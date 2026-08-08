@@ -90,4 +90,25 @@ export async function jobsRoutes(app: FastifyInstance) {
       });
     }
   });
+
+  app.post<{
+      Body: CreateJobBody;
+    }>('/jobs/run', async (request, reply) => {
+      try {
+        const job = await jobManager.run(
+          request.body.goal
+        );
+
+        return reply.status(201).send(job);
+      } catch (error) {
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'Unable to run job';
+
+        return reply.status(400).send({
+          error: message,
+        });
+      }
+  });
 }

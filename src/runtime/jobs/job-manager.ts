@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+
 import { deterministicPlanner } from '../planner/deterministic-planner.js';
 import { capabilityRegistry } from '../registry/registry.js';
 import { checkPermission } from '../permissions/permissions.js';
@@ -64,6 +65,14 @@ class JobManager {
     return job;
   }
 
+  async run(goal: string): Promise<Job> {
+    const created = await this.create(goal);
+
+    await this.plan(created.id);
+
+    return this.execute(created.id);
+  }
+
   async plan(id: string): Promise<Job> {
     const job = await jobStore.get(id);
 
@@ -93,116 +102,116 @@ class JobManager {
   }
 
   async execute(id: string): Promise<Job> {
-  const job = await jobStore.get(id);
+    const job = await jobStore.get(id);
 
-  if (!job) {
-    throw new Error(`Job not found: ${id}`);
-  }
-
-  if (job.steps.length === 0) {
-    throw new Error('Job has no planned steps');
-  }
-
-  job.status = 'executing';
-  job.startedAt = new Date().toISOString();
-  job.updatedAt = job.startedAt;
-
-  this.addEvent(job, 'execution.started');
-
-  try {
-    for (const step of job.steps) {
-      const capability = capabilityRegistry.get(step.capability);
-
-      if (!capability) {
-        throw new Error(
-          `Capability not found: ${step.capability}`
-        );
-      }
-
-      const permission = checkPermission(capability.risk);
-
-      if (!permission.allowed) {
-        throw new Error(
-          permission.reason ??
-            `Capability not permitted: ${step.capability}`
-        );
-      }
-
-      step.status = 'running';
-      step.startedAt = new Date().toISOString();
-
-      this.addEvent(job, 'capability.started', {
-        stepId: step.id,
-        capability: step.capability,
-      });
-
-      try {
-        const result = await capability.execute(step.input);
-
-        step.result = result;
-        step.status = 'completed';
-        step.completedAt = new Date().toISOString();
-
-        this.addEvent(job, 'capability.completed', {
-          stepId: step.id,
-          capability: step.capability,
-        });
-      } catch (error) {
-        const message =
-          error instanceof Error
-            ? error.message
-            : 'Unknown capability execution error';
-
-        step.status = 'failed';
-        step.error = message;
-        step.completedAt = new Date().toISOString();
-
-        this.addEvent(job, 'capability.failed', {
-          stepId: step.id,
-          capability: step.capability,
-          error: message,
-        });
-
-        throw error;
-      }
+    if (!job) {
+      throw new Error(`Job not found: ${id}`);
     }
 
-    job.status = 'completed';
-    job.completedAt = new Date().toISOString();
-    job.updatedAt = job.completedAt;
+    if (job.steps.length === 0) {
+      throw new Error('Job has no planned steps');
+    }
 
-    job.result =
-      job.steps.length === 1
-        ? job.steps[0].result
-        : job.steps.map((step) => step.result);
+    job.status = 'executing';
+    job.startedAt = new Date().toISOString();
+    job.updatedAt = job.startedAt;
 
-    this.addEvent(job, 'job.completed', {
-      stepCount: job.steps.length,
-    });
+    this.addEvent(job, 'execution.started');
 
-    await jobStore.update(job);
+    try {
+      for (const step of job.steps) {
+        const capability = capabilityRegistry.get(step.capability);
 
-    return job;
-  } catch (error) {
-    const message =
-      error instanceof Error
-        ? error.message
-        : 'Unknown job execution error';
+        if (!capability) {
+          throw new Error(
+            `Capability not found: ${step.capability}`
+          );
+        }
 
-    job.status = 'failed';
-    job.error = message;
-    job.completedAt = new Date().toISOString();
-    job.updatedAt = job.completedAt;
+        const permission = checkPermission(capability.risk);
 
-    this.addEvent(job, 'job.failed', {
-      error: message,
-    });
+        if (!permission.allowed) {
+          throw new Error(
+            permission.reason ??
+              `Capability not permitted: ${step.capability}`
+          );
+        }
 
-    await jobStore.update(job);
+        step.status = 'running';
+        step.startedAt = new Date().toISOString();
 
-    return job;
+        this.addEvent(job, 'capability.started', {
+          stepId: step.id,
+          capability: step.capability,
+        });
+
+        try {
+          const result = await capability.execute(step.input);
+
+          step.result = result;
+          step.status = 'completed';
+          step.completedAt = new Date().toISOString();
+
+          this.addEvent(job, 'capability.completed', {
+            stepId: step.id,
+            capability: step.capability,
+          });
+        } catch (error) {
+          const message =
+            error instanceof Error
+              ? error.message
+              : 'Unknown capability execution error';
+
+          step.status = 'failed';
+          step.error = message;
+          step.completedAt = new Date().toISOString();
+
+          this.addEvent(job, 'capability.failed', {
+            stepId: step.id,
+            capability: step.capability,
+            error: message,
+          });
+
+          throw error;
+        }
+      }
+
+      job.status = 'completed';
+      job.completedAt = new Date().toISOString();
+      job.updatedAt = job.completedAt;
+
+      job.result =
+        job.steps.length === 1
+          ? job.steps[0].result
+          : job.steps.map((step) => step.result);
+
+      this.addEvent(job, 'job.completed', {
+        stepCount: job.steps.length,
+      });
+
+      await jobStore.update(job);
+
+      return job;
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Unknown job execution error';
+
+      job.status = 'failed';
+      job.error = message;
+      job.completedAt = new Date().toISOString();
+      job.updatedAt = job.completedAt;
+
+      this.addEvent(job, 'job.failed', {
+        error: message,
+      });
+
+      await jobStore.update(job);
+
+      return job;
+    }
   }
-}
 
   private addEvent(
     job: Job,
