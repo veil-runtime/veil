@@ -1,0 +1,31 @@
+{
+  "name": "playwright-lab",
+  "version": "1.0.0",
+  "description": "Local Browser Operator",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"No tests yet\""
+  },
+  "keywords": [
+    "playwright",
+    "automation",
+    "browser",
+    "ai"
+  ],
+  "author": "Mustapha",
+  "license": "ISC",
+  "dependencies": {
+    "fastify": "^5.11.2",
+    "playwright": "^1.62.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "tsx": "^4.23.11",
+    "typescript": "^7.0.2"
+  }
+}

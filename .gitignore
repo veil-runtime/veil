@@ -1,0 +1,7 @@
+
+playwright/.auth/
+browser-profile/
+node_modules/
+
+dist/
+.env
