@@ -3,6 +3,7 @@ import { linkedinRoutes } from '../routes/linkedin.routes.js';
 import { capabilitiesRoutes } from '../routes/capabilities.routes.js';
 import { executionRoutes } from '../routes/execution.routes.js';
 import { registerCapabilities } from '../../runtime/registry/register-capabilities.js';
+import { jobsRoutes } from '../routes/jobs.routes.js';
 
 const app = Fastify({
   logger: true,
@@ -26,6 +27,10 @@ app.register(capabilitiesRoutes, {
 });
 
 app.register(executionRoutes, {
+  prefix: '/api',
+});
+
+app.register(jobsRoutes, {
   prefix: '/api',
 });
 

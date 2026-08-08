@@ -1,0 +1,93 @@
+import { FastifyInstance } from 'fastify';
+import { jobManager } from '../../runtime/jobs/job-manager.js';
+
+interface CreateJobBody {
+  goal: string;
+}
+
+interface JobParams {
+  id: string;
+}
+
+export async function jobsRoutes(app: FastifyInstance) {
+  app.post<{
+    Body: CreateJobBody;
+  }>('/jobs', async (request, reply) => {
+    try {
+      const job = await jobManager.create(
+        request.body?.goal
+      );
+
+      return reply.status(201).send(job);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Unable to create job';
+
+      return reply.status(400).send({
+        error: message,
+      });
+    }
+  });
+
+  app.get('/jobs', async () => {
+    return {
+      jobs: await jobManager.list(),
+    };
+  });
+
+  app.get<{
+    Params: JobParams;
+  }>('/jobs/:id', async (request, reply) => {
+    const job = await jobManager.get(
+      request.params.id
+    );
+
+    if (!job) {
+      return reply.status(404).send({
+        error: 'Job not found',
+      });
+    }
+
+    return job;
+  });
+
+  app.post<{
+    Params: JobParams;
+  }>('/jobs/:id/plan', async (request, reply) => {
+    try {
+      const job = await jobManager.plan(request.params.id);
+
+      return job;
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Unable to plan job';
+
+      return reply.status(400).send({
+        error: message,
+      });
+    }
+  });
+
+  app.post<{
+    Params: JobParams;
+  }>('/jobs/:id/execute', async (request, reply) => {
+    try {
+      const job = await jobManager.execute(request.params.id);
+
+      return job;
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Unable to execute job';
+
+      return reply.status(400).send({
+        error: message,
+      });
+    }
+  });
+}
