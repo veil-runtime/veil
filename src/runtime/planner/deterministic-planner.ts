@@ -1,11 +1,13 @@
 import { randomUUID } from 'node:crypto';
 
-import {
-  ExecutionPlan,
-  Planner,
-} from './planner.js';
+import { PlannerProvider } from './planner-provider.js';
+import { ExecutionPlan } from './planner.js';
 
-export class DeterministicPlanner implements Planner {
+export class DeterministicPlannerProvider
+  implements PlannerProvider
+{
+  readonly name = 'deterministic';
+
   async plan(goal: string): Promise<ExecutionPlan> {
     const urlMatch = goal.match(/https?:\/\/[^\s]+/i);
 
@@ -36,4 +38,4 @@ export class DeterministicPlanner implements Planner {
 }
 
 export const deterministicPlanner =
-  new DeterministicPlanner();
+  new DeterministicPlannerProvider();

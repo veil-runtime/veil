@@ -4,12 +4,14 @@ import { capabilitiesRoutes } from '../routes/capabilities.routes.js';
 import { executionRoutes } from '../routes/execution.routes.js';
 import { registerCapabilities } from '../../runtime/registry/register-capabilities.js';
 import { jobsRoutes } from '../routes/jobs.routes.js';
+import { registerPlanners } from '../../runtime/planner/register-planners.js';
 
 const app = Fastify({
   logger: true,
 });
 
 registerCapabilities();
+registerPlanners();
 
 app.get('/health', async () => {
   return {

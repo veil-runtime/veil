@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { deterministicPlanner } from '../planner/deterministic-planner.js';
 import { capabilityRegistry } from '../registry/registry.js';
 import { checkPermission } from '../permissions/permissions.js';
+import { plannerRegistry } from '../planner/planner-registry.js';
 
 import { Job } from './job.js';
 import {
@@ -85,7 +86,9 @@ class JobManager {
 
     this.addEvent(job, 'planning.started');
 
-    const plan = await deterministicPlanner.plan(job.goal);
+    const planner = plannerRegistry.getDefault();
+
+    const plan = await planner.plan(job.goal);
 
     job.steps = plan.steps;
 
@@ -93,6 +96,7 @@ class JobManager {
     job.updatedAt = new Date().toISOString();
 
     this.addEvent(job, 'planning.completed', {
+      planner: planner.name,
       stepCount: job.steps.length,
     });
 
