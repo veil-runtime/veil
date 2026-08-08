@@ -1,5 +1,5 @@
-import { Capability } from '../../core/capability.js';
-import { createPublicSession } from '../../browser/browser.js';
+import { Capability } from '../../runtime/registry/capability.js';
+import { createPublicSession } from '../../providers/browser/browser-session.js';
 
 interface WebPageReadInput {
   url: string;

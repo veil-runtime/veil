@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
-import { capabilityRegistry } from '../core/registry.js';
-import { checkPermission } from '../core/permissions.js';
-import { writeAuditLog } from '../core/audit.js';
+import { capabilityRegistry } from '../../runtime/registry/registry.js';
+import { checkPermission } from '../../runtime/permissions/permissions.js';
+import { writeAuditLog } from '../../runtime/audit/audit.js';
 
 interface ExecuteParams {
   name: string;

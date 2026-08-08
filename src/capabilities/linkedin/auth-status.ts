@@ -1,5 +1,5 @@
-import { Capability } from '../../core/capability.js';
-import { createLinkedInSession } from '../../browser/browser.js';
+import { Capability } from '../../runtime/registry/capability.js';
+import { createLinkedInSession } from '../../providers/browser/browser-session.js';
 
 interface LinkedInAuthStatusResult {
   authenticated: boolean;

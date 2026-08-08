@@ -1,8 +1,8 @@
 import { FastifyInstance } from 'fastify';
-import { checkLinkedInAuthentication } from '../skills/linkedin/linkedin.js';
+import { linkedinAuthStatusCapability } from '../../capabilities/linkedin/auth-status.js';
 
 export async function linkedinRoutes(app: FastifyInstance) {
   app.get('/linkedin/status', async () => {
-    return checkLinkedInAuthentication();
+    return linkedinAuthStatusCapability.execute(undefined);
   });
 }

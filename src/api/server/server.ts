@@ -1,8 +1,8 @@
 import Fastify from 'fastify';
-import { linkedinRoutes } from './routes/linkedin.routes.js';
-import { capabilitiesRoutes } from './routes/capabilities.routes.js';
-import { registerCapabilities } from './core/register-capabilities.js';
-import { executionRoutes } from './routes/execution.routes.js';
+import { linkedinRoutes } from '../routes/linkedin.routes.js';
+import { capabilitiesRoutes } from '../routes/capabilities.routes.js';
+import { executionRoutes } from '../routes/execution.routes.js';
+import { registerCapabilities } from '../../runtime/registry/register-capabilities.js';
 
 const app = Fastify({
   logger: true,

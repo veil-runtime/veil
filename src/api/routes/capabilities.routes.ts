@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { capabilityRegistry } from '../core/registry.js';
+import { capabilityRegistry } from '../../runtime/registry/registry.js';
 
 export async function capabilitiesRoutes(app: FastifyInstance) {
   app.get('/capabilities', async () => {

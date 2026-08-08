@@ -6,7 +6,7 @@ import {
 import {
   sessionManager,
   SessionName,
-} from '../providers/session-manager.js';
+} from './session-manager.js';
 
 export interface BrowserSession {
   context: BrowserContext;

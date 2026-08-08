@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "start": "tsx src/server.ts",
+    "dev": "tsx watch src/api/server/server.ts",
+    "start": "tsx src/api/server/server.ts",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "test": "echo \"No tests yet\""

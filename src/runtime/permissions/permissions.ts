@@ -1,4 +1,4 @@
-import { CapabilityRisk } from './capability.js';
+import { CapabilityRisk } from '../registry/capability.js';
 
 export interface PermissionDecision {
   allowed: boolean;
