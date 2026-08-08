@@ -103,10 +103,17 @@ Rules:
       throw new Error('Planner returned no content');
     }
 
+    const normalizedContent = content
+      .trim()
+      .replace(/^```json\s*/i, '')
+      .replace(/^```\s*/i, '')
+      .replace(/\s*```$/, '')
+      .trim();
+
     let parsed: PlannerResponse;
 
     try {
-      parsed = JSON.parse(content);
+      parsed = JSON.parse(normalizedContent);
     } catch {
       throw new Error(
         `Planner returned invalid JSON: ${content}`
