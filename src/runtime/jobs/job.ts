@@ -7,6 +7,8 @@ export interface Job {
 
   goal: string;
 
+  planner?: string;
+
   status: JobStatus;
 
   createdAt: string;

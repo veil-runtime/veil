@@ -20,6 +20,7 @@ class CapabilityRegistry {
       name: capability.name,
       description: capability.description,
       risk: capability.risk,
+      inputSchema: capability.inputSchema ?? {},
     }));
   }
 }

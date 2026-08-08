@@ -14,7 +14,10 @@ import { JobStatus } from './job-status.js';
 import { jobStore } from './job-store.js';
 
 class JobManager {
-  async create(goal: string): Promise<Job> {
+  async create(
+    goal: string,
+    planner?: string
+  ): Promise<Job>{
     if (!goal?.trim()) {
       throw new Error('Job goal is required');
     }
@@ -24,6 +27,7 @@ class JobManager {
     const job: Job = {
       id: randomUUID(),
       goal: goal.trim(),
+      planner,
       status: 'created',
       createdAt: now,
       updatedAt: now,
@@ -66,8 +70,11 @@ class JobManager {
     return job;
   }
 
-  async run(goal: string): Promise<Job> {
-    const created = await this.create(goal);
+  async run(
+    goal: string,
+    planner?: string
+  ): Promise<Job> {
+    const created = await this.create(goal, planner);
 
     await this.plan(created.id);
 
@@ -86,7 +93,15 @@ class JobManager {
 
     this.addEvent(job, 'planning.started');
 
-    const planner = plannerRegistry.getDefault();
+    const planner = job.planner
+      ? plannerRegistry.get(job.planner)
+      : plannerRegistry.getDefault();
+
+    if (!planner) {
+      throw new Error(
+        `Planner not found: ${job.planner}`
+      );
+    }
 
     const plan = await planner.plan(job.goal);
 

@@ -5,6 +5,7 @@ import { executionRoutes } from '../routes/execution.routes.js';
 import { registerCapabilities } from '../../runtime/registry/register-capabilities.js';
 import { jobsRoutes } from '../routes/jobs.routes.js';
 import { registerPlanners } from '../../runtime/planner/register-planners.js';
+import { plannersRoutes } from '../routes/planners.routes.js';
 
 const app = Fastify({
   logger: true,
@@ -33,6 +34,10 @@ app.register(executionRoutes, {
 });
 
 app.register(jobsRoutes, {
+  prefix: '/api',
+});
+
+app.register(plannersRoutes, {
   prefix: '/api',
 });
 

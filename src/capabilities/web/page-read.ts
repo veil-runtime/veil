@@ -22,6 +22,15 @@ export const webPageReadCapability: Capability<
 
   risk: 'read',
 
+  inputSchema: {
+    url: {
+      type: 'string',
+      required: true,
+      description:
+        'The full HTTP or HTTPS URL of the public web page to read',
+    },
+  },
+
   async execute(input) {
     if (!input?.url) {
       throw new Error('url is required');

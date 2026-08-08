@@ -3,6 +3,7 @@ import { jobManager } from '../../runtime/jobs/job-manager.js';
 
 interface CreateJobBody {
   goal: string;
+  planner?: string;
 }
 
 interface JobParams {
@@ -15,7 +16,8 @@ export async function jobsRoutes(app: FastifyInstance) {
   }>('/jobs', async (request, reply) => {
     try {
       const job = await jobManager.create(
-        request.body?.goal
+        request.body?.goal,
+        request.body?.planner
       );
 
       return reply.status(201).send(job);
@@ -96,7 +98,8 @@ export async function jobsRoutes(app: FastifyInstance) {
     }>('/jobs/run', async (request, reply) => {
       try {
         const job = await jobManager.run(
-          request.body.goal
+          request.body.goal,
+          request.body.planner
         );
 
         return reply.status(201).send(job);
