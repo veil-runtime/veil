@@ -6,6 +6,7 @@ import {
 } from 'node:path';
 
 import { Capability } from '../../runtime/registry/capability.js';
+import { evaluateCommandPolicy } from '../../runtime/permissions/command-policy.js';
 
 interface ShellCommandRunInput {
   command: string;
@@ -83,7 +84,7 @@ export const shellCommandRunCapability: Capability<
       type: 'string',
       required: true,
       description:
-        'Executable name only, for example "git", "node", "npm", "pnpm", "python3", "dotnet" or "docker". Do not include arguments or spaces. For "git status", use command="git" and args=["status"].',
+        'Approved command. Prefer executable name only, for example "git" with args=["status"]. If a simple command such as "git status" is supplied as one string, Operator will normalize it before policy evaluation.',
     },
 
     args: {
@@ -109,28 +110,64 @@ export const shellCommandRunCapability: Capability<
     }
 
     if (
-      !ALLOWED_COMMANDS.has(
-        input.command
-      )
-    ) {
-      throw new Error(
-        `Command is not allowed: ${input.command}`
-      );
-    }
-
-    const args = input.args ?? [];
-
-    if (
-      !Array.isArray(args) ||
-      args.some(
-        (arg) =>
-          typeof arg !== 'string'
+      input.args !== undefined &&
+      (
+        !Array.isArray(input.args) ||
+        input.args.some(
+          (arg) =>
+            typeof arg !== 'string'
+        )
       )
     ) {
       throw new Error(
         'args must be an array of strings'
       );
     }
+
+    const commandParts = input.command
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+
+    const command = commandParts[0];
+
+    if (!command) {
+      throw new Error(
+        'command is required'
+      );
+    }
+
+    const args = [
+      ...commandParts.slice(1),
+      ...(input.args ?? []),
+    ];
+
+    if (!ALLOWED_COMMANDS.has(command)) {
+      throw new Error(
+        `Command is not allowed: ${command}`
+      );
+    }
+
+    const policy = evaluateCommandPolicy(
+      command,
+      args
+    );
+
+    if (!policy.allowed) {
+      throw new Error(
+        policy.reason ??
+          'Command is not permitted by policy'
+      );
+    }
+
+    context?.logger.info(
+      'Command policy evaluated',
+      {
+        command,
+        args,
+        risk: policy.risk,
+      }
+    );
 
     const cwd = resolveSafeCwd(
       input.cwd
@@ -139,7 +176,7 @@ export const shellCommandRunCapability: Capability<
     context?.logger.info(
       'Running approved command',
       {
-        command: input.command,
+        command,
         args,
         cwd,
       }
@@ -149,7 +186,7 @@ export const shellCommandRunCapability: Capability<
       await new Promise<ShellCommandRunResult>(
         (resolvePromise, reject) => {
           const child = spawn(
-            input.command,
+            command,
             args,
             {
               cwd,
@@ -184,8 +221,7 @@ export const shellCommandRunCapability: Capability<
             'close',
             (exitCode) => {
               resolvePromise({
-                command:
-                  input.command,
+                command,
                 args,
                 cwd,
                 exitCode:
@@ -209,8 +245,8 @@ export const shellCommandRunCapability: Capability<
     context?.logger.info(
       'Approved command completed',
       {
-        command:
-          input.command,
+        command,
+        args,
         exitCode:
           result.exitCode,
       }
