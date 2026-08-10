@@ -17,6 +17,7 @@ import {
   jobStore,
 } from './job-store.js';
 import { jobMemory } from './job-memory.js';
+import { ConsoleExecutionLogger } from '../execution/console-execution-logger.js';
 
 class JobManager {
   async create(
@@ -197,11 +198,17 @@ class JobManager {
         });
 
         try {
+          const logger = new ConsoleExecutionLogger(
+            job.id,
+            step.id
+          );
+
           const result = await capability.execute(
             step.input,
             {
               jobId: job.id,
               stepId: step.id,
+              logger,
             }
           );
 

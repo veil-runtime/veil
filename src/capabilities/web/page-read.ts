@@ -31,7 +31,7 @@ export const webPageReadCapability: Capability<
     },
   },
 
-  async execute(input) {
+  async execute(input, context) {
     if (!input?.url) {
       throw new Error('url is required');
     }
@@ -44,6 +44,10 @@ export const webPageReadCapability: Capability<
       );
     }
 
+    context?.logger.info(
+      `Reading public web page: ${url}`
+    );
+
     const session = await createPublicSession();
 
     try {
@@ -52,6 +56,10 @@ export const webPageReadCapability: Capability<
         timeout: 30000,
       });
 
+      context?.logger.info(
+        `Page loaded: ${session.page.url()}`
+      );
+
       const title = await session.page.title();
 
       const text = await session.page
@@ -59,12 +67,20 @@ export const webPageReadCapability: Capability<
         .innerText()
         .catch(() => '');
 
+      context?.logger.info(
+        'Public web page read completed'
+      );
+
       return {
         title,
         url: session.page.url(),
         text: text.trim().slice(0, 20000),
       };
     } finally {
+      context?.logger.debug(
+        'Closing browser session'
+      );
+
       await session.close();
     }
   },
