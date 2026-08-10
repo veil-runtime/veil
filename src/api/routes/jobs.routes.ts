@@ -78,6 +78,40 @@ export async function jobsRoutes(app: FastifyInstance) {
     return job;
   });
 
+  app.get<{
+    Querystring: JobListQuery;
+  }>('/jobs/history', async (request) => {
+    const limit = request.query.limit
+      ? Number.parseInt(request.query.limit, 10)
+      : undefined;
+
+    const jobs = await jobManager.list({
+      status: request.query.status,
+      planner: request.query.planner,
+      capability: request.query.capability,
+      goal: request.query.goal,
+      limit:
+        Number.isFinite(limit) && limit! > 0
+          ? limit
+          : undefined,
+    });
+
+    return {
+      jobs: jobs.map((job) => ({
+        id: job.id,
+        goal: job.goal,
+        planner: job.planner,
+        status: job.status,
+        capabilities: job.steps.map(
+          (step) => step.capability
+        ),
+        createdAt: job.createdAt,
+        startedAt: job.startedAt,
+        completedAt: job.completedAt,
+      })),
+    };
+  });
+
   app.post<{
     Params: JobParams;
   }>('/jobs/:id/plan', async (request, reply) => {
