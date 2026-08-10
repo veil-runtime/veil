@@ -1,5 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { jobManager } from '../../runtime/jobs/job-manager.js';
+import { executionLogStore } from '../../runtime/logging/execution-log-store.js';
 
 interface CreateJobBody {
   goal: string;
@@ -68,6 +69,24 @@ export async function jobsRoutes(app: FastifyInstance) {
         error: message,
       });
     }
+  });
+
+  app.get<{
+    Params: JobParams;
+  }>('/jobs/:id/logs', async (request, reply) => {
+    const job = await jobManager.get(request.params.id);
+
+    if (!job) {
+      return reply.status(404).send({
+        error: 'Job not found',
+      });
+    }
+
+    return {
+      logs: executionLogStore.listByJob(
+        request.params.id
+      ),
+    };
   });
 
   app.get<{

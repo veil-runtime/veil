@@ -4,12 +4,15 @@ import {
   ExecutionLogLevel,
 } from './execution-logger.js';
 
+import { ExecutionLogSink } from '../logging/execution-log-sink.js';
+
 export class ConsoleExecutionLogger
   implements ExecutionLogger
 {
   constructor(
     private readonly jobId: string,
-    private readonly stepId: string
+    private readonly stepId: string,
+    private readonly sink: ExecutionLogSink
   ) {}
 
   debug(
@@ -54,26 +57,6 @@ export class ConsoleExecutionLogger
       metadata,
     };
 
-    const output = JSON.stringify({
-      type: 'execution_log',
-      ...entry,
-    });
-
-    switch (level) {
-      case 'debug':
-        console.debug(output);
-        break;
-
-      case 'warn':
-        console.warn(output);
-        break;
-
-      case 'error':
-        console.error(output);
-        break;
-
-      default:
-        console.info(output);
-    }
+    void this.sink.write(entry);
   }
 }

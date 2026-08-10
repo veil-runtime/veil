@@ -1,6 +1,5 @@
 import { randomUUID } from 'node:crypto';
 
-import { deterministicPlanner } from '../planner/deterministic-planner.js';
 import { capabilityRegistry } from '../registry/registry.js';
 import { checkPermission } from '../permissions/permissions.js';
 import { plannerRegistry } from '../planner/planner-registry.js';
@@ -17,7 +16,11 @@ import {
   jobStore,
 } from './job-store.js';
 import { jobMemory } from './job-memory.js';
+
 import { ConsoleExecutionLogger } from '../execution/console-execution-logger.js';
+import { ConsoleLogSink } from '../logging/console-log-sink.js';
+import { CompositeLogSink } from '../logging/composite-log-sink.js';
+import { SQLiteLogSink } from '../logging/sqlite-log-sink.js';
 
 class JobManager {
   async create(
@@ -112,13 +115,17 @@ class JobManager {
     }
 
     const context = await jobMemory.getPlannerContext(
-      job.goal);
+      job.goal
+    );
 
     const plan = await planner.plan(
       job.goal,
-      context);
+      context
+    );
 
-    const validation = validatePlan(plan.steps);
+    const validation = validatePlan(
+      plan.steps
+    );
 
     if (!validation.valid) {
       this.addEvent(job, 'planning.completed', {
@@ -200,7 +207,11 @@ class JobManager {
         try {
           const logger = new ConsoleExecutionLogger(
             job.id,
-            step.id
+            step.id,
+            new CompositeLogSink([
+              new ConsoleLogSink(),
+              new SQLiteLogSink(),
+            ])
           );
 
           const result = await capability.execute(
