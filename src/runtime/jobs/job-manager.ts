@@ -16,6 +16,7 @@ import {
   JobListFilter,
   jobStore,
 } from './job-store.js';
+import { jobMemory } from './job-memory.js';
 
 class JobManager {
   async create(
@@ -109,7 +110,12 @@ class JobManager {
       );
     }
 
-    const plan = await planner.plan(job.goal);
+    const context = await jobMemory.getPlannerContext(
+      job.goal);
+
+    const plan = await planner.plan(
+      job.goal,
+      context);
 
     const validation = validatePlan(plan.steps);
 
@@ -137,6 +143,8 @@ class JobManager {
       planner: planner.name,
       stepCount: job.steps.length,
       valid: true,
+      memoryJobs:
+        context.previousJobs?.length ?? 0,
     });
 
     await jobStore.update(job);
