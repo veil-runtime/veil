@@ -4,17 +4,12 @@ import { capabilityRegistry } from '../registry/registry.js';
 import { checkPermission } from '../permissions/permissions.js';
 import { plannerRegistry } from '../planner/planner-registry.js';
 import { validatePlan } from '../execution/plan-validator.js';
+import { runtimeEventBus } from '../events/memory-event-bus.js';
 
 import { Job, JobOutcome } from './job.js';
-import {
-  JobEvent,
-  JobEventType,
-} from './job-event.js';
+import { JobEvent, JobEventType } from './job-event.js';
 import { JobStatus } from './job-status.js';
-import {
-  JobListFilter,
-  jobStore,
-} from './job-store.js';
+import { JobListFilter, jobStore } from './job-store.js';
 import { jobMemory } from './job-memory.js';
 
 import { ConsoleExecutionLogger } from '../execution/console-execution-logger.js';
@@ -328,6 +323,18 @@ class JobManager {
     };
 
     job.events.push(event);
+
+    void runtimeEventBus.publish({
+      id: event.id,
+      type: event.type,
+      timestamp: event.timestamp,
+      jobId: event.jobId,
+      stepId:
+        typeof event.data?.stepId === 'string'
+          ? event.data.stepId
+          : undefined,
+      data: event.data,
+    });
 
     return event;
   }

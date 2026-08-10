@@ -9,7 +9,7 @@ import { Capability } from '../../runtime/registry/capability.js';
 import { evaluateCommandPolicy } from '../../runtime/permissions/command-policy.js';
 
 interface ShellCommandRunInput {
-  command: string;
+  command: string | string[];
   args?: string[];
   cwd?: string;
 }
@@ -21,6 +21,11 @@ interface ShellCommandRunResult {
   exitCode: number;
   stdout: string;
   stderr: string;
+}
+
+interface NormalizedCommand {
+  command: string;
+  args: string[];
 }
 
 const ALLOWED_COMMANDS = new Set([
@@ -68,6 +73,132 @@ function resolveSafeCwd(
   return candidate;
 }
 
+function parseCommandParts(
+  command: string | string[]
+): string[] {
+  if (Array.isArray(command)) {
+    if (
+      command.length === 0 ||
+      command.some(
+        (part) =>
+          typeof part !== 'string'
+      )
+    ) {
+      throw new Error(
+        'command array must contain strings'
+      );
+    }
+
+    return command;
+  }
+
+  const trimmed = command.trim();
+
+  if (!trimmed) {
+    throw new Error(
+      'command is required'
+    );
+  }
+
+  /*
+   * Some planners may return:
+   *
+   * ["git", "status"]
+   *
+   * as a JSON-encoded string.
+   */
+  if (
+    trimmed.startsWith('[') &&
+    trimmed.endsWith(']')
+  ) {
+    try {
+      const parsed = JSON.parse(trimmed);
+
+      if (
+        Array.isArray(parsed) &&
+        parsed.length > 0 &&
+        parsed.every(
+          (part) =>
+            typeof part === 'string'
+        )
+      ) {
+        return parsed;
+      }
+    } catch {
+      // Fall through to normal command parsing.
+    }
+  }
+
+  return trimmed
+    .split(/\s+/)
+    .filter(Boolean);
+}
+
+function normalizeCommand(
+  input: ShellCommandRunInput
+): NormalizedCommand {
+  if (!input?.command) {
+    throw new Error(
+      'command is required'
+    );
+  }
+
+  if (
+    input.args !== undefined &&
+    (
+      !Array.isArray(input.args) ||
+      input.args.some(
+        (arg) =>
+          typeof arg !== 'string'
+      )
+    )
+  ) {
+    throw new Error(
+      'args must be an array of strings'
+    );
+  }
+
+  const commandParts =
+    parseCommandParts(input.command);
+
+  const command =
+    commandParts[0];
+
+  if (!command) {
+    throw new Error(
+      'command is required'
+    );
+  }
+
+  const embeddedArgs =
+    commandParts.slice(1);
+
+  const suppliedArgs =
+    input.args ?? [];
+
+  /*
+   * Explicit args win when provided.
+   *
+   * This avoids:
+   *
+   * command = "git status"
+   * args = ["status"]
+   *
+   * becoming:
+   *
+   * ["status", "status"]
+   */
+  const args =
+    suppliedArgs.length > 0
+      ? suppliedArgs
+      : embeddedArgs;
+
+  return {
+    command,
+    args,
+  };
+}
+
 export const shellCommandRunCapability: Capability<
   ShellCommandRunInput,
   ShellCommandRunResult
@@ -75,7 +206,7 @@ export const shellCommandRunCapability: Capability<
   name: 'shell.command.run',
 
   description:
-    'Run an approved executable with a separate argument list inside the configured Operator workspace, without invoking a shell',
+    'Run an approved executable inside the configured Operator workspace without invoking a shell. Operator safely normalizes common command representations before policy evaluation.',
 
   risk: 'read',
 
@@ -84,14 +215,14 @@ export const shellCommandRunCapability: Capability<
       type: 'string',
       required: true,
       description:
-        'Approved command. Prefer executable name only, for example "git" with args=["status"]. If a simple command such as "git status" is supplied as one string, Operator will normalize it before policy evaluation.',
+        'Command to execute. Preferred form: command="git" with args=["status"]. Simple forms such as "git status" may also be normalized safely.',
     },
 
     args: {
       type: 'array',
       required: false,
       description:
-        'Command arguments as separate strings. Example: for "git status", use ["status"]. Do not include shell operators such as &&, |, > or ;.',
+        'Optional command arguments as separate strings. Example: ["status"]. Preserve requested subcommands and do not include shell operators.',
     },
 
     cwd: {
@@ -103,44 +234,10 @@ export const shellCommandRunCapability: Capability<
   },
 
   async execute(input, context) {
-    if (!input?.command) {
-      throw new Error(
-        'command is required'
-      );
-    }
-
-    if (
-      input.args !== undefined &&
-      (
-        !Array.isArray(input.args) ||
-        input.args.some(
-          (arg) =>
-            typeof arg !== 'string'
-        )
-      )
-    ) {
-      throw new Error(
-        'args must be an array of strings'
-      );
-    }
-
-    const commandParts = input.command
-      .trim()
-      .split(/\s+/)
-      .filter(Boolean);
-
-    const command = commandParts[0];
-
-    if (!command) {
-      throw new Error(
-        'command is required'
-      );
-    }
-
-    const args = [
-      ...commandParts.slice(1),
-      ...(input.args ?? []),
-    ];
+    const {
+      command,
+      args,
+    } = normalizeCommand(input);
 
     if (!ALLOWED_COMMANDS.has(command)) {
       throw new Error(
@@ -148,10 +245,11 @@ export const shellCommandRunCapability: Capability<
       );
     }
 
-    const policy = evaluateCommandPolicy(
-      command,
-      args
-    );
+    const policy =
+      evaluateCommandPolicy(
+        command,
+        args
+      );
 
     if (!policy.allowed) {
       throw new Error(
@@ -169,9 +267,8 @@ export const shellCommandRunCapability: Capability<
       }
     );
 
-    const cwd = resolveSafeCwd(
-      input.cwd
-    );
+    const cwd =
+      resolveSafeCwd(input.cwd);
 
     context?.logger.info(
       'Running approved command',
@@ -184,7 +281,10 @@ export const shellCommandRunCapability: Capability<
 
     const result =
       await new Promise<ShellCommandRunResult>(
-        (resolvePromise, reject) => {
+        (
+          resolvePromise,
+          reject
+        ) => {
           const child = spawn(
             command,
             args,
@@ -201,14 +301,16 @@ export const shellCommandRunCapability: Capability<
           child.stdout.on(
             'data',
             (chunk) => {
-              stdout += chunk.toString();
+              stdout +=
+                chunk.toString();
             }
           );
 
           child.stderr.on(
             'data',
             (chunk) => {
-              stderr += chunk.toString();
+              stderr +=
+                chunk.toString();
             }
           );
 

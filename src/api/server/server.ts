@@ -6,6 +6,8 @@ import { registerCapabilities } from '../../runtime/registry/register-capabiliti
 import { jobsRoutes } from '../routes/jobs.routes.js';
 import { registerPlanners } from '../../runtime/planner/register-planners.js';
 import { plannersRoutes } from '../routes/planners.routes.js';
+import { runtimeEventBus } from '../../runtime/events/memory-event-bus.js';
+import { consoleEventSubscriber } from '../../runtime/events/console-event-subscriber.js';
 
 const app = Fastify({
   logger: true,
@@ -14,10 +16,15 @@ const app = Fastify({
 registerCapabilities();
 registerPlanners();
 
+runtimeEventBus.subscribe(
+  '*',
+  consoleEventSubscriber
+);
+
 app.get('/health', async () => {
   return {
     status: 'ok',
-    service: 'browser-operator',
+    service: 'operator-runtime',
   };
 });
 
@@ -48,7 +55,7 @@ async function start() {
       host: '127.0.0.1',
     });
 
-    console.log('Browser Operator running on http://127.0.0.1:3333');
+    console.log('Operator Runtime running on http://127.0.0.1:3333');
   } catch (error) {
     app.log.error(error);
     process.exit(1);
