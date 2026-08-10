@@ -14,6 +14,8 @@ interface JobListQuery {
   status?: string;
   planner?: string;
   capability?: string;
+  goal?: string;
+  limit?: string;
 }
 
 export async function jobsRoutes(app: FastifyInstance) {
@@ -42,11 +44,20 @@ export async function jobsRoutes(app: FastifyInstance) {
   app.get<{
     Querystring: JobListQuery;
   }>('/jobs', async (request) => {
+    const limit = request.query.limit
+      ? Number.parseInt(request.query.limit, 10)
+      : undefined;
+
     return {
       jobs: await jobManager.list({
         status: request.query.status,
         planner: request.query.planner,
         capability: request.query.capability,
+        goal: request.query.goal,
+        limit:
+          Number.isFinite(limit) && limit! > 0
+            ? limit
+            : undefined,
       }),
     };
   });

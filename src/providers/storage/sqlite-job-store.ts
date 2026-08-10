@@ -92,6 +92,18 @@ export class SQLiteJobStore implements JobStore {
       );
     }
 
+    if (filter?.goal) {
+      const goal = filter.goal.toLowerCase();
+
+      jobs = jobs.filter((job) =>
+        job.goal.toLowerCase().includes(goal)
+      );
+    }
+
+    if (filter?.limit && filter.limit > 0) {
+      jobs = jobs.slice(0, filter.limit);
+    }
+
     return jobs;
   }
 
