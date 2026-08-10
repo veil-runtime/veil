@@ -197,7 +197,13 @@ class JobManager {
         });
 
         try {
-          const result = await capability.execute(step.input);
+          const result = await capability.execute(
+            step.input,
+            {
+              jobId: job.id,
+              stepId: step.id,
+            }
+          );
 
           step.result = result;
           step.status = 'completed';

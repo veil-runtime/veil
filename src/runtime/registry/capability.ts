@@ -1,11 +1,9 @@
+import { ExecutionContext } from '../execution/execution-context.js';
+
 export type CapabilityRisk =
   | 'read'
   | 'write'
   | 'destructive';
-
-export interface CapabilityContext {
-  requestId?: string;
-}
 
 export interface CapabilityInputField {
   type: string;
@@ -30,6 +28,6 @@ export interface Capability<
 
   execute(
     input: TInput,
-    context?: CapabilityContext
+    context?: ExecutionContext
   ): Promise<TResult>;
 }
