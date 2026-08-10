@@ -1,4 +1,8 @@
-import { ExecutionLogger } from './execution-logger.js';
+import {
+  ExecutionLogEntry,
+  ExecutionLogger,
+  ExecutionLogLevel,
+} from './execution-logger.js';
 
 export class ConsoleExecutionLogger
   implements ExecutionLogger
@@ -8,32 +12,68 @@ export class ConsoleExecutionLogger
     private readonly stepId: string
   ) {}
 
-  debug(message: string): void {
-    console.debug(this.format('DEBUG', message));
+  debug(
+    message: string,
+    metadata?: Record<string, unknown>
+  ): void {
+    this.write('debug', message, metadata);
   }
 
-  info(message: string): void {
-    console.info(this.format('INFO', message));
+  info(
+    message: string,
+    metadata?: Record<string, unknown>
+  ): void {
+    this.write('info', message, metadata);
   }
 
-  warn(message: string): void {
-    console.warn(this.format('WARN', message));
+  warn(
+    message: string,
+    metadata?: Record<string, unknown>
+  ): void {
+    this.write('warn', message, metadata);
   }
 
-  error(message: string): void {
-    console.error(this.format('ERROR', message));
+  error(
+    message: string,
+    metadata?: Record<string, unknown>
+  ): void {
+    this.write('error', message, metadata);
   }
 
-  private format(
-    level: string,
-    message: string
-  ): string {
-    return [
-      '[operator]',
-      `[${level}]`,
-      `[job:${this.jobId}]`,
-      `[step:${this.stepId}]`,
+  private write(
+    level: ExecutionLogLevel,
+    message: string,
+    metadata?: Record<string, unknown>
+  ): void {
+    const entry: ExecutionLogEntry = {
+      timestamp: new Date().toISOString(),
+      level,
       message,
-    ].join(' ');
+      jobId: this.jobId,
+      stepId: this.stepId,
+      metadata,
+    };
+
+    const output = JSON.stringify({
+      type: 'execution_log',
+      ...entry,
+    });
+
+    switch (level) {
+      case 'debug':
+        console.debug(output);
+        break;
+
+      case 'warn':
+        console.warn(output);
+        break;
+
+      case 'error':
+        console.error(output);
+        break;
+
+      default:
+        console.info(output);
+    }
   }
 }
