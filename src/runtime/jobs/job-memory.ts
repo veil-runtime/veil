@@ -2,11 +2,30 @@ import { Job } from './job.js';
 import { jobStore } from './job-store.js';
 import { PlannerContext } from '../planner/planner.js';
 
+const STOP_WORDS = new Set([
+  'read',
+  'write',
+  'check',
+  'run',
+  'show',
+  'tell',
+  'current',
+  'from',
+  'with',
+  'that',
+  'this',
+  'file',
+]);
+
 function extractKeywords(goal: string): string[] {
   return goal
     .toLowerCase()
-    .split(/[^a-z0-9]+/)
-    .filter((word) => word.length >= 4)
+    .split(/[^a-z0-9.]+/)
+    .filter(
+      (word) =>
+        word.length >= 4 &&
+        !STOP_WORDS.has(word)
+    )
     .slice(0, 8);
 }
 
@@ -14,16 +33,45 @@ function scoreJob(
   currentGoal: string,
   previousJob: Job
 ): number {
-  const keywords = extractKeywords(currentGoal);
-  const previousGoal = previousJob.goal.toLowerCase();
+  const normalizedCurrentGoal =
+    currentGoal.toLowerCase();
 
-  return keywords.reduce(
-    (score, keyword) =>
+  const previousGoal =
+    previousJob.goal.toLowerCase();
+
+  const keywords =
+    extractKeywords(currentGoal);
+
+  let score = keywords.reduce(
+    (total, keyword) =>
       previousGoal.includes(keyword)
-        ? score + 1
-        : score,
+        ? total + 1
+        : total,
     0
   );
+
+  if (
+    normalizedCurrentGoal.includes('linkedin') &&
+    previousGoal.includes('linkedin')
+  ) {
+    score += 3;
+  }
+
+  if (
+    normalizedCurrentGoal.includes('git') &&
+    previousGoal.includes('git')
+  ) {
+    score += 3;
+  }
+
+  if (
+    normalizedCurrentGoal.includes('readme') &&
+    previousGoal.includes('readme')
+  ) {
+    score += 3;
+  }
+
+  return score;
 }
 
 class JobMemory {
@@ -44,15 +92,18 @@ class JobMemory {
       .slice(0, 3);
 
     return {
-      previousJobs: relevant.map(({ job }) => ({
-        goal: job.goal,
-        status: job.status,
-        capabilities: job.steps.map(
-          (step) => step.capability
-        ),
-      })),
+      previousJobs: relevant.map(
+        ({ job }) => ({
+          goal: job.goal,
+          status: job.status,
+          capabilities: job.steps.map(
+            (step) => step.capability
+          ),
+        })
+      ),
     };
   }
 }
 
-export const jobMemory = new JobMemory();
+export const jobMemory =
+  new JobMemory();

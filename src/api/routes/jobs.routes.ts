@@ -1,5 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { jobManager } from '../../runtime/jobs/job-manager.js';
+import { operatorRuntime } from '../../runtime/operator-runtime.js';
 import { executionLogStore } from '../../runtime/logging/execution-log-store.js';
 
 interface CreateJobBody {
@@ -202,9 +203,11 @@ export async function jobsRoutes(app: FastifyInstance) {
       Body: CreateJobBody;
     }>('/jobs/run', async (request, reply) => {
       try {
-        const job = await jobManager.run(
+        const job = await operatorRuntime.run(
           request.body.goal,
-          request.body.planner
+          {
+            planner: request.body.planner,
+          }
         );
 
         return reply.status(201).send(job);
