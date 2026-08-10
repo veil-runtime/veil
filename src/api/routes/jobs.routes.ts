@@ -18,6 +18,11 @@ interface JobListQuery {
   limit?: string;
 }
 
+interface ReviewJobBody {
+  outcome: 'success' | 'inconclusive' | 'failed';
+  notes?: string;
+}
+
 export async function jobsRoutes(app: FastifyInstance) {
   app.post<{
     Body: CreateJobBody;
@@ -34,6 +39,30 @@ export async function jobsRoutes(app: FastifyInstance) {
         error instanceof Error
           ? error.message
           : 'Unable to create job';
+
+      return reply.status(400).send({
+        error: message,
+      });
+    }
+  });
+
+  app.post<{
+    Params: JobParams;
+    Body: ReviewJobBody;
+  }>('/jobs/:id/review', async (request, reply) => {
+    try {
+      const job = await jobManager.review(
+        request.params.id,
+        request.body.outcome,
+        request.body.notes
+      );
+
+      return job;
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Unable to review job';
 
       return reply.status(400).send({
         error: message,

@@ -10,7 +10,8 @@ export type JobEventType =
   | 'capability.failed'
   | 'job.completed'
   | 'job.failed'
-  | 'job.cancelled';
+  | 'job.cancelled'
+  | 'job.reviewed';
 
 export interface JobEvent {
   id: string;

@@ -6,7 +6,7 @@ import { checkPermission } from '../permissions/permissions.js';
 import { plannerRegistry } from '../planner/planner-registry.js';
 import { validatePlan } from '../execution/plan-validator.js';
 
-import { Job } from './job.js';
+import { Job, JobOutcome } from './job.js';
 import {
   JobEvent,
   JobEventType,
@@ -228,6 +228,7 @@ class JobManager {
       }
 
       job.status = 'completed';
+      job.outcome = 'success';
       job.completedAt = new Date().toISOString();
       job.updatedAt = job.completedAt;
 
@@ -250,6 +251,7 @@ class JobManager {
           : 'Unknown job execution error';
 
       job.status = 'failed';
+      job.outcome = 'failed';
       job.error = message;
       job.completedAt = new Date().toISOString();
       job.updatedAt = job.completedAt;
@@ -262,6 +264,30 @@ class JobManager {
 
       return job;
     }
+  }
+
+  async review(
+    id: string,
+    outcome: JobOutcome,
+    notes?: string
+  ): Promise<Job> {
+    const job = await jobStore.get(id);
+
+    if (!job) {
+      throw new Error(`Job not found: ${id}`);
+    }
+
+    job.outcome = outcome;
+    job.updatedAt = new Date().toISOString();
+
+    this.addEvent(job, 'job.reviewed', {
+      outcome,
+      notes,
+    });
+
+    await jobStore.update(job);
+
+    return job;
   }
 
   private addEvent(
