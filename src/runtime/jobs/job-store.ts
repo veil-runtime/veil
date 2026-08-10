@@ -1,12 +1,18 @@
 import { Job } from './job.js';
 import { SQLiteJobStore } from '../../providers/storage/sqlite-job-store.js';
 
+export interface JobListFilter {
+  status?: string;
+  planner?: string;
+  capability?: string;
+}
+
 export interface JobStore {
   create(job: Job): Promise<Job>;
 
   get(id: string): Promise<Job | undefined>;
 
-  list(): Promise<Job[]>;
+  list(filter?: JobListFilter): Promise<Job[]>;
 
   update(job: Job): Promise<Job>;
 }
@@ -28,8 +34,31 @@ class InMemoryJobStore implements JobStore {
     return this.jobs.get(id);
   }
 
-  async list(): Promise<Job[]> {
-    return Array.from(this.jobs.values());
+  async list(filter?: JobListFilter): Promise<Job[]> {
+    let jobs = Array.from(this.jobs.values());
+
+    if (filter?.status) {
+      jobs = jobs.filter(
+        (job) => job.status === filter.status
+      );
+    }
+
+    if (filter?.planner) {
+      jobs = jobs.filter(
+        (job) => job.planner === filter.planner
+      );
+    }
+
+    if (filter?.capability) {
+      jobs = jobs.filter((job) =>
+        job.steps.some(
+          (step) =>
+            step.capability === filter.capability
+        )
+      );
+    }
+
+    return jobs;
   }
 
   async update(job: Job): Promise<Job> {

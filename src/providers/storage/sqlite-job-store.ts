@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
 
 import { Job } from '../../runtime/jobs/job.js';
-import { JobStore } from '../../runtime/jobs/job-store.js';
+import { JobListFilter, JobStore } from '../../runtime/jobs/job-store.js';
 
 export class SQLiteJobStore implements JobStore {
   private readonly db: Database.Database;
@@ -56,7 +56,9 @@ export class SQLiteJobStore implements JobStore {
     return JSON.parse(row.data) as Job;
   }
 
-  async list(): Promise<Job[]> {
+  async list(
+    filter?: JobListFilter
+  ): Promise<Job[]> {
     const rows = this.db
       .prepare(`
         SELECT data
@@ -65,9 +67,32 @@ export class SQLiteJobStore implements JobStore {
       `)
       .all() as Array<{ data: string }>;
 
-    return rows.map(
+    let jobs = rows.map(
       (row) => JSON.parse(row.data) as Job
     );
+
+    if (filter?.status) {
+      jobs = jobs.filter(
+        (job) => job.status === filter.status
+      );
+    }
+
+    if (filter?.planner) {
+      jobs = jobs.filter(
+        (job) => job.planner === filter.planner
+      );
+    }
+
+    if (filter?.capability) {
+      jobs = jobs.filter((job) =>
+        job.steps.some(
+          (step) =>
+            step.capability === filter.capability
+        )
+      );
+    }
+
+    return jobs;
   }
 
   async update(job: Job): Promise<Job> {

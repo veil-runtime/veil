@@ -12,7 +12,10 @@ import {
   JobEventType,
 } from './job-event.js';
 import { JobStatus } from './job-status.js';
-import { jobStore } from './job-store.js';
+import {
+  JobListFilter,
+  jobStore,
+} from './job-store.js';
 
 class JobManager {
   async create(
@@ -49,8 +52,10 @@ class JobManager {
     return jobStore.get(id);
   }
 
-  async list(): Promise<Job[]> {
-    return jobStore.list();
+  async list(
+    filter?: JobListFilter
+  ): Promise<Job[]> {
+    return jobStore.list(filter);
   }
 
   async setStatus(

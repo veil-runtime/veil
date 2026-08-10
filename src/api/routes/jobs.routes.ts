@@ -10,6 +10,12 @@ interface JobParams {
   id: string;
 }
 
+interface JobListQuery {
+  status?: string;
+  planner?: string;
+  capability?: string;
+}
+
 export async function jobsRoutes(app: FastifyInstance) {
   app.post<{
     Body: CreateJobBody;
@@ -33,9 +39,15 @@ export async function jobsRoutes(app: FastifyInstance) {
     }
   });
 
-  app.get('/jobs', async () => {
+  app.get<{
+    Querystring: JobListQuery;
+  }>('/jobs', async (request) => {
     return {
-      jobs: await jobManager.list(),
+      jobs: await jobManager.list({
+        status: request.query.status,
+        planner: request.query.planner,
+        capability: request.query.capability,
+      }),
     };
   });
 
