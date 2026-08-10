@@ -136,6 +136,7 @@ Rules:
           id: randomUUID(),
           capability: step.capability,
           input: step.input,
+          reason: step.reason,
           status: 'pending',
           createdAt: new Date().toISOString(),
         };

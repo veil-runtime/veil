@@ -4,6 +4,7 @@ import { deterministicPlanner } from '../planner/deterministic-planner.js';
 import { capabilityRegistry } from '../registry/registry.js';
 import { checkPermission } from '../permissions/permissions.js';
 import { plannerRegistry } from '../planner/planner-registry.js';
+import { validatePlan } from '../execution/plan-validator.js';
 
 import { Job } from './job.js';
 import {
@@ -105,6 +106,23 @@ class JobManager {
 
     const plan = await planner.plan(job.goal);
 
+    const validation = validatePlan(plan.steps);
+
+    if (!validation.valid) {
+      this.addEvent(job, 'planning.completed', {
+        planner: planner.name,
+        stepCount: plan.steps.length,
+        valid: false,
+        validationErrors: validation.errors,
+      });
+
+      throw new Error(
+        `Generated plan failed validation: ${validation.errors
+          .map((error) => error.message)
+          .join('; ')}`
+      );
+    }
+
     job.steps = plan.steps;
 
     job.status = 'created';
@@ -113,6 +131,7 @@ class JobManager {
     this.addEvent(job, 'planning.completed', {
       planner: planner.name,
       stepCount: job.steps.length,
+      valid: true,
     });
 
     await jobStore.update(job);

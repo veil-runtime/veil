@@ -1,4 +1,5 @@
 import { Job } from './job.js';
+import { SQLiteJobStore } from '../../providers/storage/sqlite-job-store.js';
 
 export interface JobStore {
   create(job: Job): Promise<Job>;
@@ -42,4 +43,15 @@ class InMemoryJobStore implements JobStore {
   }
 }
 
-export const jobStore = new InMemoryJobStore();
+function createJobStore(): JobStore {
+  const type =
+    process.env.JOB_STORE?.toLowerCase() ?? 'memory';
+
+  if (type === 'sqlite') {
+    return new SQLiteJobStore();
+  }
+
+  return new InMemoryJobStore();
+}
+
+export const jobStore = createJobStore();

@@ -12,6 +12,8 @@ export interface JobStep {
 
   input?: unknown;
 
+  reason?: string;
+
   status: JobStepStatus;
 
   createdAt: string;
