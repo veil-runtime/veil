@@ -1,111 +1,184 @@
-# Operator Runtime
+# Operator Platform
 
-Operator Runtime is a capability-driven execution runtime that separates planning from execution.
+Operator is a capability-driven execution platform for AI and software systems.
 
-Its purpose is to provide a safe, observable and reusable way for language models and software systems to interact with external systems through capabilities, while keeping execution deterministic, auditable and independent of any specific AI provider.
+It separates **reasoning** from **execution**, allowing planners, language models and applications to safely interact with external systems through reusable capabilities while keeping execution deterministic, observable, auditable and independent of any specific AI provider.
 
-## Vision
+The goal is simple:
 
-Separate reasoning from execution.
+> Allow any planner to decide **what** should happen, while Operator reliably decides **how** it happens.
 
-- Planners decide **what** should happen.
-- The runtime decides **how** it happens.
-- Capabilities perform the work.
-- Providers integrate with external systems.
+---
 
-This allows different planners (local models, cloud models or deterministic planners) to drive the same execution engine without changing the capabilities themselves.
+# Vision
 
-## Architecture
+Modern language models are exceptional at reasoning.
+
+They should not be responsible for safely interacting with production systems.
+
+Operator provides the execution layer between reasoning and the outside world.
+
+Instead of allowing models to directly manipulate browsers, files, databases or infrastructure, Operator executes structured plans through governed capabilities, applying validation, permissions, logging, memory and runtime services before any action is performed.
+
+The result is a reusable execution platform that can power automation, operational intelligence, developer tooling and enterprise integrations without coupling execution to a specific AI model.
+
+---
+
+# Architecture
 
 ```
-Goal
-   │
-   ▼
-Planner
-   │
-   ▼
-Execution Plan
-   │
-   ▼
-Execution Runtime
-   │
-   ▼
-Execution Context
-   │
-   ├── Logger
-   ├── Memory
-   ├── Job History
-   └── Runtime Services
-   │
-   ▼
-Capabilities
-   │
-   ▼
-Providers
+                    Goal
+                     │
+                     ▼
+               Planner Runtime
+                     │
+        ┌────────────┴────────────┐
+        │                         │
+   Qwen Local               Llama (Mac)
+        │                         │
+        └──────── Team Planner ───┘
+                     │
+                     ▼
+              Execution Plan
+                     │
+                     ▼
+            Operator Runtime
+                     │
+     ┌───────────────┼────────────────┐
+     │               │                │
+ Validation      Permissions      Memory
+     │               │                │
+     └───────────────┼────────────────┘
+                     │
+                     ▼
+           Execution Context
+                     │
+     ┌───────────────┼────────────────┐
+     │               │                │
+ Logger        Job History      Runtime Services
+                     │
+                     ▼
+              Capabilities
+                     │
+                     ▼
+               Providers
+                     │
+     ┌───────────────┼────────────────┐
+     │               │                │
+ Browser      Filesystem        Shell
 ```
 
-## Current Features
+---
 
-### Runtime
+# Current Features
 
-- Capability Registry
-- Generic Execution Engine
-- Execution Context
-- Structured Execution Logging
-- Job Lifecycle Management
-- Event Timeline
-- Human-reviewed Outcomes
+## Runtime
 
-### Planning
+- Generic execution engine
+- Capability registry
+- Planner registry
+- Execution context
+- Structured execution logging
+- Job lifecycle management
+- Event timeline
+- Human-reviewed outcomes
+- SQLite-backed persistence
+- Runtime façade (`OperatorRuntime`)
 
-- Deterministic Planner
-- OpenAI-compatible Planner
-- Local Qwen Planner (Docker Model Runner)
+## Planning
 
-### Memory
+- Deterministic planner
+- OpenAI-compatible planners
+- Local Qwen planner
+- Distributed Llama planner
+- Team planner (multi-model planning)
+- Plan validation
+- Planner memory
 
-- Persistent Job Store (SQLite)
-- Job History API
-- Memory-assisted Planning
-- Planner Context Retrieval
+## Memory
 
-### Capabilities
+- Persistent job history
+- Planner context retrieval
+- Historical capability recall
+- Outcome recording
+- Human review workflow
 
-- Generic Web Page Reader
-- LinkedIn Authentication
-- LinkedIn Profile Reader
+## Capabilities
 
-### Providers
+- LinkedIn authentication
+- LinkedIn profile reader
+- Generic web page reader
+- Filesystem reader
+- Shell command execution
 
-- Browser Provider
-- Session Manager
-- Local AI Provider
-- SQLite Storage
+## Providers
 
-## Principles
+- Browser provider
+- Browser session manager
+- Local AI providers
+- SQLite storage
+
+---
+
+# Design Principles
 
 - Planner agnostic
 - Provider agnostic
 - Capability driven
-- Human review before learning
-- Structured observability
-- Small composable services
+- Runtime governed
 - Deterministic execution
+- Human review before learning
+- Small composable services
+- Explicit permissions
+- Structured observability
+- Reusable by design
 
-## Roadmap
+---
 
-### Runtime
+# What Makes Operator Different
 
-- Execution Log Pipeline
-- Progress Reporting
+Operator does not attempt to replace language models.
+
+Instead, it provides the execution environment around them.
+
+Planners can be swapped without changing capabilities.
+
+Capabilities can be added without changing the runtime.
+
+Providers can change without affecting planners.
+
+Applications can embed Operator without knowing how planning or execution works internally.
+
+This separation allows the platform to remain reusable across domains while keeping execution safe and observable.
+
+---
+
+# Roadmap
+
+## Runtime
+
+- Dependency graph execution
+- Parallel capability execution
+- Live progress reporting
 - Cancellation
-- Secrets Service
+- Retry policies
+- Secrets service
 - Metrics
-- Audit Services
+- Audit services
+- Resource management
 
-### Capabilities
+## Intelligence
 
-- LinkedIn Posting
+- Capability recommendations
+- Historical plan optimisation
+- Planner evaluation
+- Outcome-aware learning
+- Runtime analytics
+- Multi-agent planning pipelines
+
+## Capabilities
+
+- LinkedIn posting
 - GitHub
 - Docker
 - SSH
@@ -113,17 +186,15 @@ Providers
 - Jira
 - Confluence
 - REST APIs
+- Kubernetes
+- Cloud providers
 
-### Intelligence
+---
 
-- Capability recommendations
-- Historical plan optimisation
-- Outcome-aware memory
-- Planner evaluation
-- Runtime analytics
+# Status
 
-## Status
+Operator is under active development.
 
-Active development.
+The execution runtime, capability system, planner abstraction, distributed planning, structured logging and persistent memory are now in place.
 
-The runtime foundation is complete and the current focus is expanding runtime services and the capability ecosystem.
+The current focus is evolving Operator from a capable execution runtime into a complete execution platform capable of powering a wide range of AI-assisted and traditional software systems.
