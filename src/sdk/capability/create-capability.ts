@@ -4,7 +4,12 @@ import {
 
 import {
   CapabilityDefinition,
+  CapabilityExecution,
 } from './capability-definition.js';
+
+import {
+  CapabilityNext,
+} from './capability-middleware.js';
 
 export function createCapability<
   TInput = unknown,
@@ -25,50 +30,43 @@ export function createCapability<
       input,
       context
     ): Promise<TResult> {
-      const startedAt = Date.now();
+      const execution: CapabilityExecution<
+        TInput,
+        TResult
+      > = {
+        input,
+        context,
+      };
 
-      context?.logger.info(
-        'Capability execution started',
-        {
-          capability: definition.name,
-        }
-      );
+      const middleware =
+        definition.middleware ?? [];
 
-      try {
-        const result =
-          await definition.execute({
-            input,
-            context,
-          });
+      let next: CapabilityNext<TResult> =
+        () =>
+          definition.execute(
+            execution
+          );
 
-        context?.logger.info(
-          'Capability execution completed',
-          {
-            capability: definition.name,
-            durationMs:
-              Date.now() - startedAt,
-          }
-        );
+      for (
+        let index =
+          middleware.length - 1;
+        index >= 0;
+        index -= 1
+      ) {
+        const current =
+          middleware[index];
 
-        return result;
-      } catch (error) {
-        const message =
-          error instanceof Error
-            ? error.message
-            : 'Unknown capability error';
+        const previousNext =
+          next;
 
-        context?.logger.error(
-          'Capability execution failed',
-          {
-            capability: definition.name,
-            durationMs:
-              Date.now() - startedAt,
-            error: message,
-          }
-        );
-
-        throw error;
+        next = () =>
+          current.execute(
+            execution,
+            previousNext
+          );
       }
+
+      return next();
     },
   };
 }

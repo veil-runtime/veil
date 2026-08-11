@@ -5,7 +5,10 @@ import {
   resolve,
 } from 'node:path';
 
-import { createCapability } from '../../sdk/index.js';
+import {
+  createCapability,
+  LifecycleLoggingMiddleware,
+} from '../../sdk/index.js';
 
 interface FileReadInput {
   path: string;
@@ -68,6 +71,12 @@ export const filesystemFileReadCapability =
           'Path to a text file inside the configured Operator filesystem root. Prefer paths relative to the root, for example README.md or docs/architecture.md. Do not invent absolute paths.',
       },
     },
+
+    middleware: [
+      new LifecycleLoggingMiddleware(
+        'filesystem.file.read'
+      ),
+    ],
 
     async execute({
       input,

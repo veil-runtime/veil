@@ -5,6 +5,7 @@ import {
 } from '../../runtime/registry/capability.js';
 
 import { ExecutionContext } from '../../runtime/execution/execution-context.js';
+import { CapabilityMiddleware } from './capability-middleware.js';
 
 export interface CapabilityExecution<
   TInput,
@@ -19,15 +20,18 @@ export interface CapabilityDefinition<
   TResult = unknown
 > {
   name: string;
-
   description: string;
-
   risk: CapabilityRisk;
 
   inputSchema?: Record<
     string,
     CapabilityInputField
   >;
+
+  middleware?: CapabilityMiddleware<
+    TInput,
+    TResult
+  >[];
 
   execute(
     execution: CapabilityExecution<
