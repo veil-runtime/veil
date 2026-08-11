@@ -8,6 +8,7 @@ import {
 import {
   createCapability,
   LifecycleLoggingMiddleware,
+  TimeoutMiddleware,
 } from '../../sdk/index.js';
 
 interface FileReadInput {
@@ -76,6 +77,7 @@ export const filesystemFileReadCapability =
       new LifecycleLoggingMiddleware(
         'filesystem.file.read'
       ),
+      new TimeoutMiddleware(5000),
     ],
 
     async execute({

@@ -16,3 +16,7 @@ export type {
   CapabilityMiddleware,
   CapabilityNext,
 } from './capability-middleware.js';
+
+export {
+  TimeoutMiddleware,
+} from './timeout-middleware.js';
