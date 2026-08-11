@@ -6,7 +6,11 @@ It separates **reasoning** from **execution**, allowing planners, language model
 
 The goal is simple:
 
-> Allow any planner to decide **what** should happen, while Operator reliably decides **how** it happens.
+> **Allow any planner to decide _what_ should happen, while Operator reliably decides _how_ it happens.**
+
+Or, more simply:
+
+> **Operator treats AI as a planning problem and execution as an engineering problem.**
 
 ---
 
@@ -18,54 +22,60 @@ They should not be responsible for safely interacting with production systems.
 
 Operator provides the execution layer between reasoning and the outside world.
 
-Instead of allowing models to directly manipulate browsers, files, databases or infrastructure, Operator executes structured plans through governed capabilities, applying validation, permissions, logging, memory and runtime services before any action is performed.
+Instead of allowing models to directly manipulate browsers, files, databases, infrastructure or external services, Operator executes structured plans through governed capabilities, applying validation, permissions, memory, logging and runtime services before any action is performed.
 
-The result is a reusable execution platform that can power automation, operational intelligence, developer tooling and enterprise integrations without coupling execution to a specific AI model.
+The result is a reusable execution platform capable of powering automation, operational intelligence, developer tooling and enterprise integrations without coupling execution to a specific language model or AI provider.
 
 ---
 
 # Architecture
 
 ```
-                    Goal
-                     │
-                     ▼
-               Planner Runtime
-                     │
-        ┌────────────┴────────────┐
-        │                         │
-   Qwen Local               Llama (Mac)
-        │                         │
-        └──────── Team Planner ───┘
-                     │
-                     ▼
-              Execution Plan
-                     │
-                     ▼
-            Operator Runtime
-                     │
-     ┌───────────────┼────────────────┐
-     │               │                │
- Validation      Permissions      Memory
-     │               │                │
-     └───────────────┼────────────────┘
-                     │
-                     ▼
-           Execution Context
-                     │
-     ┌───────────────┼────────────────┐
-     │               │                │
- Logger        Job History      Runtime Services
-                     │
-                     ▼
-              Capabilities
-                     │
-                     ▼
-               Providers
-                     │
-     ┌───────────────┼────────────────┐
-     │               │                │
- Browser      Filesystem        Shell
+                         Goal
+                          │
+                          ▼
+                   Planner Layer
+                          │
+          ┌───────────────┴────────────────┐
+          │                                │
+     Deterministic                   AI Planners
+          │                                │
+     Qwen Local                     Llama (Mac)
+          │                                │
+          └────────── Team Planner ────────┘
+                          │
+                          ▼
+                   Execution Plan
+                          │
+                          ▼
+                  Operator Runtime
+                          │
+     ┌────────────────────┼─────────────────────┐
+     │                    │                     │
+     ▼                    ▼                     ▼
+  Policy            Job Manager            Event Bus
+     │                    │                     │
+     │                    ▼                     ▼
+     │             Execution Engine      Subscribers
+     │                    │                     │
+     └────────────────────┼─────────────────────┘
+                          ▼
+                  Execution Context
+                          │
+     ┌──────────────┬──────────────┬──────────────┐
+     ▼              ▼              ▼              ▼
+  Memory         Logging      Runtime        Services
+                               Services
+                          │
+                          ▼
+                     Capabilities
+                          │
+                          ▼
+                       Providers
+                          │
+     ┌──────────────┬──────────────┬──────────────┬──────────────┐
+     ▼              ▼              ▼              ▼
+  Browser      Filesystem       Shell          HTTP
 ```
 
 ---
@@ -75,15 +85,18 @@ The result is a reusable execution platform that can power automation, operation
 ## Runtime
 
 - Generic execution engine
+- Operator runtime façade
 - Capability registry
 - Planner registry
 - Execution context
+- Event bus
+- Runtime events
 - Structured execution logging
 - Job lifecycle management
-- Event timeline
+- Persistent SQLite job store
 - Human-reviewed outcomes
-- SQLite-backed persistence
-- Runtime façade (`OperatorRuntime`)
+
+---
 
 ## Planning
 
@@ -92,8 +105,22 @@ The result is a reusable execution platform that can power automation, operation
 - Local Qwen planner
 - Distributed Llama planner
 - Team planner (multi-model planning)
-- Plan validation
+- Planner validation
 - Planner memory
+- Historical context retrieval
+
+---
+
+## SDK
+
+- Capability SDK
+- Declarative capability authoring
+- Middleware pipeline
+- Lifecycle logging middleware
+- Timeout middleware
+- Runtime execution options
+
+---
 
 ## Memory
 
@@ -103,20 +130,28 @@ The result is a reusable execution platform that can power automation, operation
 - Outcome recording
 - Human review workflow
 
+---
+
 ## Capabilities
 
 - LinkedIn authentication
 - LinkedIn profile reader
 - Generic web page reader
+- HTTP request execution
 - Filesystem reader
 - Shell command execution
+
+---
 
 ## Providers
 
 - Browser provider
 - Browser session manager
-- Local AI providers
-- SQLite storage
+- HTTP provider
+- Filesystem provider
+- Shell provider
+- SQLite provider
+- OpenAI-compatible AI providers
 
 ---
 
@@ -127,10 +162,10 @@ The result is a reusable execution platform that can power automation, operation
 - Capability driven
 - Runtime governed
 - Deterministic execution
-- Human review before learning
-- Small composable services
 - Explicit permissions
 - Structured observability
+- Human review before learning
+- Small composable services
 - Reusable by design
 
 ---
@@ -141,15 +176,25 @@ Operator does not attempt to replace language models.
 
 Instead, it provides the execution environment around them.
 
-Planners can be swapped without changing capabilities.
+Planners determine **what** should happen.
 
-Capabilities can be added without changing the runtime.
+Operator determines **how** it happens.
 
-Providers can change without affecting planners.
+Capabilities perform the work.
 
-Applications can embed Operator without knowing how planning or execution works internally.
+Providers interact with external systems.
 
-This separation allows the platform to remain reusable across domains while keeping execution safe and observable.
+Applications embed Operator without needing to understand planning, execution or infrastructure concerns.
+
+Because these responsibilities remain independent:
+
+- Planners can be replaced without changing capabilities.
+- Capabilities can evolve without changing the runtime.
+- Providers can change without affecting planners.
+- Runtime services can evolve without modifying capabilities.
+- Applications remain insulated from implementation details.
+
+This separation allows Operator to remain reusable across domains while ensuring execution stays deterministic, observable and governed.
 
 ---
 
@@ -167,6 +212,21 @@ This separation allows the platform to remain reusable across domains while keep
 - Audit services
 - Resource management
 
+---
+
+## SDK
+
+- Provider SDK
+- Capability testing framework
+- Middleware library
+- Validation helpers
+- Retry middleware
+- Metrics middleware
+- Audit middleware
+- Execution decorators
+
+---
+
 ## Intelligence
 
 - Capability recommendations
@@ -175,6 +235,8 @@ This separation allows the platform to remain reusable across domains while keep
 - Outcome-aware learning
 - Runtime analytics
 - Multi-agent planning pipelines
+
+---
 
 ## Capabilities
 
@@ -185,16 +247,34 @@ This separation allows the platform to remain reusable across domains while keep
 - SQL
 - Jira
 - Confluence
-- REST APIs
 - Kubernetes
 - Cloud providers
+- Generic REST integrations
+
+---
+
+# Long-Term Direction
+
+Operator is evolving into a reusable execution platform capable of powering:
+
+- AI assistants
+- Operational intelligence platforms
+- Enterprise automation
+- Developer tooling
+- Agentic systems
+- Workflow orchestration
+- Multi-agent collaboration
+
+The runtime remains responsible for execution, governance and observability, while planners remain responsible for reasoning.
 
 ---
 
 # Status
 
-Operator is under active development.
+Operator has evolved beyond a proof of concept into a reusable execution platform.
 
-The execution runtime, capability system, planner abstraction, distributed planning, structured logging and persistent memory are now in place.
+The core runtime, planner abstraction, capability system, provider model, event bus, persistent memory, distributed planning and SDK foundation are now in place.
 
-The current focus is evolving Operator from a capable execution runtime into a complete execution platform capable of powering a wide range of AI-assisted and traditional software systems.
+The current focus is strengthening the platform itself—its SDKs, runtime services, provider ecosystem and execution model—so that new capabilities and integrations become progressively simpler to build while preserving deterministic, observable and governed execution.
+
+Every architectural improvement compounds across the platform, allowing Operator to scale in capability without increasing complexity.
