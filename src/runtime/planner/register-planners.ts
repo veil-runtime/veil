@@ -13,7 +13,7 @@ const qwenLocalPlanner =
 const llamaMacPlanner =
   new OpenAICompatiblePlannerProvider(
     'llama-mac',
-    'http://10.0.0.111:11434/v1',
+    'http://10.0.0.100:11434/v1',
     'llama3.2:3b'
   );
 
