@@ -8,8 +8,17 @@ import {
 } from './capability-definition.js';
 
 import {
+  CapabilityMiddleware,
   CapabilityNext,
 } from './capability-middleware.js';
+
+import {
+  LifecycleLoggingMiddleware,
+} from './lifecycle-logging-middleware.js';
+
+import {
+  TimeoutMiddleware,
+} from './timeout-middleware.js';
 
 export function createCapability<
   TInput = unknown,
@@ -38,8 +47,42 @@ export function createCapability<
         context,
       };
 
-      const middleware =
-        definition.middleware ?? [];
+      const middleware: CapabilityMiddleware<
+        TInput,
+        TResult
+      >[] = [];
+
+      if (
+        definition.lifecycleLogging ??
+        true
+      ) {
+        middleware.push(
+          new LifecycleLoggingMiddleware<
+            TInput,
+            TResult
+          >(
+            definition.name
+          )
+        );
+      }
+
+      if (
+        definition.timeoutMs !==
+        undefined
+      ) {
+        middleware.push(
+          new TimeoutMiddleware<
+            TInput,
+            TResult
+          >(
+            definition.timeoutMs
+          )
+        );
+      }
+
+      middleware.push(
+        ...(definition.middleware ?? [])
+      );
 
       let next: CapabilityNext<TResult> =
         () =>

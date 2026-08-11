@@ -20,13 +20,19 @@ export interface CapabilityDefinition<
   TResult = unknown
 > {
   name: string;
+
   description: string;
+
   risk: CapabilityRisk;
 
   inputSchema?: Record<
     string,
     CapabilityInputField
   >;
+
+  lifecycleLogging?: boolean;
+
+  timeoutMs?: number;
 
   middleware?: CapabilityMiddleware<
     TInput,
