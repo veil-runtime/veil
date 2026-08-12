@@ -132,6 +132,8 @@ Rules:
     }
 
     return {
+      version: '1.0',
+      goal,
       steps: parsed.steps.map((step) => {
         if (!capabilityRegistry.get(step.capability)) {
           throw new Error(

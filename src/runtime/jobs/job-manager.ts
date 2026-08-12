@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { capabilityRegistry } from '../registry/registry.js';
 import { checkPermission } from '../permissions/permissions.js';
 import { plannerRegistry } from '../planner/planner-registry.js';
+import { ExecutionPlan } from '../planner/planner.js';
 import { validatePlan } from '../execution/plan-validator.js';
 import { runtimeEventBus } from '../events/memory-event-bus.js';
 
@@ -18,6 +19,32 @@ import { CompositeLogSink } from '../logging/composite-log-sink.js';
 import { SQLiteLogSink } from '../logging/sqlite-log-sink.js';
 
 class JobManager {
+  async executePlan(
+    plan: ExecutionPlan
+  ): Promise<Job> {
+    if (!plan.steps.length) {
+      throw new Error(
+        'Execution plan contains no steps'
+      );
+    }
+
+    const goal =
+      plan.goal?.trim() ||
+      'External execution plan';
+
+    const job = await this.create(
+      goal
+    );
+
+    job.steps = plan.steps;
+    job.updatedAt =
+      new Date().toISOString();
+
+    await jobStore.update(job);
+
+    return this.execute(job.id);
+  }
+
   async create(
     goal: string,
     planner?: string

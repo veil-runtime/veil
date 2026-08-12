@@ -9,7 +9,15 @@ export interface PlannerContext {
 }
 
 export interface ExecutionPlan {
+  version: string;
+
+  id?: string;
+
+  goal?: string;
+
   steps: JobStep[];
+
+  metadata?: Record<string, unknown>;
 }
 
 export interface Planner {

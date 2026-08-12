@@ -22,6 +22,8 @@ export class DeterministicPlannerProvider
     const cleanedUrl = rawUrl.replace(/[.,;!?]+$/, '');
 
     return {
+      version: '1.0',
+      goal,
       steps: [
         {
           id: randomUUID(),
