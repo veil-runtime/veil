@@ -1,16 +1,16 @@
-# Operator Platform
+# Veil
 
-Operator is a capability-driven execution platform for AI and software systems.
+Veil is a capability-driven execution platform for AI and software systems.
 
-It separates **reasoning** from **execution**, allowing planners, language models and applications to safely interact with external systems through reusable capabilities while keeping execution deterministic, observable, auditable and independent of any specific AI provider.
+It separates **reasoning** from **execution**, allowing planners, language models, agents, humans and applications to safely interact with external systems through reusable capabilities while keeping execution governed, observable, auditable and independent of any specific AI provider.
 
 The goal is simple:
 
-> **Allow any planner to decide _what_ should happen, while Operator reliably decides _how_ it happens.**
+> **Allow any planner to decide _what_ should happen, while Veil reliably decides _how_ it happens.**
 
 Or, more simply:
 
-> **Operator treats AI as a planning problem and execution as an engineering problem.**
+> **Veil treats AI as a planning problem and execution as an engineering problem.**
 
 ---
 
@@ -20,17 +20,17 @@ Modern language models are exceptional at reasoning.
 
 They should not be responsible for safely interacting with production systems.
 
-Operator provides the execution layer between reasoning and the outside world.
+Veil provides the governed execution layer between reasoning and the outside world.
 
-Instead of allowing models to directly manipulate browsers, files, databases, infrastructure or external services, Operator executes structured plans through governed capabilities, applying validation, permissions, memory, logging and runtime services before any action is performed.
+Instead of allowing planners to directly manipulate browsers, files, databases, infrastructure or external services, Veil executes structured plans through governed capabilities, applying validation, permissions, policies, memory, logging and runtime services before any action is performed.
 
-The result is a reusable execution platform capable of powering automation, operational intelligence, developer tooling and enterprise integrations without coupling execution to any specific language model or AI provider.
+The result is a reusable execution platform capable of powering automation, operational intelligence, developer tooling and enterprise integrations without coupling execution to any specific reasoning system or AI provider.
 
 ---
 
 # Architectural Principles
 
-Operator owns **the contract between reasoning and execution**.
+Veil owns **the contract between reasoning and execution**.
 
 It does not prescribe how reasoning is performed or how capabilities are implemented.
 
@@ -45,7 +45,7 @@ Planner Routing
     │
 ExecutionPlan
 ══════════════════════
-Operator Runtime
+OperatorRuntime
 ══════════════════════
 Capability Registry
 Capability Modules
@@ -54,60 +54,63 @@ Providers
 Execution
 ```
 
-This separation allows new planners, routing strategies, capability modules and providers to be introduced without changing Operator Core.
+This separation allows new planners, routing strategies, capability modules and providers to be introduced without changing Veil Core.
 
 ---
 
 # Architecture
 
 ```text
-                          Goal
-                           │
-                           ▼
+                         Goal
+                          │
+                          ▼
                     Planner Router
-                           │
-                           ▼
+                          │
+                   selects strategy
+                          │
+                          ▼
                    Planner Strategy
-                           │
-        ┌──────────────────┼──────────────────┐
-        ▼                  ▼                  ▼
- Planner Registry    Runtime State      Eligibility
-        │
-        ▼
-   Planner Providers
-        │
-        ▼
-    ExecutionPlan
+                          │
+             ┌────────────┼────────────┐
+             │            │            │
+             ▼            ▼            ▼
+      Planner Registry Runtime State Eligibility
+             │
+             └────────────┬────────────┘
+                          │
+                          ▼
+                  Planner Provider(s)
+                          │
+                          ▼
+                    ExecutionPlan
+
 ══════════════════════════════════════════════
-                 OPERATOR CORE
+                     VEIL
 ══════════════════════════════════════════════
-        │
-        ▼
-    Operator Runtime
-        │
- ┌──────┼───────────────┬──────────────┐
- ▼      ▼               ▼              ▼
-Policy Job Manager   Event Bus   Execution Engine
-        │               │
-        ▼               ▼
-     Execution Context
-        │
- ┌──────┼──────────┬────────────┐
- ▼      ▼          ▼            ▼
-Memory Logging Runtime Services SDK
-        │
-        ▼
- Capability Registry
-        │
-        ▼
- Capability Modules
-        │
-        ▼
- Providers
-        │
- ┌──────┼──────────┬──────────┬──────────┐
- ▼      ▼          ▼          ▼
-Browser Filesystem Shell      HTTP
+
+                          │
+                          ▼
+                  OperatorRuntime
+                          │
+          ┌───────────────┼───────────────┐
+          ▼               ▼               ▼
+       Policy        Job Manager      Event Bus
+                                             │
+                                             ▼
+                                     Execution Engine
+                                             │
+                                             ▼
+                                  Capability Registry
+                                             │
+                                             ▼
+                                  Capability Modules
+                                             │
+                                             ▼
+                                         Providers
+                                             │
+           ┌──────────────┬──────────────┬──────────────┬──────────────┐
+           ▼              ▼              ▼              ▼
+        Browser      Filesystem        Shell          HTTP
 ```
 
 ---
@@ -117,7 +120,7 @@ Browser Filesystem Shell      HTTP
 ## Runtime
 
 - Generic execution engine
-- Operator runtime façade
+- OperatorRuntime façade
 - Capability registry
 - Planner registry
 - Strategy registry
@@ -137,9 +140,8 @@ Browser Filesystem Shell      HTTP
 - Planner registry
 - Planner strategies
 - Deterministic planner
-- OpenAI-compatible planners
-- Local Qwen planner
-- Distributed Llama planner
+- OpenAI-compatible planner support
+- Example local and distributed planner configurations
 - Planner health monitoring
 - Planner eligibility
 - Historical context retrieval
@@ -199,39 +201,38 @@ Browser Filesystem Shell      HTTP
 - Provider agnostic
 - Capability driven
 - Runtime governed
-- Deterministic execution
 - Explicit permissions
 - Structured observability
 - Human review before learning
 - Small composable services
-- Extension by composition
+- Extension through composition
 - Reusable by design
 
 ---
 
-# What Makes Operator Different
+# What Makes Veil Different
 
-Operator does not attempt to replace language models.
+Veil does not attempt to replace language models.
 
 Instead, it provides the governed execution environment around them.
 
 Reasoning remains completely replaceable.
 
-Execution remains completely governed.
+Execution remains governed and deterministic at the capability boundary.
 
-Applications embed Operator without needing to understand planning, execution or infrastructure concerns.
+Applications can embed Veil without coupling themselves to specific planners, capability implementations or infrastructure providers.
 
 Because these responsibilities remain independent:
 
 - Routers choose strategies.
 - Strategies orchestrate planners.
 - Planners produce execution plans.
-- Operator governs execution.
+- OperatorRuntime governs execution.
 - Capabilities perform the work.
 - Providers interact with external systems.
 - Runtime services remain independent of planners and capabilities.
 
-This separation allows Operator to remain reusable across domains while ensuring execution stays deterministic, observable and governed.
+This separation allows Veil to remain reusable across domains while ensuring execution remains governed, observable and consistent.
 
 ---
 
@@ -295,7 +296,7 @@ This separation allows Operator to remain reusable across domains while ensuring
 
 # Long-Term Direction
 
-Operator is evolving into a reusable execution platform capable of powering:
+Veil is evolving into a reusable execution platform capable of powering:
 
 - AI assistants
 - Operational intelligence platforms
@@ -305,20 +306,28 @@ Operator is evolving into a reusable execution platform capable of powering:
 - Workflow orchestration
 - Multi-agent collaboration
 
-The runtime remains responsible for execution, governance and observability, while reasoning remains modular through planners, strategies and routing.
+Reasoning remains modular through planners, strategies and routing.
+
+Execution remains governed and deterministic at the capability boundary.
+
+Veil defines the contract between them.
 
 ---
 
 # Status
 
-Operator has evolved beyond a proof of concept into a reusable execution platform.
+Veil has evolved beyond a proof of concept into a reusable execution platform.
 
 The execution runtime, capability system, planner abstraction, planner strategies, routing foundation, provider model, event bus, persistent memory, module architecture and SDK foundation are now in place.
 
-The current focus is strengthening the platform itself—its SDKs, runtime services, provider ecosystem, reasoning architecture and execution model—so that new planners, strategies, capabilities and integrations become progressively simpler to build while preserving deterministic, observable and governed execution.
+The current focus is strengthening the platform itself—its SDKs, runtime services, provider ecosystem, reasoning architecture and execution model—so that new planners, strategies, capabilities and integrations become progressively simpler to build while preserving governed, observable and reliable execution.
 
-Every architectural improvement compounds across the platform, allowing Operator to scale in capability without increasing complexity.
+Every architectural improvement compounds across the platform, allowing Veil to grow in capability while keeping complexity contained behind stable contracts.
 
 The guiding principle remains simple:
 
-> **Operator owns the contract between reasoning and execution.**
+> **Veil owns the contract between reasoning and execution.**
+
+Or, expressed as the architecture itself:
+
+> **Planners reason. Strategies orchestrate. OperatorRuntime governs execution. Veil owns the contract between them.**
