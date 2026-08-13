@@ -1,30 +1,39 @@
 import { deterministicPlanner } from './deterministic-planner.js';
 import { plannerRegistry } from './planner-registry.js';
 import { OpenAICompatiblePlannerProvider } from './providers/openai-compatible-planner.js';
-import { TeamPlanner } from './providers/team-planner.js';
 
 const qwenLocalPlanner =
   new OpenAICompatiblePlannerProvider(
     'qwen-local',
-    'http://localhost:12434/engines/v1',
-    'docker.io/ai/qwen3:0.6B-Q4_K_M'
+    process.env.QWEN_BASE_URL ??
+      'http://localhost:12434/engines/v1',
+    process.env.QWEN_MODEL ??
+      'docker.io/ai/qwen3:0.6B-Q4_K_M'
   );
 
 const llamaMacPlanner =
   new OpenAICompatiblePlannerProvider(
     'llama-mac',
-    'http://10.0.0.100:11434/v1',
-    'llama3.2:3b'
-  );
-
-const teamLocalPlanner =
-  new TeamPlanner(
-    qwenLocalPlanner,
-    llamaMacPlanner
+    process.env.LLAMA_MAC_BASE_URL ??
+      'http://10.0.0.100:11434/v1',
+    process.env.LLAMA_MAC_MODEL ??
+      'llama3.2:3b'
   );
 
 export function registerPlanners(): void {
   plannerRegistry.register(
+    {
+      id: 'deterministic',
+      type: 'deterministic',
+      enabled: true,
+      required: true,
+
+      traits: {
+        local: true,
+        costClass: 'free',
+        structuredOutput: 'schema',
+      },
+    },
     deterministicPlanner,
     {
       default: true,
@@ -32,14 +41,56 @@ export function registerPlanners(): void {
   );
 
   plannerRegistry.register(
+    {
+      id: 'qwen-local',
+      type: 'openai-compatible',
+      enabled: true,
+      required: true,
+
+      traits: {
+        local: true,
+        costClass: 'free',
+        structuredOutput: 'json',
+        toolReasoning: true,
+      },
+
+      config: {
+        baseUrl:
+          process.env.QWEN_BASE_URL ??
+          'http://localhost:12434/engines/v1',
+
+        model:
+          process.env.QWEN_MODEL ??
+          'docker.io/ai/qwen3:0.6B-Q4_K_M',
+      },
+    },
     qwenLocalPlanner
   );
 
   plannerRegistry.register(
-    llamaMacPlanner
-  );
+    {
+      id: 'llama-mac',
+      type: 'openai-compatible',
+      enabled: true,
+      required: false,
 
-  plannerRegistry.register(
-    teamLocalPlanner
+      traits: {
+        local: true,
+        costClass: 'free',
+        structuredOutput: 'json',
+        toolReasoning: true,
+      },
+
+      config: {
+        baseUrl:
+          process.env.LLAMA_MAC_BASE_URL ??
+          'http://10.0.0.100:11434/v1',
+
+        model:
+          process.env.LLAMA_MAC_MODEL ??
+          'llama3.2:3b',
+      },
+    },
+    llamaMacPlanner
   );
 }

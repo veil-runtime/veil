@@ -1,8 +1,15 @@
 import { randomUUID } from 'node:crypto';
 
 import { capabilityRegistry } from '../../registry/registry.js';
-import { PlannerProvider } from '../planner-provider.js';
-import { ExecutionPlan, PlannerContext, } from '../planner.js';
+import {
+  PlannerHealthResult,
+  PlannerProvider,
+} from '../planner-provider.js';
+
+import {
+  ExecutionPlan,
+  PlannerContext,
+} from '../planner.js';
 
 interface ChatCompletionResponse {
   choices?: Array<{
@@ -33,24 +40,92 @@ export class OpenAICompatiblePlannerProvider
     this.name = name;
   }
 
+  async healthCheck(): Promise<PlannerHealthResult> {
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/models`,
+        {
+          signal:
+            AbortSignal.timeout(5000),
+        }
+      );
+
+      if (!response.ok) {
+        return {
+          healthy: false,
+          available: true,
+          reason:
+            `Planner health check returned HTTP ${response.status}`,
+        };
+      }
+
+      const payload =
+        await response.json() as {
+          data?: Array<{
+            id?: string;
+          }>;
+        };
+
+      const models =
+        payload.data ?? [];
+
+      const modelAvailable =
+        models.some(
+          (item) =>
+            item.id === this.model
+        );
+
+      if (!modelAvailable) {
+        return {
+          healthy: false,
+          available: true,
+          reason:
+            `Configured model is not available: ${this.model}`,
+        };
+      }
+
+      return {
+        healthy: true,
+        available: true,
+      };
+    } catch (error) {
+      const reason =
+        error instanceof Error
+          ? error.message
+          : 'Unknown planner health check error';
+
+      return {
+        healthy: false,
+        available: false,
+        reason,
+      };
+    }
+  }
+
   async plan(
     goal: string,
     context?: PlannerContext
   ): Promise<ExecutionPlan> {
-    const capabilities = capabilityRegistry.list();
+    const capabilities =
+      capabilityRegistry.list();
 
     const response = await fetch(
       `${this.baseUrl}/chat/completions`,
       {
         method: 'POST',
+
         headers: {
-          'content-type': 'application/json',
+          'content-type':
+            'application/json',
         },
+
         body: JSON.stringify({
           model: this.model,
+
           messages: [
             {
               role: 'system',
+
               content: `
 You are a planner for Operator Runtime.
 
@@ -81,12 +156,16 @@ Rules:
 - Do not include explanations outside the JSON.
               `.trim(),
             },
+
             {
               role: 'user',
+
               content: JSON.stringify({
                 goal,
                 capabilities,
-                previousJobs: context?.previousJobs ?? [],
+                previousJobs:
+                  context?.previousJobs ??
+                  [],
               }),
             },
           ],
@@ -107,49 +186,89 @@ Rules:
       payload.choices?.[0]?.message?.content;
 
     if (!content) {
-      throw new Error('Planner returned no content');
+      throw new Error(
+        'Planner returned no content'
+      );
     }
 
-    const normalizedContent = content
-      .trim()
-      .replace(/^```json\s*/i, '')
-      .replace(/^```\s*/i, '')
-      .replace(/\s*```$/, '')
-      .trim();
+    const normalizedContent =
+      content
+        .trim()
+        .replace(
+          /^```json\s*/i,
+          ''
+        )
+        .replace(
+          /^```\s*/i,
+          ''
+        )
+        .replace(
+          /\s*```$/,
+          ''
+        )
+        .trim();
 
     let parsed: PlannerResponse;
 
     try {
-      parsed = JSON.parse(normalizedContent);
+      parsed =
+        JSON.parse(
+          normalizedContent
+        );
     } catch {
       throw new Error(
         `Planner returned invalid JSON: ${content}`
       );
     }
 
-    if (!Array.isArray(parsed.steps)) {
-      throw new Error('Planner response contains no steps');
+    if (
+      !Array.isArray(
+        parsed.steps
+      )
+    ) {
+      throw new Error(
+        'Planner response contains no steps'
+      );
     }
 
     return {
       version: '1.0',
       goal,
-      steps: parsed.steps.map((step) => {
-        if (!capabilityRegistry.get(step.capability)) {
-          throw new Error(
-            `Planner selected unknown capability: ${step.capability}`
-          );
-        }
 
-        return {
-          id: randomUUID(),
-          capability: step.capability,
-          input: step.input,
-          reason: step.reason,
-          status: 'pending',
-          createdAt: new Date().toISOString(),
-        };
-      }),
+      steps:
+        parsed.steps.map(
+          (step) => {
+            if (
+              !capabilityRegistry.get(
+                step.capability
+              )
+            ) {
+              throw new Error(
+                `Planner selected unknown capability: ${step.capability}`
+              );
+            }
+
+            return {
+              id: randomUUID(),
+
+              capability:
+                step.capability,
+
+              input:
+                step.input,
+
+              reason:
+                step.reason,
+
+              status:
+                'pending',
+
+              createdAt:
+                new Date()
+                  .toISOString(),
+            };
+          }
+        ),
     };
   }
 }

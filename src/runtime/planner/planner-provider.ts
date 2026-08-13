@@ -3,6 +3,12 @@ import {
   PlannerContext,
 } from './planner.js';
 
+export interface PlannerHealthResult {
+  healthy: boolean;
+  available: boolean;
+  reason?: string;
+}
+
 export interface PlannerProvider {
   readonly name: string;
 
@@ -10,4 +16,6 @@ export interface PlannerProvider {
     goal: string,
     context?: PlannerContext
   ): Promise<ExecutionPlan>;
+
+  healthCheck?(): Promise<PlannerHealthResult>;
 }

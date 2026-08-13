@@ -24,58 +24,90 @@ Operator provides the execution layer between reasoning and the outside world.
 
 Instead of allowing models to directly manipulate browsers, files, databases, infrastructure or external services, Operator executes structured plans through governed capabilities, applying validation, permissions, memory, logging and runtime services before any action is performed.
 
-The result is a reusable execution platform capable of powering automation, operational intelligence, developer tooling and enterprise integrations without coupling execution to a specific language model or AI provider.
+The result is a reusable execution platform capable of powering automation, operational intelligence, developer tooling and enterprise integrations without coupling execution to any specific language model or AI provider.
+
+---
+
+# Architectural Principles
+
+Operator owns **the contract between reasoning and execution**.
+
+It does not prescribe how reasoning is performed or how capabilities are implemented.
+
+Instead, it defines stable interfaces that allow both sides to evolve independently.
+
+```text
+Reasoning
+    │
+Planner Providers
+Planner Strategies
+Planner Routing
+    │
+ExecutionPlan
+══════════════════════
+Operator Runtime
+══════════════════════
+Capability Registry
+Capability Modules
+Providers
+    │
+Execution
+```
+
+This separation allows new planners, routing strategies, capability modules and providers to be introduced without changing Operator Core.
 
 ---
 
 # Architecture
 
-```
-                         Goal
-                          │
-                          ▼
-                   Planner Layer
-                          │
-          ┌───────────────┴────────────────┐
-          │                                │
-     Deterministic                   AI Planners
-          │                                │
-     Qwen Local                     Llama (Mac)
-          │                                │
-          └────────── Team Planner ────────┘
-                          │
-                          ▼
-                   Execution Plan
-                          │
-                          ▼
-                  Operator Runtime
-                          │
-     ┌────────────────────┼─────────────────────┐
-     │                    │                     │
-     ▼                    ▼                     ▼
-  Policy            Job Manager            Event Bus
-     │                    │                     │
-     │                    ▼                     ▼
-     │             Execution Engine      Subscribers
-     │                    │                     │
-     └────────────────────┼─────────────────────┘
-                          ▼
-                  Execution Context
-                          │
-     ┌──────────────┬──────────────┬──────────────┐
-     ▼              ▼              ▼              ▼
-  Memory         Logging      Runtime        Services
-                               Services
-                          │
-                          ▼
-                     Capabilities
-                          │
-                          ▼
-                       Providers
-                          │
-     ┌──────────────┬──────────────┬──────────────┬──────────────┐
-     ▼              ▼              ▼              ▼
-  Browser      Filesystem       Shell          HTTP
+```text
+                          Goal
+                           │
+                           ▼
+                    Planner Router
+                           │
+                           ▼
+                   Planner Strategy
+                           │
+        ┌──────────────────┼──────────────────┐
+        ▼                  ▼                  ▼
+ Planner Registry    Runtime State      Eligibility
+        │
+        ▼
+   Planner Providers
+        │
+        ▼
+    ExecutionPlan
+══════════════════════════════════════════════
+                 OPERATOR CORE
+══════════════════════════════════════════════
+        │
+        ▼
+    Operator Runtime
+        │
+ ┌──────┼───────────────┬──────────────┐
+ ▼      ▼               ▼              ▼
+Policy Job Manager   Event Bus   Execution Engine
+        │               │
+        ▼               ▼
+     Execution Context
+        │
+ ┌──────┼──────────┬────────────┐
+ ▼      ▼          ▼            ▼
+Memory Logging Runtime Services SDK
+        │
+        ▼
+ Capability Registry
+        │
+        ▼
+ Capability Modules
+        │
+        ▼
+ Providers
+        │
+ ┌──────┼──────────┬──────────┬──────────┐
+ ▼      ▼          ▼          ▼
+Browser Filesystem Shell      HTTP
 ```
 
 ---
@@ -88,6 +120,8 @@ The result is a reusable execution platform capable of powering automation, oper
 - Operator runtime façade
 - Capability registry
 - Planner registry
+- Strategy registry
+- ExecutionPlan contract
 - Execution context
 - Event bus
 - Runtime events
@@ -100,14 +134,16 @@ The result is a reusable execution platform capable of powering automation, oper
 
 ## Planning
 
+- Planner registry
+- Planner strategies
 - Deterministic planner
 - OpenAI-compatible planners
 - Local Qwen planner
 - Distributed Llama planner
-- Team planner (multi-model planning)
-- Planner validation
-- Planner memory
+- Planner health monitoring
+- Planner eligibility
 - Historical context retrieval
+- ExecutionPlan v1
 
 ---
 
@@ -116,9 +152,10 @@ The result is a reusable execution platform capable of powering automation, oper
 - Capability SDK
 - Declarative capability authoring
 - Middleware pipeline
-- Lifecycle logging middleware
+- Lifecycle middleware
 - Timeout middleware
 - Runtime execution options
+- Capability module support
 
 ---
 
@@ -158,6 +195,7 @@ The result is a reusable execution platform capable of powering automation, oper
 # Design Principles
 
 - Planner agnostic
+- Strategy agnostic
 - Provider agnostic
 - Capability driven
 - Runtime governed
@@ -166,6 +204,7 @@ The result is a reusable execution platform capable of powering automation, oper
 - Structured observability
 - Human review before learning
 - Small composable services
+- Extension by composition
 - Reusable by design
 
 ---
@@ -174,25 +213,23 @@ The result is a reusable execution platform capable of powering automation, oper
 
 Operator does not attempt to replace language models.
 
-Instead, it provides the execution environment around them.
+Instead, it provides the governed execution environment around them.
 
-Planners determine **what** should happen.
+Reasoning remains completely replaceable.
 
-Operator determines **how** it happens.
-
-Capabilities perform the work.
-
-Providers interact with external systems.
+Execution remains completely governed.
 
 Applications embed Operator without needing to understand planning, execution or infrastructure concerns.
 
 Because these responsibilities remain independent:
 
-- Planners can be replaced without changing capabilities.
-- Capabilities can evolve without changing the runtime.
-- Providers can change without affecting planners.
-- Runtime services can evolve without modifying capabilities.
-- Applications remain insulated from implementation details.
+- Routers choose strategies.
+- Strategies orchestrate planners.
+- Planners produce execution plans.
+- Operator governs execution.
+- Capabilities perform the work.
+- Providers interact with external systems.
+- Runtime services remain independent of planners and capabilities.
 
 This separation allows Operator to remain reusable across domains while ensuring execution stays deterministic, observable and governed.
 
@@ -229,9 +266,12 @@ This separation allows Operator to remain reusable across domains while ensuring
 
 ## Intelligence
 
+- Planner routing policies
+- Planner evaluation
+- Cost-aware routing
+- Latency-aware routing
 - Capability recommendations
 - Historical plan optimisation
-- Planner evaluation
 - Outcome-aware learning
 - Runtime analytics
 - Multi-agent planning pipelines
@@ -265,7 +305,7 @@ Operator is evolving into a reusable execution platform capable of powering:
 - Workflow orchestration
 - Multi-agent collaboration
 
-The runtime remains responsible for execution, governance and observability, while planners remain responsible for reasoning.
+The runtime remains responsible for execution, governance and observability, while reasoning remains modular through planners, strategies and routing.
 
 ---
 
@@ -273,8 +313,12 @@ The runtime remains responsible for execution, governance and observability, whi
 
 Operator has evolved beyond a proof of concept into a reusable execution platform.
 
-The core runtime, planner abstraction, capability system, provider model, event bus, persistent memory, distributed planning and SDK foundation are now in place.
+The execution runtime, capability system, planner abstraction, planner strategies, routing foundation, provider model, event bus, persistent memory, module architecture and SDK foundation are now in place.
 
-The current focus is strengthening the platform itself—its SDKs, runtime services, provider ecosystem and execution model—so that new capabilities and integrations become progressively simpler to build while preserving deterministic, observable and governed execution.
+The current focus is strengthening the platform itself—its SDKs, runtime services, provider ecosystem, reasoning architecture and execution model—so that new planners, strategies, capabilities and integrations become progressively simpler to build while preserving deterministic, observable and governed execution.
 
 Every architectural improvement compounds across the platform, allowing Operator to scale in capability without increasing complexity.
+
+The guiding principle remains simple:
+
+> **Operator owns the contract between reasoning and execution.**
