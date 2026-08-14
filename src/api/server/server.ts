@@ -9,6 +9,9 @@ import { plannersRoutes } from '../routes/planners.routes.js';
 import { runtimeEventBus } from '../../runtime/events/memory-event-bus.js';
 import { consoleEventSubscriber } from '../../runtime/events/console-event-subscriber.js';
 import { registerPlannerStrategies } from '../../runtime/planner/strategies/register-strategies.js';
+import {
+  registerPlannerRouters,
+} from '../../runtime/planner/register-routers.js';
 
 const app = Fastify({
   logger: true,
@@ -17,6 +20,7 @@ const app = Fastify({
 registerCapabilities();
 registerPlanners();
 registerPlannerStrategies();
+registerPlannerRouters();
 
 runtimeEventBus.subscribe(
   '*',

@@ -24,9 +24,14 @@ export class FallbackStrategy
   async execute(
     request: PlannerStrategyRequest
   ): Promise<ExecutionPlan> {
+    const plannerIds =
+      request.planner
+        ? [request.planner]
+        : this.plannerIds;
+
     const failures: string[] = [];
 
-    for (const plannerId of this.plannerIds) {
+    for (const plannerId of plannerIds) {
       await plannerRegistry.refreshHealth(
         plannerId
       );

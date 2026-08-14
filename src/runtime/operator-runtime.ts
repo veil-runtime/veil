@@ -1,24 +1,54 @@
 import { Job } from './jobs/job.js';
 import { JobListFilter } from './jobs/job-store.js';
 import { jobManager } from './jobs/job-manager.js';
-import { CapabilityModule } from './modules/capability-module.js';
-import { capabilityRegistry } from './registry/registry.js';
-import { plannerRegistry } from './planner/planner-registry.js';
-import { ExecutionPlan } from './planner/planner.js';
+
+import {
+  CapabilityModule,
+} from './modules/capability-module.js';
+
+import {
+  capabilityRegistry,
+} from './registry/registry.js';
+
+import {
+  plannerRegistry,
+} from './planner/planner-registry.js';
+
+import {
+  ExecutionPlan,
+} from './planner/planner.js';
+
+import {
+  plannerRouterRegistry,
+} from './planner/planner-router-registry.js';
+
+import {
+  plannerStrategyRegistry,
+} from './planner/strategies/planner-strategy-registry.js';
 
 export interface RunJobOptions {
   planner?: string;
+  strategy?: string;
 }
 
 export class OperatorRuntime {
-  use(module: CapabilityModule): void {
+  use(
+    module: CapabilityModule
+  ): void {
     const declared =
       new Set(
         module.manifest.capabilities
       );
 
-    for (const capability of module.capabilities) {
-      if (!declared.has(capability.name)) {
+    for (
+      const capability
+      of module.capabilities
+    ) {
+      if (
+        !declared.has(
+          capability.name
+        )
+      ) {
         throw new Error(
           `Capability ${capability.name} is not declared in module manifest ${module.manifest.name}`
         );
@@ -42,9 +72,44 @@ export class OperatorRuntime {
     goal: string,
     options: RunJobOptions = {}
   ): Promise<Job> {
-    return jobManager.run(
-      goal,
-      options.planner
+    const router =
+      plannerRouterRegistry.getDefault();
+
+    if (!router) {
+      throw new Error(
+        'No default planner router registered'
+      );
+    }
+
+    const selection =
+      await router.select({
+        goal,
+        strategy:
+          options.strategy,
+        planner:
+          options.planner,
+      });
+
+    const strategy =
+      plannerStrategyRegistry.get(
+        selection.strategy
+      );
+
+    if (!strategy) {
+      throw new Error(
+        `Planner strategy not found: ${selection.strategy}`
+      );
+    }
+
+    const plan =
+      await strategy.execute({
+        goal,
+        planner:
+          options.planner,
+      });
+
+    return this.executePlan(
+      plan
     );
   }
 
@@ -57,7 +122,9 @@ export class OperatorRuntime {
   async listJobs(
     filter?: JobListFilter
   ): Promise<Job[]> {
-    return jobManager.list(filter);
+    return jobManager.list(
+      filter
+    );
   }
 
   listCapabilities() {

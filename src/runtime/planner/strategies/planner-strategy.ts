@@ -5,6 +5,9 @@ import {
 
 export interface PlannerStrategyRequest {
   goal: string;
+
+  planner?: string;
+
   context?: PlannerContext;
 }
 
