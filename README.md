@@ -121,9 +121,10 @@ This separation allows new planners, routing strategies, capability modules and 
 
 - Generic execution engine
 - OperatorRuntime façade
-- Capability registry
+- Planner router registry
 - Planner registry
 - Strategy registry
+- Capability registry
 - ExecutionPlan contract
 - Execution context
 - Event bus
@@ -137,12 +138,14 @@ This separation allows new planners, routing strategies, capability modules and 
 
 ## Planning
 
+- Planner router
 - Planner registry
 - Planner strategies
 - Deterministic planner
 - OpenAI-compatible planner support
 - Example local and distributed planner configurations
 - Planner health monitoring
+- Planner runtime state
 - Planner eligibility
 - Historical context retrieval
 - ExecutionPlan v1
@@ -318,16 +321,16 @@ Veil defines the contract between them.
 
 Veil has evolved beyond a proof of concept into a reusable execution platform.
 
-The execution runtime, capability system, planner abstraction, planner strategies, routing foundation, provider model, event bus, persistent memory, module architecture and SDK foundation are now in place.
+The execution runtime, capability system, reasoning architecture, planner routing, planner strategies, provider model, event bus, persistent memory, module architecture and SDK foundation are now in place.
 
 The current focus is strengthening the platform itself—its SDKs, runtime services, provider ecosystem, reasoning architecture and execution model—so that new planners, strategies, capabilities and integrations become progressively simpler to build while preserving governed, observable and reliable execution.
 
 Every architectural improvement compounds across the platform, allowing Veil to grow in capability while keeping complexity contained behind stable contracts.
 
-The guiding principle remains simple:
+The guiding principles remain simple:
 
 > **Veil owns the contract between reasoning and execution.**
 
-Or, expressed as the architecture itself:
-
 > **Planners reason. Strategies orchestrate. OperatorRuntime governs execution. Veil owns the contract between them.**
+
+> **Architecture evolves only when existing contracts can no longer express a real-world use case. Otherwise, Veil grows through extensions rather than changes to its core.**
