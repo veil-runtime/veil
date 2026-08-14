@@ -334,3 +334,134 @@ The guiding principles remain simple:
 > **Planners reason. Strategies orchestrate. OperatorRuntime governs execution. Veil owns the contract between them.**
 
 > **Architecture evolves only when existing contracts can no longer express a real-world use case. Otherwise, Veil grows through extensions rather than changes to its core.**
+
+---
+---
+
+# Getting Started
+
+## Requirements
+
+- Node.js 24+
+- npm
+- Git
+
+Optional:
+
+- Docker Model Runner or any OpenAI-compatible model
+- Playwright (for browser capabilities)
+
+---
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone git@github.com:veil-runtime/veil.git
+cd veil
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the runtime:
+
+```bash
+npm run dev
+```
+
+Verify the runtime is running:
+
+```bash
+curl http://127.0.0.1:3333/health
+```
+
+Expected response:
+
+```json
+{
+  "status": "ok",
+  "service": "operator-runtime"
+}
+```
+
+---
+
+## Running a Job
+
+Submit a goal:
+
+```bash
+curl -X POST http://127.0.0.1:3333/api/jobs/run \
+  -H "Content-Type: application/json" \
+  -d '{
+    "goal": "Read README.md"
+  }'
+```
+
+Veil will:
+
+1. Route the request.
+2. Select a reasoning strategy.
+3. Produce an `ExecutionPlan`.
+4. Execute the plan through `OperatorRuntime`.
+5. Return the completed job.
+
+---
+
+## Architecture
+
+The execution pipeline is:
+
+```text
+Goal
+  ↓
+PlannerRouter
+  ↓
+PlannerStrategy
+  ↓
+PlannerProvider(s)
+  ↓
+ExecutionPlan
+═══════════════════════
+OperatorRuntime
+═══════════════════════
+Capability Modules
+  ↓
+Providers
+```
+
+Reasoning and execution remain independent.
+
+---
+
+## Repository Structure
+
+```text
+src/
+ ├── api/
+ ├── runtime/
+ │   ├── planner/
+ │   ├── registry/
+ │   ├── modules/
+ │   ├── execution/
+ │   ├── events/
+ │   └── providers/
+ └── capabilities/
+```
+
+---
+
+## Project Status
+
+Veil is currently approaching **Architecture Lock**.
+
+The public extension contracts are stabilising before the first public release (`v0.1.0`).
+
+Until then, public APIs may evolve as the architecture is refined.
+
+---
