@@ -348,7 +348,7 @@ The guiding principles remain simple:
 
 Optional:
 
-- Docker Model Runner or any OpenAI-compatible model
+- Docker Model Runner or another OpenAI-compatible endpoint
 - Playwright (for browser capabilities)
 
 ---
@@ -368,13 +368,23 @@ Install dependencies:
 npm install
 ```
 
+---
+
+## Running Veil
+
 Start the runtime:
 
 ```bash
-npm run dev
+JOB_STORE=sqlite npm run dev
 ```
 
-Verify the runtime is running:
+The runtime will start on:
+
+```
+http://127.0.0.1:3333
+```
+
+Verify it's running:
 
 ```bash
 curl http://127.0.0.1:3333/health
@@ -391,7 +401,7 @@ Expected response:
 
 ---
 
-## Running a Job
+## Running Your First Job
 
 Submit a goal:
 
@@ -405,63 +415,8 @@ curl -X POST http://127.0.0.1:3333/api/jobs/run \
 
 Veil will:
 
-1. Route the request.
-2. Select a reasoning strategy.
-3. Produce an `ExecutionPlan`.
+1. Route the request through a `PlannerRouter`.
+2. Select a `PlannerStrategy`.
+3. Generate an `ExecutionPlan`.
 4. Execute the plan through `OperatorRuntime`.
 5. Return the completed job.
-
----
-
-## Architecture
-
-The execution pipeline is:
-
-```text
-Goal
-  ↓
-PlannerRouter
-  ↓
-PlannerStrategy
-  ↓
-PlannerProvider(s)
-  ↓
-ExecutionPlan
-═══════════════════════
-OperatorRuntime
-═══════════════════════
-Capability Modules
-  ↓
-Providers
-```
-
-Reasoning and execution remain independent.
-
----
-
-## Repository Structure
-
-```text
-src/
- ├── api/
- ├── runtime/
- │   ├── planner/
- │   ├── registry/
- │   ├── modules/
- │   ├── execution/
- │   ├── events/
- │   └── providers/
- └── capabilities/
-```
-
----
-
-## Project Status
-
-Veil is currently approaching **Architecture Lock**.
-
-The public extension contracts are stabilising before the first public release (`v0.1.0`).
-
-Until then, public APIs may evolve as the architecture is refined.
-
----
