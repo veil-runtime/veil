@@ -9,7 +9,9 @@
     "start": "tsx src/api/server/server.ts",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "echo \"No tests yet\""
+    "test": "echo \"No tests yet\"",
+    "mcp:stdio": "tsx src/integrations/mcp/stdio-server.ts",
+    "mcp:test": "tsx src/integrations/mcp/test-client.ts"
   },
   "keywords": [
     "playwright",
@@ -20,9 +22,11 @@
   "author": "Mustapha",
   "license": "ISC",
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "better-sqlite3": "^13.0.3",
     "fastify": "^5.11.3",
-    "playwright": "^1.62.1"
+    "playwright": "^1.62.1",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^9.6.0",
