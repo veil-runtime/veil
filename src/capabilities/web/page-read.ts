@@ -17,6 +17,8 @@ export const webPageReadCapability: Capability<
 > = {
   name: 'web.page.read',
 
+  version: '1.0.0',
+
   description:
     'Open a public web page and return its title, final URL and visible text',
 

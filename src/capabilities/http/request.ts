@@ -101,6 +101,8 @@ export const httpRequestCapability: Capability<
 > = {
   name: 'http.request',
 
+  version: '1.0.0',
+
   description:
     'Send an HTTP request to a public HTTP or HTTPS endpoint and return the structured response',
 

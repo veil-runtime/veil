@@ -31,6 +31,7 @@ export function createCapability<
 ): Capability<TInput, TResult> {
   return {
     name: definition.name,
+    version: definition.version,
     description: definition.description,
     risk: definition.risk,
     inputSchema: definition.inputSchema,

@@ -25,6 +25,8 @@ export function createMcpCapability(
   return {
     name,
 
+    version: '1.0.0',
+
     description,
 
     risk: 'read',

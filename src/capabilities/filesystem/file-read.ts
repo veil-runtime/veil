@@ -57,6 +57,8 @@ export const filesystemFileReadCapability =
   >({
     name: 'filesystem.file.read',
 
+    version: '1.0.0',
+
     description:
       'Read a UTF-8 text file from the configured Operator filesystem root using a relative project path',
 

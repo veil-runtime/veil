@@ -14,6 +14,8 @@ export interface Job {
 
   planner?: string;
 
+  idempotencyKey?: string;
+
   status: JobStatus;
   outcome?: JobOutcome;
 

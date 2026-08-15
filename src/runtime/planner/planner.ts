@@ -1,5 +1,3 @@
-import { JobStep } from '../jobs/job-step.js';
-
 export interface PlannerContext {
   previousJobs?: Array<{
     goal: string;
@@ -8,16 +6,31 @@ export interface PlannerContext {
   }>;
 }
 
+export interface ResultReference {
+  readonly $ref: string;
+}
+
+export interface ExecutionStep {
+  readonly id: string;
+  readonly capability: string;
+  readonly capabilityVersion?: string;
+  readonly input?: unknown;
+  readonly reason?: string;
+  readonly idempotencyKey?: string;
+}
+
 export interface ExecutionPlan {
-  version: string;
+  readonly version: string;
 
-  id?: string;
+  readonly id?: string;
 
-  goal?: string;
+  readonly goal?: string;
 
-  steps: JobStep[];
+  readonly steps: readonly ExecutionStep[];
 
-  metadata?: Record<string, unknown>;
+  readonly metadata?: Readonly<Record<string, unknown>>;
+
+  readonly idempotencyKey?: string;
 }
 
 export interface Planner {

@@ -34,10 +34,7 @@ export function registerPlanners(): void {
         structuredOutput: 'schema',
       },
     },
-    deterministicPlanner,
-    {
-      default: true,
-    }
+    deterministicPlanner
   );
 
   plannerRegistry.register(

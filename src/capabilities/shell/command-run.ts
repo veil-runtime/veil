@@ -205,6 +205,8 @@ export const shellCommandRunCapability: Capability<
 > = {
   name: 'shell.command.run',
 
+  version: '1.0.0',
+
   description:
     'Run an approved executable inside the configured Operator workspace without invoking a shell. Operator safely normalizes common command representations before policy evaluation.',
 

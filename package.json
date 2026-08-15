@@ -9,7 +9,7 @@
     "start": "tsx src/api/server/server.ts",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "echo \"No tests yet\"",
+    "test": "tsx --test test/**/*.test.ts",
     "mcp:stdio": "tsx src/integrations/mcp/stdio-server.ts",
     "mcp:test": "tsx src/integrations/mcp/test-client.ts",
     "mcp:test:outbound": "tsx src/integrations/mcp/test-outbound.ts"

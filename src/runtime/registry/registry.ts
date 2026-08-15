@@ -18,6 +18,7 @@ class CapabilityRegistry {
   list() {
     return Array.from(this.capabilities.values()).map((capability) => ({
       name: capability.name,
+      version: capability.version,
       description: capability.description,
       risk: capability.risk,
       inputSchema: capability.inputSchema ?? {},

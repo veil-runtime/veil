@@ -260,12 +260,6 @@ Rules:
               reason:
                 step.reason,
 
-              status:
-                'pending',
-
-              createdAt:
-                new Date()
-                  .toISOString(),
             };
           }
         ),

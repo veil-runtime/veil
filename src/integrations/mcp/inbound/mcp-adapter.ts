@@ -79,10 +79,6 @@ export class McpAdapter {
                   reason:
                     'Requested through MCP',
 
-                  status: 'pending',
-
-                  createdAt:
-                    new Date().toISOString(),
                 },
               ],
             };

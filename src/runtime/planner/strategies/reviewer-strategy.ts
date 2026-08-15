@@ -75,7 +75,7 @@ export class ReviewerStrategy
         );
       }
 
-      return this.withTeamMetadata(
+      return this.withStrategyMetadata(
         proposal,
         {
           reviewerUsed: false,
@@ -100,7 +100,7 @@ export class ReviewerStrategy
         );
       }
 
-      return this.withTeamMetadata(
+      return this.withStrategyMetadata(
         proposal,
         {
           reviewerUsed: false,
@@ -124,7 +124,7 @@ export class ReviewerStrategy
           reviewContext
         );
 
-      return this.withTeamMetadata(
+      return this.withStrategyMetadata(
         reviewedPlan,
         {
           reviewerUsed: true,
@@ -143,7 +143,7 @@ export class ReviewerStrategy
         );
       }
 
-      return this.withTeamMetadata(
+      return this.withStrategyMetadata(
         proposal,
         {
           reviewerUsed: false,
@@ -192,7 +192,7 @@ export class ReviewerStrategy
     };
   }
 
-  private withTeamMetadata(
+  private withStrategyMetadata(
     plan: ExecutionPlan,
     state: {
       reviewerUsed: boolean;

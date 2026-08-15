@@ -21,6 +21,8 @@ export interface CapabilityDefinition<
 > {
   name: string;
 
+  version: string;
+
   description: string;
 
   risk: CapabilityRisk;

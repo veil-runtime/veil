@@ -31,8 +31,6 @@ export class DeterministicPlannerProvider
           input: {
             url: cleanedUrl,
           },
-          status: 'pending',
-          createdAt: new Date().toISOString(),
         },
       ],
     };

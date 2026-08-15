@@ -23,15 +23,12 @@ export interface RegisteredPlanner {
 }
 
 interface RegisterPlannerOptions {
-  default?: boolean;
   state?: Partial<PlannerRuntimeState>;
 }
 
 class PlannerRegistry {
   private readonly planners =
     new Map<string, RegisteredPlanner>();
-
-  private defaultPlannerId?: string;
 
   register(
     definition: PlannerDefinition,
@@ -63,10 +60,6 @@ class PlannerRegistry {
       entry
     );
 
-    if (options.default) {
-      this.defaultPlannerId =
-        definition.id;
-    }
   }
 
   get(
@@ -101,43 +94,13 @@ class PlannerRegistry {
     );
   }
 
-  getDefault():
-    | PlannerProvider
-    | undefined {
-    if (!this.defaultPlannerId) {
-      return undefined;
-    }
-
-    return this.planners.get(
-      this.defaultPlannerId
-    )?.provider;
-  }
-
-  getDefaultRegistered():
-    | RegisteredPlanner
-    | undefined {
-    if (!this.defaultPlannerId) {
-      return undefined;
-    }
-
-    return this.planners.get(
-      this.defaultPlannerId
-    );
-  }
-
   list(): Array<{
     name: string;
-    default: boolean;
   }> {
     return Array.from(
       this.planners.values()
     ).map((entry) => ({
-      name:
-        entry.definition.id,
-
-      default:
-        entry.definition.id ===
-        this.defaultPlannerId,
+      name: entry.definition.id,
     }));
   }
 
@@ -224,9 +187,6 @@ class PlannerRegistry {
           eligibility.eligible,
         reasons:
           eligibility.reasons,
-        default:
-          planner.definition.id ===
-          this.defaultPlannerId,
       };
     });
   }

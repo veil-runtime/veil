@@ -240,31 +240,6 @@ export async function jobsRoutes(
   app.post<{
     Params: JobParams;
   }>(
-    '/jobs/:id/plan',
-    async (request, reply) => {
-      try {
-        const job =
-          await jobManager.plan(
-            request.params.id
-          );
-
-        return job;
-      } catch (error) {
-        const message =
-          error instanceof Error
-            ? error.message
-            : 'Unable to plan job';
-
-        return reply.status(400).send({
-          error: message,
-        });
-      }
-    }
-  );
-
-  app.post<{
-    Params: JobParams;
-  }>(
     '/jobs/:id/execute',
     async (request, reply) => {
       try {

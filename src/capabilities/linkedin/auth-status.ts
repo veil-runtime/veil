@@ -13,6 +13,8 @@ export const linkedinAuthStatusCapability: Capability<
 > = {
   name: 'linkedin.auth.status',
 
+  version: '1.0.0',
+
   description:
     'Check whether the saved LinkedIn browser session is authenticated',
 
