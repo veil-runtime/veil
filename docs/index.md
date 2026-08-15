@@ -1,427 +1,641 @@
 ---
 layout: default
-title: Veil
+title: Veil — Governed Execution for AI
+description: Veil provides the execution layer between intent and action.
 ---
 
 # Veil
 
-Veil is a capability-driven execution platform for AI and software systems.
+## Governed execution for AI and software systems.
 
-It separates **reasoning** from **execution**, allowing planners, language models, agents, humans and applications to safely interact with external systems through reusable capabilities while keeping execution governed, observable, auditable and independent of any specific AI provider.
+AI is becoming remarkably good at deciding **what should happen**.
 
-The goal is simple:
+Actually doing it safely and reliably is a different problem.
 
-> **Allow any planner to decide _what_ should happen, while Veil reliably decides _how_ it happens.**
+Reading files. Calling APIs. Using browsers. Running commands. Accessing infrastructure. Applying permissions. Recording what happened. Tracking failures.
 
-Or, more simply:
+Every system that moves from reasoning to action eventually has to solve these problems.
 
-> **Veil treats AI as a planning problem and execution as an engineering problem.**
+**Veil solves the execution problem once.**
 
----
-
-# Vision
-
-Modern language models are exceptional at reasoning.
-
-They should not be responsible for safely interacting with production systems.
-
-Veil provides the governed execution layer between reasoning and the outside world.
-
-Instead of allowing planners to directly manipulate browsers, files, databases, infrastructure or external services, Veil executes structured plans through governed capabilities, applying validation, permissions, policies, memory, logging and runtime services before any action is performed.
-
-The result is a reusable execution platform capable of powering automation, operational intelligence, developer tooling and enterprise integrations without coupling execution to any specific reasoning system or AI provider.
-
----
-
-# Architectural Principles
-
-Veil owns **the contract between reasoning and execution**.
-
-It does not prescribe how reasoning is performed or how capabilities are implemented.
-
-Instead, it defines stable interfaces that allow both sides to evolve independently.
+Veil provides the **execution layer between intent and action** — turning structured plans into governed operations through reusable capabilities.
 
 ```text
-Reasoning
-    │
-Planner Providers
-Planner Strategies
-Planner Routing
-    │
+Reasoning / Intent
+        │
+        │  What should happen?
+        ▼
+   ExecutionPlan
+        │
+══════════════════════════════
+             VEIL
+    validate · govern · execute
+══════════════════════════════
+        │
+        ▼
+   Capabilities
+        │
+        ├── Files
+        ├── APIs
+        ├── Browsers
+        ├── Databases
+        ├── Commands
+        ├── Infrastructure
+        └── Your own capabilities
+```
+
+The system requesting the work decides **what it wants to happen**.
+
+Veil determines how that plan can be executed using the capabilities and rules you have configured, performs the work through those capabilities, and records what happened.
+
+**The reasoning system can change.**
+
+**The infrastructure can change.**
+
+**The capabilities can grow.**
+
+**The execution model stays the same.**
+
+> **Veil treats reasoning as a planning problem and execution as an engineering problem.**
+
+---
+
+# What Does Veil Actually Do?
+
+Veil gives AI, applications, automations and humans a common execution layer for interacting with real software systems.
+
+Depending on the capabilities you register, a system using Veil could:
+
+- read, create or modify files
+- call internal or external APIs
+- query or update databases
+- navigate and interact with websites
+- run approved commands
+- inspect repositories
+- interact with development tools
+- trigger business workflows
+- work with infrastructure
+- connect to internal systems
+- perform any other operation you expose as a capability
+
+These operations are exposed to Veil as **capabilities**.
+
+A capability is an operation that has explicitly been made available for execution.
+
+```text
+                    VEIL
+                      │
+              What can I use?
+                      │
+        ┌─────────────┼─────────────┐
+        ▼             ▼             ▼
+      Files          APIs        Browser
+        │             │             │
+        ▼             ▼             ▼
+     Storage       Services      Websites
+
+                      +
+
+              Your Capabilities
+```
+
+You decide which capabilities exist and how they may be used.
+
+Veil provides the common execution machinery around them: validation, policy enforcement, lifecycle management, execution, events, logging, history and observability.
+
+---
+
+# Why Does That Make Things Easier?
+
+Without a shared execution layer, every new AI application, agent or automation tends to rebuild the same plumbing.
+
+Imagine building an AI assistant that needs to investigate a problem in a software project.
+
+You may need to connect it to:
+
+```text
+Repository files
+       ↓
+External APIs
+       ↓
+Application services
+       ↓
+Database
+       ↓
+Approved commands
+       ↓
+Execution history
+```
+
+The application now needs more than intelligence.
+
+It needs integrations.
+
+It needs permissions.
+
+It needs validation.
+
+It needs execution lifecycle management.
+
+It needs logging.
+
+It needs a way to know what operations exist and how to invoke them.
+
+And when you build the next application, much of that work appears again.
+
+Veil moves that machinery into a reusable execution layer.
+
+```text
+                         VEIL
+                           │
+             ┌─────────────┼─────────────┐
+             ▼             ▼             ▼
+           Files          APIs        Database
+             │             │             │
+             └─────────────┼─────────────┘
+                           │
+                      reusable by
+                           │
+          ┌────────────────┼────────────────┐
+          ▼                ▼                ▼
+     AI Assistant      Automation      Application
+```
+
+The assistant doesn't need its own filesystem execution layer.
+
+An automation doesn't need another implementation of the same API capability.
+
+Changing the model doesn't require rebuilding the execution machinery.
+
+**Expose the capability once. Reuse the execution layer.**
+
+---
+
+# The Core Idea
+
+Veil is not tied to AI.
+
+It is **execution infrastructure that AI can use**.
+
+Work can originate from different places:
+
+```text
+                 WHO WANTS WORK DONE?
+
+        AI          Human        Application
+         \            |              /
+          \           |             /
+           \      Automation       /
+            \         |           /
+             \        |          /
+                  Intent
+                    │
+                    ▼
+              ExecutionPlan
+                    │
+         ═════════════════════
+                   VEIL
+         validate · govern · execute
+         ═════════════════════
+                    │
+                    ▼
+                Capabilities
+                    │
+       ┌────────────┼────────────┐
+       ▼            ▼            ▼
+     Files         APIs       Browser
+       │            │            │
+       ├────────────┼────────────┤
+       ▼            ▼            ▼
+   Databases     Commands   Infrastructure
+                    │
+                    ▼
+               Your Systems
+```
+
+An AI planner can produce an `ExecutionPlan`.
+
+An application can construct one directly.
+
+A deterministic automation can produce one.
+
+A human-controlled interface can submit one.
+
+Veil's execution model does not need to change depending on who requested the work.
+
+---
+
+# A Practical Example
+
+Imagine you expose capabilities that allow Veil to inspect application logs, check service health, read configuration and query a database.
+
+Now imagine an AI system is asked:
+
+> Why is this application failing?
+
+The reasoning system might produce a plan:
+
+```text
+1. Read the application logs
+2. Check the service health endpoint
+3. Inspect the relevant configuration
+4. Query the database
+5. Perform an approved recovery action if permitted
+6. Verify the result
+```
+
+Veil does not need to be the intelligence that came up with that plan.
+
+Its responsibility begins when the plan needs to become real operations.
+
+```text
+AI / Human / Application
+          │
+          │ proposes
+          ▼
+    ExecutionPlan
+          │
+          ▼
+        VEIL
+          │
+          ├── validate the request
+          ├── apply configured rules
+          ├── resolve capabilities
+          ├── execute operations
+          ├── track outcomes and failures
+          └── record what happened
+          │
+          ▼
+   Real-world systems
+```
+
+The reasoning system can focus on **what should happen**.
+
+Veil provides the engineering machinery for turning that plan into controlled, observable execution.
+
+---
+
+# Build Once. Reuse Everywhere.
+
+This separation becomes more useful as systems grow.
+
+Today you might have:
+
+```text
+Local Model
+     │
+     ▼
+    Veil
+     │
+     ▼
+Filesystem
+```
+
+Tomorrow:
+
+```text
+Hosted Model
+     │
+     ▼
+    Veil
+     │
+     ▼
+Filesystem
+```
+
+Later:
+
+```text
+Application ──┐
+AI Agent ─────┤
+Automation ───┼──→ Veil ──→ Files
+Human ────────┤             APIs
+Local Model ──┤             Browser
+Hosted AI ────┘             Database
+                            Infrastructure
+                            Your Systems
+```
+
+The systems proposing work can change.
+
+The systems performing work can change.
+
+The execution boundary does not have to be rebuilt every time.
+
+That is the problem Veil is designed to solve.
+
+---
+
+# How Veil Works
+
+At its simplest, Veil follows one execution path:
+
+```text
+Intent
+  │
+  ▼
+Planning
+  │
+  ▼
 ExecutionPlan
-══════════════════════
-OperatorRuntime
-══════════════════════
-Capability Registry
-Capability Modules
-Providers
-    │
-Execution
+  │
+  ▼
+VEIL
+  │
+  ▼
+Capability
+  │
+  ▼
+Provider
+  │
+  ▼
+External System
 ```
 
-This separation allows new planners, routing strategies, capability modules and providers to be introduced without changing Veil Core.
+## Intent
 
----
+Something wants work done.
 
-# Architecture
-
-```text
-                         Goal
-                          │
-                          ▼
-                    Planner Router
-                          │
-                   selects strategy
-                          │
-                          ▼
-                   Planner Strategy
-                          │
-             ┌────────────┼────────────┐
-             │            │            │
-             ▼            ▼            ▼
-      Planner Registry Runtime State Eligibility
-             │
-             └────────────┬────────────┘
-                          │
-                          ▼
-                  Planner Provider(s)
-                          │
-                          ▼
-                    ExecutionPlan
-
-══════════════════════════════════════════════
-                     VEIL
-══════════════════════════════════════════════
-
-                          │
-                          ▼
-                  OperatorRuntime
-                          │
-          ┌───────────────┼───────────────┐
-          ▼               ▼               ▼
-       Policy        Job Manager      Event Bus
-                                             │
-                                             ▼
-                                     Execution Engine
-                                             │
-                                             ▼
-                                  Capability Registry
-                                             │
-                                             ▼
-                                  Capability Modules
-                                             │
-                                             ▼
-                                         Providers
-                                             │
-           ┌──────────────┬──────────────┬──────────────┬──────────────┐
-           ▼              ▼              ▼              ▼
-        Browser      Filesystem        Shell          HTTP
-```
-
----
-
-# Current Features
-
-## Runtime
-
-- Generic execution engine
-- OperatorRuntime façade
-- Planner router registry
-- Planner registry
-- Strategy registry
-- Capability registry
-- ExecutionPlan contract
-- Execution context
-- Event bus
-- Runtime events
-- Structured execution logging
-- Job lifecycle management
-- Persistent SQLite job store
-- Human-reviewed outcomes
-
----
+That could be an AI model, application, automation, human-controlled interface or another system.
 
 ## Planning
 
-- Planner router
-- Planner registry
-- Planner strategies
-- Deterministic planner
-- OpenAI-compatible planner support
-- Example local and distributed planner configurations
-- Planner health monitoring
-- Planner runtime state
-- Planner eligibility
-- Historical context retrieval
-- ExecutionPlan v1
+A planner can translate a goal into an `ExecutionPlan`.
 
----
+Planning is deliberately separate from execution.
 
-## SDK
+## ExecutionPlan
 
-- Capability SDK
-- Declarative capability authoring
-- Middleware pipeline
-- Lifecycle middleware
-- Timeout middleware
-- Runtime execution options
-- Capability module support
+The plan describes the work to be performed.
 
----
+It forms the boundary between reasoning and execution.
 
-## Memory
+## Veil
 
-- Persistent job history
-- Planner context retrieval
-- Historical capability recall
-- Outcome recording
-- Human review workflow
-
----
+`OperatorRuntime` governs execution of the plan through the runtime.
 
 ## Capabilities
 
-- LinkedIn authentication
-- LinkedIn profile reader
-- Generic web page reader
-- HTTP request execution
-- Filesystem reader
-- Shell command execution
+Capabilities define the operations available for execution.
 
----
+Examples already represented in Veil include operations for:
+
+```text
+filesystem.file.read
+http.request
+shell execution
+browser operations
+```
+
+Additional capabilities can be introduced without changing Veil Core.
 
 ## Providers
 
-- Browser provider
-- Browser session manager
-- HTTP provider
-- Filesystem provider
-- Shell provider
-- SQLite provider
-- OpenAI-compatible AI providers
+Providers contain the implementation required to interact with external systems such as browsers, filesystems, APIs and other infrastructure.
 
 ---
 
-# Design Principles
+# Bring Your Own Everything
 
-- Planner agnostic
-- Strategy agnostic
-- Provider agnostic
-- Capability driven
-- Runtime governed
-- Explicit permissions
-- Structured observability
-- Human review before learning
-- Small composable services
-- Extension through composition
-- Reusable by design
+Veil is deliberately designed not to own the entire stack.
 
----
+```text
+Bring your own models.
+Bring your own infrastructure.
+Build your own capabilities.
+Use your own providers.
+Choose your own planning strategies.
+```
 
-# What Makes Veil Different
+Models are participants in the architecture, not the architecture itself.
 
-Veil does not attempt to replace language models.
+A local model can produce a plan.
 
-Instead, it provides the governed execution environment around them.
+A hosted model can produce a plan.
 
-Reasoning remains completely replaceable.
+Multiple models can participate in planning.
 
-Execution remains governed and deterministic at the capability boundary.
+An application can construct a plan directly.
 
-Applications can embed Veil without coupling themselves to specific planners, capability implementations or infrastructure providers.
+A deterministic process can operate without AI at all.
 
-Because these responsibilities remain independent:
+They ultimately meet at the same boundary:
 
-- Routers choose strategies.
-- Strategies orchestrate planners.
-- Planners produce execution plans.
-- OperatorRuntime governs execution.
-- Capabilities perform the work.
-- Providers interact with external systems.
-- Runtime services remain independent of planners and capabilities.
-
-This separation allows Veil to remain reusable across domains while ensuring execution remains governed, observable and consistent.
-
----
-
-# Roadmap
-
-## Runtime
-
-- Dependency graph execution
-- Parallel capability execution
-- Live progress reporting
-- Cancellation
-- Retry policies
-- Secrets service
-- Metrics
-- Audit services
-- Resource management
+```text
+Whatever produced the intent
+            │
+            ▼
+      ExecutionPlan
+            │
+            ▼
+           VEIL
+            │
+            ▼
+   Governed Execution
+```
 
 ---
 
-## SDK
+# What Can You Build With Veil?
 
-- Provider SDK
-- Capability testing framework
-- Middleware library
-- Validation helpers
-- Retry middleware
-- Metrics middleware
-- Audit middleware
-- Execution decorators
+Veil is infrastructure rather than a single-purpose AI application.
 
----
+That means the same execution model can support very different systems.
 
-## Intelligence
+## AI Assistants
 
-- Planner routing policies
-- Planner evaluation
-- Cost-aware routing
-- Latency-aware routing
-- Capability recommendations
-- Historical plan optimisation
-- Outcome-aware learning
-- Runtime analytics
-- Multi-agent planning pipelines
+Give assistants controlled access to files, APIs, applications and other systems without embedding all execution logic directly into the reasoning layer.
 
----
+## Developer Tools
 
-## Capabilities
+Build systems that can inspect repositories, read files, call development services and perform registered development operations.
 
-- LinkedIn posting
-- GitHub
-- Docker
-- SSH
-- SQL
-- Jira
-- Confluence
-- Kubernetes
-- Cloud providers
-- Generic REST integrations
+## Automation
+
+Allow applications, humans or AI to propose work while Veil provides a consistent execution environment underneath.
+
+## Operational Intelligence
+
+Build systems that investigate conditions, construct plans and perform controlled operational actions through known capabilities.
+
+## Enterprise Integrations
+
+Expose internal systems through explicit capabilities while keeping execution concerns separate from whichever AI system or application consumes them.
+
+## Agentic Systems
+
+Change models, planners and orchestration strategies while keeping execution behind the same governed boundary.
+
+## Your Own Systems
+
+Capabilities are extensible.
+
+Veil does not need native knowledge of every application or infrastructure platform you use.
+
+If an operation can be represented through a capability and provider, it can participate in the same execution model.
 
 ---
 
-# Long-Term Direction
+# Built Around Extensions
 
-Veil is evolving into a reusable execution platform capable of powering:
+Veil's core vocabulary is intentionally small.
 
-- AI assistants
-- Operational intelligence platforms
-- Enterprise automation
-- Developer tooling
-- Agentic systems
-- Workflow orchestration
-- Multi-agent collaboration
+```text
+Planner
+   │
+   └── reasons
 
-Reasoning remains modular through planners, strategies and routing.
+Strategy
+   │
+   └── orchestrates
 
-Execution remains governed and deterministic at the capability boundary.
+ExecutionPlan
+   │
+   └── describes work
 
-Veil defines the contract between them.
+OperatorRuntime
+   │
+   └── governs execution
 
----
+Capability
+   │
+   └── defines an operation
 
-# Status
+Provider
+   │
+   └── interacts with a system
+```
 
-Veil has evolved beyond a proof of concept into a reusable execution platform.
+The goal is not to continually make Veil Core larger.
 
-The execution runtime, capability system, reasoning architecture, planner routing, planner strategies, provider model, event bus, persistent memory, module architecture and SDK foundation are now in place.
-
-The current focus is strengthening the platform itself—its SDKs, runtime services, provider ecosystem, reasoning architecture and execution model—so that new planners, strategies, capabilities and integrations become progressively simpler to build while preserving governed, observable and reliable execution.
-
-Every architectural improvement compounds across the platform, allowing Veil to grow in capability while keeping complexity contained behind stable contracts.
-
-The guiding principles remain simple:
-
-> **Veil owns the contract between reasoning and execution.**
-
-> **Planners reason. Strategies orchestrate. OperatorRuntime governs execution. Veil owns the contract between them.**
+New functionality should normally arrive through extensions.
 
 > **Architecture evolves only when existing contracts can no longer express a real-world use case. Otherwise, Veil grows through extensions rather than changes to its core.**
 
 ---
----
 
-# Getting Started
+# What Exists Today?
 
-## Requirements
+Veil has moved beyond its initial proof of concept.
 
-- Node.js 24+
-- npm
-- Git
+The current foundation includes:
 
-Optional:
+### Runtime
 
-- Docker Model Runner or another OpenAI-compatible endpoint
-- Playwright (for browser capabilities)
+- generic execution engine
+- `OperatorRuntime` façade
+- capability registry
+- execution context
+- event bus and runtime events
+- structured execution logging
+- job lifecycle management
+- persistent SQLite job store
+- human-reviewed outcomes
 
----
+### Reasoning
 
-## Installation
+- `PlannerRouter`
+- planner router registry
+- planner registry
+- strategy registry
+- planner strategies
+- deterministic planning
+- OpenAI-compatible planner support
+- local and distributed planner configurations
+- planner health monitoring
+- planner runtime state
+- planner eligibility
+- historical context retrieval
+- `ExecutionPlan` v1
 
-Clone the repository:
+### Capabilities and SDK
 
-```bash
-git clone git@github.com:veil-runtime/veil.git
-cd veil
-```
+- capability SDK
+- declarative capability authoring
+- capability modules
+- middleware pipeline
+- lifecycle middleware
+- timeout middleware
+- runtime execution options
+- filesystem capability
+- HTTP capability
+- shell capability
+- browser-based capabilities
 
-Install dependencies:
+### Runtime Memory
 
-```bash
-npm install
-```
-
----
-
-## Running Veil
-
-Start the runtime:
-
-```bash
-JOB_STORE=sqlite npm run dev
-```
-
-The runtime will start on:
-
-```
-http://127.0.0.1:3333
-```
-
-Verify it's running:
-
-```bash
-curl http://127.0.0.1:3333/health
-```
-
-Expected response:
-
-```json
-{
-  "status": "ok",
-  "service": "operator-runtime"
-}
-```
+- persistent job history
+- planner context retrieval
+- historical capability recall
+- outcome recording
+- human review workflow
 
 ---
 
-## Running Your First Job
+# Where Veil Is Going
 
-Submit a goal:
+The immediate goal is not to make Veil capable of everything.
 
-```bash
-curl -X POST http://127.0.0.1:3333/api/jobs/run \
-  -H "Content-Type: application/json" \
-  -d '{
-    "goal": "Read README.md"
-  }'
+It is to make its existing contracts usable by somebody other than its creator.
+
+```text
+Architecture Lock
+       │
+       ▼
+SDK ergonomics
+       │
+       ▼
+Documentation + Examples
+       │
+       ▼
+Clean-machine verification
+       │
+       ▼
+v0.1.0
+       │
+       ▼
+Real-world usage
+       │
+       ▼
+Ecosystem
 ```
 
-Veil will:
+The release criterion is deliberately simple:
 
-1. Route the request through a `PlannerRouter`.
-2. Select a `PlannerStrategy`.
-3. Generate an `ExecutionPlan`.
-4. Execute the plan through `OperatorRuntime`.
-5. Return the completed job.
+> **Veil reaches `v0.1.0` when somebody else can confidently extend it without understanding Veil Core.**
+
+After that, real usage should determine how the ecosystem evolves.
+
+Potential directions include:
+
+- reusable capability packages
+- richer provider tooling
+- module discovery
+- additional planner strategies
+- cancellation and retry semantics
+- audit services
+- secrets management
+- dependency-aware execution
+- parallel execution
+- runtime analytics
+- community extensions
+
+These are directions rather than promises.
+
+---
+
+# Open Source
+
+Veil is being prepared for its first usable public release.
+
+The goal is to provide an open foundation for building systems that can reason and act without coupling intelligence directly to execution infrastructure.
+
+The architecture is currently being locked, the extension contracts are being hardened, and the developer experience is being prepared for `v0.1.0`.
+
+---
+
+# The Idea in One Line
+
+## Build the execution layer once. Use it from AI, applications, humans and automation.
+
+> **Planners reason. Strategies orchestrate. OperatorRuntime governs execution. Veil owns the contract between them.**
