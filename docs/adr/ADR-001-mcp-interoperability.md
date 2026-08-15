@@ -122,3 +122,24 @@ Veil-native capabilities can eventually be exposed to MCP clients without creati
 The architecture can be validated against a real external interoperability standard.
 Positioning
 MCP connects tools. Veil governs execution across those tools.
+
+## Validation Result
+
+Phase 1 interoperability has been successfully validated.
+
+### Inbound proof
+
+Confirmed:
+
+```text
+MCP Client
+   ↓
+McpAdapter
+   ↓
+ExecutionPlan
+   ↓
+OperatorRuntime
+   ↓
+Native Capability
+   ↓
+Standard Veil result/event lifecycle

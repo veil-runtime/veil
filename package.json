@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "test": "echo \"No tests yet\"",
     "mcp:stdio": "tsx src/integrations/mcp/stdio-server.ts",
-    "mcp:test": "tsx src/integrations/mcp/test-client.ts"
+    "mcp:test": "tsx src/integrations/mcp/test-client.ts",
+    "mcp:test:outbound": "tsx src/integrations/mcp/test-outbound.ts"
   },
   "keywords": [
     "playwright",
