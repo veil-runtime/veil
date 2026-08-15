@@ -1,3 +1,8 @@
+---
+layout: default
+title: Veil
+---
+
 # Veil
 
 Veil is a capability-driven execution platform for AI and software systems.
