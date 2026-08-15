@@ -308,12 +308,10 @@ Later:
 ```text
 Application ──┐
 AI Agent ─────┤
-Automation ───┼──→ Veil ──→ Files
-Human ────────┤             APIs
-Local Model ──┤             Browser
-Hosted AI ────┘             Database
-                            Infrastructure
-                            Your Systems
+Automation ───┤
+Human ────────┼──→ Veil ──→ Native Capabilities
+Local Model ──┤          ├──→ MCP Ecosystem
+Hosted AI ────┘          └──→ Your Systems
 ```
 
 The systems proposing work can change.
@@ -322,7 +320,63 @@ The systems performing work can change.
 
 The execution boundary does not have to be rebuilt every time.
 
-That is the problem Veil is designed to solve.
+Veil does not require every integration to be Veil-native.
+
+Where an existing interoperability layer already provides access to a system, Veil can use that ecosystem while preserving the same execution model.
+
+Where tighter domain semantics or control are required, native Veil capabilities can be used instead.
+
+Both meet at the same governed execution boundary.
+
+**Veil is not trying to own every model, agent framework, integration or protocol. It provides the execution boundary between them.**
+
+---
+
+# Works With Existing Ecosystems
+
+Veil is designed to complement existing interoperability standards rather than replace them.
+
+Native capabilities can provide deep, controlled access to your own systems, while external tool ecosystems can extend Veil's reach.
+
+Veil currently supports **Model Context Protocol (MCP)** interoperability in both directions:
+
+- MCP clients can discover and invoke Veil capabilities
+- Veil can execute tools exposed by external MCP servers
+
+Both paths still use Veil's existing execution model.
+
+```text
+MCP Client
+    │
+    ▼
+   Veil
+    │
+    ▼
+Native Capability
+```
+
+And in the other direction:
+
+```text
+ExecutionPlan
+    │
+    ▼
+   Veil
+    │
+    ▼
+MCP-backed Capability
+    │
+    ▼
+External MCP Server
+```
+
+MCP does not introduce a second execution path inside Veil.
+
+It is an interoperability boundary around the existing runtime.
+
+> **MCP connects tools. Veil governs execution across them.**
+
+The current MCP implementation is deliberately narrow and validates local stdio-based interoperability. More advanced gateway, authentication, multi-server and enterprise capabilities are future work.
 
 ---
 
@@ -344,9 +398,6 @@ VEIL
   │
   ▼
 Capability
-  │
-  ▼
-Provider
   │
   ▼
 External System
@@ -389,9 +440,7 @@ browser operations
 
 Additional capabilities can be introduced without changing Veil Core.
 
-## Providers
-
-Providers contain the implementation required to interact with external systems such as browsers, filesystems, APIs and other infrastructure.
+Capabilities may execute against native integrations or delegate to interoperability layers such as MCP.
 
 ---
 
@@ -403,7 +452,7 @@ Veil is deliberately designed not to own the entire stack.
 Bring your own models.
 Bring your own infrastructure.
 Build your own capabilities.
-Use your own providers.
+Use existing tool ecosystems.
 Choose your own planning strategies.
 ```
 
@@ -462,9 +511,13 @@ Build systems that investigate conditions, construct plans and perform controlle
 
 Expose internal systems through explicit capabilities while keeping execution concerns separate from whichever AI system or application consumes them.
 
+Existing MCP servers can also be brought behind the same execution boundary instead of requiring every integration to be rebuilt specifically for Veil.
+
 ## Agentic Systems
 
 Change models, planners and orchestration strategies while keeping execution behind the same governed boundary.
+
+Veil can complement existing agent frameworks rather than requiring them to be replaced.
 
 ## Your Own Systems
 
@@ -472,7 +525,7 @@ Capabilities are extensible.
 
 Veil does not need native knowledge of every application or infrastructure platform you use.
 
-If an operation can be represented through a capability and provider, it can participate in the same execution model.
+If an operation can be represented through a capability, it can participate in the same execution model.
 
 ---
 
@@ -501,14 +554,18 @@ Capability
    │
    └── defines an operation
 
-Provider
+Integration
    │
-   └── interacts with a system
+   └── connects external systems and protocols
 ```
 
 The goal is not to continually make Veil Core larger.
 
 New functionality should normally arrive through extensions.
+
+MCP is one example of this principle.
+
+It was added as an interoperability layer around the existing execution model rather than introducing a separate MCP-specific runtime.
 
 > **Architecture evolves only when existing contracts can no longer express a real-world use case. Otherwise, Veil grows through extensions rather than changes to its core.**
 
@@ -554,13 +611,20 @@ The current foundation includes:
 - declarative capability authoring
 - capability modules
 - middleware pipeline
-- lifecycle middleware
-- timeout middleware
+- lifecycle and timeout middleware
 - runtime execution options
 - filesystem capability
 - HTTP capability
 - shell capability
 - browser-based capabilities
+- MCP interoperability
+
+### Interoperability
+
+- expose Veil capabilities to MCP clients
+- execute external MCP tools as Veil capabilities
+- inbound and outbound MCP stdio support
+- MCP execution through the existing Veil runtime and job lifecycle
 
 ### Runtime Memory
 
@@ -574,31 +638,49 @@ The current foundation includes:
 
 # Where Veil Is Going
 
+Veil is currently completing its **Architecture Lock** phase.
+
+A major external-standard test has now been completed:
+
+**MCP interoperability was implemented in both directions without requiring an alternative execution path or MCP-specific changes to Veil's core execution contracts.**
+
+That is important because MCP is not only a new integration.
+
+It is evidence that Veil's existing boundaries can absorb an external interoperability standard without redefining the runtime around it.
+
+The remaining Architecture Lock work is focused on removing historical duplication and tightening the public execution contracts.
+
+```text
+MCP Architecture Validation
+              │
+              ▼
+Architecture Cleanup
+              │
+              ▼
+Architecture Lock
+              │
+              ▼
+SDK Ergonomics
+              │
+              ▼
+Documentation + Examples
+              │
+              ▼
+Clean-machine Verification
+              │
+              ▼
+v0.1.0
+              │
+              ▼
+Real-world Usage
+              │
+              ▼
+Ecosystem
+```
+
 The immediate goal is not to make Veil capable of everything.
 
 It is to make its existing contracts usable by somebody other than its creator.
-
-```text
-Architecture Lock
-       │
-       ▼
-SDK ergonomics
-       │
-       ▼
-Documentation + Examples
-       │
-       ▼
-Clean-machine verification
-       │
-       ▼
-v0.1.0
-       │
-       ▼
-Real-world usage
-       │
-       ▼
-Ecosystem
-```
 
 The release criterion is deliberately simple:
 
@@ -609,15 +691,16 @@ After that, real usage should determine how the ecosystem evolves.
 Potential directions include:
 
 - reusable capability packages
-- richer provider tooling
+- richer integration tooling
 - module discovery
 - additional planner strategies
 - cancellation and retry semantics
-- audit services
+- stronger audit services
 - secrets management
 - dependency-aware execution
 - parallel execution
 - runtime analytics
+- richer MCP integration
 - community extensions
 
 These are directions rather than promises.
@@ -629,6 +712,10 @@ These are directions rather than promises.
 Veil is being prepared for its first usable public release.
 
 The goal is to provide an open foundation for building systems that can reason and act without coupling intelligence directly to execution infrastructure.
+
+Veil is not intended to replace models, agent frameworks, MCP, workflow systems or the infrastructure you already use.
+
+It provides a common execution boundary between them.
 
 The architecture is currently being locked, the extension contracts are being hardened, and the developer experience is being prepared for `v0.1.0`.
 
