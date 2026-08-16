@@ -478,3 +478,11 @@ Veil will:
 3. Generate an `ExecutionPlan`.
 4. Execute the plan through `OperatorRuntime`.
 5. Return the completed job.
+
+---
+
+# License and branding
+
+Veil Core is licensed under Apache-2.0. Copyright 2026 Mustapha Keraan.
+Veil names, logos, and branding are governed separately; see
+[TRADEMARKS.md](TRADEMARKS.md) for the brand policy.
