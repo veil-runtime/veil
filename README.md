@@ -355,6 +355,64 @@ Optional:
 
 ## Installation
 
+Install the public runtime package in an application:
+
+```bash
+npm install @veil-runtime/core
+```
+
+Create and execute a capability through the public API:
+
+```ts
+import {
+  createCapability,
+  OperatorRuntime,
+  type CapabilityModule,
+  type ExecutionPlan,
+} from '@veil-runtime/core';
+
+const echo = createCapability<{ value: string }, string>({
+  name: 'example.echo',
+  version: '1.0.0',
+  description: 'Return the provided value',
+  risk: 'read',
+  async execute({ input }) {
+    return input.value;
+  },
+});
+
+const module: CapabilityModule = {
+  manifest: {
+    name: 'example',
+    version: '1.0.0',
+    capabilities: [echo.name],
+  },
+  capabilities: [echo],
+};
+
+const plan: ExecutionPlan = {
+  version: '1.0',
+  steps: [{
+    id: 'echo',
+    capability: echo.name,
+    capabilityVersion: echo.version,
+    input: { value: 'Hello from Veil' },
+  }],
+};
+
+const runtime = new OperatorRuntime();
+runtime.use(module);
+
+const job = await runtime.executePlan(plan);
+console.log(job.status, job.result);
+```
+
+This public-package usage is compile- and execution-verified by the release
+consumer fixture. Internal `src`, `dist`, registry, provider, and storage
+subpaths are intentionally unavailable.
+
+## Repository development
+
 Clone the repository:
 
 ```bash

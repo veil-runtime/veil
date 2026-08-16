@@ -1,5 +1,5 @@
 import { mkdirSync } from 'node:fs';
-import { dirname } from 'node:path';
+import { dirname, resolve } from 'node:path';
 
 import Database from 'better-sqlite3';
 
@@ -12,7 +12,7 @@ export class SQLiteLogSink
   private readonly db: Database.Database;
 
   constructor(path = './data/operator.db') {
-    mkdirSync(dirname(path), { recursive: true });
+    mkdirSync(dirname(resolve(path)), { recursive: true });
     this.db = new Database(path);
 
     this.db.exec(`
