@@ -440,7 +440,7 @@ description: Veil provides the execution layer between intent and action.
     .plan-preview{
       padding:15px 20px;
       border-bottom:1px solid #ffffff08;
-      background:#ffffff015;
+      background:#ffffff05;
     }
 
     .plan-title{
@@ -1075,6 +1075,117 @@ description: Veil provides the execution layer between intent and action.
       transform:none;
     }
 
+    /* --------------------------------
+      Quickstart
+    --------------------------------- */
+
+    .quickstart{
+      display:grid;
+      grid-template-columns:175px 1.25fr .75fr;
+      border:1px solid var(--line);
+      border-radius:16px;
+      overflow:hidden;
+      background:#0c0e13;
+    }
+
+    .quickstart-tabs{
+      border-right:1px solid var(--line);
+      padding:14px;
+      background:#0a0c10;
+    }
+
+    .quick-tab{
+      width:100%;
+      border:1px solid transparent;
+      background:transparent;
+      color:#7d808b;
+      padding:13px;
+      text-align:left;
+      border-radius:8px;
+      cursor:pointer;
+      font-size:12px;
+    }
+
+    .quick-tab span{
+      color:#555963;
+      font:10px ui-monospace,SFMono-Regular,Menlo,monospace;
+      margin-right:8px;
+    }
+
+    .quick-tab:hover{
+      color:var(--ink);
+    }
+
+    .quick-tab.active{
+      border-color:#655d7e;
+      color:var(--ink);
+      background:#8b5cf610;
+    }
+
+    .quick-code{
+      min-width:0;
+      background:#08090c;
+    }
+
+    .quick-header{
+      padding:13px 17px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      justify-content:space-between;
+      color:#747783;
+      font:10px ui-monospace,SFMono-Regular,Menlo,monospace;
+    }
+
+    .quick-code pre{
+      margin:0;
+      padding:27px;
+      min-height:315px;
+      overflow:auto;
+      color:#d7d7dd;
+      font:12px/1.8 ui-monospace,SFMono-Regular,Menlo,monospace;
+    }
+
+    .quick-explain{
+      padding:29px;
+      border-left:1px solid var(--line);
+    }
+
+    .quick-explain h3{
+      font-size:24px;
+      line-height:1.15;
+      letter-spacing:-.035em;
+      margin:14px 0;
+    }
+
+    .quick-explain p{
+      color:#92949e;
+      font-size:14px;
+    }
+
+    @media(max-width:900px){
+      .quickstart{
+        grid-template-columns:1fr;
+      }
+
+      .quickstart-tabs{
+        display:grid;
+        grid-template-columns:repeat(4,1fr);
+        border-right:0;
+        border-bottom:1px solid var(--line);
+      }
+
+      .quick-explain{
+        border-left:0;
+        border-top:1px solid var(--line);
+      }
+    }
+
+    @media(max-width:600px){
+      .quickstart-tabs{
+        grid-template-columns:1fr 1fr;
+      }
+    }
+
     @media(prefers-reduced-motion:reduce){
       *{
         scroll-behavior:auto!important;
@@ -1467,92 +1578,6 @@ description: Veil provides the execution layer between intent and action.
       </div>
     </section>
 
-    <!-- PRACTICAL EXAMPLE -->
-
-    <section>
-      <div class="wrap">
-
-        <div class="section-head reveal">
-          <div>
-            <div class="kicker">A practical example</div>
-            <h2>One request. Real consequences.</h2>
-          </div>
-
-          <p>
-            An AI can propose an investigation.
-            Veil becomes important when that proposal must turn into
-            controlled operations against real systems.
-          </p>
-        </div>
-
-        <div class="story">
-
-          <div class="story-copy reveal">
-            <h3>“Why is this application failing?”</h3>
-
-            <p>
-              A reasoning system might propose reading logs, checking service
-              health, inspecting configuration, querying a database, and
-              performing a recovery action.
-            </p>
-
-            <p>
-              <strong>
-                Veil does not need to be the intelligence that created the plan.
-              </strong>
-              Its responsibility begins when that plan needs to become real.
-            </p>
-          </div>
-
-          <div class="terminal reveal">
-            <div class="terminal-bar">
-              execution / incident-investigation
-            </div>
-
-            <div class="terminal-body">
-              <div class="log">
-                <span class="time">00:01</span>
-                <span><b class="ok">✓</b> ExecutionPlan received</span>
-              </div>
-
-              <div class="log">
-                <span class="time">00:02</span>
-                <span><b class="ok">✓</b> logs capability resolved</span>
-              </div>
-
-              <div class="log">
-                <span class="time">00:03</span>
-                <span><b class="ok">✓</b> health capability executed</span>
-              </div>
-
-              <div class="log">
-                <span class="time">00:04</span>
-                <span><b class="ok">✓</b> database capability resolved</span>
-              </div>
-
-              <div class="log">
-                <span class="time">00:05</span>
-                <span><b class="wait">◆</b> recovery awaiting approval</span>
-              </div>
-
-              <div class="log">
-                <span class="time">00:06</span>
-                <span><b class="ok">✓</b> recovery executed</span>
-              </div>
-
-              <div class="result">
-                Outcome: service recovered<br>
-                <span class="dim">
-                  Execution lifecycle recorded by Veil.
-                </span>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
     <!-- CONSTANT -->
 
     <section class="constant">
@@ -1795,6 +1820,257 @@ description: Veil provides the execution layer between intent and action.
           </div>
 
         </div>
+      </div>
+    </section>
+
+    <!-- BUILD A CAPABILITY -->
+
+    <section id="build">
+      <div class="wrap">
+
+        <div class="section-head reveal">
+          <div>
+            <div class="kicker">Extend Veil</div>
+            <h2>Make anything a capability.</h2>
+          </div>
+
+          <p>
+            Veil does not need to understand every system you use.
+            Expose the operations you want to make executable, register them,
+            and the same runtime can resolve and execute them from any plan.
+          </p>
+        </div>
+
+        <div class="build-flow reveal">
+
+          <div class="build-step">
+            <span class="build-number">01</span>
+            <small>YOUR SYSTEM</small>
+            <strong>Existing operation</strong>
+            <code>restartService()</code>
+          </div>
+
+          <div class="build-arrow">→</div>
+
+          <div class="build-step active">
+            <span class="build-number">02</span>
+            <small>VEIL</small>
+            <strong>Capability</strong>
+            <code>service.restart</code>
+          </div>
+
+          <div class="build-arrow">→</div>
+
+          <div class="build-step">
+            <span class="build-number">03</span>
+            <small>REGISTER</small>
+            <strong>Available to plans</strong>
+            <code>CapabilityRegistry</code>
+          </div>
+
+          <div class="build-arrow">→</div>
+
+          <div class="build-step">
+            <span class="build-number">04</span>
+            <small>EXECUTE</small>
+            <strong>OperatorRuntime</strong>
+            <code>ExecutionResult</code>
+          </div>
+
+        </div>
+
+        <div class="capability-example reveal">
+
+          <div class="capability-copy">
+
+            <div class="kicker">
+              Your infrastructure stays yours
+            </div>
+
+            <h3>
+              Wrap the operation.<br>
+              Veil handles the execution boundary.
+            </h3>
+
+            <p>
+              A capability can sit in front of a function, API, database,
+              shell command, browser operation, SDK, internal service,
+              or MCP tool.
+            </p>
+
+            <p>
+              You do not move your infrastructure into Veil.
+              You decide which operations become available for controlled execution.
+            </p>
+
+          </div>
+
+          <div class="code-window">
+
+            <div class="code-bar">
+              capability.ts
+              <span>conceptual shape</span>
+            </div>
+
+            <pre><code><span class="code-dim">// Your existing operation</span>
+    async function restartService(name) {
+      return infrastructure.restart(name);
+    }
+
+    <span class="code-dim">// Expose it as a capability</span>
+    const restart = {
+      name: <span class="code-string">"service.restart"</span>,
+
+      async execute(input) {
+        return restartService(input.service);
+      }
+    };
+
+    <span class="code-dim">// Register once</span>
+    registry.register(restart);</code></pre>
+
+          </div>
+
+        </div>
+
+        <p class="api-note reveal">
+          The final code example will mirror the frozen v0.1.0 public API exactly.
+          The example above illustrates the capability model rather than introducing
+          a separate website-only API.
+        </p>
+
+      </div>
+    </section>
+
+    <!-- ZERO TO EXECUTION -->
+
+    <section id="quickstart">
+      <div class="wrap">
+
+        <div class="section-head reveal">
+          <div>
+            <div class="kicker">Developer path</div>
+            <h2>From your code to controlled execution.</h2>
+          </div>
+
+          <p>
+            Veil is deliberately small at the integration boundary.
+            Define what may be executed, register it, provide an
+            <code>ExecutionPlan</code>, and let the runtime handle execution.
+          </p>
+        </div>
+
+        <div class="quickstart reveal">
+
+          <div class="quickstart-tabs">
+
+            <button class="quick-tab active" data-quick="define">
+              <span>01</span>
+              Define
+            </button>
+
+            <button class="quick-tab" data-quick="register">
+              <span>02</span>
+              Register
+            </button>
+
+            <button class="quick-tab" data-quick="plan">
+              <span>03</span>
+              Plan
+            </button>
+
+            <button class="quick-tab" data-quick="execute">
+              <span>04</span>
+              Execute
+            </button>
+
+          </div>
+
+          <div class="quick-code">
+
+            <div class="quick-header">
+              <span id="quickTitle">Define a capability</span>
+              <span>TypeScript</span>
+            </div>
+
+            <pre><code id="quickCode"></code></pre>
+
+          </div>
+
+          <div class="quick-explain">
+
+            <span class="control-label">
+              What happened?
+            </span>
+
+            <h3 id="quickExplainTitle">
+              Expose one controlled operation.
+            </h3>
+
+            <p id="quickExplainBody">
+              Your application still owns the implementation.
+              Veil only needs a capability contract around the operation
+              you want to make available for execution.
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- AI IS OPTIONAL -->
+
+    <section>
+      <div class="wrap">
+
+        <div class="section-head reveal">
+          <div>
+            <div class="kicker">Bring your own intelligence</div>
+            <h2>AI is optional.</h2>
+          </div>
+
+          <p>
+            Veil executes plans. It does not require a particular model,
+            provider, or even an AI planner. Anything capable of producing
+            an ExecutionPlan can use the same execution runtime.
+          </p>
+        </div>
+
+        <div class="sources reveal">
+
+          <div class="source-card">
+            <small>HOSTED AI</small>
+            <strong>OpenAI / Claude / other</strong>
+            <span>↓ Planner ↓ ExecutionPlan</span>
+          </div>
+
+          <div class="source-card">
+            <small>LOCAL AI</small>
+            <strong>Ollama / local models</strong>
+            <span>↓ Planner ↓ ExecutionPlan</span>
+          </div>
+
+          <div class="source-card">
+            <small>NO AI</small>
+            <strong>Your application</strong>
+            <span>↓ ExecutionPlan</span>
+          </div>
+
+          <div class="source-card">
+            <small>EXTERNAL SYSTEM</small>
+            <strong>Automation / human / service</strong>
+            <span>↓ ExecutionPlan</span>
+          </div>
+
+        </div>
+
+        <div class="source-runtime reveal">
+          <span>All roads lead to the same boundary</span>
+          <strong>ExecutionPlan → OperatorRuntime → Capability</strong>
+        </div>
+
       </div>
     </section>
 
@@ -2429,6 +2705,112 @@ description: Veil provides the execution layer between intent and action.
     );
 
     renderScenario();
+
+    const quickExamples = {
+      define: {
+        title: "Define a capability",
+        explainTitle: "Expose one controlled operation.",
+        explainBody:
+          "Your application owns the implementation. Veil only needs a capability contract around the operation you want to make executable.",
+        code:
+    `const capability = {
+      name: "customer.lookup",
+
+      async execute(input) {
+        return customers.find(input.id);
+      }
+    };`
+      },
+
+      register: {
+        title: "Register the capability",
+        explainTitle: "Tell Veil what exists.",
+        explainBody:
+          "Capabilities become available through the registry. Plans cannot execute undeclared operations simply because a planner requested them.",
+        code:
+    `registry.register(capability);
+
+    // customer.lookup is now
+    // available for execution`
+      },
+
+      plan: {
+        title: "Create or receive an ExecutionPlan",
+        explainTitle: "Planning remains separate.",
+        explainBody:
+          "The plan describes what should happen. It may come from AI, deterministic software, a human workflow, or another system.",
+        code:
+    `const plan = {
+      steps: [
+        {
+          capability: "customer.lookup",
+          input: {
+            id: "cust_42"
+          }
+        }
+      ]
+    };`
+      },
+
+      execute: {
+        title: "Execute through Veil",
+        explainTitle: "The same runtime performs the work.",
+        explainBody:
+          "OperatorRuntime resolves the requested capability, executes it through the configured lifecycle, and returns an observable result.",
+        code:
+    `const result =
+      await runtime.executePlan(plan);
+
+    console.log(result);`
+      }
+    };
+
+    const quickTabs =
+      [...document.querySelectorAll(".quick-tab")];
+
+    const quickTitle =
+      document.querySelector("#quickTitle");
+
+    const quickCode =
+      document.querySelector("#quickCode");
+
+    const quickExplainTitle =
+      document.querySelector("#quickExplainTitle");
+
+    const quickExplainBody =
+      document.querySelector("#quickExplainBody");
+
+    function renderQuickExample(key) {
+      const example = quickExamples[key];
+
+      quickTitle.textContent =
+        example.title;
+
+      quickCode.textContent =
+        example.code;
+
+      quickExplainTitle.textContent =
+        example.explainTitle;
+
+      quickExplainBody.textContent =
+        example.explainBody;
+    }
+
+    quickTabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        quickTabs.forEach(item =>
+          item.classList.remove("active")
+        );
+
+        tab.classList.add("active");
+
+        renderQuickExample(
+          tab.dataset.quick
+        );
+      });
+    });
+
+    renderQuickExample("define");
 
     /* --------------------------------
        Architecture explorer
