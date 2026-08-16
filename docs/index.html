@@ -9,93 +9,2520 @@ description: Veil provides the execution layer between intent and action.
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#08090c">
-  <meta name="description" content="Veil provides the execution layer between intent and action.">
+  <meta
+    name="description"
+    content="Veil provides the execution layer between intent and action."
+  >
   <title>Veil — Governed Execution for AI</title>
+
   <style>
-    :root{--bg:#08090c;--panel:#101218;--ink:#f5f2ec;--muted:#9b9da7;--line:#292d38;--violet:#a78bfa;--cyan:#67e8f9;--green:#6ee7a8;--amber:#f6c96b;--red:#fb7185;--max:1180px}
-    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.6;overflow-x:hidden}
-    body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.25;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:48px 48px;mask-image:linear-gradient(to bottom,#000,transparent 82%)}
-    a{color:inherit}.wrap{width:min(calc(100% - 40px),var(--max));margin:auto}.nav{height:72px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:4}.brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:-.03em;text-decoration:none}.mark{width:27px;height:27px;border:1px solid #777188;border-radius:50%;display:grid;place-items:center;box-shadow:inset 0 0 18px #8b5cf655}.mark:after{content:"";width:2px;height:15px;background:var(--violet);box-shadow:0 0 12px var(--violet)}.navlinks{display:flex;gap:24px;align-items:center}.navlinks a{font-size:14px;color:var(--muted);text-decoration:none}.navlinks a:hover{color:var(--ink)}.pill{border:1px solid var(--line);border-radius:999px;padding:9px 14px!important;color:var(--ink)!important;background:#ffffff08}
-    .hero{min-height:calc(100vh - 72px);padding:8vh 0 70px;display:grid;grid-template-columns:1.02fr .98fr;align-items:center;gap:7vw;position:relative}.eyebrow,.kicker{font:700 12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--violet)}h1{font-size:clamp(53px,7.6vw,108px);line-height:.9;letter-spacing:-.07em;margin:22px 0 30px;max-width:800px}.hero h1 span{color:var(--muted)}.lede{font-size:clamp(18px,2vw,23px);line-height:1.5;color:#c8c8cf;max-width:650px}.actions{display:flex;gap:12px;margin-top:34px;flex-wrap:wrap}.button{border:1px solid var(--line);border-radius:8px;padding:13px 18px;background:#12141b;color:var(--ink);font-weight:700;text-decoration:none;cursor:pointer;font:inherit}.button.primary{background:var(--ink);color:#111;border-color:var(--ink)}.button:hover{transform:translateY(-1px)}
-    .boundary{position:relative;min-height:580px;display:grid;place-items:center}.boundary:before{content:"";position:absolute;left:50%;top:-8%;height:116%;width:1px;background:linear-gradient(transparent,var(--violet) 15%,var(--cyan) 50%,var(--violet) 85%,transparent);box-shadow:0 0 32px 6px #8b5cf633}.veil-label{position:absolute;top:1%;left:50%;transform:translateX(-50%);font:700 10px ui-monospace,monospace;letter-spacing:.28em;color:#d7ccff;background:var(--bg);padding:8px}.packet{width:min(100%,430px);border:1px solid #373946;border-radius:14px;background:linear-gradient(145deg,#171923ef,#0d0f14ef);box-shadow:0 25px 80px #0009;position:relative;overflow:hidden}.packet-head{padding:17px 19px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;font:12px ui-monospace,monospace;color:var(--muted)}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--amber);box-shadow:0 0 12px var(--amber);margin-right:8px}.request{padding:24px 22px 19px;font-size:17px}.request:before{content:"INTENT";display:block;font:10px ui-monospace,monospace;letter-spacing:.16em;color:var(--violet);margin-bottom:9px}.checks{padding:0 18px 18px;display:grid;gap:8px}.check{opacity:0;transform:translateY(5px);display:flex;align-items:center;gap:10px;padding:10px 11px;background:#ffffff06;border:1px solid #ffffff09;border-radius:7px;font:12px ui-monospace,monospace;color:#b8bac5;transition:.35s}.check.show{opacity:1;transform:none}.check i{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}.check.warn i{background:var(--amber);box-shadow:0 0 10px var(--amber)}.run{width:calc(100% - 36px);margin:0 18px 18px;border:0;border-radius:8px;padding:12px;background:#ece8ff;color:#17131f;font-weight:800;cursor:pointer}.run:disabled{opacity:.5;cursor:wait}.receipt{display:none;margin:0 18px 18px;padding:14px;border-radius:8px;border:1px solid #6ee7a844;background:#6ee7a80b;color:var(--green);font:12px ui-monospace,monospace}.receipt.show{display:block}.signal{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--violet);box-shadow:0 0 20px 8px #8b5cf666;left:calc(50% - 5px);top:9%;opacity:0}.signal.travel{animation:travel 2.2s ease-in-out}@keyframes travel{0%{opacity:0;top:8%}12%,85%{opacity:1}100%{opacity:0;top:91%;background:var(--green)}}
-    section{padding:120px 0;border-top:1px solid #ffffff0b}.section-head{display:grid;grid-template-columns:.75fr 1.25fr;gap:8vw;margin-bottom:64px}.section-head h2{font-size:clamp(37px,5.4vw,72px);letter-spacing:-.055em;line-height:1;margin:12px 0}.section-head p{color:#b5b6bf;font-size:19px;margin:25px 0 0;max-width:640px}.triad{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{padding:30px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(145deg,#12141a,#0c0d11);min-height:230px}.number{font:11px ui-monospace,monospace;color:var(--violet)}.card h3{font-size:27px;letter-spacing:-.035em;margin:60px 0 10px}.card p{margin:0;color:var(--muted)}
-    .story{display:grid;grid-template-columns:1fr 1fr;gap:18px}.story-copy{padding:48px;border:1px solid var(--line);border-radius:14px;background:#0d0f14}.story-copy h3{font-size:36px;line-height:1.12;letter-spacing:-.045em;margin:0 0 20px}.story-copy p{color:#b3b4bc}.terminal{background:#08090c;border:1px solid var(--line);border-radius:14px;overflow:hidden;font:13px/1.8 ui-monospace,SFMono-Regular,Menlo,monospace}.terminal-bar{padding:12px 16px;border-bottom:1px solid var(--line);color:#686b76}.terminal-body{padding:25px;min-height:340px}.log{display:flex;gap:16px}.time{color:#555963}.ok{color:var(--green)}.wait{color:var(--amber)}.dim{color:#767986}.result{margin-top:20px;padding-top:17px;border-top:1px solid var(--line);color:#d6d6dc}
-    .constant{overflow:hidden}.constant-track{display:flex;gap:16px;width:max-content;animation:drift 30s linear infinite}.constant-item{width:340px;border:1px solid var(--line);border-radius:12px;padding:24px;background:#0e1015}.constant-item strong{display:block;font-size:21px;margin-bottom:7px}.constant-item span{color:var(--muted)}@keyframes drift{to{transform:translateX(calc(-50% - 8px))}}
-    .cap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.cap{border:1px solid var(--line);padding:22px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;background:#0d0f14}.cap:hover{border-color:#645b80;background:#11131a}.cap b{font-size:16px}.cap code{color:#747783;font-size:11px}.cap i{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px #6ee7a866}
-    .quote{font-size:clamp(34px,5vw,68px);line-height:1.08;letter-spacing:-.055em;max-width:1050px}.quote span{color:var(--violet)}
-    .details{display:grid;gap:10px}.details details{border:1px solid var(--line);border-radius:10px;background:#0d0f14}.details summary{cursor:pointer;padding:21px 24px;font-weight:750;list-style:none;display:flex;justify-content:space-between}.details summary:after{content:"+";color:var(--violet)}.details details[open] summary:after{content:"−"}.details .inside{padding:0 24px 24px;color:var(--muted);display:grid;grid-template-columns:repeat(2,1fr);gap:8px 24px}.inside span:before{content:"↳ ";color:#5c6070}
-    .roadmap{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}.phase{background:#0d0f14;padding:25px;min-height:150px}.phase small{color:var(--violet);font:11px ui-monospace,monospace}.phase b{display:block;margin-top:30px}.phase.current{background:linear-gradient(145deg,#191426,#0d0f14)}
-    .final{text-align:center;padding:160px 20px}.final h2{font-size:clamp(46px,7vw,94px);line-height:.96;letter-spacing:-.065em;max-width:1000px;margin:0 auto 28px}.final p{font-size:20px;color:var(--muted);max-width:660px;margin:0 auto 34px}.footer{border-top:1px solid var(--line);padding:30px 0;color:#727580;font-size:13px;display:flex;justify-content:space-between}
-    .reveal{opacity:0;transform:translateY(18px);transition:.7s ease}.reveal.visible{opacity:1;transform:none}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
-    @media(max-width:800px){.navlinks a:not(.pill){display:none}.hero{grid-template-columns:1fr;padding-top:55px}.boundary{min-height:520px}.section-head,.story{grid-template-columns:1fr}.triad,.cap-grid{grid-template-columns:1fr}.roadmap{grid-template-columns:1fr 1fr}.section-head{gap:10px}.card h3{margin-top:30px}.details .inside{grid-template-columns:1fr}.footer{gap:20px;flex-direction:column}}
+    :root{
+      --bg:#08090c;
+      --panel:#101218;
+      --ink:#f5f2ec;
+      --muted:#9b9da7;
+      --line:#292d38;
+      --violet:#a78bfa;
+      --cyan:#67e8f9;
+      --green:#6ee7a8;
+      --amber:#f6c96b;
+      --red:#fb7185;
+      --max:1180px;
+    }
+
+    *{box-sizing:border-box}
+
+    html{scroll-behavior:smooth}
+
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--ink);
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      line-height:1.6;
+      overflow-x:hidden;
+    }
+
+    body:before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.25;
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+      background-size:48px 48px;
+      mask-image:linear-gradient(to bottom,#000,transparent 82%);
+    }
+
+    a{color:inherit}
+
+    button,
+    input{
+      font:inherit;
+    }
+
+    .wrap{
+      width:min(calc(100% - 40px),var(--max));
+      margin:auto;
+    }
+
+    .nav{
+      height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      position:relative;
+      z-index:4;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:11px;
+      font-weight:800;
+      letter-spacing:-.03em;
+      text-decoration:none;
+    }
+
+    .mark{
+      width:27px;
+      height:27px;
+      border:1px solid #777188;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      box-shadow:inset 0 0 18px #8b5cf655;
+    }
+
+    .mark:after{
+      content:"";
+      width:2px;
+      height:15px;
+      background:var(--violet);
+      box-shadow:0 0 12px var(--violet);
+    }
+
+    .navlinks{
+      display:flex;
+      gap:24px;
+      align-items:center;
+    }
+
+    .navlinks a{
+      font-size:14px;
+      color:var(--muted);
+      text-decoration:none;
+    }
+
+    .navlinks a:hover{
+      color:var(--ink);
+    }
+
+    .pill{
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:9px 14px!important;
+      color:var(--ink)!important;
+      background:#ffffff08;
+    }
+
+    .eyebrow,
+    .kicker{
+      font:700 12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      color:var(--violet);
+    }
+
+    .hero{
+      min-height:calc(100vh - 72px);
+      padding:7vh 0 90px;
+      display:grid;
+      grid-template-columns:.96fr 1.04fr;
+      align-items:center;
+      gap:6vw;
+      position:relative;
+    }
+
+    h1{
+      font-size:clamp(53px,7.2vw,102px);
+      line-height:.9;
+      letter-spacing:-.07em;
+      margin:22px 0 30px;
+      max-width:800px;
+    }
+
+    .hero h1 span{
+      color:var(--muted);
+    }
+
+    .lede{
+      font-size:clamp(18px,2vw,23px);
+      line-height:1.5;
+      color:#c8c8cf;
+      max-width:650px;
+    }
+
+    .actions{
+      display:flex;
+      gap:12px;
+      margin-top:34px;
+      flex-wrap:wrap;
+    }
+
+    .button{
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:13px 18px;
+      background:#12141b;
+      color:var(--ink);
+      font-weight:700;
+      text-decoration:none;
+      cursor:pointer;
+      transition:
+        transform .18s ease,
+        background .18s ease,
+        border-color .18s ease;
+    }
+
+    .button.primary{
+      background:var(--ink);
+      color:#111;
+      border-color:var(--ink);
+    }
+
+    .button:hover{
+      transform:translateY(-1px);
+    }
+
+    /* --------------------------------
+       Interactive simulation
+    --------------------------------- */
+
+    .sim-shell{
+      border:1px solid #343845;
+      border-radius:18px;
+      background:
+        radial-gradient(circle at top right,#8b5cf615,transparent 34%),
+        linear-gradient(145deg,#11141c,#0b0d12);
+      box-shadow:0 30px 90px #000a;
+      overflow:hidden;
+      position:relative;
+    }
+
+    .sim-shell:before{
+      content:"INTERACTIVE EXECUTION SIMULATION";
+      display:block;
+      padding:13px 18px;
+      border-bottom:1px solid var(--line);
+      color:#777b88;
+      font:700 10px ui-monospace,SFMono-Regular,Menlo,monospace;
+      letter-spacing:.17em;
+    }
+
+    .sim-grid{
+      display:grid;
+      grid-template-columns:190px 1fr;
+      min-height:610px;
+    }
+
+    .sim-controls{
+      padding:18px;
+      border-right:1px solid var(--line);
+      background:#ffffff02;
+    }
+
+    .control-label{
+      display:block;
+      margin:0 0 8px;
+      color:#737783;
+      font:700 9px ui-monospace,SFMono-Regular,Menlo,monospace;
+      letter-spacing:.15em;
+      text-transform:uppercase;
+    }
+
+    .scenario-list{
+      display:grid;
+      gap:7px;
+      margin-bottom:24px;
+    }
+
+    .scenario{
+      width:100%;
+      text-align:left;
+      border:1px solid transparent;
+      background:transparent;
+      color:#9fa2ad;
+      padding:10px;
+      border-radius:7px;
+      cursor:pointer;
+      font-size:12px;
+      line-height:1.35;
+      transition:.18s ease;
+    }
+
+    .scenario:hover{
+      color:var(--ink);
+      background:#ffffff06;
+    }
+
+    .scenario.active{
+      color:var(--ink);
+      border-color:#655d7e;
+      background:#8b5cf610;
+    }
+
+    .toggle-list{
+      display:grid;
+      gap:8px;
+      margin-bottom:23px;
+    }
+
+    .toggle-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      border:1px solid #ffffff08;
+      background:#ffffff03;
+      border-radius:7px;
+      padding:10px;
+      color:#9ea1ab;
+      cursor:pointer;
+      font-size:11px;
+    }
+
+    .toggle-row input{
+      appearance:none;
+      width:28px;
+      height:16px;
+      border-radius:999px;
+      background:#2b2e37;
+      position:relative;
+      cursor:pointer;
+      flex:none;
+      outline:none;
+      transition:.2s ease;
+    }
+
+    .toggle-row input:after{
+      content:"";
+      position:absolute;
+      width:10px;
+      height:10px;
+      left:3px;
+      top:3px;
+      border-radius:50%;
+      background:#777b86;
+      transition:.2s ease;
+    }
+
+    .toggle-row input:checked{
+      background:#8b5cf644;
+    }
+
+    .toggle-row input:checked:after{
+      transform:translateX(12px);
+      background:var(--violet);
+      box-shadow:0 0 9px #a78bfa88;
+    }
+
+    .sim-note{
+      color:#5f626d;
+      font-size:10px;
+      line-height:1.5;
+      margin-top:24px;
+    }
+
+    .sim-stage{
+      position:relative;
+      padding:21px;
+      min-width:0;
+    }
+
+    .boundary-label{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:13px;
+      color:#7d7f8b;
+      font:700 9px ui-monospace,SFMono-Regular,Menlo,monospace;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+    }
+
+    .boundary-label:before,
+    .boundary-label:after{
+      content:"";
+      height:1px;
+      flex:1;
+      background:linear-gradient(90deg,transparent,var(--violet),transparent);
+      opacity:.55;
+    }
+
+    .packet{
+      border:1px solid #373946;
+      border-radius:14px;
+      background:linear-gradient(145deg,#171923ef,#0d0f14ef);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .packet-head{
+      padding:15px 17px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      color:var(--muted);
+      font:11px ui-monospace,SFMono-Regular,Menlo,monospace;
+    }
+
+    .packet-state{
+      display:flex;
+      align-items:center;
+    }
+
+    .dot{
+      display:inline-block;
+      width:7px;
+      height:7px;
+      border-radius:50%;
+      background:var(--amber);
+      box-shadow:0 0 12px var(--amber);
+      margin-right:8px;
+    }
+
+    .dot.ready{
+      background:var(--cyan);
+      box-shadow:0 0 12px var(--cyan);
+    }
+
+    .dot.running{
+      background:var(--amber);
+      box-shadow:0 0 12px var(--amber);
+    }
+
+    .dot.success{
+      background:var(--green);
+      box-shadow:0 0 12px var(--green);
+    }
+
+    .dot.failure{
+      background:var(--red);
+      box-shadow:0 0 12px var(--red);
+    }
+
+    .request{
+      padding:20px 20px 17px;
+      font-size:16px;
+      border-bottom:1px solid #ffffff08;
+    }
+
+    .request:before{
+      content:"INTENT";
+      display:block;
+      margin-bottom:7px;
+      color:var(--violet);
+      font:700 9px ui-monospace,SFMono-Regular,Menlo,monospace;
+      letter-spacing:.16em;
+    }
+
+    .plan-preview{
+      padding:15px 20px;
+      border-bottom:1px solid #ffffff08;
+      background:#ffffff015;
+    }
+
+    .plan-title{
+      color:#686c77;
+      font:700 9px ui-monospace,SFMono-Regular,Menlo,monospace;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      margin-bottom:8px;
+    }
+
+    .plan-step{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      color:#a9abb5;
+      font:11px/1.8 ui-monospace,SFMono-Regular,Menlo,monospace;
+    }
+
+    .plan-step span{
+      color:#555a66;
+      width:15px;
+    }
+
+    .execution-log{
+      padding:16px 17px 10px;
+      min-height:220px;
+      max-height:260px;
+      overflow:auto;
+    }
+
+    .event{
+      display:grid;
+      grid-template-columns:18px 1fr;
+      gap:9px;
+      align-items:flex-start;
+      padding:6px 3px;
+      opacity:0;
+      transform:translateY(3px);
+      animation:eventIn .24s ease forwards;
+      font:11px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;
+    }
+
+    @keyframes eventIn{
+      to{
+        opacity:1;
+        transform:none;
+      }
+    }
+
+    .event-icon{
+      color:#616570;
+      text-align:center;
+    }
+
+    .event.ok .event-icon{
+      color:var(--green);
+    }
+
+    .event.warn .event-icon{
+      color:var(--amber);
+    }
+
+    .event.error .event-icon{
+      color:var(--red);
+    }
+
+    .event.info .event-icon{
+      color:var(--cyan);
+    }
+
+    .event-main{
+      color:#aeb0b9;
+      min-width:0;
+    }
+
+    .event-main strong{
+      color:#dedee4;
+      font-weight:600;
+    }
+
+    .event-detail{
+      display:block;
+      color:#626671;
+    }
+
+    .approval-panel{
+      display:none;
+      margin:0 17px 14px;
+      padding:14px;
+      border:1px solid #f6c96b40;
+      background:#f6c96b08;
+      border-radius:8px;
+    }
+
+    .approval-panel.show{
+      display:block;
+      animation:eventIn .25s ease;
+    }
+
+    .approval-copy{
+      color:#d5bd83;
+      font-size:12px;
+      margin-bottom:11px;
+    }
+
+    .approval-copy strong{
+      color:var(--amber);
+      display:block;
+      margin-bottom:2px;
+    }
+
+    .approval-actions{
+      display:flex;
+      gap:8px;
+    }
+
+    .approval-actions button{
+      border:1px solid var(--line);
+      border-radius:7px;
+      padding:8px 11px;
+      cursor:pointer;
+      background:#12141a;
+      color:var(--ink);
+      font-weight:700;
+      font-size:11px;
+    }
+
+    .approval-actions .approve{
+      border-color:#6ee7a844;
+      color:var(--green);
+    }
+
+    .approval-actions .reject{
+      border-color:#fb718544;
+      color:var(--red);
+    }
+
+    .run{
+      width:calc(100% - 34px);
+      margin:0 17px 17px;
+      border:0;
+      border-radius:8px;
+      padding:12px;
+      background:#ece8ff;
+      color:#17131f;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    .run:disabled{
+      opacity:.5;
+      cursor:wait;
+    }
+
+    .receipt{
+      display:none;
+      margin:0 17px 17px;
+      padding:12px;
+      border-radius:8px;
+      font:11px ui-monospace,SFMono-Regular,Menlo,monospace;
+    }
+
+    .receipt.show{
+      display:block;
+    }
+
+    .receipt.success{
+      border:1px solid #6ee7a844;
+      background:#6ee7a80b;
+      color:var(--green);
+    }
+
+    .receipt.failure{
+      border:1px solid #fb718544;
+      background:#fb718508;
+      color:var(--red);
+    }
+
+    /* --------------------------------
+       Generic sections
+    --------------------------------- */
+
+    section{
+      padding:120px 0;
+      border-top:1px solid #ffffff0b;
+    }
+
+    .section-head{
+      display:grid;
+      grid-template-columns:.75fr 1.25fr;
+      gap:8vw;
+      margin-bottom:64px;
+    }
+
+    .section-head h2{
+      font-size:clamp(37px,5.4vw,72px);
+      letter-spacing:-.055em;
+      line-height:1;
+      margin:12px 0;
+    }
+
+    .section-head p{
+      color:#b5b6bf;
+      font-size:19px;
+      margin:25px 0 0;
+      max-width:640px;
+    }
+
+    .triad{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+    }
+
+    .card{
+      padding:30px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:linear-gradient(145deg,#12141a,#0c0d11);
+      min-height:230px;
+    }
+
+    .number{
+      color:var(--violet);
+      font:11px ui-monospace,SFMono-Regular,Menlo,monospace;
+    }
+
+    .card h3{
+      font-size:27px;
+      letter-spacing:-.035em;
+      margin:60px 0 10px;
+    }
+
+    .card p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .story{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+    }
+
+    .story-copy{
+      padding:48px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#0d0f14;
+    }
+
+    .story-copy h3{
+      font-size:36px;
+      line-height:1.12;
+      letter-spacing:-.045em;
+      margin:0 0 20px;
+    }
+
+    .story-copy p{
+      color:#b3b4bc;
+    }
+
+    .terminal{
+      background:#08090c;
+      border:1px solid var(--line);
+      border-radius:14px;
+      overflow:hidden;
+      font:13px/1.8 ui-monospace,SFMono-Regular,Menlo,monospace;
+    }
+
+    .terminal-bar{
+      padding:12px 16px;
+      border-bottom:1px solid var(--line);
+      color:#686b76;
+    }
+
+    .terminal-body{
+      padding:25px;
+      min-height:340px;
+    }
+
+    .log{
+      display:flex;
+      gap:16px;
+    }
+
+    .time{
+      color:#555963;
+    }
+
+    .ok{
+      color:var(--green);
+    }
+
+    .wait{
+      color:var(--amber);
+    }
+
+    .dim{
+      color:#767986;
+    }
+
+    .result{
+      margin-top:20px;
+      padding-top:17px;
+      border-top:1px solid var(--line);
+      color:#d6d6dc;
+    }
+
+    .constant{
+      overflow:hidden;
+    }
+
+    .constant-track{
+      display:flex;
+      gap:16px;
+      width:max-content;
+      animation:drift 30s linear infinite;
+    }
+
+    .constant-item{
+      width:340px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:24px;
+      background:#0e1015;
+    }
+
+    .constant-item strong{
+      display:block;
+      font-size:21px;
+      margin-bottom:7px;
+    }
+
+    .constant-item span{
+      color:var(--muted);
+    }
+
+    @keyframes drift{
+      to{
+        transform:translateX(calc(-50% - 8px));
+      }
+    }
+
+    .quote{
+      font-size:clamp(34px,5vw,68px);
+      line-height:1.08;
+      letter-spacing:-.055em;
+      max-width:1050px;
+    }
+
+    .quote span{
+      color:var(--violet);
+    }
+
+    /* --------------------------------
+       Architecture explorer
+    --------------------------------- */
+
+    .architecture-shell{
+      border:1px solid var(--line);
+      border-radius:16px;
+      overflow:hidden;
+      background:
+        radial-gradient(circle at center,#8b5cf60d,transparent 42%),
+        #0c0e13;
+      margin-bottom:55px;
+    }
+
+    .architecture-top{
+      padding:22px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .arch-zone-label{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:16px;
+      color:#686c78;
+      font:700 9px ui-monospace,SFMono-Regular,Menlo,monospace;
+      letter-spacing:.15em;
+      text-transform:uppercase;
+    }
+
+    .arch-zone-label:after{
+      content:"";
+      height:1px;
+      flex:1;
+      background:#272a34;
+    }
+
+    .arch-flow{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .arch-node{
+      border:1px solid var(--line);
+      background:#11131a;
+      color:#a9abb5;
+      border-radius:8px;
+      padding:11px 13px;
+      cursor:pointer;
+      transition:.18s ease;
+      font:11px ui-monospace,SFMono-Regular,Menlo,monospace;
+    }
+
+    .arch-node:hover{
+      color:var(--ink);
+      border-color:#5c5671;
+    }
+
+    .arch-node.active{
+      color:#ece8ff;
+      border-color:#8b5cf6aa;
+      background:#8b5cf614;
+      box-shadow:0 0 20px #8b5cf616;
+    }
+
+    .arch-arrow{
+      color:#4d515b;
+      font-size:13px;
+    }
+
+    .arch-boundary{
+      margin:22px 0;
+      position:relative;
+      text-align:center;
+    }
+
+    .arch-boundary:before{
+      content:"";
+      position:absolute;
+      left:0;
+      right:0;
+      top:50%;
+      height:1px;
+      background:linear-gradient(
+        90deg,
+        transparent,
+        var(--violet),
+        var(--cyan),
+        var(--violet),
+        transparent
+      );
+      opacity:.6;
+    }
+
+    .arch-boundary span{
+      position:relative;
+      display:inline-block;
+      padding:5px 12px;
+      background:#0c0e13;
+      color:#b8a8f7;
+      font:700 9px ui-monospace,SFMono-Regular,Menlo,monospace;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+    }
+
+    .architecture-detail{
+      padding:25px 28px 27px;
+      min-height:150px;
+    }
+
+    .architecture-detail strong{
+      display:block;
+      margin-bottom:8px;
+      font-size:24px;
+      letter-spacing:-.03em;
+    }
+
+    .architecture-detail p{
+      max-width:760px;
+      margin:0;
+      color:#a6a8b1;
+    }
+
+    .architecture-detail code{
+      color:#cabdfd;
+    }
+
+    .cap-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+    }
+
+    .cap{
+      border:1px solid var(--line);
+      padding:22px;
+      border-radius:10px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      background:#0d0f14;
+    }
+
+    .cap:hover{
+      border-color:#645b80;
+      background:#11131a;
+    }
+
+    .cap b{
+      font-size:16px;
+    }
+
+    .cap code{
+      color:#747783;
+      font-size:11px;
+    }
+
+    .cap i{
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:var(--green);
+      box-shadow:0 0 12px #6ee7a866;
+    }
+
+    .details{
+      display:grid;
+      gap:10px;
+    }
+
+    .details details{
+      border:1px solid var(--line);
+      border-radius:10px;
+      background:#0d0f14;
+    }
+
+    .details summary{
+      cursor:pointer;
+      padding:21px 24px;
+      font-weight:750;
+      list-style:none;
+      display:flex;
+      justify-content:space-between;
+    }
+
+    .details summary:after{
+      content:"+";
+      color:var(--violet);
+    }
+
+    .details details[open] summary:after{
+      content:"−";
+    }
+
+    .details .inside{
+      padding:0 24px 24px;
+      color:var(--muted);
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:8px 24px;
+    }
+
+    .inside span:before{
+      content:"↳ ";
+      color:#5c6070;
+    }
+
+    .roadmap{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:1px;
+      background:var(--line);
+      border:1px solid var(--line);
+      border-radius:12px;
+      overflow:hidden;
+    }
+
+    .phase{
+      background:#0d0f14;
+      padding:25px;
+      min-height:150px;
+    }
+
+    .phase small{
+      color:var(--violet);
+      font:11px ui-monospace,SFMono-Regular,Menlo,monospace;
+    }
+
+    .phase b{
+      display:block;
+      margin-top:30px;
+    }
+
+    .phase.current{
+      background:linear-gradient(145deg,#191426,#0d0f14);
+    }
+
+    .final{
+      text-align:center;
+      padding:160px 20px;
+    }
+
+    .final h2{
+      font-size:clamp(46px,7vw,94px);
+      line-height:.96;
+      letter-spacing:-.065em;
+      max-width:1000px;
+      margin:0 auto 28px;
+    }
+
+    .final p{
+      font-size:20px;
+      color:var(--muted);
+      max-width:660px;
+      margin:0 auto 34px;
+    }
+
+    .footer{
+      border-top:1px solid var(--line);
+      padding:30px 0;
+      color:#727580;
+      font-size:13px;
+      display:flex;
+      justify-content:space-between;
+    }
+
+    .reveal{
+      opacity:0;
+      transform:translateY(18px);
+      transition:.7s ease;
+    }
+
+    .reveal.visible{
+      opacity:1;
+      transform:none;
+    }
+
+    @media(prefers-reduced-motion:reduce){
+      *{
+        scroll-behavior:auto!important;
+        animation:none!important;
+        transition:none!important;
+      }
+
+      .reveal{
+        opacity:1;
+        transform:none;
+      }
+    }
+
+    @media(max-width:980px){
+      .hero{
+        grid-template-columns:1fr;
+        padding-top:55px;
+      }
+
+      .sim-grid{
+        grid-template-columns:1fr;
+      }
+
+      .sim-controls{
+        border-right:0;
+        border-bottom:1px solid var(--line);
+      }
+
+      .scenario-list{
+        grid-template-columns:repeat(3,1fr);
+      }
+
+      .toggle-list{
+        grid-template-columns:repeat(3,1fr);
+      }
+
+      .sim-note{
+        display:none;
+      }
+    }
+
+    @media(max-width:800px){
+      .navlinks a:not(.pill){
+        display:none;
+      }
+
+      .section-head,
+      .story{
+        grid-template-columns:1fr;
+      }
+
+      .triad,
+      .cap-grid{
+        grid-template-columns:1fr;
+      }
+
+      .roadmap{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .section-head{
+        gap:10px;
+      }
+
+      .card h3{
+        margin-top:30px;
+      }
+
+      .details .inside{
+        grid-template-columns:1fr;
+      }
+
+      .footer{
+        gap:20px;
+        flex-direction:column;
+      }
+
+      .scenario-list,
+      .toggle-list{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media(max-width:520px){
+      .wrap{
+        width:min(calc(100% - 26px),var(--max));
+      }
+
+      .hero{
+        padding-top:40px;
+      }
+
+      .sim-stage{
+        padding:12px;
+      }
+
+      .sim-controls{
+        padding:14px;
+      }
+
+      .packet-head{
+        font-size:10px;
+      }
+
+      .arch-flow{
+        align-items:stretch;
+      }
+
+      .arch-node{
+        flex:1;
+      }
+
+      .arch-arrow{
+        display:none;
+      }
+
+      .roadmap{
+        grid-template-columns:1fr;
+      }
+    }
   </style>
 </head>
+
 <body>
-  <nav class="nav wrap"><a class="brand" href="#top"><span class="mark"></span>Veil</a><div class="navlinks"><a href="#why">Why Veil</a><a href="#architecture">Architecture</a><a href="#today">What exists</a><a class="pill" href="#open-source">Open source</a></div></nav>
+  <nav class="nav wrap">
+    <a class="brand" href="#top">
+      <span class="mark"></span>
+      Veil
+    </a>
+
+    <div class="navlinks">
+      <a href="#why">Why Veil</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#today">What exists</a>
+      <a class="pill" href="#open-source">Open source</a>
+    </div>
+  </nav>
 
   <main id="top">
+
+    <!-- HERO -->
+
     <header class="hero wrap">
       <div>
         <div class="eyebrow">Governed execution for AI and software</div>
-        <h1>Intent is easy.<br><span>Execution is real.</span></h1>
-        <p class="lede">AI is becoming remarkably good at deciding what should happen. Veil makes sure it happens safely, reliably, and through capabilities you control.</p>
-        <div class="actions"><button class="button primary" id="heroRun">Cross the Veil</button><a class="button" href="#why">Understand the idea ↓</a></div>
+
+        <h1>
+          Intent is easy.<br>
+          <span>Execution is real.</span>
+        </h1>
+
+        <p class="lede">
+          AI is becoming remarkably good at deciding what should happen.
+          Veil provides the controlled execution layer between that intent
+          and the systems where real actions occur.
+        </p>
+
+        <div class="actions">
+          <button class="button primary" id="heroRun">
+            Run the simulation
+          </button>
+
+          <a class="button" href="#why">
+            Understand the idea ↓
+          </a>
+        </div>
       </div>
-      <div class="boundary" aria-label="Interactive Veil execution demonstration">
-        <span class="veil-label">THE VEIL</span><span class="signal" id="signal"></span>
-        <div class="packet">
-          <div class="packet-head"><span><i class="dot"></i><span id="packetState">PLAN READY</span></span><span>EXECUTION 0142</span></div>
-          <div class="request">Investigate the outage and restart the service if permitted.</div>
-          <div class="checks" id="checks">
-            <div class="check"><i></i>plan.validated</div><div class="check"><i></i>identity.established</div><div class="check"><i></i>capability.resolved</div><div class="check warn"><i></i>policy.approval_required</div><div class="check"><i></i>execution.recorded</div>
+
+      <div
+        class="sim-shell"
+        id="simulation"
+        aria-label="Interactive Veil execution simulation"
+      >
+        <div class="sim-grid">
+
+          <aside class="sim-controls">
+            <span class="control-label">Scenario</span>
+
+            <div class="scenario-list">
+              <button
+                class="scenario active"
+                data-scenario="summary"
+              >
+                Summarize a local document
+              </button>
+
+              <button
+                class="scenario"
+                data-scenario="github"
+              >
+                Create a GitHub issue
+              </button>
+
+              <button
+                class="scenario"
+                data-scenario="delete"
+              >
+                Delete after processing
+              </button>
+            </div>
+
+            <span class="control-label">Capabilities</span>
+
+            <div class="toggle-list">
+              <label class="toggle-row">
+                <span>File access</span>
+                <input
+                  type="checkbox"
+                  id="fileEnabled"
+                  checked
+                >
+              </label>
+
+              <label class="toggle-row">
+                <span>GitHub</span>
+                <input
+                  type="checkbox"
+                  id="githubEnabled"
+                  checked
+                >
+              </label>
+
+              <label class="toggle-row">
+                <span>Delete</span>
+                <input
+                  type="checkbox"
+                  id="deleteEnabled"
+                >
+              </label>
+            </div>
+
+            <span class="control-label">Execution control</span>
+
+            <div class="toggle-list">
+              <label class="toggle-row">
+                <span>Approve external writes</span>
+                <input
+                  type="checkbox"
+                  id="approvalRequired"
+                  checked
+                >
+              </label>
+            </div>
+
+            <p class="sim-note">
+              This is a deterministic browser simulation.
+              It demonstrates the execution model without invoking
+              real infrastructure.
+            </p>
+          </aside>
+
+          <div class="sim-stage">
+
+            <div class="boundary-label">
+              Execution boundary
+            </div>
+
+            <div class="packet">
+
+              <div class="packet-head">
+                <span class="packet-state">
+                  <i class="dot ready" id="stateDot"></i>
+                  <span id="packetState">PLAN READY</span>
+                </span>
+
+                <span>EXECUTION 0142</span>
+              </div>
+
+              <div
+                class="request"
+                id="requestText"
+              >
+                Summarize the local document.
+              </div>
+
+              <div class="plan-preview">
+                <div class="plan-title">
+                  Proposed ExecutionPlan
+                </div>
+
+                <div id="planSteps"></div>
+              </div>
+
+              <div
+                class="execution-log"
+                id="executionLog"
+                aria-live="polite"
+              ></div>
+
+              <div
+                class="approval-panel"
+                id="approvalPanel"
+              >
+                <div class="approval-copy">
+                  <strong>Approval required</strong>
+                  <span id="approvalText">
+                    An external write is waiting for approval.
+                  </span>
+                </div>
+
+                <div class="approval-actions">
+                  <button
+                    class="approve"
+                    id="approveButton"
+                  >
+                    Approve
+                  </button>
+
+                  <button
+                    class="reject"
+                    id="rejectButton"
+                  >
+                    Reject
+                  </button>
+                </div>
+              </div>
+
+              <button
+                class="run"
+                id="run"
+              >
+                Execute governed plan
+              </button>
+
+              <div
+                class="receipt"
+                id="receipt"
+              ></div>
+            </div>
           </div>
-          <button class="run" id="run">Execute governed plan</button>
-          <div class="receipt" id="receipt">✓ COMPLETED · 5 decisions recorded · receipt #0142</div>
         </div>
       </div>
     </header>
 
-    <section id="why"><div class="wrap">
-      <div class="section-head reveal"><div><div class="kicker">The missing layer</div><h2>Reasoning is not execution.</h2></div><p>Reading files. Calling APIs. Using browsers. Running commands. Applying permissions. Recording outcomes. Every system that moves from deciding to doing eventually has to solve the same engineering problem.</p></div>
-      <div class="triad"><article class="card reveal"><span class="number">01 / VALIDATE</span><h3>Can this be done?</h3><p>Veil checks the plan, resolves the requested operations, and makes failure explicit.</p></article><article class="card reveal"><span class="number">02 / GOVERN</span><h3>Should this be done?</h3><p>Your permissions and policies determine what may proceed and what requires review.</p></article><article class="card reveal"><span class="number">03 / EXECUTE</span><h3>Make it real.</h3><p>Approved capabilities perform the work while Veil tracks the lifecycle and records what happened.</p></article></div>
-    </div></section>
+    <!-- WHY -->
 
-    <section><div class="wrap">
-      <div class="section-head reveal"><div><div class="kicker">A practical example</div><h2>One request. Real consequences.</h2></div><p>An AI can propose an investigation. Veil takes responsibility when that proposal must become controlled operations against real systems.</p></div>
-      <div class="story"><div class="story-copy reveal"><h3>“Why is this application failing?”</h3><p>The reasoning system proposes reading logs, checking service health, inspecting configuration, querying the database, and performing a recovery action if permitted.</p><p><strong>Veil does not need to be the intelligence that created the plan.</strong> Its responsibility begins when the plan needs to become real.</p></div><div class="terminal reveal"><div class="terminal-bar">execution / incident-investigation</div><div class="terminal-body"><div class="log"><span class="time">00:01</span><span><b class="ok">✓</b> plan received</span></div><div class="log"><span class="time">00:02</span><span><b class="ok">✓</b> logs inspected</span></div><div class="log"><span class="time">00:03</span><span><b class="ok">✓</b> health endpoint checked</span></div><div class="log"><span class="time">00:04</span><span><b class="ok">✓</b> database query approved</span></div><div class="log"><span class="time">00:05</span><span><b class="wait">◆</b> recovery action governed</span></div><div class="log"><span class="time">00:06</span><span><b class="ok">✓</b> result verified</span></div><div class="result">Outcome: service recovered<br><span class="dim">All operations recorded by Veil.</span></div></div></div></div>
-    </div></section>
+    <section id="why">
+      <div class="wrap">
 
-    <section class="constant"><div class="wrap"><div class="kicker reveal">Everything around it can change</div><p class="quote reveal">The reasoning system can change. The infrastructure can change. The capabilities can grow. <span>The execution model stays the same.</span></p></div><div class="constant-track" aria-hidden="true"><div class="constant-item"><strong>Local model → Filesystem</strong><span>Governed through Veil</span></div><div class="constant-item"><strong>Hosted AI → APIs</strong><span>Governed through Veil</span></div><div class="constant-item"><strong>Application → Database</strong><span>Governed through Veil</span></div><div class="constant-item"><strong>Human → Infrastructure</strong><span>Governed through Veil</span></div><div class="constant-item"><strong>Local model → Filesystem</strong><span>Governed through Veil</span></div><div class="constant-item"><strong>Hosted AI → APIs</strong><span>Governed through Veil</span></div><div class="constant-item"><strong>Application → Database</strong><span>Governed through Veil</span></div><div class="constant-item"><strong>Human → Infrastructure</strong><span>Governed through Veil</span></div></div></section>
+        <div class="section-head reveal">
+          <div>
+            <div class="kicker">The missing layer</div>
+            <h2>Reasoning is not execution.</h2>
+          </div>
 
-    <section id="architecture"><div class="wrap">
-      <div class="section-head reveal"><div><div class="kicker">Capabilities</div><h2>You decide what exists.</h2></div><p>A capability is an operation that has explicitly been made available for execution. Register it once, then reuse the same governed execution machinery across AI, applications, automations, and humans.</p></div>
-      <div class="cap-grid"><div class="cap"><span><b>Files</b><br><code>filesystem.file.read</code></span><i></i></div><div class="cap"><span><b>APIs</b><br><code>http.request</code></span><i></i></div><div class="cap"><span><b>Browsers</b><br><code>browser.operation</code></span><i></i></div><div class="cap"><span><b>Databases</b><br><code>database.query</code></span><i></i></div><div class="cap"><span><b>Commands</b><br><code>shell.execution</code></span><i></i></div><div class="cap"><span><b>Your systems</b><br><code>capability.custom</code></span><i></i></div></div>
-    </div></section>
+          <p>
+            Reading files. Calling APIs. Using browsers. Running commands.
+            Applying execution controls. Recording outcomes.
+            Every system that moves from deciding to doing eventually has
+            to solve the same engineering problem.
+          </p>
+        </div>
 
-    <section><div class="wrap"><p class="quote reveal">Bring your own models. Bring your own infrastructure. Build your own capabilities. <span>Meet at one governed boundary.</span></p><div class="section-head reveal" style="margin-top:90px"><div><div class="kicker">Interoperability</div><h2>MCP connects tools. Veil governs execution across them.</h2></div><p>MCP clients can discover and invoke Veil capabilities. Veil can also execute tools exposed by external MCP servers. Both directions still pass through the same runtime, governance, and job lifecycle—there is no second execution path.</p></div></div></section>
+        <div class="triad">
 
-    <section id="today"><div class="wrap">
-      <div class="section-head reveal"><div><div class="kicker">What exists today</div><h2>Beyond proof of concept.</h2></div><p>The foundation already includes a generic runtime, planning infrastructure, reusable capabilities, persistent history, human-reviewed outcomes, and MCP interoperability in both directions.</p></div>
-      <div class="details reveal">
-        <details><summary>Runtime</summary><div class="inside"><span>Generic execution engine</span><span>OperatorRuntime façade</span><span>Capability registry and context</span><span>Events and structured logging</span><span>Job lifecycle management</span><span>Persistent SQLite job store</span><span>Human-reviewed outcomes</span></div></details>
-        <details><summary>Reasoning</summary><div class="inside"><span>PlannerRouter and registries</span><span>Planner strategies</span><span>Deterministic planning</span><span>OpenAI-compatible planners</span><span>Local and distributed configurations</span><span>Health and eligibility monitoring</span><span>Historical context retrieval</span><span>ExecutionPlan v1</span></div></details>
-        <details><summary>Capabilities and SDK</summary><div class="inside"><span>Declarative capability authoring</span><span>Capability modules</span><span>Middleware pipeline</span><span>Lifecycle and timeout middleware</span><span>Filesystem and HTTP</span><span>Shell and browser operations</span></div></details>
-        <details><summary>MCP interoperability</summary><div class="inside"><span>Expose capabilities to MCP clients</span><span>Execute MCP tools as capabilities</span><span>Inbound and outbound stdio</span><span>Existing runtime and lifecycle preserved</span></div></details>
-        <details><summary>Runtime memory</summary><div class="inside"><span>Persistent job history</span><span>Planner context retrieval</span><span>Historical capability recall</span><span>Outcome recording</span><span>Human review workflow</span></div></details>
+          <article class="card reveal">
+            <span class="number">01 / RESOLVE</span>
+
+            <h3>Can this be done?</h3>
+
+            <p>
+              Veil receives the plan, resolves the requested capabilities,
+              and makes unavailable operations explicit.
+            </p>
+          </article>
+
+          <article class="card reveal">
+            <span class="number">02 / GOVERN</span>
+
+            <h3>May it proceed?</h3>
+
+            <p>
+              Configured execution controls determine which operations may
+              continue and which require additional authority or review.
+            </p>
+          </article>
+
+          <article class="card reveal">
+            <span class="number">03 / EXECUTE</span>
+
+            <h3>Make it real.</h3>
+
+            <p>
+              Resolved capabilities perform the work once execution
+              requirements are satisfied, while Veil records the lifecycle
+              and result.
+            </p>
+          </article>
+        </div>
       </div>
-    </div></section>
+    </section>
 
-    <section><div class="wrap"><div class="section-head reveal"><div><div class="kicker">Where Veil is going</div><h2>Architecture first. Ecosystem next.</h2></div><p>Veil reaches v0.1.0 when somebody else can confidently extend it without understanding Veil Core. Future directions remain informed by real-world use rather than promises.</p></div><div class="roadmap reveal"><div class="phase current"><small>NOW</small><b>Architecture lock</b></div><div class="phase"><small>NEXT</small><b>SDK ergonomics</b></div><div class="phase"><small>THEN</small><b>Documentation + v0.1.0</b></div><div class="phase"><small>AFTER</small><b>Real-world ecosystem</b></div></div></div></section>
+    <!-- PRACTICAL EXAMPLE -->
 
-    <section class="final" id="open-source"><div class="wrap reveal"><div class="kicker">Open source · preparing for v0.1.0</div><h2>Build the execution layer once.</h2><p>Use it from AI, applications, humans, and automation—without coupling intelligence directly to execution infrastructure.</p><a class="button primary" href="#architecture">Explore the architecture</a></div></section>
+    <section>
+      <div class="wrap">
+
+        <div class="section-head reveal">
+          <div>
+            <div class="kicker">A practical example</div>
+            <h2>One request. Real consequences.</h2>
+          </div>
+
+          <p>
+            An AI can propose an investigation.
+            Veil becomes important when that proposal must turn into
+            controlled operations against real systems.
+          </p>
+        </div>
+
+        <div class="story">
+
+          <div class="story-copy reveal">
+            <h3>“Why is this application failing?”</h3>
+
+            <p>
+              A reasoning system might propose reading logs, checking service
+              health, inspecting configuration, querying a database, and
+              performing a recovery action.
+            </p>
+
+            <p>
+              <strong>
+                Veil does not need to be the intelligence that created the plan.
+              </strong>
+              Its responsibility begins when that plan needs to become real.
+            </p>
+          </div>
+
+          <div class="terminal reveal">
+            <div class="terminal-bar">
+              execution / incident-investigation
+            </div>
+
+            <div class="terminal-body">
+              <div class="log">
+                <span class="time">00:01</span>
+                <span><b class="ok">✓</b> ExecutionPlan received</span>
+              </div>
+
+              <div class="log">
+                <span class="time">00:02</span>
+                <span><b class="ok">✓</b> logs capability resolved</span>
+              </div>
+
+              <div class="log">
+                <span class="time">00:03</span>
+                <span><b class="ok">✓</b> health capability executed</span>
+              </div>
+
+              <div class="log">
+                <span class="time">00:04</span>
+                <span><b class="ok">✓</b> database capability resolved</span>
+              </div>
+
+              <div class="log">
+                <span class="time">00:05</span>
+                <span><b class="wait">◆</b> recovery awaiting approval</span>
+              </div>
+
+              <div class="log">
+                <span class="time">00:06</span>
+                <span><b class="ok">✓</b> recovery executed</span>
+              </div>
+
+              <div class="result">
+                Outcome: service recovered<br>
+                <span class="dim">
+                  Execution lifecycle recorded by Veil.
+                </span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- CONSTANT -->
+
+    <section class="constant">
+      <div class="wrap">
+
+        <div class="kicker reveal">
+          Everything around it can change
+        </div>
+
+        <p class="quote reveal">
+          The reasoning system can change.
+          The infrastructure can change.
+          The capabilities can grow.
+          <span>The execution model stays the same.</span>
+        </p>
+
+      </div>
+
+      <div
+        class="constant-track"
+        aria-hidden="true"
+      >
+        <div class="constant-item">
+          <strong>Local model → Filesystem</strong>
+          <span>Executed through Veil</span>
+        </div>
+
+        <div class="constant-item">
+          <strong>Hosted AI → APIs</strong>
+          <span>Executed through Veil</span>
+        </div>
+
+        <div class="constant-item">
+          <strong>Application → Database</strong>
+          <span>Executed through Veil</span>
+        </div>
+
+        <div class="constant-item">
+          <strong>Human → Infrastructure</strong>
+          <span>Executed through Veil</span>
+        </div>
+
+        <div class="constant-item">
+          <strong>Local model → Filesystem</strong>
+          <span>Executed through Veil</span>
+        </div>
+
+        <div class="constant-item">
+          <strong>Hosted AI → APIs</strong>
+          <span>Executed through Veil</span>
+        </div>
+
+        <div class="constant-item">
+          <strong>Application → Database</strong>
+          <span>Executed through Veil</span>
+        </div>
+
+        <div class="constant-item">
+          <strong>Human → Infrastructure</strong>
+          <span>Executed through Veil</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ARCHITECTURE -->
+
+    <section id="architecture">
+      <div class="wrap">
+
+        <div class="section-head reveal">
+          <div>
+            <div class="kicker">Architecture</div>
+            <h2>Proposal and execution remain separate.</h2>
+          </div>
+
+          <p>
+            Intelligence can propose what should happen.
+            Veil receives the resulting plan at a clear execution boundary,
+            resolves registered capabilities, applies execution controls,
+            performs the work, and returns observable results.
+          </p>
+        </div>
+
+        <div class="architecture-shell reveal">
+
+          <div class="architecture-top">
+
+            <div class="arch-zone-label">
+              Proposal
+            </div>
+
+            <div class="arch-flow">
+              <button
+                class="arch-node"
+                data-node="intent"
+              >
+                Intent
+              </button>
+
+              <span class="arch-arrow">→</span>
+
+              <button
+                class="arch-node"
+                data-node="planner"
+              >
+                Planner
+              </button>
+
+              <span class="arch-arrow">→</span>
+
+              <button
+                class="arch-node active"
+                data-node="plan"
+              >
+                ExecutionPlan
+              </button>
+            </div>
+
+            <div class="arch-boundary">
+              <span>Execution boundary</span>
+            </div>
+
+            <div class="arch-zone-label">
+              Governed execution
+            </div>
+
+            <div class="arch-flow">
+              <button
+                class="arch-node"
+                data-node="runtime"
+              >
+                OperatorRuntime
+              </button>
+
+              <span class="arch-arrow">→</span>
+
+              <button
+                class="arch-node"
+                data-node="registry"
+              >
+                CapabilityRegistry
+              </button>
+
+              <span class="arch-arrow">→</span>
+
+              <button
+                class="arch-node"
+                data-node="capability"
+              >
+                Capability
+              </button>
+
+              <span class="arch-arrow">→</span>
+
+              <button
+                class="arch-node"
+                data-node="result"
+              >
+                Result
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="architecture-detail"
+            id="architectureDetail"
+          >
+            <strong>ExecutionPlan</strong>
+
+            <p>
+              A structured proposal describing the operations that should be
+              executed. The plan expresses intent in executable form, but does
+              not itself perform the work.
+            </p>
+          </div>
+        </div>
+
+        <div class="section-head reveal">
+          <div>
+            <div class="kicker">Capabilities</div>
+            <h2>You decide what exists.</h2>
+          </div>
+
+          <p>
+            A capability is an operation explicitly made available for
+            execution. Register capabilities once, then reuse the same
+            execution machinery across AI, applications, automations,
+            and human-driven workflows.
+          </p>
+        </div>
+
+        <div class="cap-grid">
+
+          <div class="cap">
+            <span>
+              <b>Files</b><br>
+              <code>filesystem.file.read</code>
+            </span>
+            <i></i>
+          </div>
+
+          <div class="cap">
+            <span>
+              <b>APIs</b><br>
+              <code>http.request</code>
+            </span>
+            <i></i>
+          </div>
+
+          <div class="cap">
+            <span>
+              <b>Browsers</b><br>
+              <code>browser.operation</code>
+            </span>
+            <i></i>
+          </div>
+
+          <div class="cap">
+            <span>
+              <b>Databases</b><br>
+              <code>database.query</code>
+            </span>
+            <i></i>
+          </div>
+
+          <div class="cap">
+            <span>
+              <b>Commands</b><br>
+              <code>shell.execution</code>
+            </span>
+            <i></i>
+          </div>
+
+          <div class="cap">
+            <span>
+              <b>Your systems</b><br>
+              <code>capability.custom</code>
+            </span>
+            <i></i>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- INTEROPERABILITY -->
+
+    <section>
+      <div class="wrap">
+
+        <p class="quote reveal">
+          Bring your own models.
+          Bring your own infrastructure.
+          Build your own capabilities.
+          <span>Meet at one governed boundary.</span>
+        </p>
+
+        <div
+          class="section-head reveal"
+          style="margin-top:90px"
+        >
+          <div>
+            <div class="kicker">Interoperability</div>
+            <h2>MCP connects tools. Veil keeps one execution model.</h2>
+          </div>
+
+          <p>
+            MCP clients can discover and invoke Veil capabilities.
+            Veil can also execute tools exposed by external MCP servers.
+            Both directions still pass through the existing Veil runtime and
+            execution lifecycle rather than creating a second execution path.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- WHAT EXISTS TODAY -->
+
+    <section id="today">
+      <div class="wrap">
+
+        <div class="section-head reveal">
+          <div>
+            <div class="kicker">What exists today</div>
+            <h2>Beyond proof of concept.</h2>
+          </div>
+
+          <p>
+            The foundation already includes a generic runtime, planning
+            infrastructure, reusable capabilities, persistent history,
+            human-reviewed outcomes, and MCP interoperability in both
+            directions.
+          </p>
+        </div>
+
+        <div class="details reveal">
+
+          <details>
+            <summary>Runtime</summary>
+
+            <div class="inside">
+              <span>Generic execution engine</span>
+              <span>OperatorRuntime façade</span>
+              <span>Capability registry and context</span>
+              <span>Events and structured logging</span>
+              <span>Job lifecycle management</span>
+              <span>Persistent SQLite job store</span>
+              <span>Human-reviewed outcomes</span>
+            </div>
+          </details>
+
+          <details>
+            <summary>Reasoning</summary>
+
+            <div class="inside">
+              <span>PlannerRouter and registries</span>
+              <span>Planner strategies</span>
+              <span>Deterministic planning</span>
+              <span>OpenAI-compatible planners</span>
+              <span>Local and distributed configurations</span>
+              <span>Health and eligibility monitoring</span>
+              <span>Historical context retrieval</span>
+              <span>ExecutionPlan v1</span>
+            </div>
+          </details>
+
+          <details>
+            <summary>Capabilities and SDK</summary>
+
+            <div class="inside">
+              <span>Declarative capability authoring</span>
+              <span>Capability modules</span>
+              <span>Middleware pipeline</span>
+              <span>Lifecycle and timeout middleware</span>
+              <span>Filesystem and HTTP</span>
+              <span>Shell and browser operations</span>
+            </div>
+          </details>
+
+          <details>
+            <summary>MCP interoperability</summary>
+
+            <div class="inside">
+              <span>Expose capabilities to MCP clients</span>
+              <span>Execute MCP tools as capabilities</span>
+              <span>Inbound and outbound stdio</span>
+              <span>Existing runtime and lifecycle preserved</span>
+            </div>
+          </details>
+
+          <details>
+            <summary>Runtime memory</summary>
+
+            <div class="inside">
+              <span>Persistent job history</span>
+              <span>Planner context retrieval</span>
+              <span>Historical capability recall</span>
+              <span>Outcome recording</span>
+              <span>Human review workflow</span>
+            </div>
+          </details>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ROADMAP -->
+
+    <section>
+      <div class="wrap">
+
+        <div class="section-head reveal">
+          <div>
+            <div class="kicker">Where Veil is going</div>
+            <h2>Architecture first. Ecosystem next.</h2>
+          </div>
+
+          <p>
+            Veil reaches v0.1.0 when somebody else can confidently extend it
+            without understanding Veil Core. Future directions remain informed
+            by real-world use rather than promises.
+          </p>
+        </div>
+
+        <div class="roadmap reveal">
+
+          <div class="phase current">
+            <small>NOW</small>
+            <b>Architecture lock</b>
+          </div>
+
+          <div class="phase">
+            <small>NEXT</small>
+            <b>SDK ergonomics</b>
+          </div>
+
+          <div class="phase">
+            <small>THEN</small>
+            <b>Documentation + v0.1.0</b>
+          </div>
+
+          <div class="phase">
+            <small>AFTER</small>
+            <b>Real-world ecosystem</b>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL -->
+
+    <section
+      class="final"
+      id="open-source"
+    >
+      <div class="wrap reveal">
+
+        <div class="kicker">
+          Open source · preparing for v0.1.0
+        </div>
+
+        <h2>
+          Build the execution layer once.
+        </h2>
+
+        <p>
+          Use it from AI, applications, humans, and automation without
+          coupling intelligence directly to execution infrastructure.
+        </p>
+
+        <a
+          class="button primary"
+          href="#architecture"
+        >
+          Explore the architecture
+        </a>
+
+      </div>
+    </section>
+
   </main>
-  <footer class="footer wrap"><span>Veil — governed execution for AI and software systems.</span><span>Intent → Plan → Governed execution</span></footer>
+
+  <footer class="footer wrap">
+    <span>
+      Veil — governed execution for AI and software systems.
+    </span>
+
+    <span>
+      Intent → Plan → Governed execution
+    </span>
+  </footer>
+
   <script>
-    const checks=[...document.querySelectorAll('.check')],run=document.querySelector('#run'),heroRun=document.querySelector('#heroRun'),receipt=document.querySelector('#receipt'),state=document.querySelector('#packetState'),signal=document.querySelector('#signal');
-    const delay=ms=>new Promise(r=>setTimeout(r,ms));
-    async function execute(){run.disabled=true;receipt.classList.remove('show');checks.forEach(c=>c.classList.remove('show'));state.textContent='GOVERNING';signal.classList.remove('travel');void signal.offsetWidth;signal.classList.add('travel');document.querySelector('.boundary').scrollIntoView({behavior:'smooth',block:'center'});for(const item of checks){await delay(340);item.classList.add('show')}await delay(350);state.textContent='COMPLETED';receipt.classList.add('show');run.disabled=false;run.textContent='Run again'}
-    run.addEventListener('click',execute);heroRun.addEventListener('click',execute);
-    const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.12});document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+    const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+    const scenarios = {
+      summary: {
+        intent: "Summarize the local document.",
+        steps: [
+          {
+            capability: "filesystem.file.read",
+            requires: "file"
+          },
+          {
+            capability: "document.summarize"
+          }
+        ]
+      },
+
+      github: {
+        intent: "Read the local document and create a GitHub issue from the findings.",
+        steps: [
+          {
+            capability: "filesystem.file.read",
+            requires: "file"
+          },
+          {
+            capability: "github.issue.create",
+            requires: "github",
+            externalWrite: true
+          }
+        ]
+      },
+
+      delete: {
+        intent: "Read the document, process it, then delete the original file.",
+        steps: [
+          {
+            capability: "filesystem.file.read",
+            requires: "file"
+          },
+          {
+            capability: "document.process"
+          },
+          {
+            capability: "filesystem.file.delete",
+            requires: "delete",
+            destructive: true
+          }
+        ]
+      }
+    };
+
+    const capabilityInputs = {
+      file: document.querySelector("#fileEnabled"),
+      github: document.querySelector("#githubEnabled"),
+      delete: document.querySelector("#deleteEnabled")
+    };
+
+    const approvalRequired =
+      document.querySelector("#approvalRequired");
+
+    const scenarioButtons =
+      [...document.querySelectorAll(".scenario")];
+
+    const requestText =
+      document.querySelector("#requestText");
+
+    const planSteps =
+      document.querySelector("#planSteps");
+
+    const executionLog =
+      document.querySelector("#executionLog");
+
+    const runButton =
+      document.querySelector("#run");
+
+    const heroRun =
+      document.querySelector("#heroRun");
+
+    const approvalPanel =
+      document.querySelector("#approvalPanel");
+
+    const approvalText =
+      document.querySelector("#approvalText");
+
+    const approveButton =
+      document.querySelector("#approveButton");
+
+    const rejectButton =
+      document.querySelector("#rejectButton");
+
+    const receipt =
+      document.querySelector("#receipt");
+
+    const packetState =
+      document.querySelector("#packetState");
+
+    const stateDot =
+      document.querySelector("#stateDot");
+
+    let selectedScenario = "summary";
+    let running = false;
+    let approvalResolver = null;
+
+    function setState(label, type = "ready") {
+      packetState.textContent = label;
+
+      stateDot.className = `dot ${type}`;
+    }
+
+    function addEvent(type, title, detail = "") {
+      const iconMap = {
+        ok: "✓",
+        warn: "◆",
+        error: "✕",
+        info: "•"
+      };
+
+      const event = document.createElement("div");
+
+      event.className = `event ${type}`;
+
+      event.innerHTML = `
+        <span class="event-icon">${iconMap[type] || "•"}</span>
+        <span class="event-main">
+          <strong>${title}</strong>
+          ${detail ? `<span class="event-detail">${detail}</span>` : ""}
+        </span>
+      `;
+
+      executionLog.appendChild(event);
+      executionLog.scrollTop = executionLog.scrollHeight;
+    }
+
+    function renderScenario() {
+      const scenario = scenarios[selectedScenario];
+
+      requestText.textContent = scenario.intent;
+
+      planSteps.innerHTML = scenario.steps
+        .map((step, index) => `
+          <div class="plan-step">
+            <span>${index + 1}.</span>
+            ${step.capability}
+          </div>
+        `)
+        .join("");
+
+      resetExecution();
+    }
+
+    function resetExecution() {
+      executionLog.innerHTML = "";
+
+      approvalPanel.classList.remove("show");
+
+      receipt.className = "receipt";
+      receipt.textContent = "";
+
+      setState("PLAN READY", "ready");
+
+      runButton.disabled = false;
+      runButton.textContent = "Execute governed plan";
+
+      approvalResolver = null;
+      running = false;
+    }
+
+    async function requestApproval(step) {
+      approvalText.textContent =
+        `${step.capability} is waiting for explicit approval.`;
+
+      approvalPanel.classList.add("show");
+
+      return new Promise(resolve => {
+        approvalResolver = resolve;
+      });
+    }
+
+    approveButton.addEventListener("click", () => {
+      if (!approvalResolver) {
+        return;
+      }
+
+      approvalPanel.classList.remove("show");
+
+      const resolve = approvalResolver;
+
+      approvalResolver = null;
+
+      resolve(true);
+    });
+
+    rejectButton.addEventListener("click", () => {
+      if (!approvalResolver) {
+        return;
+      }
+
+      approvalPanel.classList.remove("show");
+
+      const resolve = approvalResolver;
+
+      approvalResolver = null;
+
+      resolve(false);
+    });
+
+    async function execute() {
+      if (running) {
+        return;
+      }
+
+      running = true;
+
+      const scenario = scenarios[selectedScenario];
+
+      executionLog.innerHTML = "";
+      receipt.className = "receipt";
+
+      runButton.disabled = true;
+
+      setState("EXECUTING", "running");
+
+      addEvent(
+        "info",
+        "ExecutionPlan received",
+        `${scenario.steps.length} step${scenario.steps.length === 1 ? "" : "s"} proposed`
+      );
+
+      await delay(450);
+
+      for (let index = 0; index < scenario.steps.length; index++) {
+        const step = scenario.steps[index];
+
+        addEvent(
+          "info",
+          step.capability,
+          `resolving capability for step ${index + 1}`
+        );
+
+        await delay(430);
+
+        if (
+          step.requires &&
+          capabilityInputs[step.requires] &&
+          !capabilityInputs[step.requires].checked
+        ) {
+          addEvent(
+            "error",
+            "Capability unavailable",
+            `${step.capability} is not currently registered`
+          );
+
+          await delay(300);
+
+          setState("STOPPED", "failure");
+
+          receipt.textContent =
+            `✕ EXECUTION STOPPED · ${step.capability} unavailable`;
+
+          receipt.className =
+            "receipt failure show";
+
+          runButton.disabled = false;
+          runButton.textContent = "Run again";
+
+          running = false;
+          return;
+        }
+
+        addEvent(
+          "ok",
+          "Capability resolved",
+          step.capability
+        );
+
+        await delay(400);
+
+        if (
+          step.externalWrite &&
+          approvalRequired.checked
+        ) {
+          addEvent(
+            "warn",
+            "Approval required",
+            `${step.capability} cannot proceed yet`
+          );
+
+          setState("AWAITING APPROVAL", "running");
+
+          const approved =
+            await requestApproval(step);
+
+          if (!approved) {
+            addEvent(
+              "error",
+              "Approval rejected",
+              `${step.capability} was not executed`
+            );
+
+            await delay(250);
+
+            setState("REJECTED", "failure");
+
+            receipt.textContent =
+              "✕ EXECUTION REJECTED · no external write performed";
+
+            receipt.className =
+              "receipt failure show";
+
+            runButton.disabled = false;
+            runButton.textContent = "Run again";
+
+            running = false;
+            return;
+          }
+
+          addEvent(
+            "ok",
+            "Approval granted",
+            `${step.capability} may proceed`
+          );
+
+          setState("EXECUTING", "running");
+
+          await delay(350);
+        }
+
+        addEvent(
+          "info",
+          "Executing capability",
+          step.capability
+        );
+
+        await delay(520);
+
+        addEvent(
+          "ok",
+          "Capability executed",
+          `${step.capability} completed successfully`
+        );
+
+        await delay(320);
+      }
+
+      addEvent(
+        "ok",
+        "Execution completed",
+        "all proposed steps completed"
+      );
+
+      await delay(280);
+
+      setState("COMPLETED", "success");
+
+      receipt.textContent =
+        `✓ COMPLETED · ${scenario.steps.length}/${scenario.steps.length} steps executed`;
+
+      receipt.className =
+        "receipt success show";
+
+      runButton.disabled = false;
+      runButton.textContent = "Run again";
+
+      running = false;
+    }
+
+    runButton.addEventListener(
+      "click",
+      execute
+    );
+
+    heroRun.addEventListener(
+      "click",
+      () => {
+        document
+          .querySelector("#simulation")
+          .scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+          });
+
+        setTimeout(execute, 350);
+      }
+    );
+
+    scenarioButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        if (running) {
+          return;
+        }
+
+        scenarioButtons.forEach(item =>
+          item.classList.remove("active")
+        );
+
+        button.classList.add("active");
+
+        selectedScenario =
+          button.dataset.scenario;
+
+        renderScenario();
+      });
+    });
+
+    Object.values(capabilityInputs).forEach(input => {
+      input.addEventListener("change", () => {
+        if (!running) {
+          resetExecution();
+        }
+      });
+    });
+
+    approvalRequired.addEventListener(
+      "change",
+      () => {
+        if (!running) {
+          resetExecution();
+        }
+      }
+    );
+
+    renderScenario();
+
+    /* --------------------------------
+       Architecture explorer
+    --------------------------------- */
+
+    const architectureDetails = {
+      intent: {
+        title: "Intent",
+        body:
+          "The desired outcome. Intent may originate from AI, an application, automation, a human, or another system. It describes what is wanted rather than directly performing infrastructure operations."
+      },
+
+      planner: {
+        title: "Planner",
+        body:
+          "A planner converts intent into a structured proposal. Different planning strategies or providers can be used without changing the execution machinery that follows."
+      },
+
+      plan: {
+        title: "ExecutionPlan",
+        body:
+          "A structured proposal describing the operations that should be executed. The plan expresses intent in executable form, but does not itself perform the work."
+      },
+
+      runtime: {
+        title: "OperatorRuntime",
+        body:
+          "The execution boundary. OperatorRuntime receives plans, coordinates execution, resolves capabilities, enforces the configured execution lifecycle, and produces observable outcomes."
+      },
+
+      registry: {
+        title: "CapabilityRegistry",
+        body:
+          "The registry contains the capabilities available to the runtime. A requested operation must resolve to something that has actually been registered before it can be executed."
+      },
+
+      capability: {
+        title: "Capability",
+        body:
+          "A capability is the concrete operation that performs work: reading a file, making an HTTP request, querying a database, invoking an MCP tool, or interacting with another system."
+      },
+
+      result: {
+        title: "Result",
+        body:
+          "Execution produces structured outcomes and observable lifecycle information. The caller can see what succeeded, what failed, and where execution stopped."
+      }
+    };
+
+    const architectureNodes =
+      [...document.querySelectorAll(".arch-node")];
+
+    const architectureDetail =
+      document.querySelector("#architectureDetail");
+
+    architectureNodes.forEach(node => {
+      node.addEventListener("click", () => {
+        architectureNodes.forEach(item =>
+          item.classList.remove("active")
+        );
+
+        node.classList.add("active");
+
+        const detail =
+          architectureDetails[node.dataset.node];
+
+        architectureDetail.innerHTML = `
+          <strong>${detail.title}</strong>
+          <p>${detail.body}</p>
+        `;
+      });
+    });
+
+    /* --------------------------------
+       Reveal animations
+    --------------------------------- */
+
+    const observer =
+      new IntersectionObserver(
+        entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+            }
+          });
+        },
+        {
+          threshold: .12
+        }
+      );
+
+    document
+      .querySelectorAll(".reveal")
+      .forEach(element => observer.observe(element));
   </script>
 </body>
 </html>
