@@ -49,3 +49,13 @@ Execution should remain governed through capability validation, policy, lifecycl
 - Preserve existing public contracts unless a change is justified.
 - Update documentation when architecture changes.
 - Prefer explicit behavior over implicit magic.
+
+## Agent workflow
+
+Read `AGENTS.md` before starting. Work from the bounded tasks in
+`docs/release/v0.1.0.md`. Do not combine package-boundary, test, example, and
+documentation ownership in one change unless the task explicitly requires it.
+
+Before editing, identify the affected files and the smallest proposed change.
+Finish by running `npm run check` and reporting exact results. Stop for a
+maintainer decision before changing a locked public contract.
