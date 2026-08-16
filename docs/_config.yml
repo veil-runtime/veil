@@ -1,0 +1,6 @@
+exclude:
+  - ARCHITECTURE.md
+  - ROADMAP.md
+  - index-old.md
+  - adr
+  - release
