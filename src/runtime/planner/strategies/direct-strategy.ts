@@ -24,29 +24,33 @@ export class DirectStrategy
   async execute(
     request: PlannerStrategyRequest
   ): Promise<ExecutionPlan> {
+    const plannerId =
+      request.planner ??
+      this.plannerId;
+
     await plannerRegistry.refreshHealth(
-      this.plannerId
+      plannerId
     );
 
     const eligibility =
       plannerRegistry.getEligibility(
-        this.plannerId
+        plannerId
       );
 
     if (!eligibility.eligible) {
       throw new Error(
-        `Planner ${this.plannerId} is not eligible: ${eligibility.reasons.join('; ')}`
+        `Planner ${plannerId} is not eligible: ${eligibility.reasons.join('; ')}`
       );
     }
 
     const planner =
       plannerRegistry.get(
-        this.plannerId
+        plannerId
       );
 
     if (!planner) {
       throw new Error(
-        `Planner not found: ${this.plannerId}`
+        `Planner not found: ${plannerId}`
       );
     }
 

@@ -66,10 +66,6 @@ async function main(): Promise<void> {
         reason:
           'ADR-001 outbound MCP proof',
 
-        status: 'pending',
-
-        createdAt:
-          new Date().toISOString(),
       },
     ],
   };

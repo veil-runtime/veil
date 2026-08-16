@@ -15,6 +15,8 @@ export const linkedinSelfProfileCapability: Capability<
 > = {
   name: 'linkedin.profile.self',
 
+  version: '1.0.0',
+
   description:
     'Read the authenticated LinkedIn user profile name, headline, company, location and profile URL',
 

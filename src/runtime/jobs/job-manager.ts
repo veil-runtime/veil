@@ -2,16 +2,16 @@ import { randomUUID } from 'node:crypto';
 
 import { capabilityRegistry } from '../registry/registry.js';
 import { checkPermission } from '../permissions/permissions.js';
-import { plannerRegistry } from '../planner/planner-registry.js';
 import { ExecutionPlan } from '../planner/planner.js';
-import { validatePlan } from '../execution/plan-validator.js';
+import { validatePlan, validateStepInput } from '../execution/plan-validator.js';
+import { ExecutionCaller } from '../execution/execution-context.js';
+import { resolveResultReferences } from '../execution/result-reference.js';
 import { runtimeEventBus } from '../events/memory-event-bus.js';
 
 import { Job, JobOutcome } from './job.js';
 import { JobEvent, JobEventType } from './job-event.js';
 import { JobStatus } from './job-status.js';
 import { JobListFilter, jobStore } from './job-store.js';
-import { jobMemory } from './job-memory.js';
 
 import { ConsoleExecutionLogger } from '../execution/console-execution-logger.js';
 import { ConsoleLogSink } from '../logging/console-log-sink.js';
@@ -20,11 +20,21 @@ import { SQLiteLogSink } from '../logging/sqlite-log-sink.js';
 
 class JobManager {
   async executePlan(
-    plan: ExecutionPlan
+    plan: ExecutionPlan,
+    caller?: ExecutionCaller
   ): Promise<Job> {
     if (!plan.steps.length) {
       throw new Error(
         'Execution plan contains no steps'
+      );
+    }
+
+    const validation = validatePlan(plan.steps);
+    if (!validation.valid) {
+      throw new Error(
+        `Execution plan failed validation: ${validation.errors
+          .map((error) => error.message)
+          .join('; ')}`
       );
     }
 
@@ -36,13 +46,18 @@ class JobManager {
       goal
     );
 
-    job.steps = plan.steps;
+    job.idempotencyKey = plan.idempotencyKey;
+    job.steps = plan.steps.map((step) => ({
+      ...step,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+    }));
     job.updatedAt =
       new Date().toISOString();
 
     await jobStore.update(job);
 
-    return this.execute(job.id);
+    return this.execute(job.id, caller);
   }
 
   async create(
@@ -103,86 +118,10 @@ class JobManager {
     return job;
   }
 
-  async run(
-    goal: string,
-    planner?: string
+  async execute(
+    id: string,
+    caller?: ExecutionCaller
   ): Promise<Job> {
-    const created = await this.create(goal, planner);
-
-    await this.plan(created.id);
-
-    return this.execute(created.id);
-  }
-
-  async plan(id: string): Promise<Job> {
-    const job = await jobStore.get(id);
-
-    if (!job) {
-      throw new Error(`Job not found: ${id}`);
-    }
-
-    job.status = 'planning';
-    job.updatedAt = new Date().toISOString();
-
-    this.addEvent(job, 'planning.started');
-
-    const planner = job.planner
-      ? plannerRegistry.get(job.planner)
-      : plannerRegistry.getDefault();
-
-    if (!planner) {
-      throw new Error(
-        `Planner not found: ${job.planner}`
-      );
-    }
-
-    const context = await jobMemory.getPlannerContext(
-      job.goal
-    );
-
-    const plan = await planner.plan(
-      job.goal,
-      context
-    );
-
-    const validation = validatePlan(
-      plan.steps
-    );
-
-    if (!validation.valid) {
-      this.addEvent(job, 'planning.completed', {
-        planner: planner.name,
-        stepCount: plan.steps.length,
-        valid: false,
-        validationErrors: validation.errors,
-      });
-
-      throw new Error(
-        `Generated plan failed validation: ${validation.errors
-          .map((error) => error.message)
-          .join('; ')}`
-      );
-    }
-
-    job.steps = plan.steps;
-
-    job.status = 'created';
-    job.updatedAt = new Date().toISOString();
-
-    this.addEvent(job, 'planning.completed', {
-      planner: planner.name,
-      stepCount: job.steps.length,
-      valid: true,
-      memoryJobs:
-        context.previousJobs?.length ?? 0,
-    });
-
-    await jobStore.update(job);
-
-    return job;
-  }
-
-  async execute(id: string): Promise<Job> {
     const job = await jobStore.get(id);
 
     if (!job) {
@@ -227,6 +166,27 @@ class JobManager {
         });
 
         try {
+          const completedSteps = job.steps.slice(
+            0,
+            job.steps.indexOf(step)
+          );
+          const resolvedInput = resolveResultReferences(
+            step.input,
+            completedSteps
+          );
+          const inputValidation = validateStepInput(
+            step,
+            resolvedInput
+          );
+
+          if (!inputValidation.valid) {
+            throw new Error(
+              inputValidation.errors
+                .map((validationError) => validationError.message)
+                .join('; ')
+            );
+          }
+
           const logger = new ConsoleExecutionLogger(
             job.id,
             step.id,
@@ -237,11 +197,12 @@ class JobManager {
           );
 
           const result = await capability.execute(
-            step.input,
+            resolvedInput,
             {
               jobId: job.id,
               stepId: step.id,
               logger,
+              caller,
             }
           );
 

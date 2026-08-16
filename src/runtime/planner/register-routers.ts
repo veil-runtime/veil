@@ -10,7 +10,8 @@ export function registerPlannerRouters(): void {
   plannerRouterRegistry.register(
     'default',
     new DefaultPlannerRouter(
-      'local-review'
+      'local-review',
+      'local-direct'
     ),
     {
       default: true,

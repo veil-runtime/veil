@@ -15,11 +15,13 @@ export interface Capability<
   TInput = unknown,
   TResult = unknown
 > {
-  name: string;
+  readonly name: string;
 
-  description: string;
+  readonly version: string;
 
-  risk: CapabilityRisk;
+  readonly description: string;
+
+  readonly risk: CapabilityRisk;
 
   inputSchema?: Record<
     string,

@@ -5,15 +5,7 @@ export type JobStepStatus =
   | 'failed'
   | 'skipped';
 
-export interface JobStep {
-  id: string;
-
-  capability: string;
-
-  input?: unknown;
-
-  reason?: string;
-
+export interface JobStep extends ExecutionStep {
   status: JobStepStatus;
 
   createdAt: string;
@@ -23,3 +15,4 @@ export interface JobStep {
   result?: unknown;
   error?: string;
 }
+import { ExecutionStep } from '../planner/planner.js';

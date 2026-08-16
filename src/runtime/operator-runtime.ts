@@ -1,6 +1,8 @@
 import { Job } from './jobs/job.js';
 import { JobListFilter } from './jobs/job-store.js';
 import { jobManager } from './jobs/job-manager.js';
+import { jobMemory } from './jobs/job-memory.js';
+import { ExecutionCaller } from './execution/execution-context.js';
 
 import {
   CapabilityModule,
@@ -29,6 +31,27 @@ import {
 export interface RunJobOptions {
   planner?: string;
   strategy?: string;
+  caller?: ExecutionCaller;
+}
+
+export interface ExecutePlanOptions {
+  caller?: ExecutionCaller;
+}
+
+function immutableCaller(
+  caller?: ExecutionCaller
+): ExecutionCaller | undefined {
+  if (!caller) return undefined;
+
+  return Object.freeze({
+    ...caller,
+    scopes: caller.scopes
+      ? Object.freeze([...caller.scopes])
+      : undefined,
+    metadata: caller.metadata
+      ? Object.freeze({ ...caller.metadata })
+      : undefined,
+  });
 }
 
 export class OperatorRuntime {
@@ -61,10 +84,12 @@ export class OperatorRuntime {
   }
 
   async executePlan(
-    plan: ExecutionPlan
+    plan: ExecutionPlan,
+    options: ExecutePlanOptions = {}
   ): Promise<Job> {
     return jobManager.executePlan(
-      plan
+      plan,
+      immutableCaller(options.caller)
     );
   }
 
@@ -106,10 +131,13 @@ export class OperatorRuntime {
         goal,
         planner:
           options.planner,
+        context:
+          await jobMemory.getPlannerContext(goal),
       });
 
     return this.executePlan(
-      plan
+      plan,
+      { caller: options.caller }
     );
   }
 
