@@ -13,6 +13,14 @@ description: Veil provides the execution layer between intent and action.
     name="description"
     content="Veil provides the execution layer between intent and action."
   >
+  <meta property="og:title" content="Veil — Governed Execution for AI">
+  <meta
+    property="og:description"
+    content="Veil provides the execution layer between intent and action."
+  >
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://veil-runtime.github.io/veil/">
+  <link rel="canonical" href="https://veil-runtime.github.io/veil/">
   <title>Veil — Governed Execution for AI</title>
 
   <style>
@@ -1319,7 +1327,7 @@ description: Veil provides the execution layer between intent and action.
     <div class="navlinks">
       <a href="#why">Why Veil</a>
       <a href="#architecture">Architecture</a>
-      <a href="#today">What exists</a>
+      <a href="#install">Install</a>
       <a class="pill" href="#open-source">Open source</a>
     </div>
   </nav>
@@ -1344,13 +1352,13 @@ description: Veil provides the execution layer between intent and action.
         </p>
 
         <div class="actions">
-          <button class="button primary" id="heroRun">
+          <a class="button primary" href="#install">
+            Install Veil Core
+          </a>
+
+          <button class="button" id="heroRun">
             Run the simulation
           </button>
-
-          <a class="button" href="#why">
-            Understand the idea ↓
-          </a>
         </div>
       </div>
 
@@ -1578,6 +1586,42 @@ description: Veil provides the execution layer between intent and action.
       </div>
     </section>
 
+    <!-- INSTALL -->
+
+    <section id="install">
+      <div class="wrap">
+
+        <div class="section-head reveal">
+          <div>
+            <div class="kicker">Public package</div>
+            <h2>Veil Core is available today.</h2>
+          </div>
+
+          <p>
+            Install <code>@veil-runtime/core</code> to define capabilities and
+            execute explicit plans through the public runtime boundary.
+          </p>
+        </div>
+
+        <div class="terminal reveal">
+          <div class="terminal-bar">npm</div>
+          <div class="terminal-body">
+            <div class="log">
+              <span class="dim">$</span>
+              <span>npm install @veil-runtime/core</span>
+            </div>
+            <div class="result">
+              Veil Core v0.1.1 is an early public release. The core package and
+              public execution boundary are available now; deeper documentation,
+              examples, capability guides, and getting-started material are
+              continuing to develop.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
     <!-- CONSTANT -->
 
     <section class="constant">
@@ -1758,14 +1802,16 @@ description: Veil provides the execution layer between intent and action.
         <div class="section-head reveal">
           <div>
             <div class="kicker">Capabilities</div>
-            <h2>You decide what exists.</h2>
+            <h2>Define what exists.</h2>
           </div>
 
           <p>
             A capability is an operation explicitly made available for
             execution. Register capabilities once, then reuse the same
             execution machinery across AI, applications, automations,
-            and human-driven workflows.
+            and human-driven workflows. The examples below describe capability
+            shapes you can define; they are not bundled integrations in
+            <code>@veil-runtime/core</code>.
           </p>
         </div>
 
@@ -1934,9 +1980,9 @@ description: Veil provides the execution layer between intent and action.
         </div>
 
         <p class="api-note reveal">
-          The final code example will mirror the frozen v0.1.0 public API exactly.
-          The example above illustrates the capability model rather than introducing
-          a separate website-only API.
+          The interactive quickstart below uses the published v0.1.1 public API.
+          This conceptual example illustrates the capability model without
+          introducing a separate website-only API.
         </p>
 
       </div>
@@ -2042,13 +2088,13 @@ description: Veil provides the execution layer between intent and action.
 
           <div class="source-card">
             <small>HOSTED AI</small>
-            <strong>OpenAI / Claude / other</strong>
+            <strong>Your hosted model</strong>
             <span>↓ Planner ↓ ExecutionPlan</span>
           </div>
 
           <div class="source-card">
             <small>LOCAL AI</small>
-            <strong>Ollama / local models</strong>
+            <strong>Your local model</strong>
             <span>↓ Planner ↓ ExecutionPlan</span>
           </div>
 
@@ -2096,99 +2142,78 @@ description: Veil provides the execution layer between intent and action.
           </div>
 
           <p>
-            MCP clients can discover and invoke Veil capabilities.
-            Veil can also execute tools exposed by external MCP servers.
-            Both directions still pass through the existing Veil runtime and
-            execution lifecycle rather than creating a second execution path.
+            MCP is an interoperability layer around Veil, not a second
+            execution path. Adapters can translate MCP invocations into
+            <code>ExecutionPlan</code> instances, and MCP-backed capabilities
+            can sit behind the same runtime boundary. The public core package
+            does not currently ship MCP adapters or providers.
           </p>
         </div>
 
       </div>
     </section>
 
-    <!-- WHAT EXISTS TODAY -->
+    <!-- PUBLIC CORE -->
 
     <section id="today">
       <div class="wrap">
 
         <div class="section-head reveal">
           <div>
-            <div class="kicker">What exists today</div>
-            <h2>Beyond proof of concept.</h2>
+            <div class="kicker">What is public today</div>
+            <h2>A usable core, an early ecosystem.</h2>
           </div>
 
           <p>
-            The foundation already includes a generic runtime, planning
-            infrastructure, reusable capabilities, persistent history,
-            human-reviewed outcomes, and MCP interoperability in both
-            directions.
+            <code>@veil-runtime/core</code> v0.1.1 provides the public
+            execution boundary. Providers, integrations, and ecosystem
+            packages can be composed around it without changing that model.
           </p>
         </div>
 
         <div class="details reveal">
 
           <details>
-            <summary>Runtime</summary>
+            <summary>Public runtime API</summary>
 
             <div class="inside">
-              <span>Generic execution engine</span>
-              <span>OperatorRuntime façade</span>
-              <span>Capability registry and context</span>
-              <span>Events and structured logging</span>
-              <span>Job lifecycle management</span>
-              <span>Persistent SQLite job store</span>
-              <span>Human-reviewed outcomes</span>
+              <span>OperatorRuntime</span>
+              <span>ExecutionPlan and execution-step types</span>
+              <span>Job, result, and event types</span>
+              <span>Capability and capability-module contracts</span>
             </div>
           </details>
 
           <details>
-            <summary>Reasoning</summary>
-
-            <div class="inside">
-              <span>PlannerRouter and registries</span>
-              <span>Planner strategies</span>
-              <span>Deterministic planning</span>
-              <span>OpenAI-compatible planners</span>
-              <span>Local and distributed configurations</span>
-              <span>Health and eligibility monitoring</span>
-              <span>Historical context retrieval</span>
-              <span>ExecutionPlan v1</span>
-            </div>
-          </details>
-
-          <details>
-            <summary>Capabilities and SDK</summary>
+            <summary>Capability SDK</summary>
 
             <div class="inside">
               <span>Declarative capability authoring</span>
               <span>Capability modules</span>
-              <span>Middleware pipeline</span>
+              <span>Middleware support</span>
               <span>Lifecycle and timeout middleware</span>
-              <span>Filesystem and HTTP</span>
-              <span>Shell and browser operations</span>
             </div>
           </details>
 
           <details>
-            <summary>MCP interoperability</summary>
+            <summary>Planning flexibility</summary>
 
             <div class="inside">
-              <span>Expose capabilities to MCP clients</span>
-              <span>Execute MCP tools as capabilities</span>
-              <span>Inbound and outbound stdio</span>
-              <span>Existing runtime and lifecycle preserved</span>
+              <span>Bring your own planners</span>
+              <span>Deterministic or non-AI planning</span>
+              <span>Explicit ExecutionPlan boundary</span>
+              <span>No required AI vendor</span>
             </div>
           </details>
 
           <details>
-            <summary>Runtime memory</summary>
+            <summary>Extensible boundaries</summary>
 
             <div class="inside">
-              <span>Persistent job history</span>
-              <span>Planner context retrieval</span>
-              <span>Historical capability recall</span>
-              <span>Outcome recording</span>
-              <span>Human review workflow</span>
+              <span>Custom capabilities</span>
+              <span>Custom providers and integrations</span>
+              <span>Infrastructure remains under application control</span>
+              <span>MCP at the interoperability boundary</span>
             </div>
           </details>
 
@@ -2208,9 +2233,9 @@ description: Veil provides the execution layer between intent and action.
           </div>
 
           <p>
-            Veil reaches v0.1.0 when somebody else can confidently extend it
-            without understanding Veil Core. Future directions remain informed
-            by real-world use rather than promises.
+            Veil Core is publicly available at v0.1.1. Future work is guided by
+            real-world use and focuses on developer experience, documentation,
+            examples, and ecosystem growth rather than promises.
           </p>
         </div>
 
@@ -2218,7 +2243,7 @@ description: Veil provides the execution layer between intent and action.
 
           <div class="phase current">
             <small>NOW</small>
-            <b>Architecture lock</b>
+            <b>Public Core v0.1.1</b>
           </div>
 
           <div class="phase">
@@ -2228,7 +2253,7 @@ description: Veil provides the execution layer between intent and action.
 
           <div class="phase">
             <small>THEN</small>
-            <b>Documentation + v0.1.0</b>
+            <b>Documentation and examples</b>
           </div>
 
           <div class="phase">
@@ -2249,7 +2274,7 @@ description: Veil provides the execution layer between intent and action.
       <div class="wrap reveal">
 
         <div class="kicker">
-          Open source · preparing for v0.1.0
+          Open source · Apache-2.0
         </div>
 
         <h2>
@@ -2263,9 +2288,9 @@ description: Veil provides the execution layer between intent and action.
 
         <a
           class="button primary"
-          href="#architecture"
+          href="#install"
         >
-          Explore the architecture
+          Install Veil Core
         </a>
 
       </div>
@@ -2275,11 +2300,11 @@ description: Veil provides the execution layer between intent and action.
 
   <footer class="footer wrap">
     <span>
-      Veil — governed execution for AI and software systems.
+      Veil Core v0.1.1 — Apache-2.0 · Copyright 2026 Mustapha Keraan.
     </span>
 
     <span>
-      Intent → Plan → Governed execution
+      Veil branding is governed separately.
     </span>
   </footer>
 
@@ -2713,25 +2738,41 @@ description: Veil provides the execution layer between intent and action.
         explainBody:
           "Your application owns the implementation. Veil only needs a capability contract around the operation you want to make executable.",
         code:
-    `const capability = {
-      name: "customer.lookup",
+    `import { createCapability } from "@veil-runtime/core";
 
-      async execute(input) {
-        return customers.find(input.id);
+    const echo = createCapability<{ value: string }, string>({
+      name: "example.echo",
+      version: "1.0.0",
+      description: "Return the provided value",
+      risk: "read",
+      async execute({ input }) {
+        return input.value;
       }
-    };`
+    });`
       },
 
       register: {
         title: "Register the capability",
         explainTitle: "Tell Veil what exists.",
         explainBody:
-          "Capabilities become available through the registry. Plans cannot execute undeclared operations simply because a planner requested them.",
+          "Capabilities become available when you install a module on the runtime. Plans cannot execute undeclared operations simply because a planner requested them.",
         code:
-    `registry.register(capability);
+    `import {
+      OperatorRuntime,
+      type CapabilityModule
+    } from "@veil-runtime/core";
 
-    // customer.lookup is now
-    // available for execution`
+    const module: CapabilityModule = {
+      manifest: {
+        name: "example",
+        version: "1.0.0",
+        capabilities: [echo.name]
+      },
+      capabilities: [echo]
+    };
+
+    const runtime = new OperatorRuntime();
+    runtime.use(module);`
       },
 
       plan: {
@@ -2740,12 +2781,17 @@ description: Veil provides the execution layer between intent and action.
         explainBody:
           "The plan describes what should happen. It may come from AI, deterministic software, a human workflow, or another system.",
         code:
-    `const plan = {
+    `import type { ExecutionPlan } from "@veil-runtime/core";
+
+    const plan: ExecutionPlan = {
+      version: "1.0",
       steps: [
         {
-          capability: "customer.lookup",
+          id: "echo",
+          capability: echo.name,
+          capabilityVersion: echo.version,
           input: {
-            id: "cust_42"
+            value: "Hello from Veil"
           }
         }
       ]
@@ -2756,12 +2802,12 @@ description: Veil provides the execution layer between intent and action.
         title: "Execute through Veil",
         explainTitle: "The same runtime performs the work.",
         explainBody:
-          "OperatorRuntime resolves the requested capability, executes it through the configured lifecycle, and returns an observable result.",
+          "OperatorRuntime resolves the requested capability, executes it through the configured lifecycle, and returns the resulting job.",
         code:
-    `const result =
+    `const job =
       await runtime.executePlan(plan);
 
-    console.log(result);`
+    console.log(job.status, job.result);`
       }
     };
 
