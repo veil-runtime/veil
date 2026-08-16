@@ -25,11 +25,12 @@ try {
   const files = pack.files.map(({ path }) => path).sort();
 
   assert.equal(pack.name, '@veil-runtime/core');
-  assert.equal(pack.version, '0.1.0');
+  assert.equal(pack.version, '0.1.1');
   assert.ok(files.includes('dist/index.js'));
   assert.ok(files.includes('dist/index.d.ts'));
   assert.ok(files.includes('README.md'));
   assert.ok(files.includes('LICENSE'));
+  assert.ok(files.includes('NOTICE'));
   assert.ok(files.includes('package.json'));
   assert.ok(!files.some((path) => path.startsWith('src/')));
   assert.ok(!files.some((path) => path.startsWith('test/')));
