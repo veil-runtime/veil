@@ -1,3 +1,6 @@
+import { mkdirSync } from 'node:fs';
+import { dirname } from 'node:path';
+
 import Database from 'better-sqlite3';
 
 import { ExecutionLogEntry } from '../execution/execution-logger.js';
@@ -9,6 +12,7 @@ export class SQLiteLogSink
   private readonly db: Database.Database;
 
   constructor(path = './data/operator.db') {
+    mkdirSync(dirname(path), { recursive: true });
     this.db = new Database(path);
 
     this.db.exec(`
