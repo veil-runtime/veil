@@ -1,6 +1,7 @@
-import Database from 'better-sqlite3';
 import { mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
+
+import Database from 'better-sqlite3';
 
 import { ExecutionLogEntry } from '../execution/execution-logger.js';
 import { ExecutionLogSink } from './execution-log-sink.js';
