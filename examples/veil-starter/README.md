@@ -1264,3 +1264,49 @@ payments-service demonstration goal and proposes:
 This keeps the reasoning/execution boundary fully testable offline without
 external model credentials. It is not a chatbot, does not call tools outside
 Veil, and does not add model configuration, memory, or persistence.
+
+---
+
+# Lesson 07 — MCP Interoperability
+
+The lessons progress from execution to interoperability:
+
+```text
+01 Execute
+02 Extend
+03 Compose
+04 Integrate
+05 Govern
+06 Reason
+07 Interoperate
+```
+
+Lesson 07 proves that MCP changes how an action enters Veil. It does not
+change how Veil executes it.
+
+Select **MCP**, then run the `payments-api` service check. The Starter's local
+MCP client sends a tool request to the public `McpAdapter`. The adapter creates
+the normal `ExecutionPlan`, and Veil executes the existing `service.health`
+capability through `OperatorRuntime`.
+
+```text
+MCP Client
+    |
+    v
+McpAdapter
+    |
+    v
+ExecutionPlan
+    |
+    v
+OperatorRuntime
+    |
+    v
+Capability
+```
+
+In **Experience** mode, the lesson presents only the service check and its
+health result. In **Learn** mode, it shows the real MCP request, the resulting
+Veil Job and events, and the final result. The adapter does not create a second
+execution model: it only translates the MCP interaction into Veil's existing
+runtime boundary.

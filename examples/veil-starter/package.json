@@ -13,6 +13,7 @@
     "check": "npm run typecheck && npm test"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "@veil-runtime/core": "file:../.."
   },
   "devDependencies": {

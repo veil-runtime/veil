@@ -1,4 +1,4 @@
-export type ScenarioDomain = 'personal' | 'developer' | 'support' | 'operations' | 'planner';
+export type ScenarioDomain = 'personal' | 'developer' | 'support' | 'operations' | 'planner' | 'mcp';
 
 export interface ScenarioDefinition {
   id: string;
@@ -74,6 +74,16 @@ export const scenarios: readonly ScenarioDefinition[] = [
     capabilityName: 'service.health',
     exampleInput: {
       goal: 'Check the payments service',
+    },
+  },
+  {
+    id: 'mcp-service-health',
+    domain: 'mcp',
+    label: 'MCP Interoperability',
+    description: 'Check a service through MCP while Veil keeps its normal execution path.',
+    capabilityName: 'service.health',
+    exampleInput: {
+      serviceName: 'payments-api',
     },
   },
 ];

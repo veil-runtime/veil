@@ -18,13 +18,14 @@ export function ScenarioPanel({
   onInputChange,
 }: ScenarioPanelProps) {
   const isPlannerScenario = scenario.domain === 'planner';
+  const isMcpScenario = scenario.domain === 'mcp';
 
   return (
     <section className="panel">
-      <p className="eyebrow">{scenario.domain}</p>
+      <p className="eyebrow">{isMcpScenario ? 'MCP' : scenario.domain}</p>
       <h2>{scenario.label}</h2>
-      <p>{scenario.description}</p>
-      {!isPlannerScenario || mode === 'learn' ? (
+      {mode === 'learn' || !isMcpScenario ? <p>{scenario.description}</p> : null}
+      {(!isPlannerScenario || mode === 'learn') && (mode === 'learn' || !isMcpScenario) ? (
         <div className="capability-name">
           <strong>{isPlannerScenario ? 'Planner proposes a registered capability' : (scenario.capabilityNames ?? [scenario.capabilityName]).join(' → ')}</strong>
           <span>Registered by Veil</span>
@@ -32,7 +33,7 @@ export function ScenarioPanel({
       ) : null}
       {Object.keys(scenario.exampleInput).map((field) => (
         <label key={field} htmlFor={field}>
-          {labelFor(field)}
+          {isMcpScenario && field === 'serviceName' ? 'Service' : labelFor(field)}
           {field === 'content' ? (
             <textarea
               id={field}

@@ -60,6 +60,11 @@ export function App() {
   }, [scenario]);
 
   useEffect(() => {
+    if (scenario.domain === 'mcp') {
+      setPreview(undefined);
+      return;
+    }
+
     const controller = new AbortController();
     const timer = window.setTimeout(async () => {
       try {
@@ -102,16 +107,25 @@ export function App() {
     setResponse(undefined);
 
     try {
-      const result = await fetch(scenario.domain === 'planner' ? '/api/plan-and-run' : '/api/execute', {
+      const result = await fetch(
+        scenario.domain === 'mcp'
+          ? '/api/mcp'
+          : scenario.domain === 'planner'
+            ? '/api/plan-and-run'
+            : '/api/execute',
+        {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(scenario.domain === 'planner'
+        body: JSON.stringify(scenario.domain === 'mcp'
+          ? { serviceName: executionInput.serviceName }
+          : scenario.domain === 'planner'
           ? { goal: executionInput.goal }
           : {
             capabilityName: scenario.capabilityName,
             input: executionInput,
           }),
-      });
+        },
+      );
       const body = await result.json() as unknown;
 
       setResponse(body);
@@ -139,13 +153,13 @@ export function App() {
   return (
     <main>
       <header>
-        <p className="eyebrow">Veil Starter · Lesson 06</p>
-        <h1>Reasoning proposes what should happen. Veil still owns execution.</h1>
-        <p>Personal, Developer, Support, Operations, and Planner are Starter presentation categories. Veil executes each request through an ExecutionPlan.</p>
+        <p className="eyebrow">Veil Starter · Lesson 07</p>
+        <h1>MCP changes how an action enters Veil. Veil still owns execution.</h1>
+        <p>Personal, Developer, Support, Operations, Planner, and MCP are Starter presentation categories. Veil executes each request through an ExecutionPlan.</p>
         <div className="toggle-group" aria-label="Domain">
-          {(['personal', 'developer', 'support', 'operations', 'planner'] as const).map((entry) => (
+          {(['personal', 'developer', 'support', 'operations', 'planner', 'mcp'] as const).map((entry) => (
             <button key={entry} type="button" className={domain === entry ? '' : 'secondary'} onClick={() => selectDomain(entry)}>
-              {entry === 'personal' ? 'Personal' : entry === 'developer' ? 'Developer' : entry === 'support' ? 'Support' : entry === 'operations' ? 'Operations' : 'Planner'}
+              {entry === 'personal' ? 'Personal' : entry === 'developer' ? 'Developer' : entry === 'support' ? 'Support' : entry === 'operations' ? 'Operations' : entry === 'planner' ? 'Planner' : 'MCP'}
             </button>
           ))}
         </div>
@@ -167,7 +181,7 @@ export function App() {
         </div>
       </header>
       {mode === 'learn' ? (
-        <p className="mental-model">{domain === 'planner' ? 'Goal → Planner → ExecutionPlan → OperatorRuntime → Capability → Result' : 'Scenario → ExecutionPlan → Validation → ExecutionAuthorizer → Capability → Job / Events / Result'}</p>
+        <p className="mental-model">{domain === 'mcp' ? 'MCP Request → McpAdapter → ExecutionPlan → OperatorRuntime → Capability → Result' : domain === 'planner' ? 'Goal → Planner → ExecutionPlan → OperatorRuntime → Capability → Result' : 'Scenario → ExecutionPlan → Validation → ExecutionAuthorizer → Capability → Job / Events / Result'}</p>
       ) : null}
       <div className="panel-grid">
         <ScenarioPanel
@@ -176,7 +190,7 @@ export function App() {
           mode={mode}
           onInputChange={(field, value) => setInput((current) => ({ ...current, [field]: value }))}
         />
-        {mode === 'learn' || domain !== 'planner' ? <PlanPanel plan={preview?.plan ?? { loading: true }} planner={preview?.planner} /> : null}
+        {domain !== 'mcp' && (mode === 'learn' || domain !== 'planner') ? <PlanPanel plan={preview?.plan ?? { loading: true }} planner={preview?.planner} /> : null}
         <ExecutionPanel
           isRunning={isRunning}
           response={response}
