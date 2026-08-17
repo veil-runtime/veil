@@ -21,7 +21,7 @@ export function ScenarioPanel({
       <h2>{scenario.label}</h2>
       <p>{scenario.description}</p>
       <div className="capability-name">
-        <strong>{scenario.capabilityName}</strong>
+        <strong>{(scenario.capabilityNames ?? [scenario.capabilityName]).join(' → ')}</strong>
         <span>Registered by Veil</span>
       </div>
       {Object.keys(scenario.exampleInput).map((field) => (

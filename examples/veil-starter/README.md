@@ -1015,3 +1015,44 @@ The runtime boundary remains the same.
 
 Only the plan becomes more powerful.
 
+---
+
+# Lesson 03 — Compose Capabilities in One Plan
+
+Lesson 01 executed one capability. Lesson 02 showed that different capabilities
+can use the same runtime. Lesson 03 proves that one `ExecutionPlan` can contain
+multiple capabilities, with a later step consuming an earlier step's result.
+
+Select **Support** and run **Prepare Customer Response**:
+
+```text
+customer.lookup
+      |
+      | result
+      v
+email.draft
+```
+
+The Support scenario accepts a customer ID and an issue. Its single plan has two
+ordered steps:
+
+1. `customer.lookup` resolves `CUST-001` to the deterministic Amina customer fixture.
+2. `email.draft` receives that result through the public Veil reference:
+   `{ $ref: 'steps.customer.result' }`.
+
+The Starter does not orchestrate two JavaScript calls or copy the customer into
+the draft input. It creates one `ExecutionPlan` and calls
+`OperatorRuntime.executePlan(plan)` once. Veil resolves the first step result
+when executing the second step.
+
+In **Experience** mode, the final deterministic draft is shown in application
+terms. In **Learn** mode, the real plan exposes the unresolved reference, and
+the real Job exposes each step result, events, and final result.
+
+Select **Try invalid input** to send an empty customer ID. Veil rejects the
+first step during plan validation before a Job is created, and the server
+returns the existing HTTP `422` response.
+
+Lesson 03 deliberately does not send email or add HTTP integrations, databases,
+persistence, AI-generated text, policies, approvals, authentication, retries,
+or new runtime abstractions.
