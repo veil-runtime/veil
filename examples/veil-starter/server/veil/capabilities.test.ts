@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 
 import { deployTriggerCapability, githubRepoGetCapability } from './capabilities.js';
+import { starterPlanner } from './planner.js';
 import { starterExecutionAuthorizer } from './execution-authorizer.js';
 import {
   createDemoPlan,
@@ -171,6 +172,49 @@ test('support plan chaining remains available', async () => {
       status: 'drafted',
     },
   ]);
+});
+
+test('the deterministic planner proposes the registered service.health capability', async () => {
+  const goal = 'Check the payments service';
+  const plan = await starterPlanner.plan(goal);
+
+  assert.equal(plan.goal, goal);
+  assert.deepEqual(plan.steps, [{
+    id: 'check-payments-service',
+    capability: 'service.health',
+    capabilityVersion: '1.0.0',
+    input: { serviceName: 'payments-api' },
+    reason: 'Check the requested payments service.',
+  }]);
+  assert.ok(runtime.listCapabilities().some(
+    (capability) => capability.name === plan.steps[0]?.capability,
+  ));
+});
+
+test('the runtime executes a plan proposed by the deterministic planner', async () => {
+  const plan = await starterPlanner.plan('Check the payments service');
+  const job = await runtime.executePlan(plan);
+
+  assert.equal(job.status, 'completed');
+  assert.equal(job.steps[0]?.capability, 'service.health');
+  assert.ok(job.events.some((event) => event.type === 'capability.started'));
+  assert.deepEqual(job.result, {
+    serviceName: 'payments-api',
+    status: 'healthy',
+    checked: true,
+  });
+});
+
+test('the planner is isolated from runtime and capability execution', async () => {
+  const [planner, client] = await Promise.all([
+    readFile(new URL('./planner.ts', import.meta.url), 'utf8'),
+    readFile(new URL('../../client/src/App.tsx', import.meta.url), 'utf8'),
+  ]);
+
+  assert.doesNotMatch(planner, /(?:\.execute|\.executePlan)\s*\(/);
+  assert.doesNotMatch(planner, /OperatorRuntime|Capability/);
+  assert.match(client, /\/api\/planner|\/api\/plan-and-run/);
+  assert.doesNotMatch(client, /service\.health|@veil-runtime\/core/);
 });
 
 test('deploy.trigger authorizes a valid staging plan and executes once', async () => {

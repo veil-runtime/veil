@@ -1167,3 +1167,100 @@ deployment result. Select `production` to see the real authorization denial.
 In Learn mode, the real `ExecutionPlan`, Job, and events show validation,
 authorization, and the `capability.denied` event. The denied Job has no
 `capability.started` event for `deploy.trigger`.
+
+---
+
+# Lesson 06 — Add Intelligence
+
+The lessons progress from execution to reasoning:
+
+```text
+01 Execute
+02 Extend
+03 Compose
+04 Integrate
+05 Govern
+06 Reason
+```
+
+Lesson 06 proves exactly one idea:
+
+> The planner decides what should happen. Veil still decides how that plan is executed through the runtime.
+
+Select **Planner**, enter:
+
+```text
+Check the payments service
+```
+
+then select **Plan and Run**. The Starter server sends the goal to its
+deterministic planner. The planner proposes a real `ExecutionPlan` for the
+already-registered `service.health` capability:
+
+```text
+Goal
+ |
+ v
+Planner
+ |
+ v
+ExecutionPlan
+ |
+ v
+Veil
+ |
+ v
+Capability
+```
+
+The plan is then submitted unchanged to `OperatorRuntime.executePlan(plan)`.
+The planner does not receive the runtime or a capability instance, so it
+cannot execute `service.health` directly.
+
+In **Experience** mode, the lesson shows only the goal, action, and the
+`payments-api` health result. In **Learn** mode, it shows the original goal,
+the deterministic planner label, the real `ExecutionPlan`, and the runtime's
+Job, events, and final result:
+
+```text
+Goal
+ |
+ v
+Planner
+ |
+ v
+ExecutionPlan
+ |
+ v
+OperatorRuntime
+ |
+ v
+service.health
+ |
+ v
+Result
+```
+
+The default planner is deliberately deterministic. It recognizes the
+payments-service demonstration goal and proposes:
+
+```json
+{
+  "version": "1.0",
+  "goal": "Check the payments service",
+  "steps": [
+    {
+      "id": "check-payments-service",
+      "capability": "service.health",
+      "capabilityVersion": "1.0.0",
+      "input": {
+        "serviceName": "payments-api"
+      }
+    }
+  ]
+}
+```
+
+This keeps the reasoning/execution boundary fully testable offline without
+external model credentials. It is not a chatbot, does not call tools outside
+Veil, and does not add model configuration, memory, or persistence.
