@@ -10,6 +10,7 @@ import {
   createSupportPlan,
   runtime,
 } from './runtime.js';
+import { runMcpServiceHealth } from './mcp.js';
 
 function mockResponse(
   status: number,
@@ -203,6 +204,33 @@ test('the runtime executes a plan proposed by the deterministic planner', async 
     status: 'healthy',
     checked: true,
   });
+});
+
+test('MCP executes the registered service.health capability through the public adapter', async () => {
+  const execution = await runMcpServiceHealth('payments-api');
+
+  assert.deepEqual(execution.request, {
+    name: 'service.health',
+    arguments: { serviceName: 'payments-api' },
+  });
+  assert.equal(execution.job.status, 'completed');
+  assert.equal(execution.job.steps[0]?.capability, 'service.health');
+  assert.ok(execution.job.events.some((event) => event.type === 'capability.started'));
+  assert.deepEqual(execution.result, {
+    serviceName: 'payments-api',
+    status: 'healthy',
+    checked: true,
+  });
+});
+
+test('the MCP Starter integration uses only the public adapter and runtime boundary', async () => {
+  const mcp = await readFile(new URL('./mcp.ts', import.meta.url), 'utf8');
+
+  assert.match(mcp, /from '@veil-runtime\/core'/);
+  assert.match(mcp, /new McpAdapter\(runtime\)/);
+  assert.match(mcp, /client\.callTool\(request\)/);
+  assert.match(mcp, /runtime\.listJobs\(\)/);
+  assert.doesNotMatch(mcp, /src\/integrations\/mcp|\.execute\s*\(/);
 });
 
 test('the planner is isolated from runtime and capability execution', async () => {

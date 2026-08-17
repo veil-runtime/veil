@@ -11,6 +11,7 @@ import {
   createSupportPlan,
   runtime,
 } from './veil/runtime.js';
+import { runMcpServiceHealth } from './veil/mcp.js';
 import { starterPlanner } from './veil/planner.js';
 
 const port = Number(process.env.PORT ?? 3334);
@@ -176,6 +177,27 @@ const server = createServer(async (
       sendJson(response, 422, {
         kind: 'rejected',
         error: message,
+      });
+    }
+    return;
+  }
+
+  if (
+    request.method === 'POST'
+    && url.pathname === '/api/mcp'
+  ) {
+    try {
+      const body = objectBody(await readJson(request));
+      if (typeof body?.serviceName !== 'string') {
+        throw new Error('Request body must contain a serviceName.');
+      }
+
+      const execution = await runMcpServiceHealth(body.serviceName);
+      sendJson(response, 200, execution);
+    } catch (error) {
+      sendJson(response, 422, {
+        kind: 'rejected',
+        error: error instanceof Error ? error.message : 'Unknown MCP execution error.',
       });
     }
     return;
