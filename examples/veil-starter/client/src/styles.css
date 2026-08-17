@@ -1,0 +1,161 @@
+:root {
+  color: #e8edf6;
+  background: #0b1020;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 56px 24px;
+}
+
+header {
+  max-width: 720px;
+  margin-bottom: 32px;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 12px;
+  font-size: clamp(2.2rem, 6vw, 4rem);
+}
+
+h2 {
+  font-size: 1.1rem;
+}
+
+p {
+  color: #aeb9cc;
+  line-height: 1.55;
+}
+
+.eyebrow {
+  color: #75d5b1;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.panel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.panel {
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid #27324a;
+  border-radius: 12px;
+  background: #11192b;
+}
+
+.capability-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 20px 0 12px;
+}
+
+.capability-name span {
+  padding: 4px 8px;
+  border-radius: 999px;
+  color: #75d5b1;
+  background: #15382e;
+  font-size: 0.75rem;
+}
+
+label {
+  display: block;
+  margin: 20px 0 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #3b4a68;
+  border-radius: 7px;
+  color: inherit;
+  background: #0b1020;
+  font: inherit;
+}
+
+.field-hint,
+.empty-state {
+  margin-top: 8px;
+  font-size: 0.8rem;
+}
+
+pre {
+  overflow: auto;
+  padding: 14px;
+  border-radius: 8px;
+  color: #c7d3e9;
+  background: #080d19;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 24px 0 0;
+}
+
+button {
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 7px;
+  color: #07120f;
+  background: #75d5b1;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button.secondary {
+  color: #dce5f3;
+  background: #26334d;
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.error {
+  margin-top: 16px;
+  color: #ffafaf;
+}
+
+.result {
+  max-height: 360px;
+  margin-top: 16px;
+}
+
+@media (max-width: 900px) {
+  .panel-grid {
+    grid-template-columns: 1fr;
+  }
+}
