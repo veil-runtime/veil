@@ -296,11 +296,15 @@ Approval records should contain:
 
 ### Contextual Execution Policy
 
-The current public `OperatorRuntime` API does not expose a configurable
-pre-execution policy boundary for contextual rules such as allowing staging
-deployments while denying production deployments. This remains backlog work;
-it must be designed as a public runtime contract rather than recreated in
-applications.
+The public `OperatorRuntime` API now accepts an `ExecutionAuthorizer`, providing
+a runtime-scoped pre-execution boundary for contextual rules such as allowing
+staging deployments while denying production deployments. Denials use the
+ordinary job lifecycle and emit `capability.denied`.
+
+Richer policy systems remain future work, including approval orchestration,
+RBAC or ABAC, policy persistence and management, and administrative interfaces.
+Those systems must extend the governed runtime path rather than create an
+alternate execution path.
 
 ---
 

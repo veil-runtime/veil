@@ -15,7 +15,7 @@ const llamaMacPlanner =
   new OpenAICompatiblePlannerProvider(
     'llama-mac',
     process.env.LLAMA_MAC_BASE_URL ??
-      'http://10.0.0.100:11434/v1',
+      'http://127.0.0.1:11434/v1',
     process.env.LLAMA_MAC_MODEL ??
       'llama3.2:3b'
   );
@@ -81,7 +81,7 @@ export function registerPlanners(): void {
       config: {
         baseUrl:
           process.env.LLAMA_MAC_BASE_URL ??
-          'http://10.0.0.100:11434/v1',
+          'http://127.0.0.1:11434/v1',
 
         model:
           process.env.LLAMA_MAC_MODEL ??

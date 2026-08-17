@@ -1,6 +1,6 @@
 {
   "name": "@veil-runtime/core",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A governed, capability-driven execution runtime",
   "license": "Apache-2.0",
   "repository": {
