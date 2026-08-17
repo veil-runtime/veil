@@ -1,7 +1,10 @@
 import { randomUUID } from 'node:crypto';
 
 import { capabilityRegistry } from '../registry/registry.js';
-import { checkPermission } from '../permissions/permissions.js';
+import {
+  defaultExecutionAuthorizer,
+  ExecutionAuthorizer,
+} from '../permissions/execution-authorizer.js';
 import { ExecutionPlan } from '../planner/planner.js';
 import { validatePlan, validateStepInput } from '../execution/plan-validator.js';
 import { ExecutionCaller } from '../execution/execution-context.js';
@@ -21,7 +24,9 @@ import { SQLiteLogSink } from '../logging/sqlite-log-sink.js';
 class JobManager {
   async executePlan(
     plan: ExecutionPlan,
-    caller?: ExecutionCaller
+    caller?: ExecutionCaller,
+    authorizer: ExecutionAuthorizer =
+      defaultExecutionAuthorizer
   ): Promise<Job> {
     if (!plan.steps.length) {
       throw new Error(
@@ -57,7 +62,11 @@ class JobManager {
 
     await jobStore.update(job);
 
-    return this.execute(job.id, caller);
+    return this.execute(
+      job.id,
+      caller,
+      authorizer
+    );
   }
 
   async create(
@@ -120,7 +129,9 @@ class JobManager {
 
   async execute(
     id: string,
-    caller?: ExecutionCaller
+    caller?: ExecutionCaller,
+    authorizer: ExecutionAuthorizer =
+      defaultExecutionAuthorizer
   ): Promise<Job> {
     const job = await jobStore.get(id);
 
@@ -148,23 +159,6 @@ class JobManager {
           );
         }
 
-        const permission = checkPermission(capability.risk);
-
-        if (!permission.allowed) {
-          throw new Error(
-            permission.reason ??
-              `Capability not permitted: ${step.capability}`
-          );
-        }
-
-        step.status = 'running';
-        step.startedAt = new Date().toISOString();
-
-        this.addEvent(job, 'capability.started', {
-          stepId: step.id,
-          capability: step.capability,
-        });
-
         try {
           const completedSteps = job.steps.slice(
             0,
@@ -186,6 +180,46 @@ class JobManager {
                 .join('; ')
             );
           }
+
+          const authorization =
+            await authorizer.authorize({
+              jobId: job.id,
+              stepId: step.id,
+              capability: {
+                name: capability.name,
+                version: capability.version,
+                risk: capability.risk,
+              },
+              input: resolvedInput,
+              caller,
+            });
+
+          if (authorization.decision === 'deny') {
+            const message =
+              authorization.reason ??
+              `Capability not permitted: ${step.capability}`;
+
+            step.status = 'failed';
+            step.error = message;
+            step.completedAt = new Date().toISOString();
+
+            this.addEvent(job, 'capability.denied', {
+              stepId: step.id,
+              capability: capability.name,
+              risk: capability.risk,
+              reason: authorization.reason,
+            });
+
+            throw new AuthorizationDeniedError(message);
+          }
+
+          step.status = 'running';
+          step.startedAt = new Date().toISOString();
+
+          this.addEvent(job, 'capability.started', {
+            stepId: step.id,
+            capability: step.capability,
+          });
 
           const logger = new ConsoleExecutionLogger(
             job.id,
@@ -215,6 +249,10 @@ class JobManager {
             capability: step.capability,
           });
         } catch (error) {
+          if (error instanceof AuthorizationDeniedError) {
+            throw error;
+          }
+
           const message =
             error instanceof Error
               ? error.message
@@ -327,5 +365,7 @@ class JobManager {
     return event;
   }
 }
+
+class AuthorizationDeniedError extends Error {}
 
 export const jobManager = new JobManager();

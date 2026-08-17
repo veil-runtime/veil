@@ -5,6 +5,7 @@ export type JobEventType =
   | 'approval.requested'
   | 'approval.granted'
   | 'execution.started'
+  | 'capability.denied'
   | 'capability.started'
   | 'capability.completed'
   | 'capability.failed'

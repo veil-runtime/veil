@@ -1,6 +1,12 @@
 export { OperatorRuntime, operatorRuntime } from './runtime/operator-runtime.js';
 
 export type { ExecutePlanOptions, RunJobOptions } from './runtime/operator-runtime.js';
+export type { OperatorRuntimeOptions } from './runtime/operator-runtime.js';
+export type {
+  CapabilityAuthorizationContext,
+  CapabilityAuthorizationDecision,
+  ExecutionAuthorizer,
+} from './runtime/permissions/execution-authorizer.js';
 export type {
   ExecutionPlan,
   ExecutionStep,

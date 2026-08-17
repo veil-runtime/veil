@@ -411,6 +411,40 @@ This public-package usage is compile- and execution-verified by the release
 consumer fixture. Internal `src`, `dist`, registry, provider, and storage
 subpaths are intentionally unavailable.
 
+### Contextual execution authorization
+
+An application may supply a runtime-scoped authorizer. Veil resolves and
+validates the step input before invoking it, and does not start a denied
+capability:
+
+```ts
+import {
+  OperatorRuntime,
+  type ExecutionAuthorizer,
+} from '@veil-runtime/core';
+
+const authorizer: ExecutionAuthorizer = {
+  async authorize({ capability, input }) {
+    if (
+      capability.name === 'deploy.trigger' &&
+      typeof input === 'object' &&
+      input !== null &&
+      'environment' in input &&
+      input.environment === 'production'
+    ) {
+      return {
+        decision: 'deny',
+        reason: 'Production deployment is not allowed.',
+      };
+    }
+
+    return { decision: 'allow' };
+  },
+};
+
+const runtime = new OperatorRuntime({ authorizer });
+```
+
 ## Repository development
 
 Clone the repository:
