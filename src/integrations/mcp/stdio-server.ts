@@ -5,6 +5,9 @@ import {
 import {
   registerCapabilities,
 } from '../../runtime/registry/register-capabilities.js';
+import {
+  operatorRuntime,
+} from '../../runtime/operator-runtime.js';
 
 import {
   McpAdapter,
@@ -14,7 +17,7 @@ async function start(): Promise<void> {
   registerCapabilities();
 
   const adapter =
-    new McpAdapter();
+    new McpAdapter(operatorRuntime);
 
   const transport =
     new StdioServerTransport();
