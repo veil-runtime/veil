@@ -38,7 +38,16 @@ try {
   assert.ok(!files.some((path) => path.startsWith('.github/')));
   assert.ok(!files.some((path) => path.startsWith('docs/')));
   assert.ok(!files.some((path) => path.startsWith('dist/api/')));
-  assert.ok(!files.some((path) => path.startsWith('dist/integrations/')));
+  const publicIntegrationFiles = new Set([
+    'dist/integrations/mcp/inbound/capability-schema.d.ts',
+    'dist/integrations/mcp/inbound/capability-schema.js',
+    'dist/integrations/mcp/inbound/mcp-adapter.d.ts',
+    'dist/integrations/mcp/inbound/mcp-adapter.js',
+  ]);
+  assert.ok(!files.some(
+    (path) => path.startsWith('dist/integrations/')
+      && !publicIntegrationFiles.has(path),
+  ));
   assert.ok(!files.some((path) => path.startsWith('dist/capabilities/')));
   assert.ok(
     !files.some(

@@ -27,5 +27,6 @@ export type { JobStep, JobStepStatus } from './runtime/jobs/job-step.js';
 export type { JobStatus } from './runtime/jobs/job-status.js';
 export type { JobEvent } from './runtime/jobs/job-event.js';
 export type { RuntimeEvent } from './runtime/events/runtime-event.js';
+export { McpAdapter } from './integrations/mcp/inbound/mcp-adapter.js';
 
 export * from './sdk/index.js';

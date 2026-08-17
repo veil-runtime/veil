@@ -7,11 +7,7 @@ import {
 } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 import {
-  capabilityRegistry,
-} from '../../../runtime/registry/registry.js';
-
-import {
-  operatorRuntime,
+  OperatorRuntime,
 } from '../../../runtime/operator-runtime.js';
 
 import {
@@ -25,7 +21,9 @@ import {
 export class McpAdapter {
   readonly server: McpServer;
 
-  constructor() {
+  constructor(
+    private readonly runtime: OperatorRuntime,
+  ) {
     this.server =
       new McpServer({
         name: 'veil',
@@ -37,7 +35,7 @@ export class McpAdapter {
 
   private registerCapabilities(): void {
     const capabilities =
-      capabilityRegistry.list();
+      this.runtime.listCapabilities();
 
     for (
       const capability
@@ -84,7 +82,7 @@ export class McpAdapter {
             };
 
             const job =
-              await operatorRuntime.executePlan(
+              await this.runtime.executePlan(
                 plan
               );
 

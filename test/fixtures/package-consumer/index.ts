@@ -1,5 +1,6 @@
 import {
   createCapability,
+  McpAdapter,
   OperatorRuntime,
   type CapabilityAuthorizationDecision,
   type CapabilityAuthorizationContext,
@@ -51,8 +52,13 @@ const authorizer: ExecutionAuthorizer = {
 const runtimeOptions: OperatorRuntimeOptions = { authorizer };
 const runtime = new OperatorRuntime(runtimeOptions);
 runtime.use(fixtureModule);
+export const mcpAdapter = new McpAdapter(runtime);
 
 export async function validateConsumer(): Promise<void> {
+  if (!mcpAdapter.server) {
+    throw new Error('MCP adapter did not expose an MCP server.');
+  }
+
   const job = await runtime.executePlan(plan);
   if (job.status !== 'completed') {
     throw new Error(`Unexpected status: ${job.status}: ${job.error ?? 'unknown error'}`);

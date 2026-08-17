@@ -4,6 +4,7 @@ import { validateConsumer } from './dist/index.js';
 
 assert.equal(typeof publicApi.OperatorRuntime, 'function');
 assert.equal(typeof publicApi.createCapability, 'function');
+assert.equal(typeof publicApi.McpAdapter, 'function');
 await validateConsumer();
 
 for (const privateImport of [
