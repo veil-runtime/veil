@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 
-import { githubRepoGetCapability } from './capabilities.js';
+import { deployTriggerCapability, githubRepoGetCapability } from './capabilities.js';
+import { starterExecutionAuthorizer } from './execution-authorizer.js';
 import {
   createDemoPlan,
   createSupportPlan,
@@ -170,6 +171,78 @@ test('support plan chaining remains available', async () => {
       status: 'drafted',
     },
   ]);
+});
+
+test('deploy.trigger authorizes a valid staging plan and executes once', async () => {
+  const plan = createDemoPlan('deploy.trigger', {
+    service: 'payments-api',
+    environment: 'staging',
+  });
+  const decision = await starterExecutionAuthorizer.authorize({
+    jobId: 'staging-job',
+    stepId: 'deploy-trigger',
+    capability: {
+      name: deployTriggerCapability.name,
+      version: deployTriggerCapability.version,
+      risk: deployTriggerCapability.risk,
+    },
+    input: plan.steps[0]?.input,
+  });
+
+  assert.deepEqual(decision, { decision: 'allow' });
+
+  const job = await runtime.executePlan(plan);
+  const eventTypes = job.events.map((event) => event.type);
+
+  assert.equal(deployTriggerCapability.risk, 'write');
+  assert.equal(job.status, 'completed');
+  assert.deepEqual(job.result, {
+    service: 'payments-api',
+    environment: 'staging',
+    status: 'triggered',
+  });
+  assert.equal(
+    eventTypes.filter((type) => type === 'capability.started').length,
+    1,
+  );
+  assert.ok(!eventTypes.includes('capability.denied'));
+});
+
+test('deploy.trigger denies a valid production plan before execution', async () => {
+  const plan = createDemoPlan('deploy.trigger', {
+    service: 'payments-api',
+    environment: 'production',
+  });
+  const decision = await starterExecutionAuthorizer.authorize({
+    jobId: 'production-job',
+    stepId: 'deploy-trigger',
+    capability: {
+      name: deployTriggerCapability.name,
+      version: deployTriggerCapability.version,
+      risk: deployTriggerCapability.risk,
+    },
+    input: plan.steps[0]?.input,
+  });
+
+  assert.deepEqual(decision, {
+    decision: 'deny',
+    reason: 'Production deployments are not permitted in Veil Starter.',
+  });
+
+  const job = await runtime.executePlan(plan);
+  const eventTypes = job.events.map((event) => event.type);
+
+  assert.equal(job.status, 'failed');
+  assert.ok(eventTypes.includes('execution.started'));
+  assert.ok(eventTypes.includes('capability.denied'));
+  assert.equal(
+    eventTypes.filter((type) => type === 'capability.started').length,
+    0,
+  );
+  assert.equal(
+    job.events.find((event) => event.type === 'capability.denied')?.data?.reason,
+    'Production deployments are not permitted in Veil Starter.',
+  );
 });
 
 test('the capability owns the GitHub integration boundary', async () => {

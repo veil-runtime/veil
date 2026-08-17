@@ -7,11 +7,13 @@ import {
 import {
   createNoteCapability,
   customerLookupCapability,
+  deployTriggerCapability,
   emailDraftCapability,
   greetCapability,
   githubRepoGetCapability,
   serviceHealthCapability,
 } from './capabilities.js';
+import { starterExecutionAuthorizer } from './execution-authorizer.js';
 
 const capabilities: CapabilityModule['capabilities'] = [
   greetCapability,
@@ -20,6 +22,7 @@ const capabilities: CapabilityModule['capabilities'] = [
   githubRepoGetCapability,
   customerLookupCapability,
   emailDraftCapability,
+  deployTriggerCapability,
 ];
 
 const demoModule: CapabilityModule = {
@@ -32,7 +35,9 @@ const demoModule: CapabilityModule = {
   capabilities,
 };
 
-export const runtime = new OperatorRuntime();
+export const runtime = new OperatorRuntime({
+  authorizer: starterExecutionAuthorizer,
+});
 
 runtime.use(demoModule);
 

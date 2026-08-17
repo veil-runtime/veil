@@ -33,6 +33,15 @@ export function ScenarioPanel({
               value={input[field] ?? ''}
               onChange={(event) => onInputChange(field, event.target.value)}
             />
+          ) : field === 'environment' ? (
+            <select
+              id={field}
+              value={input[field] ?? ''}
+              onChange={(event) => onInputChange(field, event.target.value)}
+            >
+              <option value="staging">staging</option>
+              <option value="production">production</option>
+            </select>
           ) : (
             <input
               id={field}

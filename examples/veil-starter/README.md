@@ -1124,3 +1124,46 @@ The integration is read-only and unauthenticated for demonstration purposes.
 Credential management, authorization, approval workflows, retries, and rate
 limit handling remain application and future-runtime concerns rather than
 changes to the locked Core contracts.
+
+---
+
+# Lesson 05 — Govern Execution
+
+The lessons progress from execution to governance:
+
+```text
+01 Execute
+02 Extend
+03 Compose
+04 Integrate
+05 Govern
+```
+
+Lesson 05 adds the Operations scenario and its deterministic, simulated
+`deploy.trigger` capability. It accepts a service and environment, but it
+does not contact deployment infrastructure. The lesson concerns authorization,
+not deployments.
+
+`deploy.trigger` is structurally valid for both `staging` and `production`.
+Validation answers, "Is this execution structurally valid?" Authorization
+answers, "Is this valid execution allowed?" The Starter's
+`ExecutionAuthorizer` permits staging and denies production before the
+capability starts.
+
+```text
+Valid ExecutionPlan
+        |
+        v
+ExecutionAuthorizer
+     /       \
+ allow       deny
+   |          |
+   v          X
+Capability stopped
+```
+
+In Experience mode, trigger `payments-api` for `staging` to see the simulated
+deployment result. Select `production` to see the real authorization denial.
+In Learn mode, the real `ExecutionPlan`, Job, and events show validation,
+authorization, and the `capability.denied` event. The denied Job has no
+`capability.started` event for `deploy.trigger`.

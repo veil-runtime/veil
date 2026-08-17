@@ -1,4 +1,4 @@
-export type ScenarioDomain = 'personal' | 'developer' | 'support';
+export type ScenarioDomain = 'personal' | 'developer' | 'support' | 'operations';
 
 export interface ScenarioDefinition {
   id: string;
@@ -53,6 +53,17 @@ export const scenarios: readonly ScenarioDefinition[] = [
     exampleInput: {
       customerId: 'CUST-001',
       issue: 'Cannot access account',
+    },
+  },
+  {
+    id: 'trigger-deployment',
+    domain: 'operations',
+    label: 'Trigger Deployment',
+    description: 'Trigger a simulated deployment through Veil governance.',
+    capabilityName: 'deploy.trigger',
+    exampleInput: {
+      service: 'payments-api',
+      environment: 'staging',
     },
   },
 ];

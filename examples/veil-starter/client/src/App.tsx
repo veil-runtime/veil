@@ -29,6 +29,10 @@ function executionFailure(
     return undefined;
   }
 
+  if (capabilityName === 'deploy.trigger') {
+    return undefined;
+  }
+
   return capabilityName === 'github.repo.get'
     ? `Repository lookup failed: ${job.error}`
     : job.error;
@@ -129,13 +133,13 @@ export function App() {
   return (
     <main>
       <header>
-        <p className="eyebrow">Veil Starter · Lesson 04</p>
-        <h1>Capabilities can safely integrate with external services.</h1>
-        <p>Personal, Developer, and Support are Starter presentation categories. Veil executes each request through an ExecutionPlan.</p>
+        <p className="eyebrow">Veil Starter · Lesson 05</p>
+        <h1>A valid execution can still be denied before a capability starts.</h1>
+        <p>Personal, Developer, Support, and Operations are Starter presentation categories. Veil executes each request through an ExecutionPlan.</p>
         <div className="toggle-group" aria-label="Domain">
-          {(['personal', 'developer', 'support'] as const).map((entry) => (
+          {(['personal', 'developer', 'support', 'operations'] as const).map((entry) => (
             <button key={entry} type="button" className={domain === entry ? '' : 'secondary'} onClick={() => selectDomain(entry)}>
-              {entry === 'personal' ? 'Personal' : entry === 'developer' ? 'Developer' : 'Support'}
+              {entry === 'personal' ? 'Personal' : entry === 'developer' ? 'Developer' : entry === 'support' ? 'Support' : 'Operations'}
             </button>
           ))}
         </div>
@@ -157,7 +161,7 @@ export function App() {
         </div>
       </header>
       {mode === 'learn' ? (
-        <p className="mental-model">Scenario → ExecutionPlan → OperatorRuntime → Capability → Job / Events / Result</p>
+        <p className="mental-model">Scenario → ExecutionPlan → Validation → ExecutionAuthorizer → Capability → Job / Events / Result</p>
       ) : null}
       <div className="panel-grid">
         <ScenarioPanel

@@ -69,6 +69,17 @@ export interface EmailDraftResult {
   status: 'drafted';
 }
 
+export interface DeployTriggerInput {
+  service: string;
+  environment: string;
+}
+
+export interface DeployTriggerResult {
+  service: string;
+  environment: string;
+  status: 'triggered';
+}
+
 const customers: Readonly<Record<string, Customer>> = {
   'CUST-001': {
     id: 'CUST-001',
@@ -284,6 +295,35 @@ export const emailDraftCapability = createCapability<
       subject: 'Regarding your account access',
       body: `Hi ${input.customer.name}, we received your message about ${input.issue}. We will help you restore access to your ${input.customer.plan} account.`,
       status: 'drafted',
+    };
+  },
+});
+
+export const deployTriggerCapability = createCapability<
+  DeployTriggerInput,
+  DeployTriggerResult
+>({
+  name: 'deploy.trigger',
+  version: '1.0.0',
+  description: 'Trigger a deterministic simulated deployment.',
+  risk: 'write',
+  inputSchema: {
+    service: {
+      type: 'string',
+      required: true,
+      description: 'The service to deploy.',
+    },
+    environment: {
+      type: 'string',
+      required: true,
+      description: 'The target environment.',
+    },
+  },
+  async execute({ input }) {
+    return {
+      service: input.service,
+      environment: input.environment,
+      status: 'triggered',
     };
   },
 });
