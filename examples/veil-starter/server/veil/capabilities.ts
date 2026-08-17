@@ -32,6 +32,20 @@ export interface ServiceHealthResult {
   checked: true;
 }
 
+export interface GitHubRepoInput {
+  owner: string;
+  repo: string;
+}
+
+export interface GitHubRepoResult {
+  name: string;
+  fullName: string;
+  description: string | null;
+  stars: number;
+  openIssues: number;
+  url: string;
+}
+
 export interface CustomerLookupInput {
   customerId: string;
 }
@@ -63,6 +77,29 @@ const customers: Readonly<Record<string, Customer>> = {
     plan: 'Business',
   },
 };
+
+function isGitHubRepoResponse(
+  value: unknown,
+): value is {
+  name: string;
+  full_name: string;
+  description: string | null;
+  stargazers_count: number;
+  open_issues_count: number;
+  html_url: string;
+} {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const response = value as Record<string, unknown>;
+  return typeof response.name === 'string'
+    && typeof response.full_name === 'string'
+    && (typeof response.description === 'string' || response.description === null)
+    && typeof response.stargazers_count === 'number'
+    && typeof response.open_issues_count === 'number'
+    && typeof response.html_url === 'string';
+}
 
 export const greetCapability = createCapability<
   GreetInput,
@@ -136,6 +173,62 @@ export const serviceHealthCapability = createCapability<
       serviceName: input.serviceName,
       status: 'healthy',
       checked: true,
+    };
+  },
+});
+
+export const githubRepoGetCapability = createCapability<
+  GitHubRepoInput,
+  GitHubRepoResult
+>({
+  name: 'github.repo.get',
+  version: '1.0.0',
+  description: 'Fetch public GitHub repository metadata.',
+  risk: 'read',
+  inputSchema: {
+    owner: {
+      type: 'string',
+      required: true,
+      description: 'The GitHub repository owner.',
+    },
+    repo: {
+      type: 'string',
+      required: true,
+      description: 'The GitHub repository name.',
+    },
+  },
+  async execute({ input }) {
+    const response = await fetch(
+      `https://api.github.com/repos/${encodeURIComponent(input.owner)}/${encodeURIComponent(input.repo)}`,
+      {
+        headers: {
+          Accept: 'application/vnd.github+json',
+        },
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error(`GitHub repository request failed with status ${response.status}.`);
+    }
+
+    let body: unknown;
+    try {
+      body = await response.json();
+    } catch {
+      throw new Error('GitHub repository response was malformed.');
+    }
+
+    if (!isGitHubRepoResponse(body)) {
+      throw new Error('GitHub repository response was malformed.');
+    }
+
+    return {
+      name: body.name,
+      fullName: body.full_name,
+      description: body.description,
+      stars: body.stargazers_count,
+      openIssues: body.open_issues_count,
+      url: body.html_url,
     };
   },
 });

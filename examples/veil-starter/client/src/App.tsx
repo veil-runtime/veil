@@ -8,6 +8,7 @@ import { PlanPanel } from './components/PlanPanel.js';
 import { ScenarioPanel } from './components/ScenarioPanel.js';
 import {
   scenarioForDomain,
+  scenariosForDomain,
   type ScenarioDomain,
 } from './scenarios/scenarios.js';
 
@@ -15,10 +16,30 @@ interface CapabilityResponse {
   plan: unknown;
 }
 
+function executionFailure(
+  response: unknown,
+  capabilityName: string,
+): string | undefined {
+  if (!response || typeof response !== 'object') {
+    return undefined;
+  }
+
+  const job = (response as { job?: { error?: unknown } }).job;
+  if (typeof job?.error !== 'string') {
+    return undefined;
+  }
+
+  return capabilityName === 'github.repo.get'
+    ? `Repository lookup failed: ${job.error}`
+    : job.error;
+}
+
 export function App() {
   const [domain, setDomain] = useState<ScenarioDomain>('personal');
+  const [scenarioId, setScenarioId] = useState('save-note');
   const [mode, setMode] = useState<'experience' | 'learn'>('experience');
-  const scenario = scenarioForDomain(domain);
+  const scenario = scenarioForDomain(domain, scenarioId);
+  const domainScenarios = scenariosForDomain(domain);
   const [input, setInput] = useState<Record<string, string>>(
     scenario.exampleInput,
   );
@@ -86,6 +107,8 @@ export function App() {
       setResponse(body);
       if (!result.ok) {
         setError('Veil rejected this execution plan.');
+      } else {
+        setError(executionFailure(body, scenario.capabilityName));
       }
     } catch (executionError) {
       setError(
@@ -98,19 +121,33 @@ export function App() {
     }
   }
 
+  function selectDomain(nextDomain: ScenarioDomain) {
+    setDomain(nextDomain);
+    setScenarioId(scenariosForDomain(nextDomain)[0]?.id ?? '');
+  }
+
   return (
     <main>
       <header>
-        <p className="eyebrow">Veil Starter · Lesson 03</p>
-        <h1>One plan, chained capabilities.</h1>
+        <p className="eyebrow">Veil Starter · Lesson 04</p>
+        <h1>Capabilities can safely integrate with external services.</h1>
         <p>Personal, Developer, and Support are Starter presentation categories. Veil executes each request through an ExecutionPlan.</p>
         <div className="toggle-group" aria-label="Domain">
           {(['personal', 'developer', 'support'] as const).map((entry) => (
-            <button key={entry} type="button" className={domain === entry ? '' : 'secondary'} onClick={() => setDomain(entry)}>
+            <button key={entry} type="button" className={domain === entry ? '' : 'secondary'} onClick={() => selectDomain(entry)}>
               {entry === 'personal' ? 'Personal' : entry === 'developer' ? 'Developer' : 'Support'}
             </button>
           ))}
         </div>
+        {domainScenarios.length > 1 ? (
+          <div className="toggle-group" aria-label={`${domain} scenarios`}>
+            {domainScenarios.map((entry) => (
+              <button key={entry.id} type="button" className={scenario.id === entry.id ? '' : 'secondary'} onClick={() => setScenarioId(entry.id)}>
+                {entry.label}
+              </button>
+            ))}
+          </div>
+        ) : null}
         <div className="toggle-group" aria-label="Presentation mode">
           {(['experience', 'learn'] as const).map((entry) => (
             <button key={entry} type="button" className={mode === entry ? '' : 'secondary'} onClick={() => setMode(entry)}>
