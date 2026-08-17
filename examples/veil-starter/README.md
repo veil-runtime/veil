@@ -1056,3 +1056,71 @@ returns the existing HTTP `422` response.
 Lesson 03 deliberately does not send email or add HTTP integrations, databases,
 persistence, AI-generated text, policies, approvals, authentication, retries,
 or new runtime abstractions.
+
+---
+
+# Lesson 04 — Integrate an External REST Service
+
+Lesson 04 adds a real external integration while preserving the execution
+boundary from the earlier lessons.
+
+Select **Developer**, then choose either:
+
+- **Check Service** for the existing deterministic `service.health` capability.
+- **Fetch Repository** for the new `github.repo.get` capability.
+
+`github.repo.get` accepts an `owner` and `repo`, builds a normal
+`ExecutionPlan`, and Veil executes the capability through the same
+`OperatorRuntime.executePlan(plan)` entry point:
+
+```text
+Browser
+   |
+   | POST /api/execute
+   v
+Starter server
+   |
+   | ExecutionPlan
+   v
+OperatorRuntime
+   |
+   v
+github.repo.get
+   |
+   | GET https://api.github.com/repos/{owner}/{repo}
+   v
+GitHub REST API
+```
+
+The browser calls only the Starter server. The Starter server creates and
+executes plans; it does not call GitHub itself. The capability owns the external
+request, and its `execute` function is the only place this lesson performs the
+GitHub network I/O.
+
+For a successful GitHub response, the capability maps the public REST payload
+to the application result:
+
+```json
+{
+  "name": "veil",
+  "fullName": "veil-runtime/veil",
+  "description": "A governed execution runtime",
+  "stars": 42,
+  "openIssues": 3,
+  "url": "https://github.com/veil-runtime/veil"
+}
+```
+
+The values are live GitHub data, so the UI values will vary. A GitHub network
+failure, a non-success HTTP response, or an invalid GitHub payload throws from
+the capability. Veil records that as the normal failed step and failed Job;
+the Starter returns its existing execution failure response.
+
+Lesson 04 uses the platform `fetch` API from the Starter capability. It does
+not use or expose a Core HTTP abstraction. Tests replace `fetch` with
+deterministic mocks, so automated tests never contact GitHub.
+
+The integration is read-only and unauthenticated for demonstration purposes.
+Credential management, authorization, approval workflows, retries, and rate
+limit handling remain application and future-runtime concerns rather than
+changes to the locked Core contracts.

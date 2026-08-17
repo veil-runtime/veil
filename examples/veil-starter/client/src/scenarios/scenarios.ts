@@ -33,6 +33,17 @@ export const scenarios: readonly ScenarioDefinition[] = [
     },
   },
   {
+    id: 'fetch-repository',
+    domain: 'developer',
+    label: 'Fetch Repository',
+    description: 'Fetch public GitHub repository metadata through the Veil runtime.',
+    capabilityName: 'github.repo.get',
+    exampleInput: {
+      owner: 'octocat',
+      repo: 'Hello-World',
+    },
+  },
+  {
     id: 'prepare-customer-response',
     domain: 'support',
     label: 'Prepare Customer Response',
@@ -46,10 +57,19 @@ export const scenarios: readonly ScenarioDefinition[] = [
   },
 ];
 
+export function scenariosForDomain(
+  domain: ScenarioDomain,
+): readonly ScenarioDefinition[] {
+  return scenarios.filter((entry) => entry.domain === domain);
+}
+
 export function scenarioForDomain(
   domain: ScenarioDomain,
+  id?: string,
 ): ScenarioDefinition {
-  const scenario = scenarios.find((entry) => entry.domain === domain);
+  const scenario = scenariosForDomain(domain).find(
+    (entry) => id === undefined || entry.id === id,
+  );
   if (!scenario) {
     throw new Error(`No scenario is configured for domain '${domain}'.`);
   }

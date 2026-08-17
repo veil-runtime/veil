@@ -9,7 +9,8 @@
   "scripts": {
     "dev:server": "tsx watch server/index.ts",
     "typecheck": "tsc --project server/tsconfig.json",
-    "check": "npm run typecheck"
+    "test": "tsx --test server/veil/capabilities.test.ts",
+    "check": "npm run typecheck && npm test"
   },
   "dependencies": {
     "@veil-runtime/core": "file:../.."

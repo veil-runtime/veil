@@ -294,6 +294,14 @@ Approval records should contain:
 - Approver
 - Approval timestamp
 
+### Contextual Execution Policy
+
+The current public `OperatorRuntime` API does not expose a configurable
+pre-execution policy boundary for contextual rules such as allowing staging
+deployments while denying production deployments. This remains backlog work;
+it must be designed as a public runtime contract rather than recreated in
+applications.
+
 ---
 
 ## Version 0.9 — Provider Expansion

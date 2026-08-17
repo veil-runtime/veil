@@ -43,6 +43,17 @@ function experienceResult(
     return <div className="output-card"><strong>Draft Ready</strong><p>To: {draft.to}</p><p>Subject: {draft.subject}</p><p>{draft.body}</p></div>;
   }
 
+  if (scenario.capabilityName === 'github.repo.get') {
+    const repository = result as {
+      fullName: string;
+      description: string | null;
+      stars: number;
+      openIssues: number;
+      url: string;
+    };
+    return <div className="output-card"><strong>{repository.fullName}</strong><p>{repository.description ?? 'No description provided.'}</p><p>Stars: {repository.stars} · Open issues: {repository.openIssues}</p><p><a href={repository.url}>{repository.url}</a></p></div>;
+  }
+
   const service = result as { serviceName: string; status: string };
   return <div className="output-card"><strong>{service.serviceName}</strong><p>{service.status}</p></div>;
 }

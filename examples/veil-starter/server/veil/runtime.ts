@@ -9,6 +9,7 @@ import {
   customerLookupCapability,
   emailDraftCapability,
   greetCapability,
+  githubRepoGetCapability,
   serviceHealthCapability,
 } from './capabilities.js';
 
@@ -16,6 +17,7 @@ const capabilities: CapabilityModule['capabilities'] = [
   greetCapability,
   createNoteCapability,
   serviceHealthCapability,
+  githubRepoGetCapability,
   customerLookupCapability,
   emailDraftCapability,
 ];
