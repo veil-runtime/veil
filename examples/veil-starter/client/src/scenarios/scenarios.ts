@@ -1,4 +1,4 @@
-export type ScenarioDomain = 'personal' | 'developer' | 'support' | 'operations';
+export type ScenarioDomain = 'personal' | 'developer' | 'support' | 'operations' | 'planner';
 
 export interface ScenarioDefinition {
   id: string;
@@ -64,6 +64,16 @@ export const scenarios: readonly ScenarioDefinition[] = [
     exampleInput: {
       service: 'payments-api',
       environment: 'staging',
+    },
+  },
+  {
+    id: 'plan-and-run',
+    domain: 'planner',
+    label: 'Plan and Run',
+    description: 'Propose a service check, then let Veil execute the resulting plan.',
+    capabilityName: 'service.health',
+    exampleInput: {
+      goal: 'Check the payments service',
     },
   },
 ];

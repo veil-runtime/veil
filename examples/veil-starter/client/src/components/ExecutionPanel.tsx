@@ -50,6 +50,28 @@ function learnFlow(response: unknown): ReactNode {
   );
 }
 
+function plannerFlow(): ReactNode {
+  return (
+    <div className="execution-flow">
+      <strong>Goal</strong><span>↓</span><strong>Planner</strong><span>↓</span><strong>ExecutionPlan</strong><span>↓</span><strong>OperatorRuntime</strong><span>↓</span><strong>service.health</strong><span>↓</span><strong>Result</strong>
+    </div>
+  );
+}
+
+function plannerDetails(response: unknown): ReactNode {
+  if (!response || typeof response !== 'object') {
+    return null;
+  }
+
+  const { goal, planner } = response as { goal?: unknown; planner?: unknown };
+  return (
+    <p className="field-hint">
+      Goal: {typeof goal === 'string' ? goal : 'Unavailable'}<br />
+      Planner: {typeof planner === 'string' ? planner : 'Unavailable'}
+    </p>
+  );
+}
+
 function experienceResult(
   scenario: ScenarioDefinition,
   response: unknown,
@@ -74,6 +96,13 @@ function experienceResult(
   const result = scenario.domain === 'support'
     ? job?.steps?.at(-1)?.result
     : job?.result;
+  if (scenario.domain === 'planner') {
+    if (!result || typeof result !== 'object') {
+      return <pre className="result">{JSON.stringify(response, null, 2)}</pre>;
+    }
+    const service = result as { serviceName: string; status: string };
+    return <div className="output-card"><strong>{service.serviceName}</strong><p>{service.status === 'healthy' ? 'Healthy' : service.status}</p></div>;
+  }
   if (!result || typeof result !== 'object') {
     return <pre className="result">{JSON.stringify(response, null, 2)}</pre>;
   }
@@ -127,24 +156,24 @@ export function ExecutionPanel({
           onClick={onRun}
           disabled={isRunning}
         >
-          {isRunning ? 'Running with Veil...' : scenario.domain === 'support' ? 'Prepare Response' : scenario.capabilityName === 'deploy.trigger' ? 'Trigger Deployment' : 'Run with Veil'}
+          {isRunning ? 'Running with Veil...' : scenario.domain === 'planner' ? 'Plan and Run' : scenario.domain === 'support' ? 'Prepare Response' : scenario.capabilityName === 'deploy.trigger' ? 'Trigger Deployment' : 'Run with Veil'}
         </button>
-        <button
+        {scenario.domain !== 'planner' ? <button
           type="button"
           className="secondary"
           onClick={onTryInvalidInput}
           disabled={isRunning}
         >
           Try invalid input
-        </button>
+        </button> : null}
       </div>
-      <p className="field-hint">
+      {scenario.domain !== 'planner' ? <p className="field-hint">
         Invalid input is sent to Veil; the browser does not simulate the result.
-      </p>
+      </p> : null}
       {error ? <p className="error">{error}</p> : null}
       {mode === 'experience' ? experienceResult(scenario, response) : response ? (
         <>
-          {scenario.capabilityName === 'deploy.trigger' ? learnFlow(response) : null}
+          {scenario.domain === 'planner' ? <>{plannerFlow()}{plannerDetails(response)}</> : scenario.capabilityName === 'deploy.trigger' ? learnFlow(response) : null}
           <pre className="result">{JSON.stringify(response, null, 2)}</pre>
         </>
       ) : (

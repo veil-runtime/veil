@@ -14,6 +14,7 @@ import {
 
 interface CapabilityResponse {
   plan: unknown;
+  planner?: string;
 }
 
 function executionFailure(
@@ -62,13 +63,16 @@ export function App() {
     const controller = new AbortController();
     const timer = window.setTimeout(async () => {
       try {
-        const query = new URLSearchParams({
-          capabilityName: scenario.capabilityName,
-          input: JSON.stringify(input),
-        });
-        const result = await fetch(`/api/capabilities?${query}`, {
+        const result = scenario.domain === 'planner'
+          ? await fetch(`/api/planner?${new URLSearchParams({ goal: input.goal ?? '' })}`, {
+            signal: controller.signal,
+          })
+          : await fetch(`/api/capabilities?${new URLSearchParams({
+            capabilityName: scenario.capabilityName,
+            input: JSON.stringify(input),
+          })}`, {
           signal: controller.signal,
-        });
+          });
 
         if (!result.ok) {
           throw new Error('Unable to load the Veil runtime.');
@@ -98,13 +102,15 @@ export function App() {
     setResponse(undefined);
 
     try {
-      const result = await fetch('/api/execute', {
+      const result = await fetch(scenario.domain === 'planner' ? '/api/plan-and-run' : '/api/execute', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          capabilityName: scenario.capabilityName,
-          input: executionInput,
-        }),
+        body: JSON.stringify(scenario.domain === 'planner'
+          ? { goal: executionInput.goal }
+          : {
+            capabilityName: scenario.capabilityName,
+            input: executionInput,
+          }),
       });
       const body = await result.json() as unknown;
 
@@ -133,13 +139,13 @@ export function App() {
   return (
     <main>
       <header>
-        <p className="eyebrow">Veil Starter · Lesson 05</p>
-        <h1>A valid execution can still be denied before a capability starts.</h1>
-        <p>Personal, Developer, Support, and Operations are Starter presentation categories. Veil executes each request through an ExecutionPlan.</p>
+        <p className="eyebrow">Veil Starter · Lesson 06</p>
+        <h1>Reasoning proposes what should happen. Veil still owns execution.</h1>
+        <p>Personal, Developer, Support, Operations, and Planner are Starter presentation categories. Veil executes each request through an ExecutionPlan.</p>
         <div className="toggle-group" aria-label="Domain">
-          {(['personal', 'developer', 'support', 'operations'] as const).map((entry) => (
+          {(['personal', 'developer', 'support', 'operations', 'planner'] as const).map((entry) => (
             <button key={entry} type="button" className={domain === entry ? '' : 'secondary'} onClick={() => selectDomain(entry)}>
-              {entry === 'personal' ? 'Personal' : entry === 'developer' ? 'Developer' : entry === 'support' ? 'Support' : 'Operations'}
+              {entry === 'personal' ? 'Personal' : entry === 'developer' ? 'Developer' : entry === 'support' ? 'Support' : entry === 'operations' ? 'Operations' : 'Planner'}
             </button>
           ))}
         </div>
@@ -161,15 +167,16 @@ export function App() {
         </div>
       </header>
       {mode === 'learn' ? (
-        <p className="mental-model">Scenario → ExecutionPlan → Validation → ExecutionAuthorizer → Capability → Job / Events / Result</p>
+        <p className="mental-model">{domain === 'planner' ? 'Goal → Planner → ExecutionPlan → OperatorRuntime → Capability → Result' : 'Scenario → ExecutionPlan → Validation → ExecutionAuthorizer → Capability → Job / Events / Result'}</p>
       ) : null}
       <div className="panel-grid">
         <ScenarioPanel
           scenario={scenario}
           input={input}
+          mode={mode}
           onInputChange={(field, value) => setInput((current) => ({ ...current, [field]: value }))}
         />
-        <PlanPanel plan={preview?.plan ?? { loading: true }} />
+        {mode === 'learn' || domain !== 'planner' ? <PlanPanel plan={preview?.plan ?? { loading: true }} planner={preview?.planner} /> : null}
         <ExecutionPanel
           isRunning={isRunning}
           response={response}

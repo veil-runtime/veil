@@ -11,6 +11,7 @@ import {
   createSupportPlan,
   runtime,
 } from './veil/runtime.js';
+import { starterPlanner } from './veil/planner.js';
 
 const port = Number(process.env.PORT ?? 3334);
 
@@ -51,6 +52,11 @@ function objectBody(body: unknown): Record<string, unknown> | undefined {
   }
 
   return body as Record<string, unknown>;
+}
+
+function requestedGoal(body: unknown): string | undefined {
+  const request = objectBody(body);
+  return typeof request?.goal === 'string' ? request.goal : undefined;
 }
 
 function requestedExecution(
@@ -170,6 +176,59 @@ const server = createServer(async (
       sendJson(response, 422, {
         kind: 'rejected',
         error: message,
+      });
+    }
+    return;
+  }
+
+  if (
+    request.method === 'GET'
+    && url.pathname === '/api/planner'
+  ) {
+    try {
+      const goal = url.searchParams.get('goal');
+      if (!goal) {
+        throw new Error('A goal is required.');
+      }
+
+      const plan = await starterPlanner.plan(goal);
+      sendJson(response, 200, {
+        goal,
+        planner: starterPlanner.name,
+        plan,
+      });
+    } catch (error) {
+      sendJson(response, 422, {
+        error: error instanceof Error ? error.message : 'Unable to create a plan.',
+      });
+    }
+    return;
+  }
+
+  if (
+    request.method === 'POST'
+    && url.pathname === '/api/plan-and-run'
+  ) {
+    try {
+      const goal = requestedGoal(await readJson(request));
+      if (!goal) {
+        throw new Error('Request body must contain a goal.');
+      }
+
+      const plan = await starterPlanner.plan(goal);
+      const job = await runtime.executePlan(plan);
+
+      sendJson(response, 200, {
+        kind: 'job',
+        goal,
+        planner: starterPlanner.name,
+        plan,
+        job,
+      });
+    } catch (error) {
+      sendJson(response, 422, {
+        kind: 'rejected',
+        error: error instanceof Error ? error.message : 'Unknown planning error',
       });
     }
     return;
