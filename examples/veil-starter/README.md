@@ -1310,3 +1310,470 @@ health result. In **Learn** mode, it shows the real MCP request, the resulting
 Veil Job and events, and the final result. The adapter does not create a second
 execution model: it only translates the MCP interaction into Veil's existing
 runtime boundary.
+
+---
+
+# Lesson 08 — Build Your Own
+
+Lessons 01–07 used Veil Starter to demonstrate the runtime through
+progressively richer examples.
+
+Now the goal changes.
+
+You are no longer adding another demo capability. You are going to replace the
+demo with something your own application needs.
+
+The core pattern stays the same:
+
+```text
+Intent
+   |
+   v
+ExecutionPlan
+   |
+   v
+Veil
+   |
+   v
+Capability
+```
+
+Everything else is application-specific.
+
+## 1. Choose Something Your Application Should Be Able to Do
+
+Start with one useful action:
+
+```text
+orders.lookup
+invoice.create
+ticket.update
+document.generate
+deployment.trigger
+customer.notify
+repository.inspect
+```
+
+Keep the first capability small. A good capability has:
+
+- a clear name
+- a clear input contract
+- a predictable result
+- a specific responsibility
+- an appropriate risk level
+
+Avoid creating a large "do everything" capability.
+
+## 2. Define the Capability
+
+Use the public Veil capability contract. Conceptually:
+
+```ts
+const capability = createCapability({
+  name: 'your.capability',
+  version: '1.0.0',
+  description: 'Describe exactly what this capability does.',
+  risk: 'read',
+
+  async execute({ input }) {
+    // Your application or integration logic lives here.
+    return {
+      // Stable capability result.
+    };
+  },
+});
+```
+
+The capability is the boundary between Veil and the system that performs the
+real work. That system could be:
+
+```text
+your application
+an internal API
+a database
+a third-party service
+infrastructure
+a filesystem
+another runtime
+```
+
+Veil does not need to understand the external system itself. It needs a
+capability that knows how to interact with it.
+
+## 3. Register the Capability
+
+Make the capability available to the runtime using the normal Veil registration
+mechanism:
+
+```text
+OperatorRuntime
+      |
+      v
+Registered Capabilities
+      |
+      +-- your.capability
+      +-- another.capability
+      +-- ...
+```
+
+Once registered, the capability can participate in normal Veil execution. You
+do not need to modify `OperatorRuntime` whenever you introduce a new
+application action. You extend what the runtime can do by adding capabilities.
+
+## 4. Create an ExecutionPlan
+
+A capability becomes useful when an `ExecutionPlan` asks Veil to execute it. A
+simple plan contains one step:
+
+```text
+ExecutionPlan
+     |
+     v
+your.capability
+```
+
+More useful workflows can compose multiple capabilities:
+
+```text
+Capability A
+     |
+     | result
+     v
+Capability B
+     |
+     v
+Capability C
+```
+
+As you saw in Lesson 03, later steps can consume earlier results through
+Veil's result-reference mechanism. Keep orchestration inside the plan rather
+than manually chaining capability calls in application code.
+
+## 5. Decide How Intent Enters Veil
+
+Veil does not require one particular interface. Different systems can produce
+or submit an `ExecutionPlan`.
+
+Your application might start with a normal API or UI:
+
+```text
+Application
+     |
+     v
+ExecutionPlan
+     |
+     v
+Veil
+```
+
+You might introduce planning:
+
+```text
+Goal
+ |
+ v
+Planner
+ |
+ v
+ExecutionPlan
+ |
+ v
+Veil
+```
+
+Or expose existing capabilities through MCP:
+
+```text
+MCP Client
+    |
+    v
+McpAdapter
+    |
+    v
+ExecutionPlan
+    |
+    v
+Veil
+```
+
+The entry point can change. The execution boundary does not.
+
+## 6. Add Governance Where It Matters
+
+Not every available capability should necessarily be allowed to execute in
+every context. If your application needs contextual authorization, configure an
+`ExecutionAuthorizer` on the runtime. Conceptually:
+
+```ts
+const runtime = new OperatorRuntime({
+  authorizer: {
+    async authorize({ capability, input, caller }) {
+      // Evaluate your application's rules.
+      return { decision: 'allow' };
+    },
+  },
+});
+```
+
+An authorizer can inspect:
+
+- capability identity
+- capability risk
+- resolved input
+- caller context
+- job and step identity
+
+It can return `allow` or `deny`.
+
+Authorization occurs after Veil has resolved and validated the step input but
+before the capability starts. This means your application can express rules
+such as allowing staging deployment while denying production deployment without
+teaching Veil what "staging" or "production" means. The policy belongs to your
+application. The authorization boundary belongs to Veil.
+
+## 7. Connect a Real System
+
+When you are ready, replace deterministic demonstration logic with a real
+integration:
+
+```text
+ExecutionPlan
+     |
+     v
+your.customer.lookup
+     |
+     v
+Customer API
+```
+
+Keep the external-system logic inside the capability boundary. Do not make the
+rest of your application depend directly on the external API response shape.
+Prefer:
+
+```text
+External API
+     |
+     v
+Capability
+     |
+     v
+Stable Application Result
+```
+
+That keeps your Veil plans and application code insulated from unnecessary
+integration details.
+
+## 8. Add a Planner Only If You Need One
+
+Veil does not require AI. A human, application, deterministic planner, AI
+model, agent, or another system can decide what should happen.
+
+The important boundary is:
+
+```text
+Reasoning
+    |
+    v
+ExecutionPlan
+    |
+    v
+Veil
+    |
+    v
+Execution
+```
+
+If you add AI later, keep it on the reasoning side. The planner proposes; Veil
+executes. Do not let the planner bypass the runtime and call capabilities
+directly.
+
+## 9. Add MCP Only If It Helps Your Integration Model
+
+MCP is another way for systems to interact with tools and capabilities. It
+does not replace Veil's execution model.
+
+The inbound flow remains:
+
+```text
+MCP Client
+    |
+    v
+McpAdapter
+    |
+    v
+ExecutionPlan
+    |
+    v
+OperatorRuntime
+    |
+    v
+Capability
+```
+
+MCP changes how intent enters the system. Veil still owns the execution
+boundary.
+
+## 10. Replace the Starter Scenarios
+
+The Personal, Developer, Support, Operations, Planner, and MCP scenarios exist
+only to teach the concepts. They are not part of Veil Core.
+
+When turning Starter into your own application, replace:
+
+```text
+client/src/scenarios/
+```
+
+with scenarios that make sense for your users, for example:
+
+```text
+Healthcare
+Finance
+Operations
+Internal Tools
+Customer Support
+Developer Platform
+```
+
+You can also remove the scenario abstraction entirely if your application does
+not need it.
+
+Remember: scenario metadata belongs to the application, not Veil. Your UI
+structure should never become a requirement of the runtime.
+
+## A Practical Starting Point
+
+For your first real Veil application, keep the architecture small:
+
+```text
+Your UI / API
+      |
+      v
+ExecutionPlan
+      |
+      v
+OperatorRuntime
+      |
+      v
+Your Capability
+      |
+      v
+Your System
+```
+
+Then add features only when the use case requires them:
+
+```text
+Start
+  |
+  v
+One capability
+  |
+  v
+Multiple capabilities
+  |
+  v
+Multi-step plan
+  |
+  v
+External integration
+  |
+  v
+Authorization
+  |
+  v
+Planner
+  |
+  v
+MCP
+```
+
+You do not need every Veil feature to build something useful.
+
+## The Complete Veil Model
+
+Across these lessons, the Starter evolved from one local action into a runtime
+capable of supporting composition, integrations, governance, planning, and
+interoperability.
+
+```text
+                    Intent
+                      |
+          +-----------+-----------+
+          |                       |
+          v                       v
+     Application                Planner
+                                  |
+                                  v
+                           ExecutionPlan
+          |                       |
+          +-----------+-----------+
+                      |
+                      v
+             ExecutionAuthorizer
+                      |
+                 allow / deny
+                      |
+                      v
+               OperatorRuntime
+                      |
+            +---------+---------+
+            |                   |
+            v                   v
+       Capability          Capability
+            |                   |
+            v                   v
+       Application             APIs
+        / Systems           / Services
+```
+
+MCP can enter through the same execution boundary:
+
+```text
+MCP Client
+    |
+    v
+McpAdapter
+    |
+    v
+ExecutionPlan
+```
+
+The architecture remains consistent regardless of where the intent originated.
+
+## Course Complete
+
+You have now used Veil to:
+
+- execute a capability
+- extend the runtime with new capabilities
+- use the same runtime across different domains
+- compose multiple capabilities into one plan
+- pass results between execution steps
+- connect to a real external system
+- distinguish validation from authorization
+- govern execution with `ExecutionAuthorizer`
+- separate planning from execution
+- execute planner-produced plans
+- interoperate with MCP without introducing another execution path
+
+The recurring pattern throughout the course has been:
+
+```text
+Something decides what should happen.
+            |
+            v
+      ExecutionPlan
+            |
+            v
+          Veil
+            |
+            v
+Something performs the work.
+```
+
+That is the boundary Veil exists to provide.
+
+From here, replace the examples with your own capabilities, systems, rules, and
+reasoning. Build what your application needs. Keep the execution boundary
+explicit.
