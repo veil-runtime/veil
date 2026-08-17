@@ -1,8 +1,12 @@
 import {
   createCapability,
   OperatorRuntime,
+  type CapabilityAuthorizationDecision,
+  type CapabilityAuthorizationContext,
   type CapabilityModule,
+  type ExecutionAuthorizer,
   type ExecutionPlan,
+  type OperatorRuntimeOptions,
 } from '@veil-runtime/core';
 
 const capability = createCapability<{ value: string }, string>({
@@ -34,7 +38,18 @@ const plan: ExecutionPlan = {
   }],
 };
 
-const runtime = new OperatorRuntime();
+const authorizer: ExecutionAuthorizer = {
+  async authorize(
+    context: CapabilityAuthorizationContext,
+  ): Promise<CapabilityAuthorizationDecision> {
+    return context.capability.risk === 'read'
+      ? { decision: 'allow' }
+      : { decision: 'deny', reason: 'fixture only allows reads' };
+  },
+};
+
+const runtimeOptions: OperatorRuntimeOptions = { authorizer };
+const runtime = new OperatorRuntime(runtimeOptions);
 runtime.use(fixtureModule);
 
 export async function validateConsumer(): Promise<void> {
