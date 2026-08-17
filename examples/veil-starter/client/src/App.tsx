@@ -3,40 +3,47 @@ import {
   useState,
 } from 'react';
 
-import { CapabilityPanel } from './components/CapabilityPanel.js';
 import { ExecutionPanel } from './components/ExecutionPanel.js';
 import { PlanPanel } from './components/PlanPanel.js';
+import { ScenarioPanel } from './components/ScenarioPanel.js';
+import {
+  scenarioForDomain,
+  type ScenarioDomain,
+} from './scenarios/scenarios.js';
 
 interface CapabilityResponse {
-  capabilities: Array<{
-    name: string;
-    version: string;
-    description: string;
-    risk: string;
-    inputSchema: Record<string, {
-      type: string;
-      required: boolean;
-      description: string;
-    }>;
-  }>;
   plan: unknown;
 }
 
 export function App() {
-  const [name, setName] = useState('Mustapha');
+  const [domain, setDomain] = useState<ScenarioDomain>('personal');
+  const [mode, setMode] = useState<'experience' | 'learn'>('experience');
+  const scenario = scenarioForDomain(domain);
+  const [input, setInput] = useState<Record<string, string>>(
+    scenario.exampleInput,
+  );
   const [preview, setPreview] = useState<CapabilityResponse>();
   const [response, setResponse] = useState<unknown>();
   const [error, setError] = useState<string>();
   const [isRunning, setIsRunning] = useState(false);
 
   useEffect(() => {
+    setInput(scenario.exampleInput);
+    setResponse(undefined);
+    setError(undefined);
+  }, [scenario]);
+
+  useEffect(() => {
     const controller = new AbortController();
     const timer = window.setTimeout(async () => {
       try {
-        const result = await fetch(
-          `/api/capabilities?name=${encodeURIComponent(name)}`,
-          { signal: controller.signal },
-        );
+        const query = new URLSearchParams({
+          capabilityName: scenario.capabilityName,
+          input: JSON.stringify(input),
+        });
+        const result = await fetch(`/api/capabilities?${query}`, {
+          signal: controller.signal,
+        });
 
         if (!result.ok) {
           throw new Error('Unable to load the Veil runtime.');
@@ -58,9 +65,9 @@ export function App() {
       controller.abort();
       window.clearTimeout(timer);
     };
-  }, [name]);
+  }, [input, scenario]);
 
-  async function execute(requestedName: string) {
+  async function execute(executionInput: Record<string, string>) {
     setIsRunning(true);
     setError(undefined);
     setResponse(undefined);
@@ -69,7 +76,10 @@ export function App() {
       const result = await fetch('/api/execute', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: requestedName }),
+        body: JSON.stringify({
+          capabilityName: scenario.capabilityName,
+          input: executionInput,
+        }),
       });
       const body = await result.json() as unknown;
 
@@ -91,26 +101,42 @@ export function App() {
   return (
     <main>
       <header>
-        <p className="eyebrow">Veil Starter · Lesson 01</p>
-        <h1>Hello, Veil.</h1>
-        <p>
-          Browser UI → Application Server → Veil OperatorRuntime → Capability
-          → Execution Result
-        </p>
+        <p className="eyebrow">Veil Starter · Lesson 02</p>
+        <h1>One runtime, different capabilities.</h1>
+        <p>Personal and Developer are Starter presentation categories. Veil executes the same ExecutionPlan path for both.</p>
+        <div className="toggle-group" aria-label="Domain">
+          {(['personal', 'developer'] as const).map((entry) => (
+            <button key={entry} type="button" className={domain === entry ? '' : 'secondary'} onClick={() => setDomain(entry)}>
+              {entry === 'personal' ? 'Personal' : 'Developer'}
+            </button>
+          ))}
+        </div>
+        <div className="toggle-group" aria-label="Presentation mode">
+          {(['experience', 'learn'] as const).map((entry) => (
+            <button key={entry} type="button" className={mode === entry ? '' : 'secondary'} onClick={() => setMode(entry)}>
+              {entry === 'experience' ? 'Experience' : 'Learn'}
+            </button>
+          ))}
+        </div>
       </header>
+      {mode === 'learn' ? (
+        <p className="mental-model">Scenario → ExecutionPlan → OperatorRuntime → Capability → Job / Events / Result</p>
+      ) : null}
       <div className="panel-grid">
-        <CapabilityPanel
-          capability={preview?.capabilities[0]}
-          name={name}
-          onNameChange={setName}
+        <ScenarioPanel
+          scenario={scenario}
+          input={input}
+          onInputChange={(field, value) => setInput((current) => ({ ...current, [field]: value }))}
         />
         <PlanPanel plan={preview?.plan ?? { loading: true }} />
         <ExecutionPanel
           isRunning={isRunning}
           response={response}
           error={error}
-          onRun={() => void execute(name)}
-          onTryInvalidInput={() => void execute('')}
+          mode={mode}
+          scenario={scenario}
+          onRun={() => void execute(input)}
+          onTryInvalidInput={() => void execute({ ...input, [Object.keys(input)[0] as string]: '' })}
         />
       </div>
     </main>

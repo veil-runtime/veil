@@ -1,4 +1,6 @@
-# Veil Starter — Lesson 01: Hello Veil
+# Veil Starter — Lessons 01 and 02
+
+## Hello Veil
 
 Welcome to the first hands-on Veil lesson.
 
@@ -532,13 +534,428 @@ From here, we can start giving Veil more useful things to do.
 
 ---
 
-## Next — Lesson 02: Build Your Own Capability
+# Lesson 02 — One Runtime, Different Capabilities
 
-Lesson 02 moves beyond the capability provided by the Starter.
+Lesson 01 proved that Veil could execute a real capability.
 
-You will create another capability yourself, register it with Veil, and execute it through the same runtime and UI.
+Lesson 02 proves something broader:
 
-The architecture will stay the same:
+> **Changing what Veil can do does not require changing how Veil works.**
+
+The same runtime now executes capabilities from two different application domains:
+
+- **Personal** presents `notes.create` as **Save a Note**.
+- **Developer** presents `service.health` as **Check Service**.
+
+Both capabilities are registered with the same `OperatorRuntime` and executed through the same `ExecutionPlan` boundary.
+
+```text
+Personal                  Developer
+notes.create              service.health
+     \                       /
+      \                     /
+       ---- ExecutionPlan ---
+                |
+                v
+         OperatorRuntime
+                |
+                v
+        Job / Events / Result
+```
+
+Nothing about the fundamental Veil execution model changed.
+
+Only the capabilities available to the application changed.
+
+---
+
+## Personal Scenario
+
+Select:
+
+**Personal**
+
+The Starter presents:
+
+```text
+Save a Note
+```
+
+which maps to the Veil capability:
+
+```text
+notes.create
+```
+
+The capability accepts:
+
+```json
+{
+  "title": "Meeting Notes",
+  "content": "Follow up with the team."
+}
+```
+
+and returns a deterministic simulated note.
+
+Lesson 02 does not introduce persistence yet.
+
+The purpose is to demonstrate that an application-defined capability can represent useful work while still executing through the same Veil runtime.
+
+---
+
+## Developer Scenario
+
+Select:
+
+**Developer**
+
+The Starter presents:
+
+```text
+Check Service
+```
+
+which maps to:
+
+```text
+service.health
+```
+
+The capability accepts:
+
+```json
+{
+  "serviceName": "payments-api"
+}
+```
+
+and returns a deterministic simulated health result.
+
+Lesson 02 deliberately does not perform a real network request.
+
+Real external integrations belong to a later lesson.
+
+The execution path remains:
+
+```text
+Scenario
+    |
+    v
+ExecutionPlan
+    |
+    v
+OperatorRuntime
+    |
+    v
+service.health
+    |
+    v
+Job / Events / Result
+```
+
+---
+
+## Scenario Metadata Belongs to Starter
+
+The **Personal** and **Developer** concepts exist only in the Starter application.
+
+Scenario definitions live under:
+
+```text
+client/src/scenarios/
+```
+
+They contain presentation metadata that helps the UI describe the demonstrations.
+
+They are **not**:
+
+- Veil capability contracts
+- capability registration metadata
+- runtime authorization inputs
+- governance rules
+- part of `@veil-runtime/core`
+
+Veil itself does not know what **Personal** or **Developer** means.
+
+To Veil, these remain ordinary registered capabilities:
+
+```text
+demo.greet
+notes.create
+service.health
+```
+
+This separation is important.
+
+The application is free to organize capabilities around its own users, domains, workflows, and experiences without requiring Veil Core to understand those concepts.
+
+---
+
+## Experience and Learn Modes
+
+Lesson 02 introduces two ways of viewing the same execution:
+
+```text
+[ Experience ] [ Learn ]
+```
+
+The selected mode changes presentation only.
+
+It does **not** change how Veil executes the request.
+
+### Experience Mode
+
+**Experience** mode presents the capability in application terms.
+
+For example:
+
+```text
+Personal
+
+Save a Note
+
+Title: Meeting Notes
+Content: Follow up with the team.
+
+[ Run with Veil ]
+```
+
+or:
+
+```text
+Developer
+
+Check Service
+
+Service Name: payments-api
+
+[ Run with Veil ]
+```
+
+The result is presented as a simple user-facing output.
+
+The user does not need to understand `ExecutionPlan`, `OperatorRuntime`, or runtime events to use the application.
+
+### Learn Mode
+
+**Learn** mode reveals what happened underneath.
+
+Where available, it shows the real:
+
+- selected capability
+- `ExecutionPlan`
+- `Job`
+- events
+- execution result
+- rejection details
+
+The UI may format this information for readability, but it does not replace Veil's execution contracts with a separate telemetry model.
+
+Both modes execute exactly the same request:
+
+```text
+Experience ─┐
+            |
+            +----> Same ExecutionPlan
+            |             |
+Learn ──────┘             v
+                    OperatorRuntime
+                           |
+                           v
+                     Capability
+                           |
+                           v
+                 Job / Events / Result
+```
+
+Changing the mode changes **presentation only**.
+
+It does not change:
+
+- the server request
+- the execution plan
+- the selected capability
+- runtime execution
+- validation behaviour
+
+---
+
+## Try Breaking It
+
+The new capabilities use Veil's real input validation path.
+
+For:
+
+```text
+notes.create
+```
+
+an invalid required title is rejected.
+
+For:
+
+```text
+service.health
+```
+
+an invalid required service name is rejected.
+
+Select:
+
+**Try invalid input**
+
+to deliberately submit invalid data.
+
+The failure is not simulated by React.
+
+```text
+Invalid Input
+     |
+     v
+ExecutionPlan
+     |
+     v
+Veil Validation
+     |
+     X
+HTTP 422
+```
+
+As in Lesson 01, invalid plans are currently rejected before a `Job` exists.
+
+The Starter exposes the real validation error through HTTP `422` rather than inventing a separate Veil failure contract.
+
+---
+
+## Capability Discovery
+
+The Starter discovers registered capabilities through Veil's public runtime API.
+
+The runtime now contains:
+
+```text
+demo.greet
+notes.create
+service.health
+```
+
+Capability discovery uses the public `runtime.listCapabilities()` API rather than reaching into Veil's internal capability registry.
+
+This allows the application to inspect what Veil can execute without coupling itself to Veil's internal implementation.
+
+---
+
+## What Lesson 02 Proved
+
+The application now contains capabilities representing very different kinds of work:
+
+```text
+Personal
+   |
+   └── notes.create
+
+Developer
+   |
+   └── service.health
+```
+
+But underneath, nothing fundamental changed:
+
+```text
+Scenario
+    |
+    v
+ExecutionPlan
+    |
+    v
+OperatorRuntime
+    |
+    v
+Capability
+    |
+    v
+Job / Events / Result
+```
+
+That is the important lesson:
+
+> **The application changed what Veil can do. Veil itself did not change.**
+
+This is what allows Veil to remain reusable across different domains.
+
+A future application could present capabilities for:
+
+```text
+Personal automation
+Developer tooling
+Customer support
+Operations
+Infrastructure
+AI agents
+MCP tools
+Enterprise systems
+```
+
+without requiring each domain to introduce a new execution architecture.
+
+---
+
+## Explore Lesson 02
+
+The scenario definitions are under:
+
+```text
+client/src/scenarios/
+```
+
+The application capabilities are defined under:
+
+```text
+server/veil/
+```
+
+Follow a scenario from the UI through:
+
+```text
+Scenario
+    |
+    v
+server/index.ts
+    |
+    v
+ExecutionPlan
+    |
+    v
+server/veil/runtime.ts
+    |
+    v
+OperatorRuntime
+    |
+    v
+Capability
+```
+
+Compare the Personal and Developer scenarios.
+
+Although the user experience changes, both ultimately travel through the same Veil execution path.
+
+---
+
+## Lesson 02 Complete
+
+You have now:
+
+- registered multiple capabilities with the same runtime
+- used Veil across Personal and Developer scenarios
+- kept domain metadata outside Veil Core
+- executed both scenarios through real `ExecutionPlan` objects
+- used public capability discovery
+- viewed execution through Experience and Learn modes
+- observed real validation failures
+- seen that application presentation does not need to affect runtime architecture
+
+The core model remains:
 
 ```text
 Intent
@@ -550,8 +967,51 @@ ExecutionPlan
 Veil
    |
    v
-Your Capability
+Capability
 ```
 
-Only what Veil is capable of doing will change.
+Only what Veil is capable of doing has expanded.
+
+---
+
+## Next — Lesson 03: Compose Capabilities
+
+Lesson 03 moves from individual actions to multi-step execution.
+
+Instead of executing one isolated capability, an `ExecutionPlan` will connect multiple capabilities and allow a later step to use the result of an earlier step.
+
+Conceptually:
+
+```text
+Capability A
+     |
+     | result
+     v
+Capability B
+```
+
+while the overall execution remains:
+
+```text
+Intent
+   |
+   v
+ExecutionPlan
+   |
+   v
+OperatorRuntime
+   |
+   +----> Capability A
+   |           |
+   |           | result
+   |           v
+   +----> Capability B
+   |
+   v
+Job / Events / Result
+```
+
+The runtime boundary remains the same.
+
+Only the plan becomes more powerful.
 

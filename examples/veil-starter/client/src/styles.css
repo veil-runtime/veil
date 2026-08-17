@@ -100,6 +100,42 @@ input {
   font: inherit;
 }
 
+textarea {
+  width: 100%;
+  min-height: 96px;
+  padding: 10px 12px;
+  border: 1px solid #3b4a68;
+  border-radius: 7px;
+  color: inherit;
+  background: #0b1020;
+  font: inherit;
+  resize: vertical;
+}
+
+.toggle-group {
+  display: inline-flex;
+  gap: 8px;
+  margin: 8px 8px 0 0;
+}
+
+.mental-model {
+  margin-bottom: 20px;
+  color: #75d5b1;
+  font-weight: 700;
+}
+
+.output-card {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid #315f52;
+  border-radius: 8px;
+  background: #0d2823;
+}
+
+.output-card p {
+  margin: 8px 0 0;
+}
+
 .field-hint,
 .empty-state {
   margin-top: 8px;

@@ -6,6 +6,7 @@ import {
 import { URL } from 'node:url';
 
 import {
+  createDemoPlan,
   createGreetingPlan,
   runtime,
 } from './veil/runtime.js';
@@ -43,15 +44,41 @@ async function readJson(
   return body ? JSON.parse(body) : {};
 }
 
-function requestedName(body: unknown): string | undefined {
+function objectBody(body: unknown): Record<string, unknown> | undefined {
   if (!body || typeof body !== 'object') {
     return undefined;
   }
 
-  const name = (body as Record<string, unknown>).name;
-  return typeof name === 'string'
-    ? name
-    : undefined;
+  return body as Record<string, unknown>;
+}
+
+function requestedExecution(
+  body: unknown,
+): { capabilityName: string; input: Record<string, unknown> } | undefined {
+  const request = objectBody(body);
+  if (!request) {
+    return undefined;
+  }
+
+  // Retain the Lesson 01 request shape for the greeting demonstration.
+  if (typeof request.name === 'string') {
+    return {
+      capabilityName: 'demo.greet',
+      input: { name: request.name },
+    };
+  }
+
+  if (
+    typeof request.capabilityName !== 'string'
+    || !objectBody(request.input)
+  ) {
+    return undefined;
+  }
+
+  return {
+    capabilityName: request.capabilityName,
+    input: objectBody(request.input) as Record<string, unknown>,
+  };
 }
 
 const server = createServer(async (
@@ -72,10 +99,28 @@ const server = createServer(async (
     request.method === 'GET'
     && url.pathname === '/api/capabilities'
   ) {
-    const name = url.searchParams.get('name') ?? '';
+    const capabilityName = url.searchParams.get('capabilityName');
+    const inputParameter = url.searchParams.get('input');
+    let plan = createGreetingPlan(url.searchParams.get('name') ?? '');
+
+    if (capabilityName) {
+      try {
+        const input = inputParameter ? JSON.parse(inputParameter) : {};
+        if (!objectBody(input)) {
+          throw new Error('Input must be a JSON object.');
+        }
+        plan = createDemoPlan(capabilityName, input);
+      } catch (error) {
+        sendJson(response, 400, {
+          error: error instanceof Error ? error.message : 'Invalid input.',
+        });
+        return;
+      }
+    }
+
     sendJson(response, 200, {
       capabilities: runtime.listCapabilities(),
-      plan: createGreetingPlan(name),
+      plan,
     });
     return;
   }
@@ -85,18 +130,21 @@ const server = createServer(async (
     && url.pathname === '/api/execute'
   ) {
     try {
-      const name = requestedName(
+      const execution = requestedExecution(
         await readJson(request),
       );
 
-      if (name === undefined) {
+      if (execution === undefined) {
         sendJson(response, 400, {
-          error: 'Request body must contain a string name.',
+          error: 'Request body must contain capabilityName and an input object.',
         });
         return;
       }
 
-      const plan = createGreetingPlan(name);
+      const plan = createDemoPlan(
+        execution.capabilityName,
+        execution.input,
+      );
       const job = await runtime.executePlan(plan);
 
       sendJson(response, 200, {
