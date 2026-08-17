@@ -4,16 +4,26 @@ import {
   type ExecutionPlan,
 } from '@veil-runtime/core';
 
-import { greetCapability } from './capabilities.js';
+import {
+  createNoteCapability,
+  greetCapability,
+  serviceHealthCapability,
+} from './capabilities.js';
+
+const capabilities: CapabilityModule['capabilities'] = [
+  greetCapability,
+  createNoteCapability,
+  serviceHealthCapability,
+];
 
 const demoModule: CapabilityModule = {
   manifest: {
     name: 'veil-starter',
     version: '1.0.0',
-    description: 'Capabilities used by Veil Starter Lesson 01.',
-    capabilities: [greetCapability.name],
+    description: 'Capabilities used by Veil Starter lessons.',
+    capabilities: capabilities.map((capability) => capability.name),
   },
-  capabilities: [greetCapability],
+  capabilities,
 };
 
 export const runtime = new OperatorRuntime();
@@ -23,15 +33,30 @@ runtime.use(demoModule);
 export function createGreetingPlan(
   name: string,
 ): ExecutionPlan {
+  return createDemoPlan('demo.greet', { name });
+}
+
+export function createDemoPlan(
+  capabilityName: string,
+  input: Record<string, unknown>,
+): ExecutionPlan {
+  const capability = capabilities.find(
+    (entry) => entry.name === capabilityName,
+  );
+
+  if (!capability) {
+    throw new Error(`Unknown Veil Starter capability: ${capabilityName}`);
+  }
+
   return {
     version: '1.0',
-    goal: 'Greet a learner',
+    goal: `Run ${capability.name}`,
     steps: [{
-      id: 'greet',
-      capability: greetCapability.name,
-      capabilityVersion: greetCapability.version,
-      input: { name },
-      reason: 'Return a greeting for the provided name.',
+      id: capability.name.replace('.', '-'),
+      capability: capability.name,
+      capabilityVersion: capability.version,
+      input,
+      reason: capability.description,
     }],
   };
 }

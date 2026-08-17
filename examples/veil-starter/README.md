@@ -1,4 +1,4 @@
-# Veil Starter — Lesson 01: Hello Veil
+# Veil Starter — Lessons 01 and 02
 
 Learn the smallest useful Veil flow:
 
@@ -71,7 +71,37 @@ Select **Try invalid input**. The server sends an empty `name` in a real plan.
 Veil rejects that required input during plan validation, and the browser shows
 the returned rejection details.
 
-## What comes next
+## Lesson 02: One runtime, different capabilities
 
-Lesson 02 can add a second capability and show how later plan steps can use an
-earlier result.
+Lesson 01 proved that one capability could execute. Lesson 02 proves that the
+same runtime can execute capabilities from very different domains:
+
+- **Personal** presents `notes.create` as **Save a Note**.
+- **Developer** presents `service.health` as **Check Service**.
+
+The scenario definitions live only in `client/src/scenarios/`. They are
+presentation metadata for the Starter UI, not Veil contracts, capability
+registration data, or authorization inputs. Veil does not know what
+"Personal" or "Developer" means; both remain normal capabilities registered
+with the same `OperatorRuntime`.
+
+```text
+Personal                  Developer
+notes.create              service.health
+     \                       /
+      \                     /
+       ---- ExecutionPlan ---
+                |
+         OperatorRuntime
+                |
+        Job / Events / Result
+```
+
+Use **Experience** for user-facing inputs and outputs, or **Learn** to see the
+same execution's selected capability, real `ExecutionPlan`, `Job`, events, and
+result. The mode changes presentation only: it does not change the server
+request, plan, capability, policy, or runtime behavior.
+
+The invalid-input button still sends a real plan to Veil. Empty required fields
+are rejected by Veil's input validation path and returned by the server as an
+HTTP 422 response.
