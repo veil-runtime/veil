@@ -124,6 +124,11 @@ textarea {
   font-weight: 700;
 }
 
+.plan-flow {
+  color: #75d5b1;
+  font-weight: 700;
+}
+
 .output-card {
   margin-top: 16px;
   padding: 16px;

@@ -20,8 +20,15 @@ function experienceResult(
     return <p className="empty-state">Run the scenario to see its result.</p>;
   }
 
-  const job = (response as { job?: { result?: unknown } }).job;
-  const result = job?.result;
+  const job = (response as {
+    job?: {
+      result?: unknown;
+      steps?: Array<{ result?: unknown }>;
+    };
+  }).job;
+  const result = scenario.domain === 'support'
+    ? job?.steps?.at(-1)?.result
+    : job?.result;
   if (!result || typeof result !== 'object') {
     return <pre className="result">{JSON.stringify(response, null, 2)}</pre>;
   }
@@ -29,6 +36,11 @@ function experienceResult(
   if (scenario.capabilityName === 'notes.create') {
     const note = result as { title: string; content: string };
     return <div className="output-card"><strong>Note created</strong><p>Title: {note.title}</p><p>Content: {note.content}</p></div>;
+  }
+
+  if (scenario.domain === 'support') {
+    const draft = result as { to: string; subject: string; body: string };
+    return <div className="output-card"><strong>Draft Ready</strong><p>To: {draft.to}</p><p>Subject: {draft.subject}</p><p>{draft.body}</p></div>;
   }
 
   const service = result as { serviceName: string; status: string };
@@ -54,7 +66,7 @@ export function ExecutionPanel({
           onClick={onRun}
           disabled={isRunning}
         >
-          {isRunning ? 'Running with Veil...' : 'Run with Veil'}
+          {isRunning ? 'Running with Veil...' : scenario.domain === 'support' ? 'Prepare Response' : 'Run with Veil'}
         </button>
         <button
           type="button"

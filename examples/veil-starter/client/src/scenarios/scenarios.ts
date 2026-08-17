@@ -1,4 +1,4 @@
-export type ScenarioDomain = 'personal' | 'developer';
+export type ScenarioDomain = 'personal' | 'developer' | 'support';
 
 export interface ScenarioDefinition {
   id: string;
@@ -6,6 +6,7 @@ export interface ScenarioDefinition {
   label: string;
   description: string;
   capabilityName: string;
+  capabilityNames?: readonly string[];
   exampleInput: Record<string, string>;
 }
 
@@ -29,6 +30,18 @@ export const scenarios: readonly ScenarioDefinition[] = [
     capabilityName: 'service.health',
     exampleInput: {
       serviceName: 'payments-api',
+    },
+  },
+  {
+    id: 'prepare-customer-response',
+    domain: 'support',
+    label: 'Prepare Customer Response',
+    description: 'Look up a customer, then prepare a support email draft without sending it.',
+    capabilityName: 'email.draft',
+    capabilityNames: ['customer.lookup', 'email.draft'],
+    exampleInput: {
+      customerId: 'CUST-001',
+      issue: 'Cannot access account',
     },
   },
 ];

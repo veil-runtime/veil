@@ -32,6 +32,38 @@ export interface ServiceHealthResult {
   checked: true;
 }
 
+export interface CustomerLookupInput {
+  customerId: string;
+}
+
+export interface Customer {
+  id: string;
+  name: string;
+  email: string;
+  plan: string;
+}
+
+export interface EmailDraftInput {
+  customer: Customer;
+  issue: string;
+}
+
+export interface EmailDraftResult {
+  to: string;
+  subject: string;
+  body: string;
+  status: 'drafted';
+}
+
+const customers: Readonly<Record<string, Customer>> = {
+  'CUST-001': {
+    id: 'CUST-001',
+    name: 'Amina',
+    email: 'amina@example.com',
+    plan: 'Business',
+  },
+};
+
 export const greetCapability = createCapability<
   GreetInput,
   GreetResult
@@ -104,6 +136,61 @@ export const serviceHealthCapability = createCapability<
       serviceName: input.serviceName,
       status: 'healthy',
       checked: true,
+    };
+  },
+});
+
+export const customerLookupCapability = createCapability<
+  CustomerLookupInput,
+  Customer
+>({
+  name: 'customer.lookup',
+  version: '1.0.0',
+  description: 'Look up a deterministic customer fixture.',
+  risk: 'read',
+  inputSchema: {
+    customerId: {
+      type: 'string',
+      required: true,
+      description: 'The customer identifier to look up.',
+    },
+  },
+  async execute({ input }) {
+    const customer = customers[input.customerId];
+    if (!customer) {
+      throw new Error(`Customer not found: ${input.customerId}`);
+    }
+
+    return customer;
+  },
+});
+
+export const emailDraftCapability = createCapability<
+  EmailDraftInput,
+  EmailDraftResult
+>({
+  name: 'email.draft',
+  version: '1.0.0',
+  description: 'Prepare a deterministic customer support email draft.',
+  risk: 'read',
+  inputSchema: {
+    customer: {
+      type: 'object',
+      required: true,
+      description: 'The customer receiving the draft.',
+    },
+    issue: {
+      type: 'string',
+      required: true,
+      description: 'The customer issue to address.',
+    },
+  },
+  async execute({ input }) {
+    return {
+      to: input.customer.email,
+      subject: 'Regarding your account access',
+      body: `Hi ${input.customer.name}, we received your message about ${input.issue}. We will help you restore access to your ${input.customer.plan} account.`,
+      status: 'drafted',
     };
   },
 });

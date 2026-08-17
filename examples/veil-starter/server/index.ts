@@ -8,6 +8,7 @@ import { URL } from 'node:url';
 import {
   createDemoPlan,
   createGreetingPlan,
+  createSupportPlan,
   runtime,
 } from './veil/runtime.js';
 
@@ -81,6 +82,15 @@ function requestedExecution(
   };
 }
 
+function createPlan(
+  capabilityName: string,
+  input: Record<string, unknown>,
+) {
+  return capabilityName === 'email.draft'
+    ? createSupportPlan(input)
+    : createDemoPlan(capabilityName, input);
+}
+
 const server = createServer(async (
   request,
   response,
@@ -109,7 +119,7 @@ const server = createServer(async (
         if (!objectBody(input)) {
           throw new Error('Input must be a JSON object.');
         }
-        plan = createDemoPlan(capabilityName, input);
+        plan = createPlan(capabilityName, input);
       } catch (error) {
         sendJson(response, 400, {
           error: error instanceof Error ? error.message : 'Invalid input.',
@@ -141,7 +151,7 @@ const server = createServer(async (
         return;
       }
 
-      const plan = createDemoPlan(
+      const plan = createPlan(
         execution.capabilityName,
         execution.input,
       );

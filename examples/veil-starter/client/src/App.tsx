@@ -101,13 +101,13 @@ export function App() {
   return (
     <main>
       <header>
-        <p className="eyebrow">Veil Starter · Lesson 02</p>
-        <h1>One runtime, different capabilities.</h1>
-        <p>Personal and Developer are Starter presentation categories. Veil executes the same ExecutionPlan path for both.</p>
+        <p className="eyebrow">Veil Starter · Lesson 03</p>
+        <h1>One plan, chained capabilities.</h1>
+        <p>Personal, Developer, and Support are Starter presentation categories. Veil executes each request through an ExecutionPlan.</p>
         <div className="toggle-group" aria-label="Domain">
-          {(['personal', 'developer'] as const).map((entry) => (
+          {(['personal', 'developer', 'support'] as const).map((entry) => (
             <button key={entry} type="button" className={domain === entry ? '' : 'secondary'} onClick={() => setDomain(entry)}>
-              {entry === 'personal' ? 'Personal' : 'Developer'}
+              {entry === 'personal' ? 'Personal' : entry === 'developer' ? 'Developer' : 'Support'}
             </button>
           ))}
         </div>

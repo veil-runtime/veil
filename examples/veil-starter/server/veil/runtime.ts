@@ -6,6 +6,8 @@ import {
 
 import {
   createNoteCapability,
+  customerLookupCapability,
+  emailDraftCapability,
   greetCapability,
   serviceHealthCapability,
 } from './capabilities.js';
@@ -14,6 +16,8 @@ const capabilities: CapabilityModule['capabilities'] = [
   greetCapability,
   createNoteCapability,
   serviceHealthCapability,
+  customerLookupCapability,
+  emailDraftCapability,
 ];
 
 const demoModule: CapabilityModule = {
@@ -58,5 +62,44 @@ export function createDemoPlan(
       input,
       reason: capability.description,
     }],
+  };
+}
+
+export function createSupportPlan(
+  input: Record<string, unknown>,
+): ExecutionPlan {
+  const customerLookup = capabilities.find(
+    (capability) => capability.name === 'customer.lookup',
+  );
+  const emailDraft = capabilities.find(
+    (capability) => capability.name === 'email.draft',
+  );
+
+  if (!customerLookup || !emailDraft) {
+    throw new Error('Support capabilities are not registered.');
+  }
+
+  return {
+    version: '1.0',
+    goal: 'Prepare customer response',
+    steps: [
+      {
+        id: 'customer',
+        capability: customerLookup.name,
+        capabilityVersion: customerLookup.version,
+        input: { customerId: input.customerId },
+        reason: customerLookup.description,
+      },
+      {
+        id: 'draft',
+        capability: emailDraft.name,
+        capabilityVersion: emailDraft.version,
+        input: {
+          customer: { $ref: 'steps.customer.result' },
+          issue: input.issue,
+        },
+        reason: emailDraft.description,
+      },
+    ],
   };
 }
