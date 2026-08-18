@@ -1327,8 +1327,12 @@ description: Veil provides the execution layer between intent and action.
     <div class="navlinks">
       <a href="#why">Why Veil</a>
       <a href="#architecture">Architecture</a>
+      <a href="#starter">Starter</a>
       <a href="#install">Install</a>
-      <a class="pill" href="#open-source">Open source</a>
+      <a
+        class="pill"
+        href="https://github.com/veil-runtime/veil"
+      >GitHub</a>
     </div>
   </nav>
 
@@ -1611,10 +1615,9 @@ description: Veil provides the execution layer between intent and action.
               <span>npm install @veil-runtime/core</span>
             </div>
             <div class="result">
-              Veil Core v0.1.1 is an early public release. The core package and
-              public execution boundary are available now; deeper documentation,
-              examples, capability guides, and getting-started material are
-              continuing to develop.
+              Veil Core v0.1.2 adds contextual execution authorization and the
+              public inbound MCP adapter while preserving the same governed
+              ExecutionPlan → OperatorRuntime → Capability path.
             </div>
           </div>
         </div>
@@ -1980,7 +1983,7 @@ description: Veil provides the execution layer between intent and action.
         </div>
 
         <p class="api-note reveal">
-          The interactive quickstart below uses the published v0.1.1 public API.
+          The interactive quickstart below uses the v0.1.2 public API.
           This conceptual example illustrates the capability model without
           introducing a separate website-only API.
         </p>
@@ -2066,6 +2069,74 @@ description: Veil provides the execution layer between intent and action.
       </div>
     </section>
 
+    <!-- STARTER -->
+
+    <section id="starter">
+      <div class="wrap">
+
+        <div class="section-head reveal">
+          <div>
+            <div class="kicker">Veil Starter</div>
+            <h2>Run the demo. Learn the boundary. Replace it with your own.</h2>
+          </div>
+
+          <p>
+            Clone the repository and run the interactive Starter locally.
+            Experience mode shows the outcome; Learn mode reveals the real
+            plan, job, events, authorization decisions, and MCP translation.
+          </p>
+        </div>
+
+        <div class="details reveal">
+          <details open>
+            <summary>Clone and build</summary>
+
+            <div class="inside">
+              <span><code>git clone https://github.com/veil-runtime/veil.git</code></span>
+              <span><code>cd veil</code></span>
+              <span><code>npm install</code></span>
+              <span><code>npm run build</code></span>
+            </div>
+          </details>
+
+          <details>
+            <summary>Run the Starter</summary>
+
+            <div class="inside">
+              <span>Install dependencies in <code>examples/veil-starter</code>.</span>
+              <span>Start the trusted application server.</span>
+              <span>Start the browser client in a second terminal.</span>
+              <span>Open the local Vite URL.</span>
+            </div>
+          </details>
+
+          <details>
+            <summary>Learn and extend</summary>
+
+            <div class="inside">
+              <span>Lessons 01–07 explain capabilities, plans, governance, and MCP.</span>
+              <span>Lesson 08 turns the demonstration into an application starting point.</span>
+              <span>Replace a demo capability with one useful operation from your system.</span>
+              <span>Keep execution on the same governed runtime path.</span>
+            </div>
+          </details>
+        </div>
+
+        <div class="actions reveal">
+          <a
+            class="button primary"
+            href="https://github.com/veil-runtime/veil/tree/main/examples/veil-starter"
+          >Open the Starter guide</a>
+
+          <a
+            class="button"
+            href="https://github.com/veil-runtime/veil"
+          >Clone or fork Veil</a>
+        </div>
+
+      </div>
+    </section>
+
     <!-- AI IS OPTIONAL -->
 
     <section>
@@ -2145,8 +2216,9 @@ description: Veil provides the execution layer between intent and action.
             MCP is an interoperability layer around Veil, not a second
             execution path. Adapters can translate MCP invocations into
             <code>ExecutionPlan</code> instances, and MCP-backed capabilities
-            can sit behind the same runtime boundary. The public core package
-            does not currently ship MCP adapters or providers.
+            can sit behind the same runtime boundary. Veil Core v0.1.2 publicly
+            exports the inbound <code>McpAdapter</code>, which requires an
+            <code>OperatorRuntime</code> and creates no alternate execution path.
           </p>
         </div>
 
@@ -2165,9 +2237,10 @@ description: Veil provides the execution layer between intent and action.
           </div>
 
           <p>
-            <code>@veil-runtime/core</code> v0.1.1 provides the public
-            execution boundary. Providers, integrations, and ecosystem
-            packages can be composed around it without changing that model.
+            <code>@veil-runtime/core</code> v0.1.2 provides the public execution
+            boundary, contextual authorization, and inbound MCP adapter.
+            Providers and integrations can be composed around that boundary
+            without changing the execution model.
           </p>
         </div>
 
@@ -2178,8 +2251,9 @@ description: Veil provides the execution layer between intent and action.
 
             <div class="inside">
               <span>OperatorRuntime</span>
+              <span>OperatorRuntimeOptions and ExecutionAuthorizer</span>
               <span>ExecutionPlan and execution-step types</span>
-              <span>Job, result, and event types</span>
+              <span>Job, result, and event types, including capability.denied</span>
               <span>Capability and capability-module contracts</span>
             </div>
           </details>
@@ -2213,7 +2287,7 @@ description: Veil provides the execution layer between intent and action.
               <span>Custom capabilities</span>
               <span>Custom providers and integrations</span>
               <span>Infrastructure remains under application control</span>
-              <span>MCP at the interoperability boundary</span>
+              <span>Public inbound McpAdapter at the interoperability boundary</span>
             </div>
           </details>
 
@@ -2233,7 +2307,7 @@ description: Veil provides the execution layer between intent and action.
           </div>
 
           <p>
-            Veil Core is publicly available at v0.1.1. Future work is guided by
+            Veil Core v0.1.2 keeps the execution architecture stable. Future work is guided by
             real-world use and focuses on developer experience, documentation,
             examples, and ecosystem growth rather than promises.
           </p>
@@ -2243,7 +2317,7 @@ description: Veil provides the execution layer between intent and action.
 
           <div class="phase current">
             <small>NOW</small>
-            <b>Public Core v0.1.1</b>
+            <b>Public Core v0.1.2</b>
           </div>
 
           <div class="phase">
@@ -2286,12 +2360,22 @@ description: Veil provides the execution layer between intent and action.
           coupling intelligence directly to execution infrastructure.
         </p>
 
-        <a
-          class="button primary"
-          href="#install"
-        >
-          Install Veil Core
-        </a>
+        <div class="actions">
+          <a
+            class="button primary"
+            href="https://www.npmjs.com/package/@veil-runtime/core"
+          >Install Veil Core</a>
+
+          <a
+            class="button"
+            href="https://github.com/veil-runtime/veil/tree/main/examples/veil-starter"
+          >Try Veil Starter</a>
+
+          <a
+            class="button"
+            href="https://github.com/veil-runtime/veil"
+          >View on GitHub</a>
+        </div>
 
       </div>
     </section>
@@ -2300,7 +2384,7 @@ description: Veil provides the execution layer between intent and action.
 
   <footer class="footer wrap">
     <span>
-      Veil Core v0.1.1 — Apache-2.0 · Copyright 2026 Mustapha Keraan.
+      Veil Core v0.1.2 — Apache-2.0 · Copyright 2026 Mustapha Keraan.
     </span>
 
     <span>
