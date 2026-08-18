@@ -10,7 +10,7 @@ async function main() {
   const transport =
     new StdioClientTransport({
       command:
-        '/home/mustapha/.nvm/versions/node/v24.18.1/bin/node',
+        process.execPath,
 
       args: [
         'node_modules/tsx/dist/cli.mjs',
@@ -18,7 +18,7 @@ async function main() {
       ],
 
       cwd:
-        '/home/mustapha/dev/ai/playwright-lab',
+        process.cwd(),
 
       env: {
         JOB_STORE: 'sqlite',

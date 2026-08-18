@@ -25,7 +25,7 @@ try {
   const files = pack.files.map(({ path }) => path).sort();
 
   assert.equal(pack.name, '@veil-runtime/core');
-  assert.equal(pack.version, '0.1.1');
+  assert.equal(pack.version, '0.1.2');
   assert.ok(files.includes('dist/index.js'));
   assert.ok(files.includes('dist/index.d.ts'));
   assert.ok(files.includes('README.md'));
@@ -38,7 +38,16 @@ try {
   assert.ok(!files.some((path) => path.startsWith('.github/')));
   assert.ok(!files.some((path) => path.startsWith('docs/')));
   assert.ok(!files.some((path) => path.startsWith('dist/api/')));
-  assert.ok(!files.some((path) => path.startsWith('dist/integrations/')));
+  const publicIntegrationFiles = new Set([
+    'dist/integrations/mcp/inbound/capability-schema.d.ts',
+    'dist/integrations/mcp/inbound/capability-schema.js',
+    'dist/integrations/mcp/inbound/mcp-adapter.d.ts',
+    'dist/integrations/mcp/inbound/mcp-adapter.js',
+  ]);
+  assert.ok(!files.some(
+    (path) => path.startsWith('dist/integrations/')
+      && !publicIntegrationFiles.has(path),
+  ));
   assert.ok(!files.some((path) => path.startsWith('dist/capabilities/')));
   assert.ok(
     !files.some(

@@ -3,6 +3,10 @@ import { JobListFilter } from './jobs/job-store.js';
 import { jobManager } from './jobs/job-manager.js';
 import { jobMemory } from './jobs/job-memory.js';
 import { ExecutionCaller } from './execution/execution-context.js';
+import {
+  defaultExecutionAuthorizer,
+  ExecutionAuthorizer,
+} from './permissions/execution-authorizer.js';
 
 import {
   CapabilityModule,
@@ -38,6 +42,10 @@ export interface ExecutePlanOptions {
   caller?: ExecutionCaller;
 }
 
+export interface OperatorRuntimeOptions {
+  readonly authorizer?: ExecutionAuthorizer;
+}
+
 function immutableCaller(
   caller?: ExecutionCaller
 ): ExecutionCaller | undefined {
@@ -55,6 +63,16 @@ function immutableCaller(
 }
 
 export class OperatorRuntime {
+  private readonly authorizer: ExecutionAuthorizer;
+
+  constructor(
+    options: OperatorRuntimeOptions = {}
+  ) {
+    this.authorizer =
+      options.authorizer ??
+      defaultExecutionAuthorizer;
+  }
+
   use(
     module: CapabilityModule
   ): void {
@@ -89,7 +107,8 @@ export class OperatorRuntime {
   ): Promise<Job> {
     return jobManager.executePlan(
       plan,
-      immutableCaller(options.caller)
+      immutableCaller(options.caller),
+      this.authorizer
     );
   }
 

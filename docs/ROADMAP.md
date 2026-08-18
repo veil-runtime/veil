@@ -294,6 +294,18 @@ Approval records should contain:
 - Approver
 - Approval timestamp
 
+### Contextual Execution Policy
+
+The public `OperatorRuntime` API now accepts an `ExecutionAuthorizer`, providing
+a runtime-scoped pre-execution boundary for contextual rules such as allowing
+staging deployments while denying production deployments. Denials use the
+ordinary job lifecycle and emit `capability.denied`.
+
+Richer policy systems remain future work, including approval orchestration,
+RBAC or ABAC, policy persistence and management, and administrative interfaces.
+Those systems must extend the governed runtime path rather than create an
+alternate execution path.
+
 ---
 
 ## Version 0.9 — Provider Expansion

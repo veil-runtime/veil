@@ -9,3 +9,6 @@ dist/
 data/*.db
 data/*.db-*
 .tmp/
+test-results/
+
+examples/veil-starter/data/
