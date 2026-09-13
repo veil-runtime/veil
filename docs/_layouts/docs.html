@@ -10,12 +10,23 @@
 </head>
 <body>
   {% assign current = nil %}
-  {% assign current_index = nil %}
-  {% for nav_item in site.data.navigation %}
-    {% if nav_item.url == page.url %}
-      {% assign current = nav_item %}
-      {% assign current_index = forloop.index0 %}
-    {% endif %}
+  {% assign current_section = nil %}
+  {% assign previous = nil %}
+  {% assign next = nil %}
+  {% assign found_current = false %}
+  {% for section in site.data.navigation.sections %}
+    {% for nav_item in section.pages %}
+      {% if found_current and next == nil %}
+        {% assign next = nav_item %}
+      {% endif %}
+      {% if nav_item.url == page.url %}
+        {% assign current = nav_item %}
+        {% assign current_section = section %}
+        {% assign found_current = true %}
+      {% elsif found_current != true %}
+        {% assign previous = nav_item %}
+      {% endif %}
+    {% endfor %}
   {% endfor %}
   <header class="site-header">
     <nav class="site-nav">
@@ -30,18 +41,21 @@
     <details class="docs-navigation">
       <summary>Documentation menu</summary>
       <nav class="docs-sidebar-content" aria-label="Developer documentation">
-        <a class="docs-home{% if page.url == '/developer.html' %} is-active{% endif %}" href="{{ '/developer.html' | relative_url }}">Developer Docs</a>
-        {% assign sections = 'Getting Started|Core Concepts|Guides|Architecture|Reference|Cookbook|Contributing' | split: '|' %}
-        {% for section_name in sections %}
-          {% assign section_items = site.data.navigation | where: 'section', section_name %}
-          <section class="docs-nav-section">
-            <h2>{{ section_name }}</h2>
-            <ul>
-              {% for nav_item in section_items %}
-                <li><a class="{% if nav_item.url == page.url %}is-active{% endif %}" href="{{ nav_item.url | relative_url }}">{{ nav_item.title }}</a></li>
-              {% endfor %}
-            </ul>
-          </section>
+        {% for section in site.data.navigation.sections %}
+          {% if section.home %}
+            {% for nav_item in section.pages %}
+              <a class="docs-home{% if nav_item.url == page.url %} is-active{% endif %}" href="{{ nav_item.url | relative_url }}">Developer Docs</a>
+            {% endfor %}
+          {% else %}
+            <section class="docs-nav-section">
+              <h2>{{ section.title }}</h2>
+              <ul>
+                {% for nav_item in section.pages %}
+                  <li><a class="{% if nav_item.url == page.url %}is-active{% endif %}" href="{{ nav_item.url | relative_url }}">{{ nav_item.title }}</a></li>
+                {% endfor %}
+              </ul>
+            </section>
+          {% endif %}
         {% endfor %}
       </nav>
     </details>
@@ -50,19 +64,15 @@
         <nav class="breadcrumbs" aria-label="Breadcrumb">
           <a href="{{ '/developer.html' | relative_url }}">Docs</a>
           <span>/</span>
-          <span>{{ current.section }}</span>
+          <span>{{ current_section.title }}</span>
           <span>/</span>
           <span aria-current="page">{{ current.title }}</span>
         </nav>
       {% endif %}
       {{ content }}
-      {% if current_index != nil %}
-        {% assign previous_index = current_index | minus: 1 %}
-        {% assign next_index = current_index | plus: 1 %}
-        {% assign previous = site.data.navigation[previous_index] %}
-        {% assign next = site.data.navigation[next_index] %}
+      {% if current %}
         <nav class="page-navigation" aria-label="Document pagination">
-          {% if current_index > 0 and previous %}
+          {% if previous %}
             <a class="previous" href="{{ previous.url | relative_url }}"><span>Previous</span>{{ previous.title }}</a>
           {% else %}<span></span>{% endif %}
           {% if next %}
