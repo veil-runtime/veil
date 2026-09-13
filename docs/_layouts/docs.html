@@ -9,6 +9,25 @@
   <link rel="stylesheet" href="{{ '/assets/docs.css' | relative_url }}">
 </head>
 <body>
+  {% assign current = nil %}
+  {% assign current_section = nil %}
+  {% assign previous = nil %}
+  {% assign next = nil %}
+  {% assign found_current = false %}
+  {% for section in site.data.navigation.sections %}
+    {% for nav_item in section.pages %}
+      {% if found_current and next == nil %}
+        {% assign next = nav_item %}
+      {% endif %}
+      {% if nav_item.url == page.url %}
+        {% assign current = nav_item %}
+        {% assign current_section = section %}
+        {% assign found_current = true %}
+      {% elsif found_current != true %}
+        {% assign previous = nav_item %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
   <header class="site-header">
     <nav class="site-nav">
       <a class="brand" href="{{ '/' | relative_url }}"><span class="mark"></span>Veil</a>
@@ -19,8 +38,48 @@
     </nav>
   </header>
   <main class="docs-shell">
+    <details class="docs-navigation">
+      <summary>Documentation menu</summary>
+      <nav class="docs-sidebar-content" aria-label="Developer documentation">
+        {% for section in site.data.navigation.sections %}
+          {% if section.home %}
+            {% for nav_item in section.pages %}
+              <a class="docs-home{% if nav_item.url == page.url %} is-active{% endif %}" href="{{ nav_item.url | relative_url }}">Developer Docs</a>
+            {% endfor %}
+          {% else %}
+            <section class="docs-nav-section">
+              <h2>{{ section.title }}</h2>
+              <ul>
+                {% for nav_item in section.pages %}
+                  <li><a class="{% if nav_item.url == page.url %}is-active{% endif %}" href="{{ nav_item.url | relative_url }}">{{ nav_item.title }}</a></li>
+                {% endfor %}
+              </ul>
+            </section>
+          {% endif %}
+        {% endfor %}
+      </nav>
+    </details>
     <article class="docs-content">
+      {% if current %}
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="{{ '/developer.html' | relative_url }}">Docs</a>
+          <span>/</span>
+          <span>{{ current_section.title }}</span>
+          <span>/</span>
+          <span aria-current="page">{{ current.title }}</span>
+        </nav>
+      {% endif %}
       {{ content }}
+      {% if current %}
+        <nav class="page-navigation" aria-label="Document pagination">
+          {% if previous %}
+            <a class="previous" href="{{ previous.url | relative_url }}"><span>Previous</span>{{ previous.title }}</a>
+          {% else %}<span></span>{% endif %}
+          {% if next %}
+            <a class="next" href="{{ next.url | relative_url }}"><span>Next</span>{{ next.title }}</a>
+          {% endif %}
+        </nav>
+      {% endif %}
     </article>
   </main>
   <footer class="site-footer">

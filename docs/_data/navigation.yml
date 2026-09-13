@@ -1,0 +1,130 @@
+sections:
+  - title: Developer Docs
+    home: true
+    pages:
+      - title: Docs Home
+        url: /developer.html
+  - title: Getting Started
+    pages:
+      - title: Overview
+        url: /getting-started/overview.html
+      - title: Installation
+        url: /getting-started/installation.html
+      - title: First Capability
+        url: /getting-started/first-capability.html
+      - title: First Plan
+        url: /getting-started/first-plan.html
+      - title: First Runtime
+        url: /getting-started/first-runtime.html
+      - title: Next Steps
+        url: /getting-started/next-steps.html
+  - title: Core Concepts
+    pages:
+      - title: Reasoning and Execution
+        url: /concepts/reasoning-and-execution.html
+      - title: Execution Plans
+        url: /concepts/execution-plans.html
+      - title: Result References
+        url: /concepts/result-references.html
+      - title: Capabilities
+        url: /concepts/capabilities.html
+      - title: Capability Modules
+        url: /concepts/capability-modules.html
+      - title: Providers
+        url: /concepts/providers.html
+      - title: Execution Context
+        url: /concepts/execution-context.html
+      - title: Authorization
+        url: /concepts/authorization.html
+      - title: Jobs and Outcomes
+        url: /concepts/jobs-and-outcomes.html
+      - title: Events and Observability
+        url: /concepts/events-and-observability.html
+      - title: Planning, Strategies and Routing
+        url: /concepts/planners-strategies-routing.html
+  - title: Guides
+    pages:
+      - title: Build a Capability
+        url: /guides/build-a-capability.html
+      - title: Compose a Module
+        url: /guides/compose-a-module.html
+      - title: Multi-step Execution
+        url: /guides/multi-step-execution.html
+      - title: Pass Results Between Steps
+        url: /guides/pass-results-between-steps.html
+      - title: Protect Write Actions
+        url: /guides/protect-write-actions.html
+      - title: Add a Planner
+        url: /guides/add-a-planner.html
+      - title: Configure Planner Routing
+        url: /guides/configure-planner-routing.html
+      - title: Inbound MCP
+        url: /guides/inbound-mcp.html
+      - title: Outbound MCP
+        url: /guides/outbound-mcp.html
+      - title: Add structured logging
+        url: /guides/add-structured-logging.html
+  - title: Architecture
+    pages:
+      - title: Overview
+        url: /architecture/overview.html
+      - title: Execution Lifecycle
+        url: /architecture/execution-lifecycle.html
+      - title: Trust Boundaries
+        url: /architecture/trust-boundaries.html
+      - title: Public API Boundary
+        url: /architecture/public-api-boundary.html
+      - title: Runtime Internals
+        url: /architecture/runtime-internals.html
+      - title: Extension Model
+        url: /architecture/extension-model.html
+      - title: Design Principles
+        url: /architecture/design-principles.html
+  - title: Reference
+    pages:
+      - title: ExecutionPlan v1
+        url: /reference/execution-plan-v1.html
+      - title: OperatorRuntime
+        url: /reference/operator-runtime.html
+      - title: Capability API
+        url: /reference/capability-api.html
+      - title: Authorization API
+        url: /reference/authorization-api.html
+      - title: Job Model
+        url: /reference/job-model.html
+      - title: Runtime Events
+        url: /reference/runtime-events.html
+      - title: Planner API
+        url: /reference/planner-api.html
+      - title: Public Exports
+        url: /reference/public-exports.html
+  - title: Cookbook
+    pages:
+      - title: Governed API Call
+        url: /cookbook/governed-api-call.html
+      - title: Read Then Write
+        url: /cookbook/read-then-write.html
+      - title: Create Then Use ID
+        url: /cookbook/create-then-use-id.html
+      - title: Deny Production Action
+        url: /cookbook/deny-production-action.html
+      - title: Deterministic Planning
+        url: /cookbook/deterministic-planning.html
+      - title: MCP-backed Capability
+        url: /cookbook/mcp-backed-capability.html
+  - title: Contributing
+    pages:
+      - title: Development Setup
+        url: /contributing/development-setup.html
+      - title: Repository Map
+        url: /contributing/repository-map.html
+      - title: Testing
+        url: /contributing/testing.html
+      - title: Package Verification
+        url: /contributing/package-verification.html
+      - title: Architecture Rules
+        url: /contributing/architecture-rules.html
+      - title: Pull Requests
+        url: /contributing/pull-requests.html
+      - title: Releases
+        url: /contributing/releases.html
