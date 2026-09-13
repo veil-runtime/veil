@@ -1,6 +1,14 @@
+title: Veil
+url: "https://veil-runtime.github.io"
+baseurl: "/veil"
 exclude:
   - ARCHITECTURE.md
   - ROADMAP.md
   - index-old.md
   - adr
   - release
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: docs
