@@ -1,0 +1,165 @@
+- section: Developer Docs
+  title: Docs Home
+  url: /developer.html
+- section: Getting Started
+  title: Overview
+  url: /getting-started/overview.html
+- section: Getting Started
+  title: Installation
+  url: /getting-started/installation.html
+- section: Getting Started
+  title: First Capability
+  url: /getting-started/first-capability.html
+- section: Getting Started
+  title: First Plan
+  url: /getting-started/first-plan.html
+- section: Getting Started
+  title: First Runtime
+  url: /getting-started/first-runtime.html
+- section: Getting Started
+  title: Next Steps
+  url: /getting-started/next-steps.html
+- section: Core Concepts
+  title: Reasoning and Execution
+  url: /concepts/reasoning-and-execution.html
+- section: Core Concepts
+  title: Execution Plans
+  url: /concepts/execution-plans.html
+- section: Core Concepts
+  title: Result References
+  url: /concepts/result-references.html
+- section: Core Concepts
+  title: Capabilities
+  url: /concepts/capabilities.html
+- section: Core Concepts
+  title: Capability Modules
+  url: /concepts/capability-modules.html
+- section: Core Concepts
+  title: Providers
+  url: /concepts/providers.html
+- section: Core Concepts
+  title: Execution Context
+  url: /concepts/execution-context.html
+- section: Core Concepts
+  title: Authorization
+  url: /concepts/authorization.html
+- section: Core Concepts
+  title: Jobs and Outcomes
+  url: /concepts/jobs-and-outcomes.html
+- section: Core Concepts
+  title: Events and Observability
+  url: /concepts/events-and-observability.html
+- section: Core Concepts
+  title: Planning, Strategies and Routing
+  url: /concepts/planners-strategies-routing.html
+- section: Guides
+  title: Build a Capability
+  url: /guides/build-a-capability.html
+- section: Guides
+  title: Compose a Module
+  url: /guides/compose-a-module.html
+- section: Guides
+  title: Multi-step Execution
+  url: /guides/multi-step-execution.html
+- section: Guides
+  title: Pass Results Between Steps
+  url: /guides/pass-results-between-steps.html
+- section: Guides
+  title: Protect Write Actions
+  url: /guides/protect-write-actions.html
+- section: Guides
+  title: Add a Planner
+  url: /guides/add-a-planner.html
+- section: Guides
+  title: Configure Planner Routing
+  url: /guides/configure-planner-routing.html
+- section: Guides
+  title: Inbound MCP
+  url: /guides/inbound-mcp.html
+- section: Guides
+  title: Outbound MCP
+  url: /guides/outbound-mcp.html
+- section: Architecture
+  title: Overview
+  url: /architecture/overview.html
+- section: Architecture
+  title: Execution Lifecycle
+  url: /architecture/execution-lifecycle.html
+- section: Architecture
+  title: Trust Boundaries
+  url: /architecture/trust-boundaries.html
+- section: Architecture
+  title: Public API Boundary
+  url: /architecture/public-api-boundary.html
+- section: Architecture
+  title: Runtime Internals
+  url: /architecture/runtime-internals.html
+- section: Architecture
+  title: Extension Model
+  url: /architecture/extension-model.html
+- section: Architecture
+  title: Design Principles
+  url: /architecture/design-principles.html
+- section: Reference
+  title: ExecutionPlan v1
+  url: /reference/execution-plan-v1.html
+- section: Reference
+  title: OperatorRuntime
+  url: /reference/operator-runtime.html
+- section: Reference
+  title: Capability API
+  url: /reference/capability-api.html
+- section: Reference
+  title: Authorization API
+  url: /reference/authorization-api.html
+- section: Reference
+  title: Job Model
+  url: /reference/job-model.html
+- section: Reference
+  title: Runtime Events
+  url: /reference/runtime-events.html
+- section: Reference
+  title: Planner API
+  url: /reference/planner-api.html
+- section: Reference
+  title: Public Exports
+  url: /reference/public-exports.html
+- section: Cookbook
+  title: Governed API Call
+  url: /cookbook/governed-api-call.html
+- section: Cookbook
+  title: Read Then Write
+  url: /cookbook/read-then-write.html
+- section: Cookbook
+  title: Create Then Use ID
+  url: /cookbook/create-then-use-id.html
+- section: Cookbook
+  title: Deny Production Action
+  url: /cookbook/deny-production-action.html
+- section: Cookbook
+  title: Deterministic Planning
+  url: /cookbook/deterministic-planning.html
+- section: Cookbook
+  title: MCP-backed Capability
+  url: /cookbook/mcp-backed-capability.html
+- section: Contributing
+  title: Development Setup
+  url: /contributing/development-setup.html
+- section: Contributing
+  title: Repository Map
+  url: /contributing/repository-map.html
+- section: Contributing
+  title: Testing
+  url: /contributing/testing.html
+- section: Contributing
+  title: Package Verification
+  url: /contributing/package-verification.html
+- section: Contributing
+  title: Architecture Rules
+  url: /contributing/architecture-rules.html
+- section: Contributing
+  title: Pull Requests
+  url: /contributing/pull-requests.html
+- section: Contributing
+  title: Releases
+  url: /contributing/releases.html
