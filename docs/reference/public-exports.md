@@ -3,34 +3,34 @@ title: Public exports
 ---
 # Public exports
 
-This page is generated from the root src/index.ts and package root export for v0.1.3.
+This page summarizes the root src/index.ts and package root export for v0.1.3.
 
 ## Runtime values
 
-- OperatorRuntime"È›y¯ßy‘ public execution faÁade; construct it with optional authorizer.
-- operatorRuntime"È›y¯ßy‘ default OperatorRuntime instance.
-- McpAdapter+ßuÁ‚ùÁT inbound MCP adapter that maps exposed tools to governed one-step plans.
+- OperatorRuntime: public execution facade; construct it with an optional authorizer.
+- operatorRuntime: default OperatorRuntime instance.
+- McpAdapter: inbound MCP adapter that maps exposed tools to governed one-step plans.
 
 ## Runtime and planning types
 
-- ExecutePlanOptions, RunJobOptions, OperatorRuntimeOptions ∫w^~)ﬁt options for runtime construction and calls.
-- ExecutionPlan, ExecutionStep, ResultReference"È›y¯ßy‘ plan and reference contracts.
-- Planner, PlannerContext+ßuÁ‚ùÁT minimal planner contract and prior-job context shape.
-- ExecutionCaller, ExecutionContext"È›y¯ßy‘ caller snapshot and capability execution context.
+- ExecutePlanOptions, RunJobOptions, OperatorRuntimeOptions: options for runtime construction and calls.
+- ExecutionPlan, ExecutionStep, ResultReference: plan and reference contracts.
+- Planner, PlannerContext: minimal planner contract and prior-job context shape.
+- ExecutionCaller, ExecutionContext: caller snapshot and capability execution context.
 
 ## Capability and module types
 
-- Capability, CapabilityInputField, CapabilityRisk+ßuÁ‚ùÁT operation contract, field descriptors, and read/write/destructive classification.
-- CapabilityModule, CapabilityModuleManifest+ßuÁ‚ùÁT module packaging and manifest metadata.
+- Capability, CapabilityInputField, CapabilityRisk: operation contract, field descriptors, and read/write/destructive classification.
+- CapabilityModule, CapabilityModuleManifest: module packaging and manifest metadata.
 
 ## Authorization types
 
-- ExecutionAuthorizer"È›y¯ßy‘ async authorization contract.
-- CapabilityAuthorizationContext, CapabilityAuthorizationDecision ∫w^~)ﬁt authorizer input and allow/deny result.
+- ExecutionAuthorizer: async authorization contract.
+- CapabilityAuthorizationContext, CapabilityAuthorizationDecision: authorizer input and allow/deny result.
 
 ## Job and observation types
 
-- Job, JobOutcome, JobStep, JobStepStatus, JobStatus, JobEvent, RuntimeEvent ∫w^~)ﬁt execution history and event types.
+- Job, JobOutcome, JobStep, JobStepStatus, JobStatus, JobEvent, RuntimeEvent: execution history and event types.
 
 ## SDK exports
 

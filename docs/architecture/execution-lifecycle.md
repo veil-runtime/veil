@@ -22,7 +22,7 @@ OperatorRuntime passes the plan and an immutable caller snapshot to the internal
 
 ## Job creation
 
-The manager creates a Job with the trimmed plan goal or"��y��y�External execution plan��y��y�, copies steps as pending with creation timestamps, records the plan idempotency key, and stores the job. The plan's optional ID and metadata are not copied into the Job model. Job creation emits job.created; execution then changes status to executing and emits execution.started.
+The manager creates a Job with the trimmed plan goal or External execution plan, copies steps as pending with creation timestamps, records the plan idempotency key, and stores the job. The plan's optional ID and metadata are not copied into the Job model. Job creation emits job.created; execution then changes status to executing and emits execution.started.
 
 ## Each step, in exact order
 

@@ -28,7 +28,7 @@ Use version '1.0' for the current v1 contract. The TypeScript interface itself d
 
 ## Properties
 
-steps is required and must be nonempty at execution. id is accepted but not stored in the current Job model. goal is trimmed for the Job; blank/missing becomes"éÝyø§yÜExternal execution planéÝyø§yÝ. metadata is accepted but not used by the job manager. idempotencyKey is recorded on the job; the step key is copied to the JobStep. Neither key currently deduplicates execution. reason is copied with the step but does not alter runtime policy.
+steps is required and must be nonempty at execution. id is accepted but not stored in the current Job model. goal is trimmed for the Job; blank/missing becomes External execution plan. metadata is accepted but not used by the job manager. idempotencyKey is recorded on the job; the step key is copied to the JobStep. Neither key currently deduplicates execution. reason is copied with the step but does not alter runtime policy.
 
 capability must resolve to a registered capability. capabilityVersion, when present, must equal that capability's registered version exactly. input may be any value, but declared input schema fields are checked. An omitted input is treated as an empty record for input-schema validation.
 

@@ -16,7 +16,10 @@ An orders.create capability might declare name orders.create, risk write, fields
 createCapability accepts the same contract through a typed CapabilityDefinition. Its execute callback receives { input, context? }, not input directly. The helper applies lifecycle logging by default, optional timeout middleware when timeoutMs is set, then supplied middleware in listed order around the callback.
 
 ~~~ts
-const createOrder = createCapability({
+type CreateOrderInput = { sku: string; quantity: number };
+type CreateOrderResult = { id: string };
+
+const createOrder = createCapability<CreateOrderInput, CreateOrderResult>({
   name: 'orders.create', version: '1.0.0',
   description: 'Create an order', risk: 'write',
   inputSchema: {
@@ -25,7 +28,7 @@ const createOrder = createCapability({
   },
   async execute({ input, context }) {
     context?.logger.info('Creating order', { sku: input.sku });
-    return ordersProvider.create(input);
+    return { id: 'created-order' };
   },
 });
 ~~~

@@ -17,7 +17,7 @@ This arrangement lets deterministic code, people, LLM-backed providers, and othe
 
 ## Current behavior
 
-The default router selects an explicit requested strategy first. Otherwise, a requested planner selects the router's configured planner strategy; otherwise the router default applies. A direct strategy prefers an eligible requested planner to its configured planner. Fallback strategy attempts configured planners in order and reports failure only when none succeeds. Eligibility currently requires an enabled registered planner definition.
+The default router selects an explicit requested strategy first. Otherwise, a requested planner selects the router's configured planner strategy; otherwise the router default applies. A direct strategy prefers an eligible requested planner to its configured planner. Fallback strategy attempts configured planners in order and reports failure only when none succeeds. Eligibility evaluates the registered definition and runtime state: the definition must be enabled, and state must be available and healthy. A failure reason is reported when health is false.
 
 ## Failure behavior and limits
 

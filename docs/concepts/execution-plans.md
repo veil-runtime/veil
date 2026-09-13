@@ -9,7 +9,7 @@ ExecutionPlan is the explicit handoff from reasoning to governed execution. Its 
 
 ## How Veil uses it
 
-executePlan validates every step before it creates a job. It then creates a job, turns steps into pending job steps, and executes them in their array order. The goal is stored after trimming; absent/blank goal becomes"��y��y�External execution plan��y��y�. On success job.result is one value for one step or an ordered result array for many steps.
+executePlan validates every step before it creates a job. It then creates a job, turns steps into pending job steps, and executes them in their array order. The goal is stored after trimming; absent/blank goal becomes External execution plan. On success job.result is one value for one step or an ordered result array for many steps.
 
 ## Validation and failure
 
