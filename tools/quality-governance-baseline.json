@@ -9,13 +9,6 @@
       "reason": "Existing direct capability unit test; intentionally exercises the capability in isolation."
     },
     {
-      "path": "src/api/routes/execution.routes.ts",
-      "anchor": "e73e3a3e0a606e8a0aeda8b523da269dfb36b6b2f4c9a4ddc24f3d2aa82fddef",
-      "kind": "execute",
-      "classification": "LEGACY_BYPASS",
-      "reason": "Legacy HTTP capability dispatch with boolean approval/audit; bypasses plan and job lifecycle. Retire when migrated to OperatorRuntime."
-    },
-    {
       "path": "src/api/routes/jobs.routes.ts",
       "anchor": "858ad85bad935d26844bc549f14140c53a713e3417e9d66999dad1f3f187b0b9",
       "kind": "job-manager",

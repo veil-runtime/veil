@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
-import { capabilityRegistry } from '../../runtime/registry/registry.js';
-import { checkPermission } from '../../runtime/permissions/permissions.js';
-import { writeAuditLog } from '../../runtime/audit/audit.js';
+import { randomUUID } from 'node:crypto';
+import { OperatorRuntime, operatorRuntime } from '../../runtime/operator-runtime.js';
+import { ExecutionPlan } from '../../runtime/planner/planner.js';
 
 interface ExecuteParams {
   name: string;
@@ -9,15 +9,25 @@ interface ExecuteParams {
 
 interface ExecuteBody {
   input?: unknown;
-  approved?: boolean;
 }
 
-export async function executionRoutes(app: FastifyInstance) {
+interface ExecutionRoutesOptions {
+  runtime?: OperatorRuntime;
+}
+
+export async function executionRoutes(
+  app: FastifyInstance,
+  options: ExecutionRoutesOptions = {},
+) {
+  const runtime = options.runtime ?? operatorRuntime;
+
   app.post<{
     Params: ExecuteParams;
     Body: ExecuteBody;
   }>('/capabilities/:name/execute', async (request, reply) => {
-    const capability = capabilityRegistry.get(request.params.name);
+    const capability = runtime.listCapabilities().find(
+      (entry) => entry.name === request.params.name,
+    );
 
     if (!capability) {
       return reply.status(404).send({
@@ -26,69 +36,41 @@ export async function executionRoutes(app: FastifyInstance) {
       });
     }
 
-    const approved = request.body?.approved === true;
-
-    const permission = checkPermission(
-      capability.risk,
-      approved
-    );
-
-    if (!permission.allowed) {
-      writeAuditLog({
-        timestamp: new Date().toISOString(),
+    const plan: ExecutionPlan = {
+      version: '1.0',
+      goal: `Execute HTTP capability ${capability.name}`,
+      steps: [{
+        id: randomUUID(),
         capability: capability.name,
-        risk: capability.risk,
-        approved,
-        success: false,
-        durationMs: 0,
-        error: permission.reason,
-      });
-
-      return reply.status(403).send({
-        capability: capability.name,
-        risk: capability.risk,
-        requiresApproval: permission.requiresApproval,
-        reason: permission.reason,
-      });
-    }
-
-    const started = Date.now();
+        input: request.body?.input,
+      }],
+    };
 
     try {
-      const result = await capability.execute(
-        request.body?.input
-      );
+      const job = await runtime.executePlan(plan);
 
-      writeAuditLog({
-        timestamp: new Date().toISOString(),
-        capability: capability.name,
-        risk: capability.risk,
-        approved,
-        success: true,
-        durationMs: Date.now() - started,
-      });
+      if (job.status === 'failed') {
+        const denied = job.events.some(
+          (event) => event.type === 'capability.denied',
+        );
+        return reply.status(denied ? 403 : 500).send({
+          capability: capability.name,
+          risk: capability.risk,
+          error: job.error,
+        });
+      }
 
       return {
         capability: capability.name,
         risk: capability.risk,
-        result,
+        result: job.result,
       };
     } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : 'Unknown capability execution error';
-
-      writeAuditLog({
-        timestamp: new Date().toISOString(),
-        capability: capability.name,
-        risk: capability.risk,
-        approved,
-        success: false,
-        durationMs: Date.now() - started,
-        error: message,
-      });
-
+      // Plan admission currently reports validation failures as ordinary Errors.
+      // Other runtime failures must remain server errors.
+      if (error instanceof Error && error.message.startsWith('Execution plan failed validation:')) {
+        return reply.status(400).send({ error: error.message });
+      }
       throw error;
     }
   });

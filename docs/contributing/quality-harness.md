@@ -105,11 +105,12 @@ input validator selects and **calls** `TYPE_CHECKS[definition.type]`, and the
 package fixture intentionally imports enumerated private paths to assert rejection.
 Neither receives a general data-access exemption.
 
-The rebuilt inventory contains **17 sites**: six `GOVERNED_MACHINERY`, three
+The current inventory contains **16 sites**: six `GOVERNED_MACHINERY`, two
 temporary `LEGACY_BYPASS`, one `LEGITIMATE_NON_CAPABILITY_EXECUTE`, and seven
 `TEST_OR_FIXTURE`. Twenty-four ordinary data/collection accesses from the initial
-41-site inventory disappear. The 17 retained path/kind/anchor identities remain
-unchanged. No allowance was added to suppress a newly detected site.
+41-site inventory disappeared during harness hardening. Migrating the generic
+HTTP capability endpoint to OperatorRuntime retires one further site (17 → 16).
+The 16 retained entries are unchanged; no replacement allowance was added.
 
 Each entry in `tools/quality-governance-baseline.json` records a path, kind,
 classification, reason and SHA-256 anchor. The anchor includes the normalized
@@ -134,9 +135,9 @@ them. This expected non-green first comparison must be reviewed; the candidate
 manifest must never bootstrap its own authority. Subsequent comparisons use the
 manifest only once it exists in their legitimate trusted base.
 
-The three legacy exceptions remain unchanged: direct capability dispatch in
-`src/api/routes/execution.routes.ts` and `linkedin.routes.ts`, and direct internal
-job execution in `jobs.routes.ts`. The latter still performs per-step authorization
+The two remaining legacy exceptions are direct capability dispatch in
+`src/api/routes/linkedin.routes.ts` and direct internal job execution in
+`src/api/routes/jobs.routes.ts`. The latter still performs per-step authorization
 but skips OperatorRuntime and plan admission. Approved machinery and isolated
 unit-test references have separate individual classifications.
 
