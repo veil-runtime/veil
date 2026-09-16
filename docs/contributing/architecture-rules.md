@@ -11,8 +11,9 @@ introduced.** The experimental quality harness checks the whole relevant
 candidate tree, using individual allowances from the explicit comparison base.
 Capability work should enter through `OperatorRuntime.run` or `executePlan`.
 
-Existing direct HTTP execution in `execution.routes.ts`, `linkedin.routes.ts`,
-and `jobs.routes.ts` is recorded as legacy debt, not repaired by this rule.
+Existing direct HTTP execution in `linkedin.routes.ts` and `jobs.routes.ts`
+is recorded as legacy debt, not repaired by this rule. The generic capability
+HTTP endpoint now submits a plan through OperatorRuntime.
 Approved runtime/SDK machinery, non-capability strategy execution and test/fixture
 execution are classified individually. Ordinary computed data access is not a
 governance finding; unresolved dynamic invocation/executable extraction is. Candidate

@@ -220,11 +220,13 @@ test('complete relevant repository parses and current individual sites classify 
   const sites = parseBaseline(read(baselinePath), 'inventory');
   const key = ({ path, anchor, kind }) => `${path}:${anchor}:${kind}`;
   assert.deepEqual(report.findings.map(key).sort(), sites.map(key).sort());
-  assert.equal(sites.filter((site) => site.classification === 'LEGACY_BYPASS').length, 3);
+  assert.equal(sites.length, 16);
+  assert.ok(!sites.some((site) => site.path === 'src/api/routes/execution.routes.ts'));
+  assert.equal(sites.filter((site) => site.classification === 'LEGACY_BYPASS').length, 2);
   assert.deepEqual(sites.filter((site) => site.kind === 'dynamic').map((site) => site.path), [
     'src/runtime/execution/plan-validator.ts', 'test/fixtures/package-consumer/verify.mjs',
   ]);
-  for (const file of ['src/api/routes/execution.routes.ts', 'src/api/routes/linkedin.routes.ts', 'src/api/routes/jobs.routes.ts']) {
+  for (const file of ['src/api/routes/linkedin.routes.ts', 'src/api/routes/jobs.routes.ts']) {
     assert.ok(sites.some((site) => site.path === file && site.classification === 'LEGACY_BYPASS'));
   }
   console.log(`Parser compatibility: ${report.files} relevant repository files; ${sites.length} individually classified sites; Node ${process.versions.node}.`);
