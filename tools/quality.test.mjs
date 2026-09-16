@@ -217,3 +217,15 @@ test('untracked dynamic invocation still fails closed after data-use refinement'
   assert.equal(result.status, 2);
   assert.match(result.output, /VEIL-GOV-001 examples\/invoke.ts:1:\d+: unsupported dynamic invocation or executable extraction/);
 });
+
+for (const [label, content, additions, removals] of [
+  ['changed', 'const a = 1;\nconst replacement = 3;\n', 1, 1],
+  ['identical', 'const a = 1;\nconst b = 2;\n', 0, 0],
+]) test(`final review staged deletion recreated untracked: ${label}`, (t) => {
+  const f = fixture(t);
+  execFileSync('git', ['rm', '--cached', 'src/a.ts'], { cwd: f.root });
+  f.write('src/a.ts', content);
+  const result = f.run();
+  assert.equal(result.status, 0, result.output);
+  assert.match(result.output, new RegExp(`source totals: .*gross additions ${additions}; gross removals ${removals}; net 0`));
+});

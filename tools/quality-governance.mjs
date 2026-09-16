@@ -173,7 +173,10 @@ export async function inspectSource(path, source) {
   });
   const isManager = (value) => {
     const node = unwrap(value);
-    return node?.type === 'Identifier' && managers.has(node.name)
+    // May contain a manager: inspect only local logical/conditional value branches.
+    return node?.type === 'LogicalExpression' && (isManager(node.left) || isManager(node.right))
+      || node?.type === 'ConditionalExpression' && (isManager(node.consequent) || isManager(node.alternate))
+      || node?.type === 'Identifier' && managers.has(node.name)
       || node?.type === 'ThisExpression' && path === 'src/runtime/jobs/job-manager.ts'
       || node?.type === 'NewExpression' && isManager(node.callee)
       || member(node) && (property(node) === 'jobManager'
@@ -234,6 +237,10 @@ export async function inspectSource(path, source) {
         // Conservatively reserve destructured executePlan too: its receiver may be a manager alias.
         if (name === 'executePlan') kind = 'job-manager';
         if (node.computed && name === undefined) kind = 'dynamic';
+      }
+      if (node.type === 'TSImportEqualsDeclaration' && node.importKind !== 'type') {
+        kind = 'dynamic';
+        detail = 'unsupported TypeScript import-equals; use a static named import for analysis';
       }
       // Non-static manager loading/re-exporting is unsupported rather than an unchecked entrance.
       if ((node.type === 'CallExpression' && node.callee.type === 'Identifier' && node.callee.name === 'require'

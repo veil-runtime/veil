@@ -1,5 +1,6 @@
 import { execFileSync } from 'node:child_process';
-import { lstatSync, readFileSync } from 'node:fs';
+import { lstatSync, readFileSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 // Inspect files as data. Never load candidate code or run package scripts.
@@ -131,6 +132,20 @@ async function compare(baseArgument) {
     const oldLines = lines(old ?? '');
     const newLines = lines(current ?? '');
     let [additions, removals] = edits.get(path) ?? ['0', '0'];
+    // A staged deletion can hide a replacement at the same untracked path from git diff.
+    if (old !== undefined && current !== undefined && untracked.has(path)) {
+      const temporary = mkdtempSync(join(tmpdir(), 'veil-quality-diff-'));
+      try {
+        const left = join(temporary, 'before');
+        const right = join(temporary, 'after');
+        writeFileSync(left, old);
+        writeFileSync(right, current);
+        let stats;
+        try { stats = git(root, 'diff', '--no-index', '--no-ext-diff', '--no-textconv', '--numstat', '--', left, right); }
+        catch (error) { if (error.status !== 1) throw error; stats = error.stdout; }
+        [additions, removals] = stats.trim() ? stats.split('\t').slice(0, 2) : [0, 0];
+      } finally { rmSync(temporary, { recursive: true, force: true }); }
+    }
     if (old === undefined) [additions, removals] = [newLines, 0];
     if (current === undefined) [additions, removals] = [0, oldLines];
     if (additions === '-' || removals === '-') throw new Error(`Binary code file cannot be measured: ${path}`);

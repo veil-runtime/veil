@@ -369,3 +369,43 @@ test('third review BigInt site identities ignore literal formatting', async () =
   const result = await compare('obj[0n](input);', 'obj[0x0n](input);');
   assert.equal(result.status, 0, result.output);
 });
+
+for (const source of [
+  "import jm = require('../../runtime/jobs/job-manager.js'); jm.executePlan(plan);",
+  "export import jm = require('./job-manager.js'); jm.executePlan(plan);",
+]) test(`final review import equals: ${source}`, async () => {
+  const result = await compare('', source);
+  assert.equal(result.status, 2, result.output);
+  assert.match(result.output, /VEIL-GOV-001.*unsupported/);
+});
+for (const expression of ['jobManager || fallback', 'jobManager && fallback', 'fallback ?? jobManager',
+  'condition ? jobManager : fallback', 'condition ? fallback : jobManager',
+  '(condition ? jobManager : fallback) || other']) {
+  test(`final review manager expression: ${expression}`, async () => {
+    const result = await compare('', `const jm = ${expression}; jm.executePlan(plan);`);
+    assert.notEqual(result.status, 0, result.output);
+    assert.match(result.output, /VEIL-GOV-001/);
+  });
+}
+
+for (const source of [
+  'import * as jobs from "./job-manager.js"; import jm = jobs.jobManager; jm.executePlan(plan);',
+  'import jm = Other.Manager; jm.executePlan(plan);',
+]) test(`final review related import equals fails closed: ${source}`, async () => {
+  assert.equal((await compare('', source)).status, 2);
+});
+for (const source of [
+  'import type jm = require("./job-manager.js");',
+  'const runtime = condition ? firstRuntime : secondRuntime; runtime.executePlan(plan);',
+  'const runtime = firstRuntime || secondRuntime; runtime.executePlan(plan);',
+  'const runtime = jobManager ? firstRuntime : secondRuntime; runtime.executePlan(plan);',
+]) test(`final review unrelated expression or type import allowed: ${source}`, async () => {
+  assert.equal((await compare('', source)).status, 0);
+});
+for (const source of [
+  'const first = jobManager; const neutral = condition ? first : fallback; neutral.executePlan(plan);',
+  '(jobManager || fallback).executePlan(plan);',
+  'function invoke(neutral = condition ? jobManager : fallback) { neutral.executePlan(plan); }',
+]) test(`final review adjacent local manager expression: ${source}`, async () => {
+  assert.equal((await compare('', source)).status, 1);
+});
