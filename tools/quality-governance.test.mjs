@@ -317,3 +317,55 @@ test('second review unrelated parameter defaults remain allowed', async () => {
   const result = await compare('', 'function invoke(manager = runtime) { return manager.executePlan(plan); }');
   assert.equal(result.status, 0, result.output);
 });
+
+for (const source of [
+  'const { jobManager: jm = fallback } = jobs; jm.executePlan(plan);',
+  'const { "jobManager": neutral = fallback } = jobs; neutral?.["executePlan"]?.(plan);',
+  'const { ["jobManager"]: neutral = fallback } = jobs; neutral.executePlan(plan);',
+  'let neutral; ({ jobManager: neutral = fallback } = jobs); neutral.executePlan(plan);',
+  'function invoke({ jobManager: neutral = fallback } = jobs) { neutral.executePlan(plan); }',
+  'const alias = jobs; const { jobManager: neutral = fallback } = alias; neutral.executePlan(plan);',
+]) {
+  test(`third review namespace default: ${source}`, async () => {
+    const result = await compare('', `import * as jobs from './job-manager.js'; ${source}`);
+    assert.equal(result.status, 1, result.output);
+    assert.match(result.output, /VEIL-GOV-001.*direct JobManager execution entrance/);
+  });
+}
+for (const source of [
+  'obj[0](input);',
+  'const fn = obj[0]; fn();',
+  'const fn = obj[0];',
+  'obj?.[0]?.(input);',
+  'const fn = obj[0].bind(obj);',
+  'Reflect.apply(obj[0], obj, []);',
+  'obj[0x0](input);',
+  'obj[-1](input);',
+  'obj[0n](input);',
+]) {
+  test(`third review numeric execution: ${source}`, async () => {
+    const result = await compare('', source);
+    assert.equal(result.status, 2, result.output);
+    assert.match(result.output, /VEIL-GOV-001.*unsupported/);
+  });
+}
+for (const source of [
+  'const value = array[0]; report(value);',
+  'if (array[0] === expected) report();',
+  'function read() { return array[0]; }',
+  'const value = array[0]; returnValue(value === expected);',
+  'array[0] = value; array[0] += 1;',
+  'function read() { return array[0n]; }',
+  'import * as jobs from "./job-manager.js"; const { other: neutral = fallback } = jobs; neutral.executePlan(plan);',
+  'const { jobManager: neutral = fallback } = data; neutral.executePlan(plan);',
+]) {
+  test(`third review ordinary data or unrelated binding: ${source}`, async () => {
+    const result = await compare('', source);
+    assert.equal(result.status, 0, result.output);
+  });
+}
+
+test('third review BigInt site identities ignore literal formatting', async () => {
+  const result = await compare('obj[0n](input);', 'obj[0x0n](input);');
+  assert.equal(result.status, 0, result.output);
+});

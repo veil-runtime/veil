@@ -122,6 +122,8 @@ sections:
         url: /contributing/testing.html
       - title: Package Verification
         url: /contributing/package-verification.html
+      - title: Quality Harness
+        url: /contributing/quality-harness.html
       - title: Architecture Rules
         url: /contributing/architecture-rules.html
       - title: Pull Requests

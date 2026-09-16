@@ -17,6 +17,7 @@ const ignored = new Set(['start', 'end', 'loc', 'extra', 'comments', 'leadingCom
 
 // Keep syntax and structural position, but not formatting, raw quotes or comments.
 function syntax(value) {
+  if (typeof value === 'bigint') return value.toString();
   if (Array.isArray(value)) return value.map(syntax);
   if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value)
     .filter(([key]) => !ignored.has(key)).map(([key, child]) => [key, syntax(child)]));
@@ -195,8 +196,9 @@ export async function inspectSource(path, source) {
           changed = true;
         }
         if (target?.type === 'ObjectPattern') for (const item of target.properties) {
-          if (property(item) === 'jobManager' && item.value?.type === 'Identifier' && !managers.has(item.value.name)) {
-            managers.add(item.value.name);
+          const binding = item.value?.type === 'AssignmentPattern' ? item.value.left : item.value;
+          if (property(item) === 'jobManager' && binding?.type === 'Identifier' && !managers.has(binding.name)) {
+            managers.add(binding.name);
             changed = true;
           }
         }
@@ -215,7 +217,7 @@ export async function inspectSource(path, source) {
         const name = property(node);
         if (name === 'execute') kind = 'execute';
         if (['execute', 'executePlan'].includes(name) && isManager(node.object)) kind = 'job-manager';
-        if (node.computed && name === undefined && node.property.type !== 'NumericLiteral' && executionRelevant(node)) {
+        if (node.computed && name === undefined && executionRelevant(node)) {
           kind = 'dynamic';
           detail = 'unsupported dynamic invocation or executable extraction';
         }
