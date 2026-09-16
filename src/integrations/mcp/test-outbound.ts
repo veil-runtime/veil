@@ -37,7 +37,8 @@ async function main(): Promise<void> {
       'mcp.everything.echo',
       'Call the Everything MCP server echo tool',
       'echo',
-      provider
+      provider,
+      'read'
     );
 
   capabilityRegistry.register(
