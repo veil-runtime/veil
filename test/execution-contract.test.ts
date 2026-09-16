@@ -140,6 +140,48 @@ test('plan validation rejects incompatible versions, malformed input, and forwar
   assert.match(malformed.errors[0].message, /must be of type 'string'/);
 });
 
+for (const [label, version, accepted] of [
+  ['omitted', undefined, true],
+  ['matching', '1.0.0', true],
+  ['empty', '', false],
+  ['mismatching', '2.0.0', false],
+] as const) {
+  test(`capability version validation: ${label}`, async () => {
+    const capability = uniqueCapabilityName(`version-${label}`);
+    let executions = 0;
+    registerCapability(capability, 'read', async () => {
+      executions += 1;
+      return 'executed';
+    });
+    const step = {
+      id: 'step',
+      capability,
+      ...(version === undefined ? {} : { capabilityVersion: version }),
+    };
+    const validation = validatePlan([step]);
+    assert.deepEqual(validation, accepted
+      ? { valid: true, errors: [] }
+      : {
+        valid: false,
+        errors: [{
+          stepId: 'step',
+          capability,
+          message: `Capability version mismatch for '${capability}': requested ${version}, registered 1.0.0`,
+        }],
+      });
+
+    const execute = () => new OperatorRuntime().executePlan({ version: '1.0', steps: [step] });
+    if (accepted) {
+      assert.equal((await execute()).status, 'completed');
+    } else {
+      await assert.rejects(execute, {
+        message: `Execution plan failed validation: ${validation.errors[0].message}`,
+      });
+    }
+    assert.equal(executions, accepted ? 1 : 0);
+  });
+}
+
 test('default authorization allows reads and denies write and destructive capabilities', async () => {
   const readName = uniqueCapabilityName('default-read');
   const writeName = uniqueCapabilityName('default-write');
