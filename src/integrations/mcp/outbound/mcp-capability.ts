@@ -1,5 +1,6 @@
 import {
   Capability,
+  CapabilityRisk,
 } from '../../../runtime/registry/capability.js';
 
 import {
@@ -17,11 +18,16 @@ export function createMcpCapability(
   name: string,
   description: string,
   downstreamToolName: string,
-  provider: McpProvider
+  provider: McpProvider,
+  risk: CapabilityRisk
 ): Capability<
   McpCapabilityInput,
   unknown
 > {
+  if (risk !== 'read' && risk !== 'write' && risk !== 'destructive') {
+    throw new TypeError('Outbound MCP capability requires an explicit valid CapabilityRisk');
+  }
+
   return {
     name,
 
@@ -29,7 +35,7 @@ export function createMcpCapability(
 
     description,
 
-    risk: 'read',
+    risk,
 
     inputSchema: {
       arguments: {
