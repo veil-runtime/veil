@@ -17,4 +17,4 @@ Approved runtime/SDK machinery, non-capability strategy execution and test/fixtu
 execution are classified individually. Ordinary computed data access is not a
 governance finding; unresolved dynamic invocation/executable extraction is. Candidate
 baseline edits cannot grant themselves permission. See
-[the quality harness](quality-harness.md) for adoption, coverage and limits.
+[the quality harness](quality-harness.html) for adoption, coverage and limits.

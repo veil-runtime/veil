@@ -274,3 +274,46 @@ for (const source of [
     assert.equal(result.status, 0, result.output);
   });
 }
+
+for (const operator of ['=', '||=', '&&=', '??=']) {
+  for (const use of ['(obj[key] OP fallback)();', 'const fn = (obj[key] OP fallback); fn();', '(obj[key] OP fallback)?.();']) {
+    const source = use.replace('OP', operator);
+    test(`second review assignment execution: ${source}`, async () => {
+      const result = await compare('', source);
+      assert.equal(result.status, 2, result.output);
+      assert.match(result.output, /VEIL-GOV-001.*unsupported/);
+    });
+  }
+  test(`second review assignment data: ${operator}`, async () => {
+    const result = await compare('', `obj[key] ${operator} fallback; const value = (obj[key] ${operator} fallback); report(value);`);
+    assert.equal(result.status, 0, result.output);
+  });
+}
+for (const source of [
+  'function invoke(manager = jobManager) { return manager.executePlan(plan); }',
+  'const invoke = (manager = jobManager) => manager?.executePlan(plan);',
+  'function invoke({ manager = jobManager } = {}) { manager.executePlan(plan); }',
+  'function invoke([manager = jobManager] = []) { manager.executePlan(plan); }',
+  'function invoke(first = jobManager, second = first) { second.executePlan(plan); }',
+  'function invoke(manager = (jobManager as Manager)) { manager["executePlan"](plan); }',
+  'const { manager = jobManager } = input; manager.executePlan(plan);',
+  'let manager; ({ manager = jobManager } = input); manager.executePlan(plan);',
+  'import { jobManager as original } from "./job-manager.js"; function invoke(manager = original) { manager.executePlan(plan); }',
+  'import * as jobs from "./job-manager.js"; function invoke(namespace = jobs) { const { jobManager: manager } = namespace; manager.executePlan(plan); }',
+]) {
+  test(`second review manager default: ${source}`, async () => {
+    const result = await compare('', source);
+    assert.equal(result.status, 1, result.output);
+    assert.match(result.output, /VEIL-GOV-001.*direct JobManager execution entrance/);
+  });
+}
+
+test('second review assignment RHS invocation follows the expression result', async () => {
+  const result = await compare('', 'let fn; (fn = obj[key])(); report(fn);');
+  assert.equal(result.status, 2, result.output);
+  assert.match(result.output, /VEIL-GOV-001.*unsupported/);
+});
+test('second review unrelated parameter defaults remain allowed', async () => {
+  const result = await compare('', 'function invoke(manager = runtime) { return manager.executePlan(plan); }');
+  assert.equal(result.status, 0, result.output);
+});

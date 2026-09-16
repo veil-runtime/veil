@@ -117,6 +117,8 @@ function dynamicExecutionUse(program) {
     }
     if (parent.type === 'TaggedTemplateExpression') return parent.tag === node;
     if (member(parent) && parent.object === node) return ['executePlan', 'bind', 'call', 'apply'].includes(property(parent));
+    if (parent.type === 'AssignmentExpression' && ['=', '||=', '&&=', '??='].includes(parent.operator)
+      && executionUse(parent, seen)) return true;
     if (parent.type === 'VariableDeclarator' && parent.init === node) return bindingUse(parent.id, seen);
     if (['AssignmentExpression', 'AssignmentPattern'].includes(parent.type) && parent.right === node) return bindingUse(parent.left, seen);
     // Comparisons, returns, formatting, argument passing and object/JSX data uses
@@ -181,7 +183,7 @@ export async function inspectSource(path, source) {
     changed = false;
     walk(ast.program, (node) => {
       const target = node.type === 'VariableDeclarator' ? node.id
-        : node.type === 'AssignmentExpression' ? node.left : undefined;
+        : ['AssignmentExpression', 'AssignmentPattern'].includes(node.type) ? node.left : undefined;
       const value = node.type === 'VariableDeclarator' ? node.init : node.right;
       if (target?.type === 'Identifier' && isManager(value) && !managers.has(target.name)) {
         managers.add(target.name);
