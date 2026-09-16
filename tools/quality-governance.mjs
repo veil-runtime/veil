@@ -55,6 +55,15 @@ function dynamicExecutionUse(program) {
   const declaration = (identifier) => {
     const parent = parents.get(identifier);
     if (parent?.type === 'VariableDeclarator' && parent.id === identifier) return parent;
+    if (parent?.type === 'AssignmentPattern' && parent.left === identifier) {
+      // Defaults bind through variable patterns or parameters, not assignment targets.
+      for (let owner = parent; owner; owner = parents.get(owner)) {
+        const container = parents.get(owner);
+        if (container?.type === 'VariableDeclarator' && container.id === owner
+          || container?.params?.includes(owner)) return parent;
+        if (!['AssignmentPattern', 'ObjectProperty', 'ObjectPattern', 'ArrayPattern'].includes(container?.type)) break;
+      }
+    }
     for (let scope = scopeOf(identifier); scope; scope = scopeOf(parents.get(scope))) {
       for (const statement of scope.body) {
         const node = statement.declaration ?? statement;
@@ -98,11 +107,18 @@ function dynamicExecutionUse(program) {
       || parent.type === 'SequenceExpression' && parent.expressions.at(-1) === node) {
       return executionUse(parent, seen);
     }
-    if (['CallExpression', 'OptionalCallExpression', 'NewExpression'].includes(parent.type)) return parent.callee === node;
+    if (['CallExpression', 'OptionalCallExpression', 'NewExpression'].includes(parent.type)) {
+      const callee = unwrap(parent.callee);
+      const reflectiveTarget = member(callee) && unwrap(callee.object)?.type === 'Identifier'
+        && unwrap(callee.object).name === 'Reflect'
+        && (['apply', 'construct'].includes(property(callee)) && parent.arguments[0] === node
+          || property(callee) === 'construct' && parent.arguments[2] === node);
+      return parent.callee === node || reflectiveTarget;
+    }
     if (parent.type === 'TaggedTemplateExpression') return parent.tag === node;
-    if (member(parent) && parent.object === node) return ['bind', 'call', 'apply'].includes(property(parent));
+    if (member(parent) && parent.object === node) return ['executePlan', 'bind', 'call', 'apply'].includes(property(parent));
     if (parent.type === 'VariableDeclarator' && parent.init === node) return bindingUse(parent.id, seen);
-    if (parent.type === 'AssignmentExpression' && parent.right === node) return bindingUse(parent.left, seen);
+    if (['AssignmentExpression', 'AssignmentPattern'].includes(parent.type) && parent.right === node) return bindingUse(parent.left, seen);
     // Comparisons, returns, formatting, argument passing and object/JSX data uses
     // are not executable extraction in this local rule. Callee bodies are not followed.
     return false;
@@ -131,7 +147,7 @@ export async function inspectSource(path, source) {
         ...(/\.[cm]?tsx?$/.test(path) ? [['typescript', {
           dts: /\.d\.[cm]?ts$/.test(path), disallowAmbiguousJSXLike: /\.[cm]ts$/.test(path),
         }]] : []),
-        ...(/\.[jt]sx$/.test(path) ? ['jsx'] : []),
+        ...(/\.[cm]?[jt]sx$/.test(path) ? ['jsx'] : []),
       ],
     });
   } catch (error) {

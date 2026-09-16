@@ -229,3 +229,48 @@ test('complete relevant repository parses and current individual sites classify 
   }
   console.log(`Parser compatibility: ${report.files} relevant repository files; ${sites.length} individually classified sites; Node ${process.versions.node}.`);
 });
+
+for (const source of [
+  'const jm = jobs[key]; jm.executePlan(plan);',
+  'const neutral = values[key]; neutral?.["executePlan"]?.(plan);',
+  'const neutral = values[key]; const run = neutral.executePlan; run(plan);',
+  'function run(fn = obj[key]) { fn(); }',
+  'const { fn = obj[key] } = input; fn();',
+  'const [fn = obj[key]] = input; fn();',
+  'const run = (fn = obj[key]) => fn?.();',
+  'let fn; ({ fn = obj[key] } = input); fn();',
+  'Reflect.apply(cap[key], cap, [input]);',
+  'Reflect?.["apply"]?.((obj[key] as Function), obj, []);',
+  'const fn = obj[key]; Reflect.apply(fn, obj, []);',
+  'Reflect.construct(obj[key], []);',
+  'Reflect.construct(Fn, [], obj[key]);',
+  'function run({ fn = obj[key] } = {}) { fn(); }',
+  'function run([fn = obj[key]] = []) { fn(); }',
+]) {
+  test(`external review execution regression: ${source}`, async () => {
+    const result = await compare('', source);
+    assert.equal(result.status, 2, result.output);
+    assert.match(result.output, /VEIL-GOV-001.*unsupported/);
+  });
+}
+for (const extension of ['cjsx', 'mjsx', 'ctsx', 'mtsx']) {
+  test(`external review JSX extension regression: ${extension}`, async () => {
+    const sites = await inspectSource(`view.${extension}`, 'const view = <button onClick={() => obj.execute(input)} />;');
+    assert.equal(sites.length, 1);
+    assert.equal(sites[0].kind, 'execute');
+  });
+}
+
+for (const source of [
+  'function read(value = obj[key]) { return value === expected; }',
+  'const { value = obj[key] } = input; report(value);',
+  'const [value = obj[key]] = input; report(value);',
+  'Reflect.apply(fn, obj[key], []);',
+  'Reflect.apply(fn, obj, [input[key]]);',
+  'Reflect.construct(fn, [input[key]]);',
+]) {
+  test(`external review data remains allowed: ${source}`, async () => {
+    const result = await compare('', source);
+    assert.equal(result.status, 0, result.output);
+  });
+}

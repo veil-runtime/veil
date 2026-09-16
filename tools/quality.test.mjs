@@ -202,7 +202,7 @@ test('baseline changes are verification controls and invalid candidates fail clo
   assert.match(result.output, /VEIL-GOV-001.*invalid baseline/);
 });
 
-test('untracked dynamic data uses need no baseline entries', (t) => {
+test('untracked dynamic data needs no baseline entries', (t) => {
   const f = fixture(t);
   f.write('examples/data.ts', 'const value = input[field]; if (value === expected) report(value);');
   const result = f.run();
