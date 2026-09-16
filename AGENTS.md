@@ -26,6 +26,11 @@ stores, provider implementations, or validators from the package root.
 5. Do not mix formatting, line-ending, or file-mode cleanup into feature work.
 6. Run `npm run check` before handing work back.
 7. Report changed files, commands run, exact failures, and remaining work.
+8. For implementation work, also run `npm run quality -- --base <commit>`
+   when an appropriate comparison base is available, and report quality deltas.
+   Do not change the comparison base or relax verification controls merely to
+   obtain a passing result. `npm run check` remains the authoritative
+   functional/package gate; quality findings marked "review required" need review.
 
 Any change to a locked contract requires an explicit architecture decision by
 the maintainer; agents must stop and request that decision.

@@ -43,6 +43,8 @@
     "test": "tsc --project tsconfig.test.json && node --test .tmp/test-build/test/*.test.js",
     "verify:package": "npm run build && node tools/verify-package.mjs",
     "check": "npm run typecheck && npm test && npm run verify:package",
+    "quality": "node tools/quality.mjs",
+    "test:quality": "node --test tools/quality.test.mjs",
     "mcp:stdio": "tsx src/integrations/mcp/stdio-server.ts",
     "mcp:test": "tsx src/integrations/mcp/test-client.ts",
     "mcp:test:outbound": "tsx src/integrations/mcp/test-outbound.ts"
