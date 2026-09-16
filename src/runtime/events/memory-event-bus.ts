@@ -62,8 +62,13 @@ export class MemoryEventBus
 
     await Promise.all(
       handlers.map(
-        (handler) =>
-          Promise.resolve(handler(event))
+        async (handler) => {
+          try {
+            await handler(event);
+          } catch {
+            // Subscriber failures are contained observer failures.
+          }
+        }
       )
     );
   }

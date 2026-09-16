@@ -9,6 +9,7 @@ import {
 import { ExecutionCaller } from '../src/runtime/execution/execution-context.js';
 import { validatePlan } from '../src/runtime/execution/plan-validator.js';
 import { capabilityRegistry } from '../src/runtime/registry/registry.js';
+import { runtimeEventBus } from '../src/runtime/events/memory-event-bus.js';
 
 const suffix = `${process.pid}-${Date.now()}`;
 const sourceName = `test.source.${suffix}`;
@@ -56,6 +57,51 @@ function oneStepPlan(capability: string, input?: unknown) {
       input,
     }],
   };
+}
+
+for (const fails of [false, true]) {
+  test(`observer failures preserve capability ${fails ? 'failure' : 'success'} and lifecycle history`, async () => {
+    const capability = uniqueCapabilityName(`observer-${fails}`);
+    registerCapability(capability, 'read', async () => {
+      if (fails) throw new Error('genuine capability failure');
+      return { value: 'successful result' };
+    });
+    const baseline = await new OperatorRuntime().executePlan(oneStepPlan(capability));
+    const unsubscribeReject = runtimeEventBus.subscribe('*', () =>
+      Promise.reject(new Error('observer rejected')));
+    const unsubscribeThrow = runtimeEventBus.subscribe('*', () => {
+      throw new Error('observer threw');
+    });
+    const observed: string[] = [];
+    const unsubscribeObserver = runtimeEventBus.subscribe('*', (event) => {
+      observed.push(event.id);
+    });
+    try {
+      const job = await new OperatorRuntime().executePlan(oneStepPlan(capability));
+      assert.equal(job.status, fails ? 'failed' : 'completed');
+      assert.equal(job.steps[0].status, fails ? 'failed' : 'completed');
+      if (fails) {
+        assert.match(job.error ?? '', /genuine capability failure/);
+      } else {
+        assert.deepEqual(job.steps[0].result, { value: 'successful result' });
+      }
+      const types = eventTypes(job);
+      assert.deepEqual(types, eventTypes(baseline));
+      for (const type of [
+        'job.created', 'capability.started',
+        fails ? 'capability.failed' : 'capability.completed',
+        fails ? 'job.failed' : 'job.completed',
+      ]) {
+        assert.ok(types.includes(type), `missing retained event: ${type}`);
+      }
+      assert.ok(!types.includes(fails ? 'job.completed' : 'job.failed'));
+      assert.deepEqual(observed, job.events.map((event) => event.id));
+    } finally {
+      unsubscribeReject();
+      unsubscribeThrow();
+      unsubscribeObserver();
+    }
+  });
 }
 
 capabilityRegistry.register({
