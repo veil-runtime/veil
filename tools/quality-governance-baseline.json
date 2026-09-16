@@ -1,0 +1,124 @@
+{
+  "version": 1,
+  "sites": [
+    {
+      "path": "examples/veil-starter/server/veil/capabilities.test.ts",
+      "anchor": "52b8509038c6e02f0fccf1a34118a963984bded3ddc019b2bdee9e3083de44a3",
+      "kind": "execute",
+      "classification": "TEST_OR_FIXTURE",
+      "reason": "Existing direct capability unit test; intentionally exercises the capability in isolation."
+    },
+    {
+      "path": "src/api/routes/execution.routes.ts",
+      "anchor": "e73e3a3e0a606e8a0aeda8b523da269dfb36b6b2f4c9a4ddc24f3d2aa82fddef",
+      "kind": "execute",
+      "classification": "LEGACY_BYPASS",
+      "reason": "Legacy HTTP capability dispatch with boolean approval/audit; bypasses plan and job lifecycle. Retire when migrated to OperatorRuntime."
+    },
+    {
+      "path": "src/api/routes/jobs.routes.ts",
+      "anchor": "858ad85bad935d26844bc549f14140c53a713e3417e9d66999dad1f3f187b0b9",
+      "kind": "job-manager",
+      "classification": "LEGACY_BYPASS",
+      "reason": "Legacy HTTP job execution enters JobManager directly; retains per-step authorization but skips OperatorRuntime and plan admission. Retire when migrated."
+    },
+    {
+      "path": "src/api/routes/linkedin.routes.ts",
+      "anchor": "01bd3bcf2bb5f66c04010457c206aa4a030331f34d9c8a0efe83098966bb5ad9",
+      "kind": "execute",
+      "classification": "LEGACY_BYPASS",
+      "reason": "Legacy LinkedIn status HTTP route directly invokes a capability. Retire when migrated to OperatorRuntime."
+    },
+    {
+      "path": "src/runtime/execution/plan-validator.ts",
+      "anchor": "d8937f3f002890312f040f4917be0c4aaeb380635ba7637b774d6278e32229cf",
+      "kind": "dynamic",
+      "classification": "GOVERNED_MACHINERY",
+      "reason": "Existing TYPE_CHECKS lookup selects an input-validation predicate, called as check(value); it is not capability dispatch."
+    },
+    {
+      "path": "src/runtime/jobs/job-manager.ts",
+      "anchor": "530be93382e9afceb27f33b701239750fbd20aa0ffc1b9634a2fae55dfb36c26",
+      "kind": "job-manager",
+      "classification": "GOVERNED_MACHINERY",
+      "reason": "Approved internal execution loop: plan admission delegates here and capability dispatch follows per-step authorization."
+    },
+    {
+      "path": "src/runtime/jobs/job-manager.ts",
+      "anchor": "1f3b5a0288cc6ed6b3591a94669ddf3d155b2ff979d26eab54b24577b8559f4c",
+      "kind": "execute",
+      "classification": "GOVERNED_MACHINERY",
+      "reason": "Approved internal execution loop: plan admission delegates here and capability dispatch follows per-step authorization."
+    },
+    {
+      "path": "src/runtime/operator-runtime.ts",
+      "anchor": "bee745368f9432230e79e8e483392a15aa743bdf853564657fbd8b05bccfdec1",
+      "kind": "job-manager",
+      "classification": "GOVERNED_MACHINERY",
+      "reason": "Approved runtime delegation to JobManager or planner strategy; strategy produces a plan."
+    },
+    {
+      "path": "src/runtime/operator-runtime.ts",
+      "anchor": "f1589007acc4a53492d593561b9d9b3aac451bf4d5e22dd3e01748bc3d065cc6",
+      "kind": "execute",
+      "classification": "LEGITIMATE_NON_CAPABILITY_EXECUTE",
+      "reason": "Planner strategy execution produces an ExecutionPlan; capability dispatch follows through OperatorRuntime.executePlan."
+    },
+    {
+      "path": "src/sdk/capability/create-capability.ts",
+      "anchor": "0e58f16e6c26e79279fe0a35302a8c6c2f0194e689fda296fd424bbae98cc6b4",
+      "kind": "execute",
+      "classification": "GOVERNED_MACHINERY",
+      "reason": "Approved capability-definition callback or middleware delegation inside the SDK."
+    },
+    {
+      "path": "src/sdk/capability/create-capability.ts",
+      "anchor": "71ee6e7e30c08a8a46082da1658dd23de501f521b2d2a4cc359fb8ef80940ddf",
+      "kind": "execute",
+      "classification": "GOVERNED_MACHINERY",
+      "reason": "Approved capability-definition callback or middleware delegation inside the SDK."
+    },
+    {
+      "path": "test/fixtures/package-consumer/verify.mjs",
+      "anchor": "0ca0d41fecc7c7f23ede6d59e48201e69fd07dd15ae85888d2360f0ff3c65141",
+      "kind": "dynamic",
+      "classification": "TEST_OR_FIXTURE",
+      "reason": "Reviewed negative package-export test: imports enumerated private paths and asserts rejection."
+    },
+    {
+      "path": "test/planner-routing.test.ts",
+      "anchor": "3045cc55b637d5509c9705dc787c292013d3b248cc1c419b94df983bc1c9d561",
+      "kind": "execute",
+      "classification": "TEST_OR_FIXTURE",
+      "reason": "Planner strategy unit test; executes reasoning, not capability work."
+    },
+    {
+      "path": "test/planner-routing.test.ts",
+      "anchor": "b36db2ba927195ec359f250c4493e61e178c3cabf1e3451dcbc8f900b63698a9",
+      "kind": "execute",
+      "classification": "TEST_OR_FIXTURE",
+      "reason": "Planner strategy unit test; executes reasoning, not capability work."
+    },
+    {
+      "path": "test/planner-routing.test.ts",
+      "anchor": "132a61ba2d05f584ebc5cabffa0c65cb331b462c7f556da32c38ecfcfb7731f8",
+      "kind": "execute",
+      "classification": "TEST_OR_FIXTURE",
+      "reason": "Planner strategy unit test; executes reasoning, not capability work."
+    },
+    {
+      "path": "test/planner-routing.test.ts",
+      "anchor": "349a445b6e74964e7191e282b1e06550d9c11dcf41c303b90615391cf966bd72",
+      "kind": "execute",
+      "classification": "TEST_OR_FIXTURE",
+      "reason": "Planner strategy unit test; executes reasoning, not capability work."
+    },
+    {
+      "path": "test/planner-routing.test.ts",
+      "anchor": "838a7dae7e1f045541edd0d94c3aaca7c7f8721386d0cda8d7899da603671809",
+      "kind": "execute",
+      "classification": "TEST_OR_FIXTURE",
+      "reason": "Planner strategy unit test; executes reasoning, not capability work."
+    }
+  ]
+}

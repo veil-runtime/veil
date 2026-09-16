@@ -37,6 +37,7 @@ function fixture(t) {
   write('src/index.ts', 'export {};\n');
   write('src/sdk/index.ts', 'export {};\n');
   write('AGENTS.md', 'Preserve contracts.\n');
+  write('tools/quality-governance-baseline.json', '{"version":1,"sites":[]}\n');
   git('init', '--quiet');
   git('config', 'core.autocrlf', 'false');
   git('add', '.');
@@ -171,4 +172,48 @@ test('test and harness growth are separated from source', (t) => {
   assert.equal(result.status, 1);
   assert.match(result.output, /test totals: 2 -> 3 LOC; gross additions 1; gross removals 0; net 1/);
   assert.match(result.output, /harness totals: 1 -> 2 LOC; gross additions 1; gross removals 0; net 1/);
+});
+
+for (const path of ['src/new.ts', 'examples/helper.ts', 'tools/helper.mjs', 'outside.ts', 'test/hidden.test.ts']) {
+  test(`governance scans untracked code across the candidate tree: ${path}`, (t) => {
+    const f = fixture(t);
+    f.write(path, 'renamed.execute(input);\n');
+    const result = f.run();
+    assert.equal(result.status, 1);
+    assert.ok(result.output.includes(`VEIL-GOV-001 ${path}:1:1`));
+  });
+}
+
+test('governance parser failure fails closed without suppressing informational findings', (t) => {
+  const f = fixture(t);
+  f.write('examples/broken.ts', 'const value = ;');
+  const result = f.run();
+  assert.equal(result.status, 2);
+  assert.match(result.output, /Direct dependencies — INFORMATIONAL/);
+  assert.match(result.output, /VEIL-GOV-001.*parser failure/);
+});
+
+test('baseline changes are verification controls and invalid candidates fail closed', (t) => {
+  const f = fixture(t);
+  f.write('tools/quality-governance-baseline.json', '{}');
+  const result = f.run();
+  assert.equal(result.status, 2);
+  assert.match(result.output, /review required: "tools\/quality-governance-baseline.json"/);
+  assert.match(result.output, /VEIL-GOV-001.*invalid baseline/);
+});
+
+test('untracked dynamic data uses need no baseline entries', (t) => {
+  const f = fixture(t);
+  f.write('examples/data.ts', 'const value = input[field]; if (value === expected) report(value);');
+  const result = f.run();
+  assert.equal(result.status, 0, result.output);
+  assert.match(result.output, /No unapproved execution references or unsupported accesses/);
+});
+
+test('untracked dynamic invocation still fails closed after data-use refinement', (t) => {
+  const f = fixture(t);
+  f.write('examples/invoke.ts', 'const value = input[field]; if (value) value();');
+  const result = f.run();
+  assert.equal(result.status, 2);
+  assert.match(result.output, /VEIL-GOV-001 examples\/invoke.ts:1:\d+: unsupported dynamic invocation or executable extraction/);
 });

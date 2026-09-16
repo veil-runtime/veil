@@ -44,7 +44,7 @@
     "verify:package": "npm run build && node tools/verify-package.mjs",
     "check": "npm run typecheck && npm test && npm run verify:package",
     "quality": "node tools/quality.mjs",
-    "test:quality": "node --test tools/quality.test.mjs",
+    "test:quality": "node --test tools/quality.test.mjs tools/quality-governance.test.mjs",
     "mcp:stdio": "tsx src/integrations/mcp/stdio-server.ts",
     "mcp:test": "tsx src/integrations/mcp/test-client.ts",
     "mcp:test:outbound": "tsx src/integrations/mcp/test-outbound.ts"
@@ -63,6 +63,7 @@
     "better-sqlite3": "^13.0.3"
   },
   "devDependencies": {
+    "@babel/parser": "8.0.5",
     "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^26.2.0",
     "fastify": "^5.11.3",

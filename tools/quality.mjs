@@ -12,7 +12,8 @@ const normalize = (value) => value.replace(/\r\n/g, '\n');
 const lines = (value) => value === '' ? 0 : value.split('\n').length - Number(value.endsWith('\n'));
 const label = (value) => JSON.stringify(value);
 const categories = ['dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies'];
-const harness = new Set(['tools/quality.mjs', 'tools/quality.test.mjs']);
+const harness = new Set(['tools/quality.mjs', 'tools/quality.test.mjs',
+  'tools/quality-governance.mjs', 'tools/quality-governance.test.mjs']);
 const code = /\.(?:[cm]?[jt]sx?)$/;
 
 function group(path) {
@@ -22,7 +23,8 @@ function group(path) {
 }
 
 function control(path) {
-  return harness.has(path) || path === 'AGENTS.md' || path === 'tools/verify-package.mjs'
+  return harness.has(path) || path === 'tools/quality-governance-baseline.json'
+    || path === 'AGENTS.md' || path === 'tools/verify-package.mjs'
     || /(^|\/)tsconfig(?:\.[^/]+)?\.json$/.test(path)
     || path.startsWith('test/') || path === 'src/index.ts'
     || /^src\/sdk\/(?:.*\/)?index\.ts$/.test(path);
@@ -54,7 +56,7 @@ function canonical(value) {
 }
 const equal = (a, b) => JSON.stringify(canonical(a)) === JSON.stringify(canonical(b));
 
-function compare(baseArgument) {
+async function compare(baseArgument) {
   const root = git(process.cwd(), 'rev-parse', '--show-toplevel').trim();
   const base = git(root, 'rev-parse', '--verify', '--end-of-options', `${baseArgument}^{commit}`).trim();
   const beforePaths = new Set(split(git(root, 'ls-tree', '-r', '--name-only', '-z', base)));
@@ -157,7 +159,15 @@ function compare(baseArgument) {
   output.push(reviews.length
     ? 'review required — changes are not proven weakening.'
     : 'No verification-control changes detected.');
-  return { output: output.join('\n'), status: reviews.length ? 1 : 0 };
+  let governance;
+  try {
+    const { checkGovernance } = await import('./quality-governance.mjs');
+    governance = await checkGovernance({ paths, before, after });
+  } catch (error) {
+    governance = { output: `VEIL-GOV-001 analysis failed: ${error.message}`, status: 2 };
+  }
+  output.push(governance.output);
+  return { output: output.join('\n'), status: Math.max(reviews.length ? 1 : 0, governance.status) };
 }
 
 try {
@@ -165,7 +175,7 @@ try {
   if (args.length !== 2 || args[0] !== '--base' || !args[1].trim() || args[1].startsWith('-')) {
     throw new Error('Usage: npm run quality -- --base <commit> (an explicit valid commit is required)');
   }
-  const result = compare(args[1]);
+  const result = await compare(args[1]);
   console.log(result.output);
   process.exitCode = result.status;
 } catch (error) {
