@@ -117,7 +117,7 @@ export function validatePlan(
       continue;
     }
 
-    if (step.capabilityVersion && step.capabilityVersion !== capability.version) {
+    if (step.capabilityVersion !== undefined && step.capabilityVersion !== capability.version) {
       errors.push({
         stepId: step.id,
         capability: step.capability,
