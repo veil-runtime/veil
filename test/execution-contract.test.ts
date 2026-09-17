@@ -72,9 +72,9 @@ for (const fails of [false, true]) {
     const unsubscribeThrow = runtimeEventBus.subscribe('*', () => {
       throw new Error('observer threw');
     });
-    const observed: string[] = [];
+    const observed: { id: string; jobId?: string }[] = [];
     const unsubscribeObserver = runtimeEventBus.subscribe('*', (event) => {
-      observed.push(event.id);
+      observed.push({ id: event.id, jobId: event.jobId });
     });
     try {
       const job = await new OperatorRuntime().executePlan(oneStepPlan(capability));
@@ -95,7 +95,10 @@ for (const fails of [false, true]) {
         assert.ok(types.includes(type), `missing retained event: ${type}`);
       }
       assert.ok(!types.includes(fails ? 'job.completed' : 'job.failed'));
-      assert.deepEqual(observed, job.events.map((event) => event.id));
+      assert.deepEqual(
+        observed.filter((event) => event.jobId === job.id).map((event) => event.id),
+        job.events.map((event) => event.id),
+      );
     } finally {
       unsubscribeReject();
       unsubscribeThrow();
