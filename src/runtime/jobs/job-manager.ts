@@ -5,7 +5,7 @@ import {
   defaultExecutionAuthorizer,
   ExecutionAuthorizer,
 } from '../permissions/execution-authorizer.js';
-import { ExecutionPlan } from '../planner/planner.js';
+import { ExecutionPlan, ExecutionStep } from '../planner/planner.js';
 import { validatePlan, validateStepInput } from '../execution/plan-validator.js';
 import { ExecutionCaller } from '../execution/execution-context.js';
 import { resolveResultReferences } from '../execution/result-reference.js';
@@ -28,13 +28,31 @@ class JobManager {
     authorizer: ExecutionAuthorizer =
       defaultExecutionAuthorizer
   ): Promise<Job> {
-    if (!plan.steps.length) {
+    // Own the structural envelope before admission; nested input remains shared.
+    const capturedGoal = plan.goal;
+    const idempotencyKey = plan.idempotencyKey;
+    const submittedSteps = plan.steps;
+    const steps = new Array<ExecutionStep>(submittedSteps.length);
+    for (let index = 0; index < steps.length; index += 1) {
+      if (!(index in submittedSteps)) continue;
+      const step = submittedSteps[index];
+      steps[index] = {
+        id: step.id,
+        capability: step.capability,
+        capabilityVersion: step.capabilityVersion,
+        input: step.input,
+        reason: step.reason,
+        idempotencyKey: step.idempotencyKey,
+      };
+    }
+
+    if (!steps.length) {
       throw new Error(
         'Execution plan contains no steps'
       );
     }
 
-    const validation = validatePlan(plan.steps);
+    const validation = validatePlan(steps);
     if (!validation.valid) {
       throw new Error(
         `Execution plan failed validation: ${validation.errors
@@ -44,15 +62,15 @@ class JobManager {
     }
 
     const goal =
-      plan.goal?.trim() ||
+      capturedGoal?.trim() ||
       'External execution plan';
 
     const job = await this.create(
       goal
     );
 
-    job.idempotencyKey = plan.idempotencyKey;
-    job.steps = plan.steps.map((step) => ({
+    job.idempotencyKey = idempotencyKey;
+    job.steps = steps.map((step) => ({
       ...step,
       status: 'pending',
       createdAt: new Date().toISOString(),

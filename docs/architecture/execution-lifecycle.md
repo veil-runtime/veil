@@ -18,11 +18,13 @@ run fails before execution if no default router exists, a selected strategy is m
 
 ## Plan admission
 
-OperatorRuntime passes the plan and an immutable caller snapshot to the internal job manager. An empty step list throws. The plan validator then checks each listed step: capability existence, supplied capability-version equality, declared required/type fields, and reference grammar/order. Invalid plans throw before a job is created.
+OperatorRuntime passes the plan and an immutable caller snapshot to the internal job manager. At the beginning of JobManager.executePlan, before any await or admission check, the manager synchronously captures the consumed goal/key and step structure into runtime-owned records (including each input root binding). The captured array preserves membership, order and holes. An empty captured step list throws. The plan validator then checks each captured step: capability existence, supplied capability-version equality, declared required/type fields, and reference grammar/order. Invalid plans throw before a job is created.
 
 ## Job creation
 
-The manager creates a Job with the trimmed plan goal or External execution plan, copies steps as pending with creation timestamps, records the plan idempotency key, and stores the job. The plan's optional ID and metadata are not copied into the Job model. Job creation emits job.created; execution then changes status to executing and emits execution.started.
+The manager creates a Job with the trimmed captured goal or External execution plan, materializes the same captured steps as pending with creation timestamps, records the captured plan idempotency key, and stores the job. The plan's optional ID and metadata are not copied into the Job model. Job creation emits job.created; execution then changes status to executing and emits execution.started.
+
+Caller structural mutation after capture cannot alter admission or materialization, including while job creation is pending. Nested input contents remain shared until existing resolution behavior copies/resolves them; admission does not guarantee stable exact input values. Results retain existing identity/mutability semantics. Stored-job execution and replay are outside this submission decision.
 
 ## Each step, in exact order
 
