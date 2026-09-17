@@ -46,6 +46,110 @@ At plan admission, Veil validates known capability, requested version, declared 
 
 ExecutionAuthorizer receives capability identity/risk, job ID, step ID, immutable caller, and fully resolved input. This lets a policy decide on properties such as target environment or generated identifier instead of trusting plan text. A denied action records capability.denied and never emits capability.started. Tests also show an authorizer exception fails the job before capability execution.
 
+## Core-hardening cycle closure (2026-09-17)
+
+The following guarantees are established in `develop` at
+`d671669afd8d63319aeb70c3fe4daf5dae73b57c`:
+
+- **Observer failure isolation:** MemoryEventBus contains synchronous subscriber
+  throws and asynchronous rejections, continues delivery to other subscribers,
+  and does not turn those failures into execution failures. Publication still
+  awaits subscribers; this is not observer timeout or mutation isolation.
+- **Explicit/owned authorization:** execution requires a non-null, non-array
+  object with an own `decision` property, read once, equal to `allow`. A valid
+  `deny` prevents execution; malformed decisions and authorizer failures fail
+  closed. Denial reasons, if present, must be strings; reason ownership is not
+  required. Authorizers are runtime-scoped, with the default allowing reads and
+  denying writes/destructive work. This owns the decision boundary, not the
+  authorized input values.
+- **Owned result-reference traversal:** every result-path segment must be an own
+  property of the current object. Inherited properties are rejected. Own special
+  names remain legitimate data; own getters and proxy traps may run. Returned
+  objects retain identity and mutability: traversal is not value isolation.
+- **Plan-local unique step identity:** admission rejects duplicate step IDs by
+  exact-string equality before job creation, persistence, runtime lifecycle
+  events, authorization or invocation. IDs may be reused in separate plans.
+  See [ADR-0007](../adr/0007-plan-local-step-identity.html).
+- **Structural execution ownership:** synchronous capture at the start of
+  JobManager.executePlan owns consumed plan/step structure and input root
+  bindings for admission and materialization. Subsequent caller structural
+  mutation cannot redirect execution. Nested input/reference contents remain
+  shared; stored-job execution/replay is outside this guarantee.
+  See [ADR-0008](../adr/0008-structural-execution-ownership.html).
+
+Evidence: `test/memory-event-bus.test.ts`, `test/execution-contract.test.ts`,
+`test/result-reference.test.ts`, `test/plan-validator.test.ts` and
+`test/structural-ownership.test.ts`, alongside their runtime implementations.
+These are scoped guarantees of the governed path, not a claim that the tracked
+legacy bypasses below are eliminated.
+
+## Invocation-value stability: open, implementation deferred
+
+The authorization-to-execution investigation is complete. The unresolved target
+guarantee is:
+
+> The capability begins execution with a value equivalent to the value authorization approved.
+
+**Current behavior does not guarantee this.** Resolved input is validated before
+authorization, but authorization and capability invocation share the same
+resolved input graph. Authorization can mutate values before invocation,
+including schema-invalid changes; there is no intervening revalidation.
+Reference-resolved values may alias retained producer results. Runtime validation
+checks values rather than materializing a validated replacement. TypeScript
+`readonly` does not provide deep runtime immutability. Isolation from hostile
+host JavaScript is not the objective.
+
+This finding follows from `src/runtime/jobs/job-manager.ts` passing the same
+`resolvedInput` to validation, authorization and invocation;
+`src/runtime/execution/plan-validator.ts` returning validation diagnostics; and
+`src/runtime/execution/result-reference.ts` returning referenced values directly.
+The result-reference and structural-ownership tests explicitly preserve result
+identity and mutability. Structural ownership does not establish value stability.
+
+Implementation is deliberately deferred until an explicit Veil invocation-value
+model is designed. This open finding closes the current core-hardening cycle
+without changing runtime behavior or accepting a new value contract. It belongs
+here with existing boundary limits rather than in an accepted ADR; a future
+decision affecting locked contracts requires an explicit maintainer architecture
+decision.
+
+### Questions for the future value model
+
+1. What value domain crosses governed execution boundaries?
+2. Are inputs passive structured data or arbitrary JavaScript values?
+3. What does value equivalence mean?
+4. Are object identities contractual?
+5. Are repeated aliases/cycles preserved, rejected, or normalized?
+6. Are Date/Map/Set/class instances supported?
+7. Are getters/proxies permitted across governed boundaries?
+8. Should authorization receive a stable immutable/materialized view?
+9. Should capability execution receive a detached equivalent mutable value?
+10. How should result references cross invocation boundaries?
+11. What correspondence is required between in-memory and persisted values?
+12. What compatibility treatment is required for existing reference identity semantics?
+
+### Candidate architecture, not an accepted decision
+
+The leading candidate from the investigation is:
+
+~~~text
+resolve
+→ materialize owned value
+→ validate owned value
+→ authorize stable policy view
+→ if allowed, invoke with detached equivalent mutable value
+~~~
+
+No mechanism has been selected: `structuredClone`, JSON serialization, deep
+freeze, schema rematerialization, and all other mechanisms remain undecided.
+The candidate depends on the value model and its equivalence/compatibility rules.
+
+Before choosing that model, exercise Veil through real integrations such as
+Mycelia/Mizan and observe the actual capability input/result shapes required in
+practice. Use that evidence to determine whether a passive structured-data domain
+is sufficient, then resolve the questions above and record the architecture
+decision before implementing invocation-value isolation.
+
 ## Provider boundary
 
 A provider is downstream code used by a capability to talk to a remote system. Veil's runtime governance occurs before the capability starts; it does not prove that provider credentials are correct, that an external API will honor a request, or that provider code is safe. Capability authors and applications remain responsible for provider-specific security and secrets.
