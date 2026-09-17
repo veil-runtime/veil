@@ -667,3 +667,68 @@ test('authorizers remain isolated between runtimes sharing the global capability
   assert.ok(eventTypes(deniedJob).includes('capability.denied'));
   assert.ok(!eventTypes(allowedJob).includes('capability.denied'));
 });
+
+for (const path of ['value', 'nested.value', '__proto__', 'constructor', 'toString']) {
+  test(`inherited result reference ${path} fails before receiving governance and stops the job`, async () => {
+    const source = uniqueCapabilityName('inherited-source');
+    const sink = uniqueCapabilityName('inherited-sink');
+    const later = uniqueCapabilityName('inherited-later');
+    const result = Object.assign(Object.create({ value: 'inherited' }), {
+      nested: Object.create({ value: 'inherited' }),
+    });
+    const executions: string[] = [];
+    const authorizations: string[] = [];
+    registerCapability(source, 'read', async () => { executions.push(source); return result; });
+    registerCapability(sink, 'read', async () => { executions.push(sink); });
+    registerCapability(later, 'read', async () => { executions.push(later); });
+    const job = await new OperatorRuntime({ authorizer: {
+      async authorize(context) {
+        authorizations.push(context.capability.name);
+        return { decision: 'allow' };
+      },
+    } }).executePlan({ version: '1.0', steps: [
+      { id: 'source', capability: source },
+      { id: 'sink', capability: sink, input: { $ref: `steps.source.result.${path}` } },
+      { id: 'later', capability: later },
+    ] });
+    const error = `Result reference path not found: steps.source.result.${path}`;
+    assert.equal(job.status, 'failed');
+    assert.equal(job.error, error);
+    assert.equal(job.steps[0].status, 'completed');
+    assert.equal(job.steps[0].result, result);
+    assert.equal(job.steps[1].status, 'failed');
+    assert.equal(job.steps[1].error, error);
+    assert.equal(job.steps[2].status, 'pending');
+    assert.deepEqual(authorizations, [source]);
+    assert.deepEqual(executions, [source]);
+    assert.ok(!job.events.some((event) => event.type === 'capability.started' &&
+      (event.data?.stepId === 'sink' || event.data?.stepId === 'later')));
+  });
+}
+
+for (const name of ['__proto__', 'constructor', 'prototype']) {
+  test(`own ${name} result data reaches receiving authorization and execution unchanged`, async () => {
+    const source = uniqueCapabilityName('own-special-source');
+    const sink = uniqueCapabilityName('own-special-sink');
+    const result = JSON.parse('{"__proto__":{"value":1},"constructor":{"value":2},"prototype":{"value":3}}');
+    const authorized: unknown[] = [];
+    const executed: unknown[] = [];
+    registerCapability(source, 'read', async () => result);
+    registerCapability(sink, 'read', async (input) => { executed.push(input); return input; });
+    const job = await new OperatorRuntime({ authorizer: {
+      async authorize(context) {
+        if (context.capability.name === sink) authorized.push(context.input);
+        return { decision: 'allow' };
+      },
+    } }).executePlan({ version: '1.0', steps: [
+      { id: 'source', capability: source },
+      { id: 'sink', capability: sink, input: { $ref: `steps.source.result.${name}` } },
+    ] });
+    assert.equal(job.status, 'completed');
+    assert.equal(authorized.length, 1);
+    assert.equal(executed.length, 1);
+    assert.equal(authorized[0], result[name]);
+    assert.equal(executed[0], result[name]);
+    assert.equal(job.steps[1].result, result[name]);
+  });
+}
