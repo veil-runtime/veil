@@ -45,6 +45,6 @@ A forward reference fails plan validation: steps.read.result.id cannot be used b
 
 ## Common mistakes
 
-Do not reference a job result; only earlier step results are addressable. Do not expect expressions, escaping, or bracket notation. Avoid duplicate IDs: current validation does not reject them and lookup finds the first prior matching completed step.
+Do not reference a job result; only earlier step results are addressable. Do not expect expressions, escaping, or bracket notation. Step IDs MUST be unique within each plan using exact-string equality; every repeated occurrence is a validation error and rejects the plan before job creation. IDs may be reused across different plans. Case and whitespace differences remain distinct; no trimming, case folding, or Unicode normalization is performed.
 
 Related: [multi-step guide](../guides/multi-step-execution.html), [authorization](authorization.html), [v1 reference](../reference/execution-plan-v1.html).

@@ -106,6 +106,14 @@ export function validatePlan(
   const seenStepIds = new Set<string>();
 
   for (const step of steps) {
+    if (seenStepIds.has(step.id)) {
+      errors.push({
+        stepId: step.id,
+        capability: step.capability,
+        message: `Duplicate step ID: ${step.id}`,
+      });
+    }
+
     const capability = capabilityRegistry.get(step.capability);
     if (!capability) {
       errors.push({

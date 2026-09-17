@@ -32,6 +32,8 @@ steps is required and must be nonempty at execution. id is accepted but not stor
 
 capability must resolve to a registered capability. capabilityVersion, when present, must equal that capability's registered version exactly. input may be any value, but declared input schema fields are checked. An omitted input is treated as an empty record for input-schema validation.
 
+Step IDs MUST be unique within a single plan, using exact-string equality. Each ID identifies exactly one execution step in that plan. IDs may be reused across different plans. Case and whitespace differences remain distinct; validation performs no trimming, case folding, or Unicode normalization. Every occurrence after the first produces `Duplicate step ID: <id>` and rejects admission before job creation.
+
 ## References and ordering
 
 A reference object is exactly { $ref: 'steps.<earlier-step-id>.result' } with optional dot-separated result path. All references in objects and arrays are discovered during validation and must name an earlier declared step. Steps execute in literal list order. At execution, only prior completed job steps are eligible.
