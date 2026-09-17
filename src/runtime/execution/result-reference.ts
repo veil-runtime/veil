@@ -52,7 +52,7 @@ export function resolveResultReferences(
 
     let resolved = step.result;
     for (const segment of path) {
-      if (!resolved || typeof resolved !== 'object' || !(segment in resolved)) {
+      if (!resolved || typeof resolved !== 'object' || !Object.hasOwn(resolved, segment)) {
         throw new Error(`Result reference path not found: ${value.$ref}`);
       }
       resolved = (resolved as Record<string, unknown>)[segment];
