@@ -3,7 +3,7 @@ title: Public exports
 ---
 # Public exports
 
-This page summarizes the root src/index.ts and package root export for v0.1.3.
+This page summarizes the root src/index.ts and package root export for v0.1.3 plus unreleased v0.1.4 introspection.
 
 ## Runtime values
 
@@ -21,6 +21,7 @@ This page summarizes the root src/index.ts and package root export for v0.1.3.
 ## Capability and module types
 
 - Capability, CapabilityInputField, CapabilityRisk: operation contract, field descriptors, and read/write/destructive classification.
+- CapabilityDescriptor: detached mutable execution metadata returned by listCapabilities and exact describeCapability; introspection is not authorization.
 - CapabilityModule, CapabilityModuleManifest: module packaging and manifest metadata.
 
 ## Authorization types

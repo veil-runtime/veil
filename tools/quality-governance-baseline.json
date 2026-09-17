@@ -45,14 +45,14 @@
     },
     {
       "path": "src/runtime/operator-runtime.ts",
-      "anchor": "bee745368f9432230e79e8e483392a15aa743bdf853564657fbd8b05bccfdec1",
+      "anchor": "6bfbeefd5ca8028fffeeee37c2785a3650cbdf19d1201c33926dd40d679304c6",
       "kind": "job-manager",
       "classification": "GOVERNED_MACHINERY",
       "reason": "Approved runtime delegation to JobManager or planner strategy; strategy produces a plan."
     },
     {
       "path": "src/runtime/operator-runtime.ts",
-      "anchor": "f1589007acc4a53492d593561b9d9b3aac451bf4d5e22dd3e01748bc3d065cc6",
+      "anchor": "2d0d6f2fdfeca15da7dc35e76568603be9da04167c1ecced1ebe407c9f293e7a",
       "kind": "execute",
       "classification": "LEGITIMATE_NON_CAPABILITY_EXECUTE",
       "reason": "Planner strategy execution produces an ExecutionPlan; capability dispatch follows through OperatorRuntime.executePlan."

@@ -5,6 +5,7 @@ import {
   type CapabilityAuthorizationDecision,
   type CapabilityAuthorizationContext,
   type CapabilityModule,
+  type CapabilityDescriptor,
   type ExecutionAuthorizer,
   type ExecutionPlan,
   type OperatorRuntimeOptions,
@@ -57,6 +58,12 @@ export const mcpAdapter = new McpAdapter(runtime);
 export async function validateConsumer(): Promise<void> {
   if (!mcpAdapter.server) {
     throw new Error('MCP adapter did not expose an MCP server.');
+  }
+
+  const inventory: CapabilityDescriptor[] = runtime.listCapabilities();
+  const descriptor: CapabilityDescriptor | undefined = runtime.describeCapability(capability.name, capability.version);
+  if (!descriptor || !inventory.some(item => item.name === descriptor.name)) {
+    throw new Error('Public capability introspection failed.');
   }
 
   const job = await runtime.executePlan(plan);

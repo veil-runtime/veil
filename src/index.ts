@@ -17,6 +17,7 @@ export type {
 export type { ExecutionCaller, ExecutionContext } from './runtime/execution/execution-context.js';
 export type {
   Capability,
+  CapabilityDescriptor,
   CapabilityInputField,
   CapabilityRisk,
 } from './runtime/registry/capability.js';

@@ -1,3 +1,4 @@
+import type { CapabilityDescriptor } from './registry/capability.js';
 import { Job } from './jobs/job.js';
 import { JobListFilter } from './jobs/job-store.js';
 import { jobManager } from './jobs/job-manager.js';
@@ -174,8 +175,15 @@ export class OperatorRuntime {
     );
   }
 
-  listCapabilities() {
+  listCapabilities(): CapabilityDescriptor[] {
     return capabilityRegistry.list();
+  }
+
+  describeCapability(
+    name: string,
+    version?: string
+  ): CapabilityDescriptor | undefined {
+    return capabilityRegistry.describe(name, version);
   }
 
   listPlanners() {
