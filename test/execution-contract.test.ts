@@ -454,6 +454,192 @@ test('an authorizer error fails closed without execution, start, or denial event
   assert.ok(!events.includes('capability.denied'));
 });
 
+const malformedAuthorizationResponses: [string, unknown][] = [
+  ['missing decision', {}],
+  ['unknown decision', { decision: 'unexpected' }],
+  ['undefined decision', { decision: undefined }],
+  ['null', null],
+  ['undefined', undefined],
+  ['string', 'allow'],
+  ['number', 1],
+  ['boolean', true],
+  ['bigint', 1n],
+  ['symbol', Symbol('allow')],
+  ['array', []],
+  ['array with allow', Object.assign([], { decision: 'allow' })],
+  ['function with allow', Object.assign(() => {}, { decision: 'allow' })],
+  ['inherited allow', Object.create({ decision: 'allow' })],
+  ['inherited deny', Object.create({ decision: 'deny' })],
+  ['null prototype without decision', Object.create(null)],
+  ['shadowed own-property method', { hasOwnProperty: () => true }],
+  ['proxy synthesizing allow without own decision', new Proxy({}, {
+    get: () => 'allow',
+  })],
+  ...[123, null, {}, [], true, 1n, Symbol('reason'), () => {}, new String('reason')]
+    .flatMap((reason): [string, unknown][] => [
+      [`own non-string reason ${String(reason)}`, { decision: 'deny', reason }],
+      [`inherited non-string reason ${String(reason)}`,
+        Object.assign(Object.create({ reason }), { decision: 'deny' })],
+    ]),
+];
+
+for (const [label, response] of malformedAuthorizationResponses) {
+  test(`malformed authorization (${label}) fails closed and stops subsequent steps`, async () => {
+    await assertAuthorizationFailure(
+      // Simulate untyped JavaScript policy implementations at the runtime boundary.
+      { authorize: async () => response } as ExecutionAuthorizer,
+      'Invalid authorization decision',
+    );
+  });
+}
+
+for (const rejects of [false, true]) {
+  test(`authorization ${rejects ? 'rejection' : 'throw'} fails closed and stops subsequent steps`, async () => {
+    await assertAuthorizationFailure({
+      authorize() {
+        const error = new Error('authorizer unavailable');
+        if (rejects) return Promise.reject(error);
+        throw error;
+      },
+    }, 'authorizer unavailable');
+  });
+}
+
+for (const property of ['decision', 'reason']) {
+  for (const inherited of [false, true]) {
+    test(`throwing ${inherited ? 'inherited' : 'own'} ${property} accessor fails closed`, async () => {
+      const response = Object.defineProperty({}, property, {
+        get() { throw new Error('authorization accessor failed'); },
+      });
+      const authorization = inherited ? Object.create(response) : response;
+      if (property === 'reason') authorization.decision = 'deny';
+      await assertAuthorizationFailure({ authorize: async () => authorization },
+        inherited && property === 'decision'
+          ? 'Invalid authorization decision' : 'authorization accessor failed');
+    });
+  }
+}
+
+for (const reason of [undefined, '', 'policy denial']) {
+  for (const shape of ['own', 'inherited', 'null prototype']) {
+    test(`valid deny preserves ${shape} reason ${String(reason)}`, async () => {
+      const capability = uniqueCapabilityName('valid-deny');
+      let executions = 0;
+      registerCapability(capability, 'read', async () => { executions += 1; });
+      const response = shape === 'inherited'
+        ? Object.assign(Object.create({ reason }), { decision: 'deny' })
+        : Object.assign(shape === 'null prototype' ? Object.create(null) : {},
+          { decision: 'deny', reason });
+      const job = await new OperatorRuntime({
+        authorizer: { authorize: async () => response },
+      }).executePlan(oneStepPlan(capability));
+      assert.equal(executions, 0);
+      assert.equal(job.status, 'failed');
+      assert.equal(job.steps[0].error, reason ?? `Capability not permitted: ${capability}`);
+      assert.equal(job.events.find(event => event.type === 'capability.denied')?.data?.reason, reason);
+      assert.ok(eventTypes(job).includes('capability.denied'));
+      assert.ok(!eventTypes(job).includes('capability.failed'));
+      assert.ok(!eventTypes(job).includes('capability.started'));
+    });
+  }
+}
+
+test('deny reason accessor is read once before error and event use', async () => {
+  const capability = uniqueCapabilityName('reason-accessor');
+  registerCapability(capability, 'read', async () => assert.fail('must not execute'));
+  let reads = 0;
+  const job = await new OperatorRuntime({ authorizer: { authorize: async () => ({
+    decision: 'deny',
+    get reason() {
+      if (++reads > 1) throw new Error('reason read again');
+      return 'stable denial';
+    },
+  }) } }).executePlan(oneStepPlan(capability));
+  assert.equal(reads, 1);
+  assert.equal(job.steps[0].error, 'stable denial');
+  assert.equal(job.events.find(event => event.type === 'capability.denied')?.data?.reason, 'stable denial');
+});
+
+test('own allow works with null prototype and shadowed hasOwnProperty', async () => {
+  const capability = uniqueCapabilityName('own-allow');
+  let executions = 0;
+  registerCapability(capability, 'read', async () => { executions += 1; });
+  const response = Object.assign(Object.create(null), {
+    decision: 'allow', hasOwnProperty: null,
+  });
+  Object.defineProperty(response, 'reason', {
+    get() { throw new Error('allow must not read deny reason'); },
+  });
+  const job = await new OperatorRuntime({
+    authorizer: { authorize: async () => response },
+  }).executePlan(oneStepPlan(capability));
+  assert.equal(executions, 1);
+  assert.equal(job.status, 'completed');
+});
+
+test('own decision accessor is read once and cannot change a denial to allow', async () => {
+  let reads = 0;
+  await assertAuthorizationFailure({ authorize: async () => ({
+    get decision() { return ++reads === 1 ? 'unexpected' : 'allow'; },
+  }) } as ExecutionAuthorizer, 'Invalid authorization decision');
+  assert.equal(reads, 1);
+});
+
+test('throwing own-property proxy trap fails closed', async () => {
+  await assertAuthorizationFailure({ authorize: async () => new Proxy({}, {
+    getOwnPropertyDescriptor() { throw new Error('authorization shape failed'); },
+    get: () => 'allow',
+  }) } as unknown as ExecutionAuthorizer, 'authorization shape failed');
+});
+
+async function assertAuthorizationFailure(
+  authorizer: ExecutionAuthorizer,
+  message: string,
+): Promise<void> {
+  const capability = uniqueCapabilityName('authorization-failure');
+  let executions = 0;
+  let authorizationCalls = 0;
+  registerCapability(capability, 'read', async () => {
+    executions += 1;
+    return 'unexpected';
+  });
+  const runtime = new OperatorRuntime({
+    authorizer: {
+      authorize(context) {
+        authorizationCalls += 1;
+        return authorizer.authorize(context);
+      },
+    },
+  });
+  const step = oneStepPlan(capability).steps[0];
+  const job = await runtime.executePlan({
+    version: '1.0',
+    steps: [step, { ...step, id: 'subsequent' }],
+  });
+
+  assert.equal(executions, 0);
+  assert.equal(authorizationCalls, 1);
+  assert.equal(job.status, 'failed');
+  assert.equal(job.outcome, 'failed');
+  assert.equal(job.error, message);
+  assert.ok(job.completedAt);
+  assert.equal(job.steps[0].status, 'failed');
+  assert.equal(job.steps[0].error, message);
+  assert.ok(job.steps[0].completedAt);
+  assert.equal(job.steps[0].startedAt, undefined);
+  assert.equal(job.steps[1].status, 'pending');
+  assert.equal(job.steps[1].startedAt, undefined);
+  assert.equal(job.steps[1].completedAt, undefined);
+  assert.deepEqual(eventTypes(job), [
+    'job.created', 'execution.started', 'capability.failed', 'job.failed',
+  ]);
+  assert.deepEqual(job.events.find(event => event.type === 'capability.failed')?.data, {
+    stepId: step.id,
+    capability,
+    error: message,
+  });
+}
+
 test('authorizers remain isolated between runtimes sharing the global capability registry', async () => {
   const capability = uniqueCapabilityName('runtime-isolation');
   let executions = 0;

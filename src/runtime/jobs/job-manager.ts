@@ -194,9 +194,28 @@ class JobManager {
               caller,
             });
 
-          if (authorization.decision === 'deny') {
+          if (
+            typeof authorization !== 'object' ||
+            authorization === null ||
+            Array.isArray(authorization) ||
+            !Object.hasOwn(authorization, 'decision')
+          ) {
+            throw new Error('Invalid authorization decision');
+          }
+
+          const decision = authorization.decision;
+          if (decision !== 'allow' && decision !== 'deny') {
+            throw new Error('Invalid authorization decision');
+          }
+
+          if (decision === 'deny') {
+            const reason = authorization.reason;
+            if (reason !== undefined && typeof reason !== 'string') {
+              throw new Error('Invalid authorization decision');
+            }
+
             const message =
-              authorization.reason ??
+              reason ??
               `Capability not permitted: ${step.capability}`;
 
             step.status = 'failed';
@@ -207,7 +226,7 @@ class JobManager {
               stepId: step.id,
               capability: capability.name,
               risk: capability.risk,
-              reason: authorization.reason,
+              reason,
             });
 
             throw new AuthorizationDeniedError(message);
