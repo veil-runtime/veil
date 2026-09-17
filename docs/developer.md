@@ -5,6 +5,12 @@ title: Veil developer documentation
 
 Veil is a governed, capability-driven execution runtime. It separates deciding what should happen from performing it. A human, application, deterministic program, or planner can produce an ExecutionPlan; Veil validates and executes that plan through registered capabilities.
 
+## Published and upcoming
+
+**v0.1.3 is the latest published package.** These docs also describe current
+unreleased v0.1.4 work. Read [upcoming v0.1.4](getting-started/upcoming-v0.1.4.html)
+for governed-execution hardening, deterministic capability introspection, and their limits.
+
 ## The mental model
 
 ~~~text
@@ -46,4 +52,4 @@ Use [execution-plan v1](reference/execution-plan-v1.html), [authorization API](r
 
 ## Current limits
 
-v0.1.3 runs a plan's steps sequentially. It has no ExecutionPlan syntax or runtime implementation for DAGs, parallel work, conditionals, retries, cancellation, or idempotency enforcement. Plan and step idempotency keys are recorded, not enforced.
+Both v0.1.3 and the current unreleased v0.1.4 implementation run a plan's steps sequentially. It has no ExecutionPlan syntax or runtime implementation for DAGs, parallel work, conditionals, retries, cancellation, or idempotency enforcement. Plan and step idempotency keys are recorded, not enforced.

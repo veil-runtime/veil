@@ -84,4 +84,4 @@ const job = await runtime.executePlan({
 The selection and reasoning functions above belong to the application, not Veil.
 The inbound `McpAdapter` still captures inventory at construction time; later
 registration does not update an existing adapter's tools. See
-[ADR-0009](../adr/0009-deterministic-capability-introspection.html).
+[capability metadata contract](capability-api.html).

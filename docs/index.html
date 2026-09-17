@@ -1,7 +1,7 @@
 ---
 layout: null
-title: Veil — Governed Execution for AI
-description: Veil provides the execution layer between intent and action.
+title: Veil — Governed execution runtime
+description: Veil is a capability-driven runtime between reasoning and infrastructure. Submit explicit plans, validate inputs, authorize operations, and observe results.
 ---
 <!doctype html>
 <html lang="en">
@@ -11,17 +11,17 @@ description: Veil provides the execution layer between intent and action.
   <meta name="theme-color" content="#08090c">
   <meta
     name="description"
-    content="Veil provides the execution layer between intent and action."
+    content="Veil is a capability-driven runtime between reasoning and infrastructure. Submit explicit plans, validate inputs, authorize operations, and observe results."
   >
-  <meta property="og:title" content="Veil — Governed Execution for AI">
+  <meta property="og:title" content="Veil — Governed execution runtime">
   <meta
     property="og:description"
-    content="Veil provides the execution layer between intent and action."
+    content="Veil is a capability-driven runtime between reasoning and infrastructure. Submit explicit plans, validate inputs, authorize operations, and observe results."
   >
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://veil-runtime.github.io/veil/">
   <link rel="canonical" href="https://veil-runtime.github.io/veil/">
-  <title>Veil — Governed Execution for AI</title>
+  <title>Veil — Governed execution runtime</title>
 
   <style>
     :root{
@@ -72,6 +72,16 @@ description: Veil provides the execution layer between intent and action.
     }
 
     a{color:inherit}
+
+    :focus-visible{
+      outline:2px solid var(--cyan);
+      outline-offset:4px;
+    }
+
+    .hero > div{min-width:0}
+
+    .code-window{min-width:0}
+    .code-window pre{overflow:auto}
 
     button,
     input{
@@ -318,7 +328,7 @@ description: Veil provides the execution layer between intent and action.
       position:relative;
       cursor:pointer;
       flex:none;
-      outline:none;
+      outline-offset:4px;
       transition:.2s ease;
     }
 
@@ -345,8 +355,8 @@ description: Veil provides the execution layer between intent and action.
     }
 
     .sim-note{
-      color:#5f626d;
-      font-size:10px;
+      color:var(--muted);
+      font-size:12px;
       line-height:1.5;
       margin-top:24px;
     }
@@ -1201,7 +1211,8 @@ description: Veil provides the execution layer between intent and action.
         transition:none!important;
       }
 
-      .reveal{
+      .reveal,
+      .event{
         opacity:1;
         transform:none;
       }
@@ -1231,7 +1242,7 @@ description: Veil provides the execution layer between intent and action.
       }
 
       .sim-note{
-        display:none;
+        margin-top:16px;
       }
     }
 
@@ -1286,6 +1297,15 @@ description: Veil provides the execution layer between intent and action.
         padding-top:40px;
       }
 
+      .navlinks{gap:8px}
+      .navlinks a{font-size:12px}
+      .pill{padding:8px 10px!important}
+      h1{font-size:clamp(44px,11vw,57px)}
+      .plan-step{overflow-wrap:anywhere}
+      .plan-step span{flex:none}
+      .arch-node{min-width:0}
+      .source-runtime strong{overflow-wrap:anywhere}
+
       .sim-stage{
         padding:12px;
       }
@@ -1300,6 +1320,7 @@ description: Veil provides the execution layer between intent and action.
 
       .arch-flow{
         align-items:stretch;
+        flex-direction:column;
       }
 
       .arch-node{
@@ -1307,7 +1328,9 @@ description: Veil provides the execution layer between intent and action.
       }
 
       .arch-arrow{
-        display:none;
+        display:block;
+        align-self:center;
+        transform:rotate(90deg);
       }
 
       .roadmap{
@@ -1343,17 +1366,21 @@ description: Veil provides the execution layer between intent and action.
 
     <header class="hero wrap">
       <div>
-        <div class="eyebrow">Governed execution for AI and software</div>
+        <div class="eyebrow">A capability-driven execution runtime</div>
 
         <h1>
-          Intent is easy.<br>
-          <span>Execution is real.</span>
+          Reasoning proposes.<br>
+          <span>Veil governs execution.</span>
         </h1>
 
         <p class="lede">
-          AI is becoming remarkably good at deciding what should happen.
-          Veil provides the controlled execution layer between that intent
-          and the systems where real actions occur.
+          Veil sits between reasoning and infrastructure. Your software, planners,
+          or human workflows produce an ExecutionPlan. Veil validates the plan,
+          authorizes each operation, and executes registered capabilities.
+        </p>
+
+        <p class="api-note">
+          Reasoning / software / humans → ExecutionPlan → Veil → capabilities / providers
         </p>
 
         <div class="actions">
@@ -1434,7 +1461,7 @@ description: Veil provides the execution layer between intent and action.
 
             <div class="toggle-list">
               <label class="toggle-row">
-                <span>Approve external writes</span>
+                <span>Ask before writes / deletes</span>
                 <input
                   type="checkbox"
                   id="approvalRequired"
@@ -1444,9 +1471,9 @@ description: Veil provides the execution layer between intent and action.
             </div>
 
             <p class="sim-note">
-              This is a deterministic browser simulation.
-              It demonstrates the execution model without invoking
-              real infrastructure.
+              Illustrative browser simulation; no runtime or infrastructure calls.
+              Human approval represents an application-owned authorizer.
+              Veil’s default policy allows reads and denies writes and destructive work.
             </p>
           </aside>
 
@@ -1571,8 +1598,9 @@ description: Veil provides the execution layer between intent and action.
             <h3>May it proceed?</h3>
 
             <p>
-              Configured execution controls determine which operations may
-              continue and which require additional authority or review.
+              The configured authorizer allows or denies each operation using
+              resolved input and caller context. Human review, when needed,
+              belongs to the application.
             </p>
           </article>
 
@@ -1603,8 +1631,9 @@ description: Veil provides the execution layer between intent and action.
           </div>
 
           <p>
-            Install <code>@veil-runtime/core</code> to define capabilities and
-            execute explicit plans through the public runtime boundary.
+            Install <code>@veil-runtime/core</code> on Node.js 24 or newer to define
+            capabilities and execute explicit plans. The latest published version
+            is <strong>v0.1.3</strong>; v0.1.4 is unreleased.
           </p>
         </div>
 
@@ -1702,10 +1731,10 @@ description: Veil provides the execution layer between intent and action.
           </div>
 
           <p>
-            Intelligence can propose what should happen.
-            Veil receives the resulting plan at a clear execution boundary,
-            resolves registered capabilities, applies execution controls,
-            performs the work, and returns observable results.
+            Software, humans, and planners decide what should happen.
+            Veil validates their declarative plan and capability contracts,
+            resolves prior results, authorizes each step, and records outcomes.
+            Capabilities use providers to interact with infrastructure.
           </p>
         </div>
 
@@ -1714,7 +1743,7 @@ description: Veil provides the execution layer between intent and action.
           <div class="architecture-top">
 
             <div class="arch-zone-label">
-              Proposal
+              Reasoning / software / humans
             </div>
 
             <div class="arch-flow">
@@ -1731,7 +1760,7 @@ description: Veil provides the execution layer between intent and action.
                 class="arch-node"
                 data-node="planner"
               >
-                Planner
+                Application / planner
               </button>
 
               <span class="arch-arrow">→</span>
@@ -1749,7 +1778,7 @@ description: Veil provides the execution layer between intent and action.
             </div>
 
             <div class="arch-zone-label">
-              Governed execution
+              Governed execution · capability resolution · lifecycle events
             </div>
 
             <div class="arch-flow">
@@ -1764,9 +1793,9 @@ description: Veil provides the execution layer between intent and action.
 
               <button
                 class="arch-node"
-                data-node="registry"
+                data-node="governance"
               >
-                CapabilityRegistry
+                Validation + authorization
               </button>
 
               <span class="arch-arrow">→</span>
@@ -1782,9 +1811,9 @@ description: Veil provides the execution layer between intent and action.
 
               <button
                 class="arch-node"
-                data-node="result"
+                data-node="provider"
               >
-                Result
+                Providers / infrastructure
               </button>
             </div>
           </div>
@@ -1802,6 +1831,13 @@ description: Veil provides the execution layer between intent and action.
             </p>
           </div>
         </div>
+
+        <p class="api-note reveal">
+          Steps run sequentially. Earlier results can feed later inputs through
+          <a href="{{ '/concepts/result-references.html' | relative_url }}">result references</a>.
+          Jobs retain outcomes and lifecycle events. Deterministic lookup and
+          ordering do not imply deterministic capability or provider results.
+        </p>
 
         <div class="section-head reveal">
           <div>
@@ -1887,7 +1923,7 @@ description: Veil provides the execution layer between intent and action.
           <p>
             Veil does not need to understand every system you use.
             Expose the operations you want to make executable, register them,
-            and the same runtime can resolve and execute them from any plan.
+            then submit plans through validation and authorization.
           </p>
         </div>
 
@@ -1915,7 +1951,7 @@ description: Veil provides the execution layer between intent and action.
             <span class="build-number">03</span>
             <small>REGISTER</small>
             <strong>Available to plans</strong>
-            <code>CapabilityRegistry</code>
+            <code>runtime.use(module)</code>
           </div>
 
           <div class="build-arrow">→</div>
@@ -1924,7 +1960,7 @@ description: Veil provides the execution layer between intent and action.
             <span class="build-number">04</span>
             <small>EXECUTE</small>
             <strong>OperatorRuntime</strong>
-            <code>ExecutionResult</code>
+            <code>Job</code>
           </div>
 
         </div>
@@ -1959,34 +1995,35 @@ description: Veil provides the execution layer between intent and action.
 
             <div class="code-bar">
               capability.ts
-              <span>conceptual shape</span>
+              <span>public API · v0.1.3</span>
             </div>
 
-            <pre><code><span class="code-dim">// Your existing operation</span>
-    async function restartService(name) {
-      return infrastructure.restart(name);
-    }
+            <pre><code>import { createCapability } from "@veil-runtime/core";
 
-    <span class="code-dim">// Expose it as a capability</span>
-    const restart = {
-      name: <span class="code-string">"service.restart"</span>,
-
-      async execute(input) {
-        return restartService(input.service);
-      }
-    };
-
-    <span class="code-dim">// Register once</span>
-    registry.register(restart);</code></pre>
+const restart = createCapability&lt;{ service: string }, void&gt;({
+  name: "service.restart",
+  version: "1.0.0",
+  description: "Restart an application service",
+  risk: "write",
+  inputSchema: {
+    service: { type: "string", required: true,
+      description: "Service name" }
+  },
+  async execute({ input }) {
+    await infrastructure.restart(input.service);
+  }
+});</code></pre>
 
           </div>
 
         </div>
 
         <p class="api-note reveal">
-          The interactive quickstart below uses the v0.1.3 public API.
-          This conceptual example illustrates the capability model without
-          introducing a separate website-only API.
+          <code>infrastructure</code> is your application’s provider. Register the
+          capability through <code>runtime.use(module)</code>, as shown below.
+          Writes require an application-configured
+          <a href="{{ '/guides/protect-write-actions.html' | relative_url }}">authorizer</a>;
+          the default policy denies them. The quickstart uses the published v0.1.3 API.
         </p>
 
       </div>
@@ -2296,6 +2333,53 @@ description: Veil provides the execution layer between intent and action.
       </div>
     </section>
 
+    <!-- UNRELEASED -->
+
+    <section id="upcoming">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div>
+            <div class="kicker">Upcoming · v0.1.4 · unreleased</div>
+            <h2>Know what is registered. Govern what runs.</h2>
+          </div>
+          <p>
+            Deterministic capability introspection describes the registered execution
+            surface. <code>listCapabilities()</code> returns inventory;
+            <code>describeCapability(name, version?)</code> performs exact lookup.
+            The new <code>CapabilityDescriptor</code> contains detached, mutable metadata.
+            This v0.1.4 contract is not available in the published v0.1.3 package.
+          </p>
+        </div>
+        <div class="triad">
+          <article class="card reveal">
+            <span class="number">01 / INTROSPECTION</span>
+            <h3>What is registered?</h3>
+            <p>Names, versions, descriptions, risk and declared input fields.
+              Inventory follows registration order; lookup matches names and versions exactly.</p>
+          </article>
+          <article class="card reveal">
+            <span class="number">02 / APPLICATION</span>
+            <h3>What is relevant?</h3>
+            <p>Your reasoning or application logic selects the capability.
+              Veil adds no semantic search, ranking, embeddings or LLM-driven selection.</p>
+          </article>
+          <article class="card reveal">
+            <span class="number">03 / AUTHORIZATION</span>
+            <h3>May this caller execute it?</h3>
+            <p>Introspection grants no permission and does not establish provider readiness.
+              Submit an ExecutionPlan through the normal governed execution path.</p>
+          </article>
+        </div>
+        <p class="api-note reveal">
+          v0.1.4 also contains event-subscriber failures, rejects malformed authorization,
+          requires own properties in result paths and unique step IDs per plan,
+          and captures plan structure before admission. Nested input values remain shared:
+          authorization-to-invocation deep value stability is not guaranteed.
+          <a href="{{ '/getting-started/upcoming-v0.1.4.html' | relative_url }}">Read the scope and limits</a>.
+        </p>
+      </div>
+    </section>
+
     <!-- ROADMAP -->
 
     <section>
@@ -2308,9 +2392,9 @@ description: Veil provides the execution layer between intent and action.
           </div>
 
           <p>
-            Veil Core v0.1.3 keeps the execution architecture stable. Future work is guided by
-            real-world use and focuses on developer experience, documentation,
-            examples, and ecosystem growth rather than promises.
+            v0.1.3 remains the latest published package. The next release targets
+            governed-execution hardening and deterministic capability introspection.
+            <a href="{{ '/getting-started/upcoming-v0.1.4.html' | relative_url }}">See the unreleased v0.1.4 scope and limits</a>.
           </p>
         </div>
 
@@ -2323,7 +2407,7 @@ description: Veil provides the execution layer between intent and action.
 
           <div class="phase">
             <small>NEXT</small>
-            <b>SDK ergonomics</b>
+            <b>v0.1.4 · hardening + introspection</b>
           </div>
 
           <div class="phase">
@@ -2605,158 +2689,161 @@ description: Veil provides the execution layer between intent and action.
       }
 
       running = true;
+      const controls = [...scenarioButtons, ...Object.values(capabilityInputs), approvalRequired, heroRun];
+      controls.forEach(control => { control.disabled = true; });
 
-      const scenario = scenarios[selectedScenario];
+      try {
+        const scenario = scenarios[selectedScenario];
 
-      executionLog.innerHTML = "";
-      receipt.className = "receipt";
+        executionLog.innerHTML = "";
+        receipt.className = "receipt";
 
-      runButton.disabled = true;
+        runButton.disabled = true;
 
-      setState("EXECUTING", "running");
-
-      addEvent(
-        "info",
-        "ExecutionPlan received",
-        `${scenario.steps.length} step${scenario.steps.length === 1 ? "" : "s"} proposed`
-      );
-
-      await delay(450);
-
-      for (let index = 0; index < scenario.steps.length; index++) {
-        const step = scenario.steps[index];
+        setState("EXECUTING", "running");
 
         addEvent(
           "info",
-          step.capability,
-          `resolving capability for step ${index + 1}`
+          "ExecutionPlan received",
+          `${scenario.steps.length} step${scenario.steps.length === 1 ? "" : "s"} proposed`
         );
 
-        await delay(430);
+        await delay(450);
 
-        if (
-          step.requires &&
-          capabilityInputs[step.requires] &&
-          !capabilityInputs[step.requires].checked
-        ) {
-          addEvent(
-            "error",
-            "Capability unavailable",
-            `${step.capability} is not currently registered`
-          );
-
-          await delay(300);
-
-          setState("STOPPED", "failure");
-
-          receipt.textContent =
-            `✕ EXECUTION STOPPED · ${step.capability} unavailable`;
-
-          receipt.className =
-            "receipt failure show";
-
-          runButton.disabled = false;
-          runButton.textContent = "Run again";
-
-          running = false;
+        const unavailable = scenario.steps.find(step =>
+          step.requires && !capabilityInputs[step.requires].checked
+        );
+        if (unavailable) {
+          addEvent("error", "Plan rejected before execution",
+            `${unavailable.capability} is not registered; no steps executed`);
+          setState("INVALID PLAN", "failure");
+          receipt.textContent = "✕ ADMISSION REJECTED · no job created";
+          receipt.className = "receipt failure show";
           return;
         }
+        addEvent("ok", "Plan validated", "registered capabilities and declared inputs checked");
+        addEvent("info", "Job created", "sequential execution begins");
 
-        addEvent(
-          "ok",
-          "Capability resolved",
-          step.capability
-        );
+        for (let index = 0; index < scenario.steps.length; index++) {
+          const step = scenario.steps[index];
 
-        await delay(400);
-
-        if (
-          step.externalWrite &&
-          approvalRequired.checked
-        ) {
           addEvent(
-            "warn",
-            "Approval required",
-            `${step.capability} cannot proceed yet`
+            "info",
+            step.capability,
+            `resolving capability for step ${index + 1}`
           );
 
-          setState("AWAITING APPROVAL", "running");
-
-          const approved =
-            await requestApproval(step);
-
-          if (!approved) {
-            addEvent(
-              "error",
-              "Approval rejected",
-              `${step.capability} was not executed`
-            );
-
-            await delay(250);
-
-            setState("REJECTED", "failure");
-
-            receipt.textContent =
-              "✕ EXECUTION REJECTED · no external write performed";
-
-            receipt.className =
-              "receipt failure show";
-
-            runButton.disabled = false;
-            runButton.textContent = "Run again";
-
-            running = false;
-            return;
-          }
+          await delay(430);
 
           addEvent(
             "ok",
-            "Approval granted",
-            `${step.capability} may proceed`
+            "Capability resolved",
+            step.capability
           );
 
-          setState("EXECUTING", "running");
+          await delay(400);
 
-          await delay(350);
+          addEvent("ok", "Input resolved and validated", "before authorization");
+
+          if ((step.externalWrite || step.destructive) && !approvalRequired.checked) {
+            addEvent("error", "Authorization denied", "default policy denies writes and destructive work");
+            setState("FAILED", "failure");
+            receipt.textContent = "✕ JOB FAILED · denied step not executed; prior steps remain completed";
+            receipt.className = "receipt failure show";
+            return;
+          }
+
+          if (step.externalWrite || step.destructive) {
+            addEvent(
+              "warn",
+              "Application approval requested",
+              `${step.capability} is awaiting the demo authorizer's decision`
+            );
+
+            setState("AWAITING APPROVAL", "running");
+
+            const approved =
+              await requestApproval(step);
+
+            if (!approved) {
+              addEvent(
+                "error",
+                "Approval rejected",
+                `${step.capability} was not executed`
+              );
+
+              await delay(250);
+
+              setState("REJECTED", "failure");
+
+              receipt.textContent =
+                "✕ JOB FAILED · denied step not executed; prior steps remain completed";
+
+              receipt.className =
+                "receipt failure show";
+
+              runButton.disabled = false;
+              runButton.textContent = "Run again";
+
+              running = false;
+              return;
+            }
+
+            addEvent(
+              "ok",
+              "Approval granted",
+              `${step.capability} may proceed`
+            );
+
+            setState("EXECUTING", "running");
+
+            await delay(350);
+          }
+
+          addEvent("ok", "Authorization allowed", "explicit allow before capability invocation");
+
+          addEvent(
+            "info",
+            "Executing capability",
+            step.capability
+          );
+
+          await delay(520);
+
+          addEvent(
+            "ok",
+            "Capability executed",
+            `${step.capability} completed successfully`
+          );
+
+          await delay(320);
         }
 
         addEvent(
-          "info",
-          "Executing capability",
-          step.capability
-        );
-
-        await delay(520);
-
-        addEvent(
           "ok",
-          "Capability executed",
-          `${step.capability} completed successfully`
+          "Execution completed",
+          "all proposed steps completed"
         );
 
-        await delay(320);
+        await delay(280);
+
+        setState("COMPLETED", "success");
+
+        receipt.textContent =
+          `✓ COMPLETED · ${scenario.steps.length}/${scenario.steps.length} steps executed`;
+
+        receipt.className =
+          "receipt success show";
+
+        runButton.disabled = false;
+        runButton.textContent = "Run again";
+
+      } finally {
+        running = false;
+        runButton.disabled = false;
+        runButton.textContent = "Run again";
+        controls.forEach(control => { control.disabled = false; });
       }
-
-      addEvent(
-        "ok",
-        "Execution completed",
-        "all proposed steps completed"
-      );
-
-      await delay(280);
-
-      setState("COMPLETED", "success");
-
-      receipt.textContent =
-        `✓ COMPLETED · ${scenario.steps.length}/${scenario.steps.length} steps executed`;
-
-      receipt.className =
-        "receipt success show";
-
-      runButton.disabled = false;
-      runButton.textContent = "Run again";
-
-      running = false;
     }
 
     runButton.addEventListener(
@@ -2789,6 +2876,7 @@ description: Veil provides the execution layer between intent and action.
         );
 
         button.classList.add("active");
+        scenarioButtons.forEach(item => item.setAttribute("aria-pressed", String(item === button)));
 
         selectedScenario =
           button.dataset.scenario;
@@ -2815,6 +2903,7 @@ description: Veil provides the execution layer between intent and action.
     );
 
     renderScenario();
+    scenarioButtons.forEach(button => button.setAttribute("aria-pressed", String(button.classList.contains("active"))));
 
     const quickExamples = {
       define: {
@@ -2830,6 +2919,10 @@ description: Veil provides the execution layer between intent and action.
       version: "1.0.0",
       description: "Return the provided value",
       risk: "read",
+      inputSchema: {
+        value: { type: "string", required: true,
+          description: "Value to return" }
+      },
       async execute({ input }) {
         return input.value;
       }
@@ -2887,7 +2980,7 @@ description: Veil provides the execution layer between intent and action.
         title: "Execute through Veil",
         explainTitle: "The same runtime performs the work.",
         explainBody:
-          "OperatorRuntime resolves the requested capability, executes it through the configured lifecycle, and returns the resulting job.",
+          "OperatorRuntime validates the plan, resolves inputs, and authorizes each step before invocation. The default authorizer allows this read operation. Inspect the returned Job for execution success or failure.",
         code:
     `const job =
       await runtime.executePlan(plan);
@@ -2934,6 +3027,7 @@ description: Veil provides the execution layer between intent and action.
         );
 
         tab.classList.add("active");
+        quickTabs.forEach(item => item.setAttribute("aria-pressed", String(item === tab)));
 
         renderQuickExample(
           tab.dataset.quick
@@ -2942,6 +3036,7 @@ description: Veil provides the execution layer between intent and action.
     });
 
     renderQuickExample("define");
+    quickTabs.forEach(tab => tab.setAttribute("aria-pressed", String(tab.classList.contains("active"))));
 
     /* --------------------------------
        Architecture explorer
@@ -2957,7 +3052,7 @@ description: Veil provides the execution layer between intent and action.
       planner: {
         title: "Planner",
         body:
-          "A planner converts intent into a structured proposal. Different planning strategies or providers can be used without changing the execution machinery that follows."
+          "Applications can submit plans directly. In the internal planning path, planners reason, strategies orchestrate, and PlannerRouter selects a strategy. Execution starts only after an ExecutionPlan reaches the runtime."
       },
 
       plan: {
@@ -2972,10 +3067,10 @@ description: Veil provides the execution layer between intent and action.
           "The execution boundary. OperatorRuntime receives plans, coordinates execution, resolves capabilities, enforces the configured execution lifecycle, and produces observable outcomes."
       },
 
-      registry: {
-        title: "CapabilityRegistry",
+      governance: {
+        title: "Validation and authorization",
         body:
-          "The registry contains the capabilities available to the runtime. A requested operation must resolve to something that has actually been registered before it can be executed."
+          "Admission checks registered capabilities, supplied versions, declared input fields and reference ordering. Each step resolves earlier results and validates input before the configured authorizer allows or denies execution. Registration alone grants no permission."
       },
 
       capability: {
@@ -2984,10 +3079,10 @@ description: Veil provides the execution layer between intent and action.
           "A capability is the concrete operation that performs work: reading a file, making an HTTP request, querying a database, invoking an MCP tool, or interacting with another system."
       },
 
-      result: {
-        title: "Result",
+      provider: {
+        title: "Providers and infrastructure",
         body:
-          "Execution produces structured outcomes and observable lifecycle information. The caller can see what succeeded, what failed, and where execution stopped."
+          "Capabilities use application-owned providers to interact with files, APIs, databases or other systems. Veil records job results and lifecycle events; provider credentials, external side effects and remote-system behavior remain application responsibilities."
       }
     };
 
@@ -2998,12 +3093,14 @@ description: Veil provides the execution layer between intent and action.
       document.querySelector("#architectureDetail");
 
     architectureNodes.forEach(node => {
+      node.setAttribute("aria-pressed", String(node.classList.contains("active")));
       node.addEventListener("click", () => {
         architectureNodes.forEach(item =>
           item.classList.remove("active")
         );
 
         node.classList.add("active");
+        architectureNodes.forEach(item => item.setAttribute("aria-pressed", String(item === node)));
 
         const detail =
           architectureDetails[node.dataset.node];

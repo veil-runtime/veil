@@ -21,7 +21,7 @@ This page summarizes the root src/index.ts and package root export for v0.1.3 pl
 ## Capability and module types
 
 - Capability, CapabilityInputField, CapabilityRisk: operation contract, field descriptors, and read/write/destructive classification.
-- CapabilityDescriptor: detached mutable execution metadata returned by listCapabilities and exact describeCapability; introspection is not authorization.
+- CapabilityDescriptor (unreleased v0.1.4): detached mutable execution metadata returned by listCapabilities and exact describeCapability; introspection is not authorization.
 - CapabilityModule, CapabilityModuleManifest: module packaging and manifest metadata.
 
 ## Authorization types
