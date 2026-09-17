@@ -10,6 +10,7 @@ Veil distinguishes intent from authority. Reasoning produces requested work. An 
 ~~~text
 planner/application intent
         -> requested plan
+        -> runtime-owned structural envelope
         -> plan validation
         -> resolved input
         -> authorization decision
@@ -20,6 +21,22 @@ planner/application intent
 ## What is not authority
 
 Planner output is not permission: a planner returns a plan, and planning failure never gives it access to providers. Capability registration is not permission: registration only makes a capability resolvable in the process. The default authorizer still denies write and destructive risk.
+
+## Structural ownership
+
+Before admission, JobManager.executePlan synchronously captures a runtime-owned
+structural execution envelope: goal, plan key, ordered step membership and the
+consumed step fields, including input root bindings. Validation and job
+materialization use that same envelope without rereading caller structure.
+Caller structural mutations after capture cannot redirect admitted execution.
+Capture may invoke getters/proxy traps; it is not an atomic snapshot of hostile
+JavaScript objects. Caller objects are neither mutated nor frozen.
+
+Nested input contents, arrays and reference objects intentionally remain shared;
+exact values validated at admission may change before resolution. Result
+ownership and mutability are unchanged. This boundary does not cover stored-job
+execution/replay, registry mutation, or authorization-to-invocation mutation.
+See the [ExecutionPlan reference](../reference/execution-plan-v1.html).
 
 ## Two validation points
 

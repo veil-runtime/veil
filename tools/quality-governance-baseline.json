@@ -31,14 +31,14 @@
     },
     {
       "path": "src/runtime/jobs/job-manager.ts",
-      "anchor": "5f3f1b0494184d690be3485b53673dd261ef66e52115a63f9dcc8a03dcc5b06a",
+      "anchor": "13fce248843444d387420b751d6e621dc142722e6d02bd588fe58b8ff5710ba5",
       "kind": "job-manager",
       "classification": "GOVERNED_MACHINERY",
       "reason": "Approved internal execution loop: plan admission delegates here and capability dispatch follows per-step authorization."
     },
     {
       "path": "src/runtime/jobs/job-manager.ts",
-      "anchor": "d676503342a50af035e6bdc0ac631b88457ffee675928a52ec87e431a02ac23d",
+      "anchor": "31a7754a040e7469f1201d936db763818a90e448d07e25b4b6b1179bcbac52a9",
       "kind": "execute",
       "classification": "GOVERNED_MACHINERY",
       "reason": "Approved internal execution loop: plan admission delegates here and capability dispatch follows per-step authorization."
