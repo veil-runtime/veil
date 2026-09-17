@@ -35,6 +35,14 @@ input: {
 
 Numeric dot segments such as items.0 work because the resolver uses property lookup on object-like values, including arrays. Bracket syntax such as items[0] is not parsed as an array index.
 
+## Own-property traversal (unreleased v0.1.4)
+
+Every result-path segment must be an own property of the current object.
+Inherited properties are rejected; own special names are valid data. Getters
+and proxy traps may run. Referenced objects retain identity and mutability;
+resolution does not isolate values or stabilize them between authorization
+and invocation.
+
 ## Parser edge cases
 
 The normal form should use nonempty dot-separated property names. The current parser nevertheless accepts steps.create.result. and steps.create.result..id: it turns the suffix into an empty path segment, which normally fails resolution unless the result has an empty-string property. This is current implementation behavior, not recommended reference syntax. steps.create.result has an empty path and resolves the full result. A malformed prefix or missing step ID fails parsing.
@@ -45,6 +53,6 @@ A forward reference fails plan validation: steps.read.result.id cannot be used b
 
 ## Common mistakes
 
-Do not reference a job result; only earlier step results are addressable. Do not expect expressions, escaping, or bracket notation. Step IDs MUST be unique within each plan using exact-string equality; every repeated occurrence is a validation error and rejects the plan before job creation. IDs may be reused across different plans. Case and whitespace differences remain distinct; no trimming, case folding, or Unicode normalization is performed.
+Do not reference a job result; only earlier step results are addressable. Do not expect expressions, escaping, or bracket notation. In **unreleased v0.1.4**, step IDs MUST be unique within each plan using exact-string equality; every repeated occurrence is a validation error and rejects the plan before job creation. IDs may be reused across different plans. Case and whitespace differences remain distinct; no trimming, case folding, or Unicode normalization is performed.
 
 Related: [multi-step guide](../guides/multi-step-execution.html), [authorization](authorization.html), [v1 reference](../reference/execution-plan-v1.html).

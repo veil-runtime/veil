@@ -32,9 +32,9 @@ steps is required and must be nonempty at execution. id is accepted but not stor
 
 capability must resolve to a registered capability. capabilityVersion, when present, must equal that capability's registered version exactly. input may be any value, but declared input schema fields are checked. An omitted input is treated as an empty record for input-schema validation.
 
-Step IDs MUST be unique within a single plan, using exact-string equality. Each ID identifies exactly one execution step in that plan. IDs may be reused across different plans. Case and whitespace differences remain distinct; validation performs no trimming, case folding, or Unicode normalization. Every occurrence after the first produces `Duplicate step ID: <id>` and rejects admission before job creation.
+In **unreleased v0.1.4**, step IDs MUST be unique within a single plan, using exact-string equality. Each ID identifies exactly one execution step in that plan. IDs may be reused across different plans. Case and whitespace differences remain distinct; validation performs no trimming, case folding, or Unicode normalization. Every occurrence after the first produces `Duplicate step ID: <id>` and rejects admission before job creation.
 
-## Structural ownership at submission
+## Structural ownership at submission (unreleased v0.1.4)
 
 At the beginning of JobManager.executePlan, synchronously before the empty-plan
 check, validation, job creation, or any await, Veil captures goal, the plan

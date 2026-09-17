@@ -17,3 +17,6 @@ for (const privateImport of [
     (error) => error?.code === 'ERR_PACKAGE_PATH_NOT_EXPORTED',
   );
 }
+
+assert.equal('CapabilityRegistry' in publicApi, false);
+assert.equal('capabilityRegistry' in publicApi, false);

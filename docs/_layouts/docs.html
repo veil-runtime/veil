@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#08090c">
   <title>{{ page.title | default: site.title }} | {{ site.title }}</title>
-  <meta name="description" content="{{ page.description | default: site.description | default: 'Veil developer documentation' }}">
+  <meta name="description" content="{{ page.description | default: site.description | default: 'Veil developer documentation' | escape }}">
   <link rel="stylesheet" href="{{ '/assets/docs.css' | relative_url }}">
 </head>
 <body>
@@ -59,6 +59,10 @@
           <span aria-current="page">{{ current.title }}</span>
         </nav>
       {% endif %}
+      <p class="version-note">
+        Published package: <strong>v0.1.3</strong>. These docs also cover
+        <a href="{{ '/getting-started/upcoming-v0.1.4.html' | relative_url }}">unreleased v0.1.4 work</a>.
+      </p>
       {{ content }}
       {% if current %}
         <nav class="page-navigation" aria-label="Document pagination">
@@ -74,7 +78,7 @@
   </main>
   <footer class="site-footer">
     <a href="{{ '/developer.html' | relative_url }}">Developer Docs</a>
-    <span>Veil v0.1.3</span>
+    <span>Latest release: Veil v0.1.3</span>
   </footer>
 </body>
 </html>

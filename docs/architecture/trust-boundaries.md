@@ -44,11 +44,11 @@ At plan admission, Veil validates known capability, requested version, declared 
 
 ## Authorization sees the real request
 
-ExecutionAuthorizer receives capability identity/risk, job ID, step ID, immutable caller, and fully resolved input. This lets a policy decide on properties such as target environment or generated identifier instead of trusting plan text. A denied action records capability.denied and never emits capability.started. Tests also show an authorizer exception fails the job before capability execution.
+ExecutionAuthorizer receives capability identity/risk, job ID, step ID, shallow-frozen caller, and fully resolved input. This lets a policy decide on properties such as target environment or generated identifier instead of trusting plan text. A denied action records capability.denied and never emits capability.started. Tests also show an authorizer exception fails the job before capability execution.
 
 ## Core-hardening cycle closure (2026-09-17)
 
-The following guarantees are established in `develop` at
+The following scoped guarantees are **unreleased v0.1.4 work**, established in `develop` at
 `d671669afd8d63319aeb70c3fe4daf5dae73b57c`:
 
 - **Observer failure isolation:** MemoryEventBus contains synchronous subscriber
@@ -69,13 +69,13 @@ The following guarantees are established in `develop` at
 - **Plan-local unique step identity:** admission rejects duplicate step IDs by
   exact-string equality before job creation, persistence, runtime lifecycle
   events, authorization or invocation. IDs may be reused in separate plans.
-  See [ADR-0007](../adr/0007-plan-local-step-identity.html).
+  See [plan-local step identity](../reference/execution-plan-v1.html#properties).
 - **Structural execution ownership:** synchronous capture at the start of
   JobManager.executePlan owns consumed plan/step structure and input root
   bindings for admission and materialization. Subsequent caller structural
   mutation cannot redirect execution. Nested input/reference contents remain
   shared; stored-job execution/replay is outside this guarantee.
-  See [ADR-0008](../adr/0008-structural-execution-ownership.html).
+  See [structural ownership](../reference/execution-plan-v1.html#structural-ownership-at-submission-unreleased-v014).
 
 Evidence: `test/memory-event-bus.test.ts`, `test/execution-contract.test.ts`,
 `test/result-reference.test.ts`, `test/plan-validator.test.ts` and

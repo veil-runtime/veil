@@ -26,7 +26,7 @@ goal -> PlannerRouter -> PlannerStrategy -> ExecutionPlan
 
 ## Layers and responsibilities
 
-A planner reasons from a goal to a plan. A PlannerRouter chooses a named strategy; a PlannerStrategy orchestrates planner providers. Neither directly executes a capability. ExecutionPlan is the handoff. OperatorRuntime validates plan submission and delegates job execution. The job manager owns the sequential step loop, job state, and events. A capability defines one operation, risk, declared input fields, and execution function. A provider, where a capability uses one, performs remote I/O.
+A planner reasons from a goal to a plan. A PlannerRouter chooses a named strategy; a PlannerStrategy orchestrates planner providers. Neither directly executes a capability. ExecutionPlan is the handoff. OperatorRuntime validates plan submission and delegates job execution. The job manager owns the sequential step loop, job state, and events. A capability defines one operation, risk, declared input fields, and execution function. A provider, where a capability uses one, interacts with a local or external system.
 
 ## Why the separation exists
 
@@ -35,6 +35,19 @@ The same plan execution rules apply whether a plan came from deterministic code,
 ## Public versus internal
 
 Consumers import OperatorRuntime, types, createCapability SDK exports, and McpAdapter only from @veil-runtime/core. Registries, job manager, planner registrations, event bus, provider implementations, built-in capabilities, and storage are internal. See [public API boundary](public-api-boundary.html).
+
+## Determinism and governance
+
+Plans execute in array order, and capability lookup uses registered names and
+exact versions when supplied. These rules do not make capability results,
+external systems, or reasoning deterministic. Validation checks Veil's declared
+field contract; authorization applies the host's policy before invocation.
+Veil is an execution runtime, not an autonomous reasoning engine, semantic tool
+router, LLM provider abstraction, or general workflow platform.
+
+See [upcoming v0.1.4](../getting-started/upcoming-v0.1.4.html) for the unreleased
+hardening and introspection work. Introspection describes registered metadata;
+applications select relevant capabilities, and authorization remains separate.
 
 ## Current limits
 
