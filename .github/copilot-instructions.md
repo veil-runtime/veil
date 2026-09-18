@@ -52,8 +52,8 @@ Execution should remain governed through capability validation, policy, lifecycl
 
 ## Agent workflow
 
-Read `AGENTS.md` before starting. Work from the bounded tasks in
-`docs/release/v0.1.0.md`. Do not combine package-boundary, test, example, and
+Read `AGENTS.md` before starting. Work from the current release preparation guidance in
+`docs/contributing/releases.md`. Do not combine package-boundary, test, example, and
 documentation ownership in one change unless the task explicitly requires it.
 
 Before editing, identify the affected files and the smallest proposed change.

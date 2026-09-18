@@ -3,7 +3,7 @@ title: Your first plan
 ---
 # Your first plan
 
-An `ExecutionPlan` is the handoff from reasoning to execution. v0.1.3 uses `version: '1.0'` and runs the step array in order.
+An `ExecutionPlan` is the handoff from reasoning to execution. v0.2.0 uses `version: '1.0'` and runs the step array in order.
 
 ```ts
 import type { ExecutionPlan } from '@veil-runtime/core';

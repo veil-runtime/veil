@@ -17,7 +17,7 @@ The validator resolves capability names against the global registry. If a capabi
 
 ## What a plan does not do
 
-The runtime records plan and step idempotency keys but does not deduplicate or enforce them. plan.id, metadata, and reason are not execution-control features. v0.1.3 has no dependencies other than earlier result references, no graph/parallel semantics, no conditional branching, retry, or cancellation.
+The runtime records plan and step idempotency keys but does not deduplicate or enforce them. plan.id, metadata, and reason are not execution-control features. v0.2.0 has no dependencies other than earlier result references, no graph/parallel semantics, no conditional branching, retry, or cancellation.
 
 ## Example
 
@@ -26,7 +26,7 @@ const plan = {
   version: '1.0',
   goal: 'Create and inspect an order',
   steps: [
-    { id: 'create', capability: 'orders.create', input: { sku: 'book' } },
+    { id: 'create', capability: 'orders.create', input: { sku: 'book', quantity: 1 } },
     { id: 'read', capability: 'orders.read',
       input: { id: { $ref: 'steps.create.result.id' } } },
   ],

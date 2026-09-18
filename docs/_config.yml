@@ -1,4 +1,5 @@
 title: Veil
+description: "Veil is a governed, capability-driven execution runtime. Reasoning produces plans; Veil validates, authorizes and executes registered operations."
 url: "https://veil-runtime.github.io"
 baseurl: "/veil"
 exclude:

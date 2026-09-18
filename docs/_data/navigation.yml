@@ -16,6 +16,8 @@ sections:
         url: /getting-started/first-plan.html
       - title: First Runtime
         url: /getting-started/first-runtime.html
+      - title: Veil v0.2.0
+        url: /getting-started/v0.2.0.html
       - title: Next Steps
         url: /getting-started/next-steps.html
   - title: Core Concepts
@@ -122,6 +124,8 @@ sections:
         url: /contributing/testing.html
       - title: Package Verification
         url: /contributing/package-verification.html
+      - title: Quality Harness
+        url: /contributing/quality-harness.html
       - title: Architecture Rules
         url: /contributing/architecture-rules.html
       - title: Pull Requests

@@ -9,6 +9,7 @@ import {
 import { ExecutionCaller } from '../src/runtime/execution/execution-context.js';
 import { validatePlan } from '../src/runtime/execution/plan-validator.js';
 import { capabilityRegistry } from '../src/runtime/registry/registry.js';
+import { runtimeEventBus } from '../src/runtime/events/memory-event-bus.js';
 
 const suffix = `${process.pid}-${Date.now()}`;
 const sourceName = `test.source.${suffix}`;
@@ -56,6 +57,54 @@ function oneStepPlan(capability: string, input?: unknown) {
       input,
     }],
   };
+}
+
+for (const fails of [false, true]) {
+  test(`observer failures preserve capability ${fails ? 'failure' : 'success'} and lifecycle history`, async () => {
+    const capability = uniqueCapabilityName(`observer-${fails}`);
+    registerCapability(capability, 'read', async () => {
+      if (fails) throw new Error('genuine capability failure');
+      return { value: 'successful result' };
+    });
+    const baseline = await new OperatorRuntime().executePlan(oneStepPlan(capability));
+    const unsubscribeReject = runtimeEventBus.subscribe('*', () =>
+      Promise.reject(new Error('observer rejected')));
+    const unsubscribeThrow = runtimeEventBus.subscribe('*', () => {
+      throw new Error('observer threw');
+    });
+    const observed: { id: string; jobId?: string }[] = [];
+    const unsubscribeObserver = runtimeEventBus.subscribe('*', (event) => {
+      observed.push({ id: event.id, jobId: event.jobId });
+    });
+    try {
+      const job = await new OperatorRuntime().executePlan(oneStepPlan(capability));
+      assert.equal(job.status, fails ? 'failed' : 'completed');
+      assert.equal(job.steps[0].status, fails ? 'failed' : 'completed');
+      if (fails) {
+        assert.match(job.error ?? '', /genuine capability failure/);
+      } else {
+        assert.deepEqual(job.steps[0].result, { value: 'successful result' });
+      }
+      const types = eventTypes(job);
+      assert.deepEqual(types, eventTypes(baseline));
+      for (const type of [
+        'job.created', 'capability.started',
+        fails ? 'capability.failed' : 'capability.completed',
+        fails ? 'job.failed' : 'job.completed',
+      ]) {
+        assert.ok(types.includes(type), `missing retained event: ${type}`);
+      }
+      assert.ok(!types.includes(fails ? 'job.completed' : 'job.failed'));
+      assert.deepEqual(
+        observed.filter((event) => event.jobId === job.id).map((event) => event.id),
+        job.events.map((event) => event.id),
+      );
+    } finally {
+      unsubscribeReject();
+      unsubscribeThrow();
+      unsubscribeObserver();
+    }
+  });
 }
 
 capabilityRegistry.register({
@@ -139,6 +188,48 @@ test('plan validation rejects incompatible versions, malformed input, and forwar
   assert.equal(malformed.valid, false);
   assert.match(malformed.errors[0].message, /must be of type 'string'/);
 });
+
+for (const [label, version, accepted] of [
+  ['omitted', undefined, true],
+  ['matching', '1.0.0', true],
+  ['empty', '', false],
+  ['mismatching', '2.0.0', false],
+] as const) {
+  test(`capability version validation: ${label}`, async () => {
+    const capability = uniqueCapabilityName(`version-${label}`);
+    let executions = 0;
+    registerCapability(capability, 'read', async () => {
+      executions += 1;
+      return 'executed';
+    });
+    const step = {
+      id: 'step',
+      capability,
+      ...(version === undefined ? {} : { capabilityVersion: version }),
+    };
+    const validation = validatePlan([step]);
+    assert.deepEqual(validation, accepted
+      ? { valid: true, errors: [] }
+      : {
+        valid: false,
+        errors: [{
+          stepId: 'step',
+          capability,
+          message: `Capability version mismatch for '${capability}': requested ${version}, registered 1.0.0`,
+        }],
+      });
+
+    const execute = () => new OperatorRuntime().executePlan({ version: '1.0', steps: [step] });
+    if (accepted) {
+      assert.equal((await execute()).status, 'completed');
+    } else {
+      await assert.rejects(execute, {
+        message: `Execution plan failed validation: ${validation.errors[0].message}`,
+      });
+    }
+    assert.equal(executions, accepted ? 1 : 0);
+  });
+}
 
 test('default authorization allows reads and denies write and destructive capabilities', async () => {
   const readName = uniqueCapabilityName('default-read');
@@ -363,6 +454,192 @@ test('an authorizer error fails closed without execution, start, or denial event
   assert.ok(!events.includes('capability.denied'));
 });
 
+const malformedAuthorizationResponses: [string, unknown][] = [
+  ['missing decision', {}],
+  ['unknown decision', { decision: 'unexpected' }],
+  ['undefined decision', { decision: undefined }],
+  ['null', null],
+  ['undefined', undefined],
+  ['string', 'allow'],
+  ['number', 1],
+  ['boolean', true],
+  ['bigint', 1n],
+  ['symbol', Symbol('allow')],
+  ['array', []],
+  ['array with allow', Object.assign([], { decision: 'allow' })],
+  ['function with allow', Object.assign(() => {}, { decision: 'allow' })],
+  ['inherited allow', Object.create({ decision: 'allow' })],
+  ['inherited deny', Object.create({ decision: 'deny' })],
+  ['null prototype without decision', Object.create(null)],
+  ['shadowed own-property method', { hasOwnProperty: () => true }],
+  ['proxy synthesizing allow without own decision', new Proxy({}, {
+    get: () => 'allow',
+  })],
+  ...[123, null, {}, [], true, 1n, Symbol('reason'), () => {}, new String('reason')]
+    .flatMap((reason): [string, unknown][] => [
+      [`own non-string reason ${String(reason)}`, { decision: 'deny', reason }],
+      [`inherited non-string reason ${String(reason)}`,
+        Object.assign(Object.create({ reason }), { decision: 'deny' })],
+    ]),
+];
+
+for (const [label, response] of malformedAuthorizationResponses) {
+  test(`malformed authorization (${label}) fails closed and stops subsequent steps`, async () => {
+    await assertAuthorizationFailure(
+      // Simulate untyped JavaScript policy implementations at the runtime boundary.
+      { authorize: async () => response } as ExecutionAuthorizer,
+      'Invalid authorization decision',
+    );
+  });
+}
+
+for (const rejects of [false, true]) {
+  test(`authorization ${rejects ? 'rejection' : 'throw'} fails closed and stops subsequent steps`, async () => {
+    await assertAuthorizationFailure({
+      authorize() {
+        const error = new Error('authorizer unavailable');
+        if (rejects) return Promise.reject(error);
+        throw error;
+      },
+    }, 'authorizer unavailable');
+  });
+}
+
+for (const property of ['decision', 'reason']) {
+  for (const inherited of [false, true]) {
+    test(`throwing ${inherited ? 'inherited' : 'own'} ${property} accessor fails closed`, async () => {
+      const response = Object.defineProperty({}, property, {
+        get() { throw new Error('authorization accessor failed'); },
+      });
+      const authorization = inherited ? Object.create(response) : response;
+      if (property === 'reason') authorization.decision = 'deny';
+      await assertAuthorizationFailure({ authorize: async () => authorization },
+        inherited && property === 'decision'
+          ? 'Invalid authorization decision' : 'authorization accessor failed');
+    });
+  }
+}
+
+for (const reason of [undefined, '', 'policy denial']) {
+  for (const shape of ['own', 'inherited', 'null prototype']) {
+    test(`valid deny preserves ${shape} reason ${String(reason)}`, async () => {
+      const capability = uniqueCapabilityName('valid-deny');
+      let executions = 0;
+      registerCapability(capability, 'read', async () => { executions += 1; });
+      const response = shape === 'inherited'
+        ? Object.assign(Object.create({ reason }), { decision: 'deny' })
+        : Object.assign(shape === 'null prototype' ? Object.create(null) : {},
+          { decision: 'deny', reason });
+      const job = await new OperatorRuntime({
+        authorizer: { authorize: async () => response },
+      }).executePlan(oneStepPlan(capability));
+      assert.equal(executions, 0);
+      assert.equal(job.status, 'failed');
+      assert.equal(job.steps[0].error, reason ?? `Capability not permitted: ${capability}`);
+      assert.equal(job.events.find(event => event.type === 'capability.denied')?.data?.reason, reason);
+      assert.ok(eventTypes(job).includes('capability.denied'));
+      assert.ok(!eventTypes(job).includes('capability.failed'));
+      assert.ok(!eventTypes(job).includes('capability.started'));
+    });
+  }
+}
+
+test('deny reason accessor is read once before error and event use', async () => {
+  const capability = uniqueCapabilityName('reason-accessor');
+  registerCapability(capability, 'read', async () => assert.fail('must not execute'));
+  let reads = 0;
+  const job = await new OperatorRuntime({ authorizer: { authorize: async () => ({
+    decision: 'deny',
+    get reason() {
+      if (++reads > 1) throw new Error('reason read again');
+      return 'stable denial';
+    },
+  }) } }).executePlan(oneStepPlan(capability));
+  assert.equal(reads, 1);
+  assert.equal(job.steps[0].error, 'stable denial');
+  assert.equal(job.events.find(event => event.type === 'capability.denied')?.data?.reason, 'stable denial');
+});
+
+test('own allow works with null prototype and shadowed hasOwnProperty', async () => {
+  const capability = uniqueCapabilityName('own-allow');
+  let executions = 0;
+  registerCapability(capability, 'read', async () => { executions += 1; });
+  const response = Object.assign(Object.create(null), {
+    decision: 'allow', hasOwnProperty: null,
+  });
+  Object.defineProperty(response, 'reason', {
+    get() { throw new Error('allow must not read deny reason'); },
+  });
+  const job = await new OperatorRuntime({
+    authorizer: { authorize: async () => response },
+  }).executePlan(oneStepPlan(capability));
+  assert.equal(executions, 1);
+  assert.equal(job.status, 'completed');
+});
+
+test('own decision accessor is read once and cannot change a denial to allow', async () => {
+  let reads = 0;
+  await assertAuthorizationFailure({ authorize: async () => ({
+    get decision() { return ++reads === 1 ? 'unexpected' : 'allow'; },
+  }) } as ExecutionAuthorizer, 'Invalid authorization decision');
+  assert.equal(reads, 1);
+});
+
+test('throwing own-property proxy trap fails closed', async () => {
+  await assertAuthorizationFailure({ authorize: async () => new Proxy({}, {
+    getOwnPropertyDescriptor() { throw new Error('authorization shape failed'); },
+    get: () => 'allow',
+  }) } as unknown as ExecutionAuthorizer, 'authorization shape failed');
+});
+
+async function assertAuthorizationFailure(
+  authorizer: ExecutionAuthorizer,
+  message: string,
+): Promise<void> {
+  const capability = uniqueCapabilityName('authorization-failure');
+  let executions = 0;
+  let authorizationCalls = 0;
+  registerCapability(capability, 'read', async () => {
+    executions += 1;
+    return 'unexpected';
+  });
+  const runtime = new OperatorRuntime({
+    authorizer: {
+      authorize(context) {
+        authorizationCalls += 1;
+        return authorizer.authorize(context);
+      },
+    },
+  });
+  const step = oneStepPlan(capability).steps[0];
+  const job = await runtime.executePlan({
+    version: '1.0',
+    steps: [step, { ...step, id: 'subsequent' }],
+  });
+
+  assert.equal(executions, 0);
+  assert.equal(authorizationCalls, 1);
+  assert.equal(job.status, 'failed');
+  assert.equal(job.outcome, 'failed');
+  assert.equal(job.error, message);
+  assert.ok(job.completedAt);
+  assert.equal(job.steps[0].status, 'failed');
+  assert.equal(job.steps[0].error, message);
+  assert.ok(job.steps[0].completedAt);
+  assert.equal(job.steps[0].startedAt, undefined);
+  assert.equal(job.steps[1].status, 'pending');
+  assert.equal(job.steps[1].startedAt, undefined);
+  assert.equal(job.steps[1].completedAt, undefined);
+  assert.deepEqual(eventTypes(job), [
+    'job.created', 'execution.started', 'capability.failed', 'job.failed',
+  ]);
+  assert.deepEqual(job.events.find(event => event.type === 'capability.failed')?.data, {
+    stepId: step.id,
+    capability,
+    error: message,
+  });
+}
+
 test('authorizers remain isolated between runtimes sharing the global capability registry', async () => {
   const capability = uniqueCapabilityName('runtime-isolation');
   let executions = 0;
@@ -390,3 +667,68 @@ test('authorizers remain isolated between runtimes sharing the global capability
   assert.ok(eventTypes(deniedJob).includes('capability.denied'));
   assert.ok(!eventTypes(allowedJob).includes('capability.denied'));
 });
+
+for (const path of ['value', 'nested.value', '__proto__', 'constructor', 'toString']) {
+  test(`inherited result reference ${path} fails before receiving governance and stops the job`, async () => {
+    const source = uniqueCapabilityName('inherited-source');
+    const sink = uniqueCapabilityName('inherited-sink');
+    const later = uniqueCapabilityName('inherited-later');
+    const result = Object.assign(Object.create({ value: 'inherited' }), {
+      nested: Object.create({ value: 'inherited' }),
+    });
+    const executions: string[] = [];
+    const authorizations: string[] = [];
+    registerCapability(source, 'read', async () => { executions.push(source); return result; });
+    registerCapability(sink, 'read', async () => { executions.push(sink); });
+    registerCapability(later, 'read', async () => { executions.push(later); });
+    const job = await new OperatorRuntime({ authorizer: {
+      async authorize(context) {
+        authorizations.push(context.capability.name);
+        return { decision: 'allow' };
+      },
+    } }).executePlan({ version: '1.0', steps: [
+      { id: 'source', capability: source },
+      { id: 'sink', capability: sink, input: { $ref: `steps.source.result.${path}` } },
+      { id: 'later', capability: later },
+    ] });
+    const error = `Result reference path not found: steps.source.result.${path}`;
+    assert.equal(job.status, 'failed');
+    assert.equal(job.error, error);
+    assert.equal(job.steps[0].status, 'completed');
+    assert.equal(job.steps[0].result, result);
+    assert.equal(job.steps[1].status, 'failed');
+    assert.equal(job.steps[1].error, error);
+    assert.equal(job.steps[2].status, 'pending');
+    assert.deepEqual(authorizations, [source]);
+    assert.deepEqual(executions, [source]);
+    assert.ok(!job.events.some((event) => event.type === 'capability.started' &&
+      (event.data?.stepId === 'sink' || event.data?.stepId === 'later')));
+  });
+}
+
+for (const name of ['__proto__', 'constructor', 'prototype']) {
+  test(`own ${name} result data reaches receiving authorization and execution unchanged`, async () => {
+    const source = uniqueCapabilityName('own-special-source');
+    const sink = uniqueCapabilityName('own-special-sink');
+    const result = JSON.parse('{"__proto__":{"value":1},"constructor":{"value":2},"prototype":{"value":3}}');
+    const authorized: unknown[] = [];
+    const executed: unknown[] = [];
+    registerCapability(source, 'read', async () => result);
+    registerCapability(sink, 'read', async (input) => { executed.push(input); return input; });
+    const job = await new OperatorRuntime({ authorizer: {
+      async authorize(context) {
+        if (context.capability.name === sink) authorized.push(context.input);
+        return { decision: 'allow' };
+      },
+    } }).executePlan({ version: '1.0', steps: [
+      { id: 'source', capability: source },
+      { id: 'sink', capability: sink, input: { $ref: `steps.source.result.${name}` } },
+    ] });
+    assert.equal(job.status, 'completed');
+    assert.equal(authorized.length, 1);
+    assert.equal(executed.length, 1);
+    assert.equal(authorized[0], result[name]);
+    assert.equal(executed[0], result[name]);
+    assert.equal(job.steps[1].result, result[name]);
+  });
+}

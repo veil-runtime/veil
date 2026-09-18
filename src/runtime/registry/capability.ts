@@ -33,3 +33,13 @@ export interface Capability<
     context?: ExecutionContext
   ): Promise<TResult>;
 }
+
+/** Detached execution metadata. Introspection is not authorization. */
+export interface CapabilityDescriptor {
+  name: string;
+  version: string;
+  description: string;
+  risk: CapabilityRisk;
+  /** Limited Veil field contract, not full JSON Schema. */
+  inputSchema: Record<string, CapabilityInputField>;
+}

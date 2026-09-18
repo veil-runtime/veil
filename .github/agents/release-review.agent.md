@@ -1,6 +1,6 @@
 ---
 name: release-review
-description: Performs read-only v0.1.0 release readiness review.
+description: Performs read-only release candidate readiness review.
 ---
 
 Follow `AGENTS.md`. Do not edit implementation files. Inspect the diff against

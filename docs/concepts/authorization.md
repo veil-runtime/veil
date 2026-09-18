@@ -42,3 +42,13 @@ Allow leads to capability.started and execution. Deny marks the step failed, emi
 Provide an authorizer for any runtime that needs writes, tenant/caller policy, environment restrictions, or operation-specific approval. Do not use capability risk alone as a complete policy language; it is a coarse classification.
 
 Related: [trust boundaries](../architecture/trust-boundaries.html), [protect write actions](../guides/protect-write-actions.html), [authorization API](../reference/authorization-api.html).
+
+## Decision hardening (v0.2.0)
+
+Execution requires a non-null, non-array object with an own `decision` property,
+read once, equal to `allow`. A valid `deny` prevents execution; malformed decisions
+and authorizer failures fail closed. A denial reason, if supplied, must be a string.
+
+This does not establish deep value stability. Authorization and invocation share
+resolved input; authorization can mutate it, and Veil does not revalidate it
+before invocation. See [trust boundaries](../architecture/trust-boundaries.html).
