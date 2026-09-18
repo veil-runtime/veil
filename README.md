@@ -2,7 +2,7 @@
 
 Veil is a governed, capability-driven execution runtime for AI and software systems.
 
-**Developer documentation:** [GitHub Pages portal](https://veil-runtime.github.io/veil/developer.html) | [repository docs](docs/developer.html)
+**Developer documentation:** [GitHub Pages portal](https://veil-runtime.github.io/veil/developer.html) | [repository docs](docs/developer.md)
 
 ## The idea
 
@@ -20,6 +20,8 @@ Planners reason. Strategies orchestrate. Routers select strategies. Capabilities
 Requires Node.js 24+.
 
     npm install @veil-runtime/core
+
+This installs the published package. To verify v0.2.0 before publication, see [candidate installation](docs/getting-started/installation.md).
 
 ## Smallest working example
 
@@ -41,15 +43,15 @@ Requires Node.js 24+.
       input: { value: 'Hello from Veil' },
     }] });
 
-The default authorizer permits reads and denies write/destructive capabilities. Supply a runtime-scoped authorizer to allow selected writes. See [authorization](docs/concepts/authorization.html).
+The default authorizer permits reads and denies write/destructive capabilities. Supply a runtime-scoped authorizer to allow selected writes. See [authorization](docs/concepts/authorization.md).
 
 ## Status and roadmap
 
-Current release: **v0.1.3**. ExecutionPlan v1 is linear. DAGs, parallel execution, conditionals, cancellation, and retry policies are roadmap work, not current behavior.
+Release candidate: **v0.2.0**. See [release notes](docs/getting-started/v0.2.0.md). The latest published package remains **v0.1.3** until publication. ExecutionPlan v1 is linear. DAGs, parallel execution, conditionals, cancellation, and retry policies are roadmap work, not current behavior.
 
 ## Contributing
 
-See [development setup](docs/contributing/development-setup.html), [testing](docs/contributing/testing.html), and the [architecture rules](docs/contributing/architecture-rules.html).
+See [development setup](docs/contributing/development-setup.md), [testing](docs/contributing/testing.md), and the [architecture rules](docs/contributing/architecture-rules.md).
 
 ## License and branding
 

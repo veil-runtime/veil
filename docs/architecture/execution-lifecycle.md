@@ -3,7 +3,7 @@ title: Execution lifecycle
 ---
 # Execution lifecycle
 
-This page describes the current source execution path, including **unreleased v0.1.4 hardening**. v0.1.3 remains the published package. A caller can begin with a direct plan or ask the runtime to plan a goal. See [release scope](../getting-started/upcoming-v0.1.4.html).
+This page describes the **v0.2.0** execution path. A caller can begin with a direct plan or ask the runtime to plan a goal. See [release scope](../getting-started/v0.2.0.html).
 
 ## Entry points
 
@@ -32,7 +32,7 @@ For every step in its array position, the runtime finds the capability in the gl
 
 The runtime next calls the configured ExecutionAuthorizer with job/step IDs, capability name/version/risk, resolved input, and caller. A deny marks the step failed, records capability.denied, and fails the job. An authorizer exception also fails the job without a capability-start event.
 
-In unreleased v0.1.4, the result must be a non-null, non-array object with a valid own `decision` property. Malformed decisions fail closed. Only after allow does Veil mark the step running, emit capability.started, construct execution context, and call capability.execute. The capability may then use a provider or perform its own I/O. Success records result, completion time, and capability.completed. Any execution error records capability.failed and ends the job; later steps are not run.
+In v0.2.0, the result must be a non-null, non-array object with a valid own `decision` property. Malformed decisions fail closed. Only after allow does Veil mark the step running, emit capability.started, construct execution context, and call capability.execute. The capability may then use a provider or perform its own I/O. Success records result, completion time, and capability.completed. Any execution error records capability.failed and ends the job; later steps are not run.
 
 Authorization and invocation share resolved input. Deep value stability between
 the approved input and the invoked input is **not guaranteed**; there is no

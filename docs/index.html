@@ -1633,7 +1633,7 @@ description: Veil is a capability-driven runtime between reasoning and infrastru
           <p>
             Install <code>@veil-runtime/core</code> on Node.js 24 or newer to define
             capabilities and execute explicit plans. The latest published version
-            is <strong>v0.1.3</strong>; v0.1.4 is unreleased.
+            is <strong>v0.1.3</strong>. These docs target the <strong>v0.2.0 release candidate</strong>.
           </p>
         </div>
 
@@ -1645,7 +1645,7 @@ description: Veil is a capability-driven runtime between reasoning and infrastru
               <span>npm install @veil-runtime/core</span>
             </div>
             <div class="result">
-              Veil Core v0.1.3 adds contextual execution authorization and the
+              The published package includes contextual execution authorization and the
               public inbound MCP adapter while preserving the same governed
               ExecutionPlan → OperatorRuntime → Capability path.
             </div>
@@ -1995,7 +1995,7 @@ description: Veil is a capability-driven runtime between reasoning and infrastru
 
             <div class="code-bar">
               capability.ts
-              <span>public API · v0.1.3</span>
+              <span>public API · v0.2.0 candidate</span>
             </div>
 
             <pre><code>import { createCapability } from "@veil-runtime/core";
@@ -2023,7 +2023,7 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
           capability through <code>runtime.use(module)</code>, as shown below.
           Writes require an application-configured
           <a href="{{ '/guides/protect-write-actions.html' | relative_url }}">authorizer</a>;
-          the default policy denies them. The quickstart uses the published v0.1.3 API.
+          the default policy denies them. The quickstart uses the public API shared by v0.1.3 and the v0.2.0 candidate.
         </p>
 
       </div>
@@ -2254,7 +2254,7 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
             MCP is an interoperability layer around Veil, not a second
             execution path. Adapters can translate MCP invocations into
             <code>ExecutionPlan</code> instances, and MCP-backed capabilities
-            can sit behind the same runtime boundary. Veil Core v0.1.3 publicly
+            can sit behind the same runtime boundary. Veil Core v0.2.0 publicly
             exports the inbound <code>McpAdapter</code>, which requires an
             <code>OperatorRuntime</code> and creates no alternate execution path.
           </p>
@@ -2275,7 +2275,7 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
           </div>
 
           <p>
-            <code>@veil-runtime/core</code> v0.1.3 provides the public execution
+            <code>@veil-runtime/core</code> v0.2.0 provides the public execution
             boundary, contextual authorization, and inbound MCP adapter.
             Providers and integrations can be composed around that boundary
             without changing the execution model.
@@ -2333,13 +2333,13 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
       </div>
     </section>
 
-    <!-- UNRELEASED -->
+    <!-- RELEASE CANDIDATE -->
 
-    <section id="upcoming">
+    <section id="v020">
       <div class="wrap">
         <div class="section-head reveal">
           <div>
-            <div class="kicker">Upcoming · v0.1.4 · unreleased</div>
+            <div class="kicker">v0.2.0 · release candidate</div>
             <h2>Know what is registered. Govern what runs.</h2>
           </div>
           <p>
@@ -2347,7 +2347,7 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
             surface. <code>listCapabilities()</code> returns inventory;
             <code>describeCapability(name, version?)</code> performs exact lookup.
             The new <code>CapabilityDescriptor</code> contains detached, mutable metadata.
-            This v0.1.4 contract is not available in the published v0.1.3 package.
+            This contract is included in the v0.2.0 candidate; see <a href="{{ '/getting-started/installation.html' | relative_url }}">local candidate installation</a>.
           </p>
         </div>
         <div class="triad">
@@ -2371,11 +2371,11 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
           </article>
         </div>
         <p class="api-note reveal">
-          v0.1.4 also contains event-subscriber failures, rejects malformed authorization,
+          v0.2.0 also contains event-subscriber failures, rejects malformed authorization,
           requires own properties in result paths and unique step IDs per plan,
           and captures plan structure before admission. Nested input values remain shared:
           authorization-to-invocation deep value stability is not guaranteed.
-          <a href="{{ '/getting-started/upcoming-v0.1.4.html' | relative_url }}">Read the scope and limits</a>.
+          <a href="{{ '/getting-started/v0.2.0.html' | relative_url }}">Read the scope and limits</a>.
         </p>
       </div>
     </section>
@@ -2392,27 +2392,27 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
           </div>
 
           <p>
-            v0.1.3 remains the latest published package. The next release targets
-            governed-execution hardening and deterministic capability introspection.
-            <a href="{{ '/getting-started/upcoming-v0.1.4.html' | relative_url }}">See the unreleased v0.1.4 scope and limits</a>.
+            The v0.2.0 candidate includes governed-execution hardening, deterministic
+            capability introspection, and the developer documentation refresh.
+            <a href="{{ '/getting-started/v0.2.0.html' | relative_url }}">See the v0.2.0 scope and limits</a>.
           </p>
         </div>
 
         <div class="roadmap reveal">
 
           <div class="phase current">
-            <small>NOW</small>
+            <small>PUBLISHED</small>
             <b>Public Core v0.1.3</b>
           </div>
 
           <div class="phase">
-            <small>NEXT</small>
-            <b>v0.1.4 · hardening + introspection</b>
+            <small>CANDIDATE</small>
+            <b>v0.2.0 · hardening + introspection</b>
           </div>
 
           <div class="phase">
-            <small>THEN</small>
-            <b>Documentation and examples</b>
+            <small>IN v0.2.0</small>
+            <b>Developer documentation refresh</b>
           </div>
 
           <div class="phase">
@@ -2469,7 +2469,7 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
 
   <footer class="footer wrap">
     <span>
-      Veil Core v0.1.3 — Apache-2.0 · Copyright 2026 Mustapha Keraan.
+      Veil Core v0.2.0 candidate — Apache-2.0 · Copyright 2026 Mustapha Keraan.
     </span>
 
     <span>

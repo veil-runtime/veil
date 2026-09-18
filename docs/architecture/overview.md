@@ -45,8 +45,8 @@ field contract; authorization applies the host's policy before invocation.
 Veil is an execution runtime, not an autonomous reasoning engine, semantic tool
 router, LLM provider abstraction, or general workflow platform.
 
-See [upcoming v0.1.4](../getting-started/upcoming-v0.1.4.html) for the unreleased
-hardening and introspection work. Introspection describes registered metadata;
+See [v0.2.0](../getting-started/v0.2.0.html) for the
+hardening and introspection included in this release candidate. Introspection describes registered metadata;
 applications select relevant capabilities, and authorization remains separate.
 
 ## Current limits

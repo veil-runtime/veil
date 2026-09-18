@@ -5,7 +5,7 @@ title: Capability API
 
 A Capability has name, version, description, risk, optional inputSchema, and async execute(input, context). Use createCapability from the root SDK. See [capabilities](../concepts/capabilities.html).
 
-`CapabilityDescriptor` (unreleased v0.1.4) is the public metadata projection:
+`CapabilityDescriptor` (v0.2.0) is the public metadata projection:
 `name: string`, `version: string`, `description: string`, `risk: CapabilityRisk`,
 and `inputSchema: Record<string, CapabilityInputField>`. Runtime introspection
 returns detached mutable copies, with `{}` for missing schemas; it never returns

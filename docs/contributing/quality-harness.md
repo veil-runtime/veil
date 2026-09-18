@@ -135,6 +135,14 @@ them. This expected non-green first comparison must be reviewed; the candidate
 manifest must never bootstrap its own authority. Subsequent comparisons use the
 manifest only once it exists in their legitimate trusted base.
 
+For v0.2.0, the maintainer explicitly accepted the reviewed 16-site inventory
+unchanged, its two legacy exceptions, the 20 reviewed verification-control changes,
+and these detection limits. Final release preparation uses accepted baseline
+`e4df5be69105e8d2fcb76bd6b9c8e249beec3064`; the fixed release-scope comparison
+against `0b591f38b6146179cfea9d66f5bf50a1773520d7` remains exit 2, not a pass.
+See the [adoption record](releases.html#accepted-governance-baseline). This human
+decision grants no additional allowances and does not change checker behavior.
+
 The two remaining legacy exceptions are direct capability dispatch in
 `src/api/routes/linkedin.routes.ts` and direct internal job execution in
 `src/api/routes/jobs.routes.ts`. The latter still performs per-step authorization

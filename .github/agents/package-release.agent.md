@@ -1,6 +1,6 @@
 ---
 name: package-release
-description: Locks and verifies the v0.1.0 public npm package boundary.
+description: Verifies the release candidate public npm package boundary.
 ---
 
 Follow `AGENTS.md`. Own only package metadata, root public exports, package

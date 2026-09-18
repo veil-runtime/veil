@@ -16,4 +16,4 @@ const job = await runtime.executePlan(plan, {
 console.log(job.status, job.result);
 ```
 
-`use` checks that each supplied capability is declared by the module manifest, then registers it. The capability registry is process-global in v0.1.3, so runtime instances share registered capabilities. `executePlan` returns the completed or failed `Job`. See [jobs](../concepts/jobs-and-outcomes.html).
+`use` checks that each supplied capability is declared by the module manifest, then registers it. The capability registry is process-global in v0.2.0, so runtime instances share registered capabilities. `executePlan` returns the completed or failed `Job`. See [jobs](../concepts/jobs-and-outcomes.html).

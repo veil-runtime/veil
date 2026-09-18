@@ -5,7 +5,7 @@ title: Providers
 
 ## What it is
 
-A provider is implementation-side code that interacts with an external system. The repository contains browser, HTTP, SQLite, and MCP provider implementations. A capability may call a provider, but provider types are not a general root-package extension API in v0.1.3.
+A provider is implementation-side code that interacts with an external system. The repository contains browser, HTTP, SQLite, and MCP provider implementations. A capability may call a provider, but provider types are not a general root-package extension API in v0.2.0.
 
 ## In the orders example
 

@@ -1,6 +1,6 @@
 # ADR-0009: Deterministic Capability Introspection
 
-**Status:** Accepted — explicit maintainer decision for unreleased v0.1.4
+**Status:** Accepted — explicit maintainer decision; included in v0.2.0
 
 **Date:** 2026-09-17
 
@@ -13,7 +13,7 @@ stable public projection and exact lookup without execution implementation acces
 
 ## Decision
 
-Veil v0.1.4 formalizes deterministic capability introspection while preserving the separation between execution-surface description, external reasoning, and runtime authorization.
+Veil v0.2.0 formalizes deterministic capability introspection while preserving the separation between execution-surface description, external reasoning, and runtime authorization.
 
 This is NOT semantic capability discovery.
 
@@ -49,8 +49,10 @@ or multi-version registration is added. MCP inbound inventory remains captured
 at adapter construction, and MCP invocation retains its existing execution path.
 
 This decision does not redesign registry ownership or other locked contracts.
-The package version remains unchanged; this and current hardening work remain
-unreleased develop work targeting v0.1.4, without release artifacts.
+At acceptance, the package version remained unchanged and this work targeted
+v0.1.4 on `develop`, without release artifacts. The maintainer subsequently
+assigned introspection and the hardening work to v0.2.0; this release preparation
+does not change the architectural decision.
 
 ## Governance review
 

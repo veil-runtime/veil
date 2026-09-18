@@ -2,16 +2,17 @@
 
 ## Supported Versions
 
-Veil is currently in active pre-release development.
+Veil v0.1.3 is the latest published release; v0.2.0 is the current release candidate.
 
 Security fixes are applied to the latest development version only.
 
 | Version | Supported |
 | ------- | :-------: |
-| main (pre-v0.1.0) | ✅ |
+| develop (latest development version) | ✅ |
 | Older snapshots | ❌ |
 
-Once Veil reaches `v0.1.0`, supported release branches and their security support windows will be documented here.
+Release-specific security support windows are not currently defined. This release
+preparation does not extend the development-only support policy.
 
 ---
 
@@ -55,7 +56,7 @@ Veil is an execution platform. Security is a core design goal.
 Reports involving any of the following are particularly valuable:
 
 - Capability permission bypasses
-- Execution sandbox escapes
+- Execution boundary bypasses (Veil does not provide a sandbox)
 - Policy enforcement failures
 - Privilege escalation
 - Authentication or authorization issues

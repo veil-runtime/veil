@@ -39,7 +39,7 @@ The schema supports only declared fields of type string, number, boolean, object
 
 ## Registration consequences
 
-runtime.use registers module capabilities in a process-global registry. Therefore separate runtime instances share registered capabilities, while their authorizers remain runtime-scoped. The current docs do not assert duplicate-registration behavior because that is not covered by the audited public contract; use unique stable names, especially in tests.
+runtime.use registers module capabilities in a process-global registry. Therefore separate runtime instances share registered capabilities, while their authorizers remain runtime-scoped. Duplicate capability names are rejected, even when their versions differ; use unique stable names, especially in tests.
 
 ## When to use it
 

@@ -43,7 +43,7 @@ Provide an authorizer for any runtime that needs writes, tenant/caller policy, e
 
 Related: [trust boundaries](../architecture/trust-boundaries.html), [protect write actions](../guides/protect-write-actions.html), [authorization API](../reference/authorization-api.html).
 
-## Decision hardening (unreleased v0.1.4)
+## Decision hardening (v0.2.0)
 
 Execution requires a non-null, non-array object with an own `decision` property,
 read once, equal to `allow`. A valid `deny` prevents execution; malformed decisions

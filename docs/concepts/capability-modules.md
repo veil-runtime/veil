@@ -29,7 +29,7 @@ use builds a set from manifest.capabilities and rejects any supplied capability 
 
 ## Why it exists
 
-A module gives an application an explicit composition unit and makes exposed capability names reviewable. It does not provide provider construction, permission enforcement, runtime isolation, or automatic dependency resolution in v0.1.3.
+A module gives an application an explicit composition unit and makes exposed capability names reviewable. It does not provide provider construction, permission enforcement, runtime isolation, or automatic dependency resolution in v0.2.0.
 
 ## Common mistakes
 

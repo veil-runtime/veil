@@ -5,10 +5,10 @@ title: Veil developer documentation
 
 Veil is a governed, capability-driven execution runtime. It separates deciding what should happen from performing it. A human, application, deterministic program, or planner can produce an ExecutionPlan; Veil validates and executes that plan through registered capabilities.
 
-## Published and upcoming
+## v0.2.0 release candidate
 
-**v0.1.3 is the latest published package.** These docs also describe current
-unreleased v0.1.4 work. Read [upcoming v0.1.4](getting-started/upcoming-v0.1.4.html)
+These docs describe the **v0.2.0 release candidate**. v0.1.3 remains the latest
+published package until publication. Read [v0.2.0](getting-started/v0.2.0.html)
 for governed-execution hardening, deterministic capability introspection, and their limits.
 
 ## The mental model
@@ -44,7 +44,7 @@ Read [reasoning and execution](concepts/reasoning-and-execution.html), the canon
 
 ## Extending Veil
 
-The supported consumer surface is documented in [public exports](reference/public-exports.html). Build capabilities and modules; use an authorizer; create plans directly. [MCP inbound](guides/inbound-mcp.html) exposes registered work through the same governed path. Planner implementation and outbound MCP integration APIs are internal in v0.1.3.
+The supported consumer surface is documented in [public exports](reference/public-exports.html). Build capabilities and modules; use an authorizer; create plans directly. [MCP inbound](guides/inbound-mcp.html) exposes registered work through the same governed path. Planner implementation and outbound MCP integration APIs are internal in v0.2.0.
 
 ## Reference and contributing
 
@@ -52,4 +52,4 @@ Use [execution-plan v1](reference/execution-plan-v1.html), [authorization API](r
 
 ## Current limits
 
-Both v0.1.3 and the current unreleased v0.1.4 implementation run a plan's steps sequentially. It has no ExecutionPlan syntax or runtime implementation for DAGs, parallel work, conditionals, retries, cancellation, or idempotency enforcement. Plan and step idempotency keys are recorded, not enforced.
+v0.2.0 runs a plan's steps sequentially. It has no ExecutionPlan syntax or runtime implementation for DAGs, parallel work, conditionals, retries, cancellation, or idempotency enforcement. Plan and step idempotency keys are recorded, not enforced.

@@ -25,7 +25,7 @@ Authorizers are runtime instance state, so two runtimes sharing a capability can
 
 Related: [execution lifecycle](../architecture/execution-lifecycle.html), [authorization](../concepts/authorization.html), [jobs](../concepts/jobs-and-outcomes.html).
 
-## Deterministic capability introspection (unreleased v0.1.4)
+## Deterministic capability introspection (v0.2.0)
 
 `listCapabilities(): CapabilityDescriptor[]` returns the process-global registered
 inventory in registration order. `describeCapability(name: string, version?: string):

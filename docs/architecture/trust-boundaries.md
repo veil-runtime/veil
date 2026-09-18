@@ -48,7 +48,7 @@ ExecutionAuthorizer receives capability identity/risk, job ID, step ID, shallow-
 
 ## Core-hardening cycle closure (2026-09-17)
 
-The following scoped guarantees are **unreleased v0.1.4 work**, established in `develop` at
+The following scoped guarantees are **v0.2.0 work**, established in `develop` at
 `d671669afd8d63319aeb70c3fe4daf5dae73b57c`:
 
 - **Observer failure isolation:** MemoryEventBus contains synchronous subscriber
@@ -75,7 +75,7 @@ The following scoped guarantees are **unreleased v0.1.4 work**, established in `
   bindings for admission and materialization. Subsequent caller structural
   mutation cannot redirect execution. Nested input/reference contents remain
   shared; stored-job execution/replay is outside this guarantee.
-  See [structural ownership](../reference/execution-plan-v1.html#structural-ownership-at-submission-unreleased-v014).
+  See [structural ownership](../reference/execution-plan-v1.html#structural-ownership-at-submission-v020).
 
 Evidence: `test/memory-event-bus.test.ts`, `test/execution-contract.test.ts`,
 `test/result-reference.test.ts`, `test/plan-validator.test.ts` and

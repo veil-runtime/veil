@@ -32,9 +32,9 @@ steps is required and must be nonempty at execution. id is accepted but not stor
 
 capability must resolve to a registered capability. capabilityVersion, when present, must equal that capability's registered version exactly. input may be any value, but declared input schema fields are checked. An omitted input is treated as an empty record for input-schema validation.
 
-In **unreleased v0.1.4**, step IDs MUST be unique within a single plan, using exact-string equality. Each ID identifies exactly one execution step in that plan. IDs may be reused across different plans. Case and whitespace differences remain distinct; validation performs no trimming, case folding, or Unicode normalization. Every occurrence after the first produces `Duplicate step ID: <id>` and rejects admission before job creation.
+In **v0.2.0**, step IDs MUST be unique within a single plan, using exact-string equality. Each ID identifies exactly one execution step in that plan. IDs may be reused across different plans. Case and whitespace differences remain distinct; validation performs no trimming, case folding, or Unicode normalization. Every occurrence after the first produces `Duplicate step ID: <id>` and rejects admission before job creation.
 
-## Structural ownership at submission (unreleased v0.1.4)
+## Structural ownership at submission (v0.2.0)
 
 At the beginning of JobManager.executePlan, synchronously before the empty-plan
 check, validation, job creation, or any await, Veil captures goal, the plan
@@ -89,4 +89,4 @@ A missing registered capability or mismatched capabilityVersion rejects plan adm
 
 ## Failure semantics and limits
 
-Admission failure throws before job creation. After creation, a missing path, failed source, invalid resolved input, denial, authorizer error, or capability error produces a failed job and stops following steps. v0.1.3 implements no DAG/dependency graph, parallelism, conditional execution, retries, cancellation, or plan-level idempotency enforcement. No roadmap syntax is defined.
+Admission failure throws before job creation. After creation, a missing path, failed source, invalid resolved input, denial, authorizer error, or capability error produces a failed job and stops following steps. v0.2.0 implements no DAG/dependency graph, parallelism, conditional execution, retries, cancellation, or plan-level idempotency enforcement. No roadmap syntax is defined.
