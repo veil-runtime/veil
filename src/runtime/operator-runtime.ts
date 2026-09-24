@@ -46,6 +46,7 @@ export interface ExecutePlanOptions {
 
 export interface OperatorRuntimeOptions {
   readonly authorizer?: ExecutionAuthorizer;
+  readonly planVersions?: readonly string[];
 }
 
 function immutableCaller(
@@ -66,6 +67,7 @@ function immutableCaller(
 
 export class OperatorRuntime {
   private readonly authorizer: ExecutionAuthorizer;
+  private readonly planVersions: ReadonlySet<string>;
 
   constructor(
     options: OperatorRuntimeOptions = {}
@@ -73,6 +75,16 @@ export class OperatorRuntime {
     this.authorizer =
       options.authorizer ??
       defaultExecutionAuthorizer;
+    const versions = options.planVersions ?? ['1.0'];
+    if (
+      !Array.isArray(versions) ||
+      versions.length === 0 ||
+      versions.some((version) => version !== '1.0' && version !== '2.0') ||
+      new Set(versions).size !== versions.length
+    ) {
+      throw new Error('planVersions must contain unique supported semantic versions');
+    }
+    this.planVersions = new Set(versions);
   }
 
   use(
@@ -113,7 +125,8 @@ export class OperatorRuntime {
         plan,
         immutableCaller(options.caller),
         this.authorizer,
-        admissionOwner
+        admissionOwner,
+        this.planVersions
       );
     } catch (error) {
       throw containForeignAdmissionError(admissionOwner, error);

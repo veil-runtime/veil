@@ -254,11 +254,13 @@ test('complete relevant repository parses and current individual sites classify 
   const sites = parseBaseline(read(baselinePath), 'inventory');
   const key = ({ path, anchor, kind }) => `${path}:${anchor}:${kind}`;
   assert.deepEqual(report.findings.map(key).sort(), sites.map(key).sort());
-  assert.equal(sites.length, 21);
+  assert.equal(sites.length, 23);
   assert.ok(!sites.some((site) => site.path.startsWith('src/api/routes/')));
   assert.equal(sites.filter((site) => site.classification === 'LEGACY_BYPASS').length, 0);
   assert.deepEqual(sites.filter((site) => site.kind === 'dynamic').map((site) => site.path), [
-    'src/runtime/execution/plan-validator.ts', 'test/fixtures/package-consumer/verify.mjs',
+    'src/runtime/execution/plan-validator.ts',
+    'src/runtime/execution/governed-value.ts', 'src/runtime/execution/governed-value.ts',
+    'test/fixtures/package-consumer/verify.mjs',
     'test/plan-admission.test.ts', 'test/plan-admission.test.ts',
     'test/plan-admission.test.ts', 'test/plan-admission.test.ts',
     'experiments/external-model-reasoner/model-adapter.mjs',

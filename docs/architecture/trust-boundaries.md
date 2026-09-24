@@ -84,79 +84,40 @@ These were scoped guarantees of the governed path. The later
 [entry hardening](governance-hardening.html) migrates LinkedIn status and retires
 stored-job execution; it does not expand the value-ownership guarantees.
 
-## Invocation-value stability: open, implementation deferred
+## Invocation-value ownership: accepted v2 boundary
 
-The [2026-09-23 ownership investigation](value-ownership-investigation.html)
-adds a complete alias map and deterministic mutation/value-domain fixtures.
-[Draft ADR-0011](../adr/0011-governed-value-ownership.html) proposes a separate
-decision for immutable authorization input and equivalent capability-entry
-values. It is not accepted and changes no runtime behavior. Provider-operation
-equivalence and committed-result stability remain distinct properties.
+On 2026-09-24 the maintainer accepted
+[ADR-0011](../adr/0011-governed-value-ownership.html). For a new explicit plan
+semantic version, it requires capture after resolution and before validation,
+an immutable authorization input, and a detached structurally equivalent value
+at outer capability entry after explicit allow. Unsupported resolved values
+fail closed. Existing ExecutionPlan `1.0` semantics must not be silently changed.
+The limited amendment to ADR-0008's reference-identity preservation applies only
+to the new semantic version; its structural ownership requirement remains intact.
 
-The authorization-to-execution investigation is complete. The unresolved target
-guarantee is:
+ExecutionPlan `2.0`, when explicitly enabled by the trusted host, now applies
+the sequence below. ExecutionPlan `1.0` retains its historical behavior.
 
-> The capability begins execution with a value equivalent to the value authorization approved.
-
-**Current behavior does not guarantee this.** Resolved input is validated before
-authorization, but authorization and capability invocation share the same
-resolved input graph. Authorization can mutate values before invocation,
-including schema-invalid changes; there is no intervening revalidation.
-Reference-resolved values may alias retained producer results. Runtime validation
-checks values rather than materializing a validated replacement. TypeScript
-`readonly` does not provide deep runtime immutability. Isolation from hostile
-host JavaScript is not the objective.
-
-This finding follows from `src/runtime/jobs/job-manager.ts` passing the same
-`resolvedInput` to validation, authorization and invocation;
-`src/runtime/execution/plan-validator.ts` returning validation diagnostics; and
-`src/runtime/execution/result-reference.ts` returning referenced values directly.
-The result-reference and structural-ownership tests explicitly preserve result
-identity and mutability. Structural ownership does not establish value stability.
-
-Implementation is deliberately deferred until an explicit Veil invocation-value
-model is designed. This open finding closes the current core-hardening cycle
-without changing runtime behavior or accepting a new value contract. It belongs
-here with existing boundary limits rather than in an accepted ADR; a future
-decision affecting locked contracts requires an explicit maintainer architecture
-decision.
-
-### Questions for the future value model
-
-1. What value domain crosses governed execution boundaries?
-2. Are inputs passive structured data or arbitrary JavaScript values?
-3. What does value equivalence mean?
-4. Are object identities contractual?
-5. Are repeated aliases/cycles preserved, rejected, or normalized?
-6. Are Date/Map/Set/class instances supported?
-7. Are getters/proxies permitted across governed boundaries?
-8. Should authorization receive a stable immutable/materialized view?
-9. Should capability execution receive a detached equivalent mutable value?
-10. How should result references cross invocation boundaries?
-11. What correspondence is required between in-memory and persisted values?
-12. What compatibility treatment is required for existing reference identity semantics?
-
-### Candidate architecture, not an accepted decision
-
-The leading candidate from the investigation is:
+The accepted future sequence is:
 
 ~~~text
-resolve
-→ materialize owned value
-→ validate owned value
-→ authorize stable policy view
-→ if allowed, invoke with detached equivalent mutable value
+existing resolution → governed capture → validation of captured input
+→ immutable authorization view → explicit allow
+→ detached equivalent capability-entry value
 ~~~
 
-No mechanism has been selected: `structuredClone`, JSON serialization, deep
-freeze, schema rematerialization, and all other mechanisms remain undecided.
-The candidate depends on the value model and its equivalence/compatibility rules.
+The guarantee starts after resolution. Existing getter/Proxy execution during
+admission and reference traversal is not removed by this decision. Middleware
+and capability code remain responsible for post-entry input use and provider
+translation. Provider-operation/external-effect equivalence, committed-result
+stability, storage parity, exactly-once execution and whole-context ownership
+remain outside the guarantee. Experiment II's frozen passive fixture does not
+prove these ownership properties.
 
-Before choosing that model, exercise Veil through real integrations such as
-Mycelia/Mizan and observe the actual capability input/result shapes required in
-practice. Use that evidence to determine whether a passive structured-data domain
-is sufficient, then resolve the questions above and record the architecture
-decision before implementing invocation-value isolation.
+See the [implementation-readiness investigation](governed-value-implementation-readiness.html)
+for the migration and test basis. The boundary begins after existing resolution;
+getter/Proxy-free `$ref` traversal, provider translation and persisted-result
+stability remain separate trust boundaries.
 
 ## Provider boundary
 

@@ -17,31 +17,45 @@
     },
     {
       "path": "src/runtime/jobs/job-manager.ts",
-      "anchor": "75b4703be8dcf754f100d3231e3da7a1fd53e3a04ac00b132be0953305ca87bc",
+      "anchor": "78caac8d0be6787876261e7c967199c0d9a05c0cdbeda7a8d911d9da5524ed10",
       "kind": "job-manager",
       "classification": "GOVERNED_MACHINERY",
-      "reason": "Version-admission inventory review V1 approved: strict plan.version === '1.0' pre-Job rejection changes the enclosing class anchor only. Existing this.execute(job.id, caller, authorizer) remains after admission/materialization; no new entrance or authority path. ADR-0012 M2 classification retained."
+      "reason": "Post-ADR-0011 review: this.execute remains the existing internal JobManager dispatch after admission and now carries the private semantic version. It is not a new public entrance, authority path, registry path or provider dispatch; GOVERNED_MACHINERY classification retained."
     },
     {
       "path": "src/runtime/jobs/job-manager.ts",
-      "anchor": "db7d11c496d45d0718ae5a3bb1c0b98fa7a1ee42ff113f63572d653801e6eb2c",
+      "anchor": "4b1e61a40f1b2fb175d0e53ff17bae53a20fba2ee26539fe2267d34da165dc55",
       "kind": "execute",
       "classification": "GOVERNED_MACHINERY",
-      "reason": "Version-admission inventory review V2 approved: preceding version gate changes the enclosing class anchor only. Existing capability.execute(resolvedInput, context) and explicit per-step authorization are unchanged; no new provider, registry or execution path. ADR-0012 M3 classification retained."
+      "reason": "Post-ADR-0011 review: capability.execute remains the existing governed invocation site; v2 supplies a detached copy while v1 supplies the legacy resolved value. The site can reach capability work only through the existing authorized path and adds no provider or registry entrance. GOVERNED_MACHINERY classification retained."
     },
     {
       "path": "src/runtime/operator-runtime.ts",
-      "anchor": "815c4aa9b00ff58a8ddfa02a86ddd489d3f1c79f39eba998da9b89c1ea369d93",
+      "anchor": "aeb8c5092d6664e4ac7c850dd226f2d6ae778cb85cf171c5ce48dd2a560fe125",
       "kind": "job-manager",
       "classification": "GOVERNED_MACHINERY",
-      "reason": "ADR-0012 inventory review M4 approved: executePlan now awaits the same JobManager admission path with a private per-call owner and contains foreign diagnostics. Trusted caller/authorizer forwarding remains; no alternative execution entrance."
+      "reason": "Post-ADR-0011 review: OperatorRuntime.executePlan still forwards to the same JobManager admission path, adding only the copied trusted host version allowlist. No alternate execution entrance, registry access or authority construction was introduced. GOVERNED_MACHINERY classification retained."
     },
     {
       "path": "src/runtime/operator-runtime.ts",
-      "anchor": "0c72436533d158d736935e3f29f2033715f419f886e716d89bb4c861b111e4bf",
+      "anchor": "c33aca7aa568feefa503eb6f69a1f301cdfece563f12d155e95ac42603fd55b9",
       "kind": "execute",
       "classification": "LEGITIMATE_NON_CAPABILITY_EXECUTE",
-      "reason": "ADR-0012 inventory review M5 approved: existing strategy.execute produces a plan and still delegates to this.executePlan. The adjacent executePlan ownership change alters the enclosing class anchor; planner invocation itself is unchanged."
+      "reason": "Post-ADR-0011 review: planner strategy.execute still produces a plan and delegates to this.executePlan; it cannot invoke a capability, provider or registry. The anchor moved only because the adjacent runtime option/dispatch code changed. LEGITIMATE_NON_CAPABILITY_EXECUTE classification retained."
+    },
+    {
+      "path": "src/runtime/execution/governed-value.ts",
+      "anchor": "8dd63a8040d329c82382bc4ae292a642e8a44479de63b274242748bbd7c8e0d1",
+      "kind": "dynamic",
+      "classification": "GOVERNED_MACHINERY",
+      "reason": "Post-ADR-0011 review: passive own length-descriptor inspection for arrays. It reads a descriptor without invoking accessors, iterators, coercion, methods or serialization, and reaches no execution, authorization, provider or registry path."
+    },
+    {
+      "path": "src/runtime/execution/governed-value.ts",
+      "anchor": "bea564db8bd711e6fc0e2b17e6ab2e34929980c9cd32d31ee32b3434924b65bb",
+      "kind": "dynamic",
+      "classification": "GOVERNED_MACHINERY",
+      "reason": "Post-ADR-0011 review: passive own-property data-descriptor inspection for governed records/arrays. It rejects accessors and copies descriptor values only; it has no execution, authorization, provider or registry reachability."
     },
     {
       "path": "src/sdk/capability/create-capability.ts",
