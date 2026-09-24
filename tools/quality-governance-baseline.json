@@ -16,6 +16,13 @@
       "reason": "ADR-0012 inventory review M1 approved: existing TYPE_CHECKS schema predicate lookup/call is unchanged; source issue codes and import shift its enclosing-statement anchor. Validation only, no dispatch or authority change."
     },
     {
+      "path": "src/runtime/execution/result-reference.ts",
+      "anchor": "fa558518ddbff03dddc63d98f9496c264b3734a45dc09caea209ddc012cb7ffd",
+      "kind": "dynamic",
+      "classification": "GOVERNED_MACHINERY",
+      "reason": "ADR-0013 implementation review R1: exact wrapper recognition inspects the own $ref descriptor to reject accessors and non-enumerable properties without invoking an ordinary-object getter. Proxy descriptor traps remain explicitly possible. The site cannot dispatch capabilities or access authorization, providers, registries, or result-path values."
+    },
+    {
       "path": "src/runtime/jobs/job-manager.ts",
       "anchor": "78caac8d0be6787876261e7c967199c0d9a05c0cdbeda7a8d911d9da5524ed10",
       "kind": "job-manager",

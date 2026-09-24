@@ -66,7 +66,7 @@ Optional captured fields may be present with undefined values.
 
 ## References and ordering
 
-A reference object is exactly { $ref: 'steps.<earlier-step-id>.result' } with optional dot-separated result path. All references in objects and arrays are discovered during validation and must name an earlier declared step. Steps execute in literal list order. At execution, only prior completed job steps are eligible.
+A reference object is exactly { $ref: 'steps.<earlier-step-id>.result' } with optional dot-separated result path. At the JavaScript boundary it must have exactly one own key across enumerable, nonenumerable and symbol keys: an enumerable own `$ref` data property containing a primitive string. Descriptor writability/configurability and prototype identity are irrelevant; arrays, accessors, inherited `$ref` and additional own keys do not qualify. Proxies are not rejected and their reflection traps may run. All references in objects and arrays are discovered during validation and must name an earlier declared step. Steps execute in literal list order. At execution, only prior completed job steps are eligible.
 
 ## Valid example
 

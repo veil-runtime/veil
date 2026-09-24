@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { OperatorRuntime, type ExecutionPlan } from '../src/index.js';
+import { isPlanAdmissionError, OperatorRuntime, type ExecutionPlan } from '../src/index.js';
 import { captureGovernedValue, GovernedValueError } from '../src/runtime/execution/governed-value.js';
 
 let capabilityNumber = 0;
@@ -120,4 +120,64 @@ test('one host can explicitly run v1 and v2 without semantic leakage', async () 
   assert.equal(Object.isFrozen(seen[0]), false);
   assert.notEqual(seen[1], source);
   assert.ok(Object.isFrozen(seen[1]));
+});
+
+test('exact result-reference wrappers preserve v1 and v2 resolution and parser diagnostics', async () => {
+  const source = `test.governed-v2.reference-source-${capabilityNumber++}`;
+  const sink = `test.governed-v2.reference-sink-${capabilityNumber++}`;
+  const instance = new OperatorRuntime({
+    planVersions: ['1.0', '2.0'],
+    authorizer: { async authorize() { return { decision: 'allow' }; } },
+  });
+  instance.use({
+    manifest: { name: sink, version: '1', capabilities: [source, sink] },
+    capabilities: [
+      {
+        name: source,
+        version: '1',
+        risk: 'read',
+        description: 'reference source',
+        async execute() {
+          return { value: 'resolved' };
+        },
+      },
+      {
+        name: sink,
+        version: '1',
+        risk: 'read',
+        description: 'reference sink',
+        inputSchema: { value: { type: 'string', required: true, description: 'value' } },
+        async execute(input) {
+          return input;
+        },
+      },
+    ],
+  });
+
+  for (const version of ['1.0', '2.0']) {
+    const job = await instance.executePlan({ version, steps: [
+      { id: 'source', capability: source },
+      {
+        id: 'sink',
+        capability: sink,
+        input: { value: { $ref: 'steps.source.result.value' } },
+      },
+    ] });
+    assert.equal(job.status, 'completed');
+    assert.deepEqual(job.steps[1].result, { value: 'resolved' });
+
+    await assert.rejects(instance.executePlan({ version, steps: [{
+      id: 'sink',
+      capability: sink,
+      input: { value: { $ref: 'not-a-result-reference' } },
+    }] }), error => {
+      assert.ok(isPlanAdmissionError(error));
+      assert.deepEqual(error.issues, [{
+        code: 'INVALID_RESULT_REFERENCE',
+        message: 'A result reference was not accepted by the admission parser.',
+        stepIndex: 0,
+      }]);
+      return true;
+    });
+  }
 });

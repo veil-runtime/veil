@@ -10,8 +10,16 @@ export function isResultReference(
     return false;
   }
 
-  const record = value as Record<string, unknown>;
-  return Object.keys(record).length === 1 && typeof record.$ref === 'string';
+  const keys = Reflect.ownKeys(value);
+  if (keys.length !== 1 || keys[0] !== '$ref') {
+    return false;
+  }
+
+  const descriptor = Object.getOwnPropertyDescriptor(value, '$ref');
+  return descriptor !== undefined
+    && descriptor.enumerable === true
+    && Object.hasOwn(descriptor, 'value')
+    && typeof descriptor.value === 'string';
 }
 
 export function parseResultReference(
