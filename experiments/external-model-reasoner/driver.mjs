@@ -40,7 +40,12 @@ export async function runTrial({ scenario, prefix = 'fixture.records', adapter, 
       const response = await callModel(adapter, contextText, Math.min(limits.callMs, remainingMs));
       record.model = response;
       emit('model-output', { turn, response });
-      if (!response.ok) { result.stop = 'provider-error'; break; }
+      if (!response.ok) {
+        const structural = response.category === 'invalid-provider-response' &&
+          typeof response.metadata?.responseShape?.rejectionReason === 'string';
+        result.stop = structural ? 'provider-boundary-failure' : 'provider-error';
+        break;
+      }
       // An output arriving after the trial deadline is evidence, never a late execution.
       if (Date.now() - started >= limits.trialMs) { result.stop = 'time-limit'; break; }
       let request;

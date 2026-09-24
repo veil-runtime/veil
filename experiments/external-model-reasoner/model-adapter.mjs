@@ -32,6 +32,25 @@ export async function callModel(adapter, contextText, timeoutMs = LIMITS.callMs)
     for (const key of ['inputTokens', 'outputTokens', 'latencyMs']) {
       if (Number.isFinite(source[key]) && source[key] >= 0) metadata[key] = source[key];
     }
+    if (source.responseShape && typeof source.responseShape === 'object') {
+      const shape = source.responseShape;
+      metadata.responseShape = {
+        outputItemCount: Number.isSafeInteger(shape.outputItemCount) ? shape.outputItemCount : 0,
+        outputItemTypes: shape.outputItemTypes && typeof shape.outputItemTypes === 'object' ?
+          Object.fromEntries(Object.entries(shape.outputItemTypes).filter(([key, value]) => typeof key === 'string' && Number.isSafeInteger(value) && value >= 0).slice(0, 16)) : {},
+        assistantMessageCount: Number.isSafeInteger(shape.assistantMessageCount) ? shape.assistantMessageCount : 0,
+        assistantMessageIndexes: Array.isArray(shape.assistantMessageIndexes) ? shape.assistantMessageIndexes.filter(Number.isSafeInteger).slice(0, 16) : [],
+        contentPartCounts: Array.isArray(shape.contentPartCounts) ? shape.contentPartCounts.filter(item => Number.isSafeInteger(item?.outputIndex) && Number.isSafeInteger(item?.count)).slice(0, 16) : [],
+        outputTextPartCount: Number.isSafeInteger(shape.outputTextPartCount) ? shape.outputTextPartCount : 0,
+        nonTextContentTypes: shape.nonTextContentTypes && typeof shape.nonTextContentTypes === 'object' ?
+          Object.fromEntries(Object.entries(shape.nonTextContentTypes).filter(([key, value]) => typeof key === 'string' && Number.isSafeInteger(value) && value >= 0).slice(0, 16)) : {},
+        nonProposalItemTypes: shape.nonProposalItemTypes && typeof shape.nonProposalItemTypes === 'object' ?
+          Object.fromEntries(Object.entries(shape.nonProposalItemTypes).filter(([key, value]) => typeof key === 'string' && Number.isSafeInteger(value) && value >= 0).slice(0, 16)) : {},
+        refusalPresent: shape.refusalPresent === true,
+        textLengths: Array.isArray(shape.textLengths) ? shape.textLengths.filter(value => Number.isSafeInteger(value) && value >= 0).slice(0, 16) : [],
+        ...(typeof shape.rejectionReason === 'string' ? { rejectionReason: shape.rejectionReason } : {}),
+      };
+    }
     if (result.ok === true && typeof result.outputText === 'string') {
       return { ok: true, outputText: result.outputText, metadata };
     }

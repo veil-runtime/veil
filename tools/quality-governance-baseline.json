@@ -129,21 +129,21 @@
     },
     {
       "path": "experiments/external-model-reasoner/model-adapter.mjs",
-      "anchor": "3ce99c733a6b8361c93f99586ffd11052a5349ef101fcd0f7209eae0c8619aca",
+      "anchor": "28a49a354fa8f965c784293731603772b623ce565e33a1ca1381b2a2e76b8e2d",
       "kind": "dynamic",
       "classification": "TEST_OR_FIXTURE",
       "reason": "Experiment II inventory review E1 approved: computed metadata read uses a fixed allowlisted string key while projecting provider response metadata; model output cannot select the key or a callable target, and the adapter has no Veil imports or execution entrance."
     },
     {
       "path": "experiments/external-model-reasoner/model-adapter.mjs",
-      "anchor": "831d7e9839db212ff938e48c5435c84716d5e1f5a597f44af136590be5f821d9",
+      "anchor": "aef3c1446aacedf2d4eae8133cf07f8e009a0825b29f08e1763a4e310beeda19",
       "kind": "dynamic",
       "classification": "TEST_OR_FIXTURE",
       "reason": "Experiment II inventory review E2 approved: computed usage metadata read is bounded to fixed token/latency keys and Number.isFinite; provider/model text is data only, with no dynamic call, Veil import, registry access or authority construction."
     },
     {
       "path": "experiments/external-model-reasoner/run.mjs",
-      "anchor": "1d26df406ab4b09a37fd7b43cd439117a32225515f6ae5ee28c63f49ffff7bc4",
+      "anchor": "7f78381ad5ff742445c3bea35efc42459684184a46a5f779673c1514f3ac2731",
       "kind": "dynamic",
       "classification": "TEST_OR_FIXTURE",
       "reason": "Experiment II inventory review E3 approved: computed CLI option key writes only into a local runner-options record after a fixed allowlist check; model output cannot reach argv parsing, and this launcher owns no Veil execution, authorization, provider or registry entrance."

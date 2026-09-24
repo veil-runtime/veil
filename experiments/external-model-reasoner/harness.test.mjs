@@ -7,6 +7,7 @@ import { trialMatrix } from './run.mjs';
 import { evaluateTrial, summarize } from './evaluate.mjs';
 import { tokenBudget, callModel, LIMITS } from './model-adapter.mjs';
 import { anthropicAdapter } from './providers/anthropic.mjs';
+import { openaiAdapter, WIRE_OUTPUT } from './providers/openai.mjs';
 
 const scenarios = JSON.parse(await readFile(new URL('./scenarios.json', import.meta.url), 'utf8'));
 const plan = (...steps) => ({ version: '1.0', steps });
@@ -56,6 +57,11 @@ test('exact model text is forwarded, only scoped feedback enters later context',
   assert.equal(result.stop, 'finished');
   assert.equal(result.hostTrace[1].rawRequest, raw);
   assert.equal(result.evaluation.terminalAssessment, 'success');
+  assert.equal(result.evaluation.metrics.providerBoundaryFailures, 0);
+  assert.equal(result.evaluation.metrics.providerErrors, 0);
+  assert.equal(result.evaluation.metrics.proposals, 1);
+  assert.equal(result.evaluation.metrics.actualInvocations, 1);
+  assert.equal(result.evaluation.metrics.actualEffects, 0);
   assert.equal(result.world.counts.total, 1);
   for (const context of contexts) {
     const data = JSON.parse(context);
@@ -235,6 +241,60 @@ test('evaluator detects forged trace authority and incomplete coverage', async (
   assert.equal(report.coverage.correction.adequate, false);
 });
 
+test('structural provider-boundary failures are distinct from infrastructure and protocol failures', () => {
+  const base = { scenario: 'discovery', hostTrace: [], terminal: null,
+    world: { records: { locked: 'untouched' } } };
+  const boundary = evaluateTrial({ ...base, stop: 'provider-boundary-failure', turns: [{
+    model: { ok: false, category: 'invalid-provider-response', metadata: {
+      responseShape: { rejectionReason: 'ambiguous-assistant-messages' },
+    } },
+  }] });
+  assert.equal(boundary.metrics.providerBoundaryFailures, 1);
+  assert.equal(boundary.metrics.providerErrors, 0);
+  assert.equal(boundary.metrics.invalidModelOutputs, 0);
+  assert.equal(boundary.metrics.admissionRejections, 0);
+  assert.equal(boundary.metrics.authorizationDenials, 0);
+  assert.equal(boundary.metrics.actualInvocations, 0);
+  assert.equal(boundary.metrics.actualEffects, 0);
+  assert.equal(boundary.metrics.incompleteTrials, 1);
+  assert.equal(boundary.outcomeClass, 'AMBIGUOUS_PUBLIC_PROPOSALS');
+  assert.deepEqual(boundary.securityViolations, []);
+
+  const provider = evaluateTrial({ ...base, stop: 'provider-error', turns: [{
+    model: { ok: false, category: 'transport', metadata: {} },
+  }] });
+  assert.equal(provider.metrics.providerBoundaryFailures, 0);
+  assert.equal(provider.metrics.providerErrors, 1);
+  assert.equal(provider.outcomeClass, 'PROVIDER_FAILURE');
+
+  const protocol = evaluateTrial({ ...base, stop: 'protocol-abort', turns: [{
+    model: { ok: true, outputText: 'not-json' },
+  }] });
+  assert.equal(protocol.metrics.providerBoundaryFailures, 0);
+  assert.equal(protocol.metrics.providerErrors, 0);
+  assert.equal(protocol.metrics.invalidModelOutputs, 1);
+  assert.equal(protocol.outcomeClass, 'MALFORMED_PROTOCOL');
+});
+
+test('structural provider failure stops one trial without retry or suite infrastructure failure', async () => {
+  let calls = 0;
+  const { result } = await scripted('discovery', [], {
+    maxTokens: 250000,
+    adapter: { async reason() {
+      calls++;
+      return { ok: false, category: 'invalid-provider-response', metadata: {
+        responseShape: { rejectionReason: 'ambiguous-assistant-messages' },
+      } };
+    } },
+  });
+  assert.equal(calls, 1);
+  assert.equal(result.stop, 'provider-boundary-failure');
+  assert.equal(result.evaluation.metrics.providerBoundaryFailures, 1);
+  assert.equal(result.evaluation.metrics.providerErrors, 0);
+  assert.equal(result.evaluation.outcomeClass, 'AMBIGUOUS_PUBLIC_PROPOSALS');
+  assert.equal(result.world.counts.total, 0);
+});
+
 function providerResponse(body, status = 200) { return new Response(JSON.stringify(body), { status }); }
 const good = { id: 'req', model: 'pinned-model', stop_reason: 'end_turn',
   content: [{ type: 'text', text: '{"method":"finish"}' }], usage: { input_tokens: 10, output_tokens: 5 } };
@@ -272,4 +332,118 @@ test('provider errors, truncation, tool calls and private blocks never become mo
   const adapter = anthropicAdapter({ apiKey: 'fake-secret', model: 'pinned-model', timeoutMs: 5,
     fetchImpl: async (_url, options) => new Promise((_, reject) => options.signal.addEventListener('abort', () => reject(new Error('aborted')))) });
   assert.equal((await adapter.reason('{}')).category, 'timeout');
+});
+
+test('OpenAI Responses adapter projects the same public model contract without tools', async () => {
+  assert.deepEqual(WIRE_OUTPUT, { mode: 'json_object', schemaRevision: 'experiment-protocol-v1-json-object' });
+  let request;
+  const body = { id: 'resp_123', model: 'gpt-test', status: 'completed',
+    output: [{ type: 'message', role: 'assistant', content: [{ type: 'output_text', text: '{"method":"finish"}' }] }],
+    usage: { input_tokens: 12, output_tokens: 7 } };
+  const adapter = openaiAdapter({ apiKey: 'fake-secret', model: 'gpt-test', temperature: 0,
+    fetchImpl: async (url, options) => { request = { url, ...options }; return providerResponse(body); } });
+  const response = await callModel(adapter, '{"goal":"synthetic"}');
+  assert.equal(response.ok, true);
+  assert.equal(response.outputText, '{"method":"finish"}');
+  assert.deepEqual({ ...response.metadata, latencyMs: undefined }, { requestedModel: 'gpt-test', reportedModel: 'gpt-test',
+    requestId: 'resp_123', finish: 'completed', inputTokens: 12, outputTokens: 7, latencyMs: undefined,
+    responseShape: { outputItemCount: 1, outputItemTypes: { message: 1 }, assistantMessageCount: 1,
+      assistantMessageIndexes: [0], contentPartCounts: [{ outputIndex: 0, count: 1 }], outputTextPartCount: 1,
+      nonTextContentTypes: {}, nonProposalItemTypes: {}, refusalPresent: false, textLengths: [19] } });
+  assert.ok(response.metadata.latencyMs >= 0);
+  assert.equal(request.url, 'https://api.openai.com/v1/responses');
+  assert.equal(request.headers.authorization, 'Bearer fake-secret');
+  const payload = JSON.parse(request.body);
+  assert.deepEqual(payload, { model: 'gpt-test', input: '{"goal":"synthetic"}', max_output_tokens: LIMITS.outputTokens,
+    store: false, text: { format: { type: 'json_object' } }, temperature: 0 });
+  assert.equal(payload.tools, undefined);
+  assert.equal(payload.text.format.type, 'json_object');
+  assert.equal(JSON.stringify(response).includes('fake-secret'), false);
+});
+
+test('OpenAI structured wire mode preserves semantic proposal text for Veil to validate', async () => {
+  const proposal = JSON.stringify({ method: 'submit', proposalId: 'p1', decision: 'try the discovered work',
+    plan: { version: '9.9', steps: [{ id: 's1', capability: 'arbitrary.capability', capabilityVersion: '99.0',
+      input: { resource: 'any-resource', value: 'model-authored-value', nested: { arbitrary: true } } }] },
+    note: 'untrusted extra data' });
+  const adapter = openaiAdapter({ apiKey: 'fake-secret', model: 'gpt-test',
+    fetchImpl: async () => providerResponse({ id: 'r', model: 'gpt-test', status: 'completed',
+      output: [{ type: 'message', role: 'assistant', content: [{ type: 'output_text', text: proposal }] }] }) });
+  const response = await callModel(adapter, '{}');
+  assert.equal(response.ok, true);
+  assert.equal(response.outputText, proposal);
+  assert.match(response.outputText, /"version":"9\.9"/);
+  assert.match(response.outputText, /arbitrary\.capability/);
+  assert.match(response.outputText, /model-authored-value/);
+  assert.equal(response.outputText.includes('approved'), false);
+});
+
+test('OpenAI adapter rejects malformed, private/tool, incomplete and provider-error responses', async () => {
+  const cases = [
+    [{ id: 'r', model: 'gpt-test', status: 'completed', output: [] }, 200, 'invalid-provider-response'],
+    [{ id: 'r', model: 'gpt-test', status: 'completed', output: [{ type: 'message', role: 'user', content: [] }] }, 200, 'invalid-provider-response'],
+    [{ id: 'r', model: 'gpt-test', status: 'completed', output: [
+      { type: 'message', role: 'assistant', content: [{ type: 'output_text', text: '{}' }] },
+      { type: 'message', role: 'assistant', content: [{ type: 'output_text', text: '{}' }] }] }, 200, 'invalid-provider-response'],
+    [{ id: 'r', model: 'gpt-test', status: 'completed', output: [{ type: 'message', role: 'assistant', content: [] }] }, 200, 'invalid-provider-response'],
+    [{ id: 'r', model: 'gpt-test', status: 'completed', output: [{ type: 'message', role: 'assistant', content: [
+      { type: 'output_text', text: '{}' }, { type: 'output_text', text: '{}' }] }] }, 200, 'invalid-provider-response'],
+    [{ id: 'r', model: 'gpt-test', status: 'completed', output: [{ type: 'reasoning', summary: [] }] }, 200, 'invalid-provider-response'],
+    [{ id: 'r', model: 'gpt-test', status: 'completed', output: [{ type: 'function_call', name: 'execute' }] }, 200, 'invalid-provider-response'],
+    [{ id: 'r', model: 'gpt-test', status: 'completed', output: [{ type: 'message', role: 'assistant', content: [{ type: 'refusal', refusal: 'no' }] }] }, 200, 'refusal'],
+    [{ id: 'r', model: 'gpt-test', status: 'incomplete', incomplete_details: { reason: 'max_output_tokens' }, output: [] }, 200, 'truncation'],
+    [{ error: { message: 'fake-secret' } }, 401, 'authentication'],
+    [{ error: { message: 'rate limited' } }, 429, 'rate-limit'],
+  ];
+  for (const [body, status, category] of cases) {
+    const adapter = openaiAdapter({ apiKey: 'fake-secret', model: 'gpt-test',
+      fetchImpl: async () => providerResponse(body, status) });
+    const result = await callModel(adapter, '{}');
+    assert.equal(result.category, category);
+    assert.equal(result.outputText, undefined);
+    assert.equal(JSON.stringify(result).includes('fake-secret'), false);
+  }
+});
+
+test('OpenAI allows safe reasoning items but retains only bounded structural metadata', async () => {
+  const privateText = 'PRIVATE-THOUGHT';
+  const adapter = openaiAdapter({ apiKey: 'fake-secret', model: 'gpt-test',
+    fetchImpl: async () => providerResponse({ id: 'r', model: 'gpt-test', status: 'completed', output: [
+      { type: 'reasoning', summary: [{ type: 'summary_text', text: privateText }] },
+      { type: 'message', role: 'assistant', content: [{ type: 'output_text', text: '{}' }] },
+    ] }) });
+  const result = await callModel(adapter, '{}');
+  assert.equal(result.ok, true);
+  assert.equal(result.outputText, '{}');
+  assert.deepEqual(result.metadata.responseShape.outputItemTypes, { reasoning: 1, message: 1 });
+  assert.deepEqual(result.metadata.responseShape.nonProposalItemTypes, { reasoning: 1 });
+  assert.deepEqual(result.metadata.responseShape.nonTextContentTypes, {});
+  assert.equal(JSON.stringify(result).includes(privateText), false);
+  assert.equal(JSON.stringify(result).includes('fake-secret'), false);
+});
+
+test('OpenAI accepts multiple safe non-proposal items but rejects unsafe output items', async () => {
+  const accepted = openaiAdapter({ apiKey: 'fake-secret', model: 'gpt-test',
+    fetchImpl: async () => providerResponse({ id: 'r', model: 'gpt-test', status: 'completed', output: [
+      { type: 'reasoning', summary: [] }, { type: 'reasoning', summary: [] },
+      { type: 'message', role: 'assistant', content: [{ type: 'output_text', text: '{"method":"finish"}' }] },
+    ] }) });
+  const result = await callModel(accepted, '{}');
+  assert.equal(result.ok, true);
+  assert.equal(result.outputText, '{"method":"finish"}');
+  assert.deepEqual(result.metadata.responseShape.nonProposalItemTypes, { reasoning: 2 });
+
+  const unsafe = openaiAdapter({ apiKey: 'fake-secret', model: 'gpt-test',
+    fetchImpl: async () => providerResponse({ id: 'r', model: 'gpt-test', status: 'completed', output: [
+      { type: 'web_search_call', id: 'call' },
+      { type: 'message', role: 'assistant', content: [{ type: 'output_text', text: '{}' }] },
+    ] }) });
+  const rejected = await callModel(unsafe, '{}');
+  assert.equal(rejected.category, 'invalid-provider-response');
+  assert.equal(rejected.metadata.responseShape.rejectionReason, 'unsupported-output-item');
+  assert.equal(rejected.outputText, undefined);
+});
+
+test('OpenAI credential absence fails closed and provider selection remains outside Veil', () => {
+  assert.throws(() => openaiAdapter({ apiKey: '', model: 'gpt-test' }), /not configured/);
 });

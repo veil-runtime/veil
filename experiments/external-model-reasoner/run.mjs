@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { LIMITS } from './model-adapter.mjs';
 import { API_VERSION } from './providers/anthropic.mjs';
+import { API_VERSION as OPENAI_API_VERSION, WIRE_OUTPUT as OPENAI_WIRE_OUTPUT } from './providers/openai.mjs';
 import { sourceManifest, root } from './manifest.mjs';
 import { hash } from './trace.mjs';
 import { summarize } from './evaluate.mjs';
@@ -30,7 +31,10 @@ function args(argv) {
 }
 async function realTrial(config, logPath, onEvent) {
   const child = fork(fileURLToPath(new URL('./worker.mjs', import.meta.url)), [], {
-    cwd: root, env: { ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY }, execArgv: [], silent: true,
+    cwd: root, env: {
+      ...(config.provider === 'openai' ? { OPENAI_API_KEY: process.env.OPENAI_API_KEY } :
+        { ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY }),
+    }, execArgv: [], silent: true,
   });
   child.stdout.resume(); child.stderr.resume();
   let writes = Promise.resolve(); let complete; let failure = false;
@@ -56,13 +60,15 @@ export async function main(argv = process.argv.slice(2)) {
   const options = args(argv); const mode = options.mode ?? 'pilot';
   const scenarios = JSON.parse(await readFile(new URL('./scenarios.json', import.meta.url), 'utf8'));
   const matrix = trialMatrix(scenarios, mode);
+  const provider = process.env.VEIL_EXPERIMENT_PROVIDER ?? 'anthropic';
+  if (!['openai', 'anthropic'].includes(provider)) throw new Error('Provider must be openai or anthropic');
   const maxTokens = Number(process.env.VEIL_EXPERIMENT_MAX_TOKENS);
   const model = process.env.VEIL_EXPERIMENT_MODEL;
   const temperatureSetting = process.env.VEIL_EXPERIMENT_TEMPERATURE ?? 'omit';
   if (!['0', 'omit'].includes(temperatureSetting)) throw new Error('Temperature must be 0 or omit');
   const out = resolve(options.out ?? resolve(root, '.tmp', `external-model-${Date.now()}`));
   await mkdir(out, { recursive: false }); // Never overwrite an existing run.
-  const prerequisites = { credentials: Boolean(process.env.ANTHROPIC_API_KEY), model: Boolean(model),
+  const prerequisites = { credentials: Boolean(provider === 'openai' ? process.env.OPENAI_API_KEY : process.env.ANTHROPIC_API_KEY), model: Boolean(model),
     budget: Number.isSafeInteger(maxTokens) && maxTokens > 0 };
   if (Object.values(prerequisites).some(ok => !ok)) {
     const status = { status: 'NOT RUN', prerequisites, realModelCalls: 0, trialsCompleted: 0 };
@@ -74,7 +80,7 @@ export async function main(argv = process.argv.slice(2)) {
     if (!options['pilot-dir']) throw new Error('Primary trials require --pilot-dir from the frozen two-trial pilot');
     const pilotManifest = JSON.parse(await readFile(resolve(options['pilot-dir'], 'manifest.json'), 'utf8'));
     const pilotSummary = JSON.parse(await readFile(resolve(options['pilot-dir'], 'summary.json'), 'utf8'));
-    if (pilotManifest.mode !== 'pilot' || pilotManifest.source.contentHash !== source.contentHash ||
+    if (pilotManifest.mode !== 'pilot' || pilotManifest.provider !== provider || pilotManifest.source.contentHash !== source.contentHash ||
         pilotManifest.model !== model || pilotManifest.temperature !== temperatureSetting ||
         pilotSummary.completedTrialRecords !== 2 || pilotSummary.status !== 'COMPLETED' ||
         pilotSummary.securityViolations.length || pilotSummary.infrastructureFailures > 0) {
@@ -82,7 +88,8 @@ export async function main(argv = process.argv.slice(2)) {
     }
   }
   const manifest = { schemaVersion: 1, createdAt: new Date().toISOString(), mode, model,
-    provider: 'anthropic', apiVersion: API_VERSION, temperature: temperatureSetting,
+    provider, apiVersion: provider === 'openai' ? OPENAI_API_VERSION : API_VERSION, temperature: temperatureSetting,
+    wireOutput: provider === 'openai' ? OPENAI_WIRE_OUTPUT : { mode: 'prompt-only', schemaRevision: 'experiment-protocol-v1' },
     temperatureSupport: temperatureSetting === 'omit' ? 'not-requested' : 'requested; rejection ends trial',
     seed: 'not-supported-by-adapter', maxTokens, budgetMethod: 'reserve UTF-8 input bytes + 1024 framing + 2048 output; no refunds',
     pricing: { inputPerMillion: process.env.VEIL_EXPERIMENT_INPUT_RATE ?? 'not-recorded',
@@ -107,7 +114,7 @@ export async function main(argv = process.argv.slice(2)) {
     const trialId = `trial-${index + 1}`;
     const logPath = resolve(out, `${trialId}.jsonl`);
     await writeFile(logPath, '', { flag: 'wx' });
-    const trial = await realTrial({ ...item, trialId, model,
+    const trial = await realTrial({ ...item, trialId, provider, model,
       ...(temperatureSetting === '0' ? { temperature: 0 } : {}), maxTokens: maxTokens - reservedTokens },
     logPath, event => {
       if (event.phase === 'budget') {

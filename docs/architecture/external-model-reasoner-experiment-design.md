@@ -3,11 +3,54 @@ title: External Reasoner Experiment II — Model Reasoning
 ---
 # External Reasoner Experiment II — Model Reasoning
 
+## Prompt-only OpenAI baseline and wire correction
+
+The first live OpenAI smoke runs used prompt-only JSON transport. Smoke-2
+returned one valid discovery object and later stopped at its budget checkpoint.
+Smoke-3 returned two concatenated identical discovery objects and ended with
+`protocol-abort`; smoke-4 independently reproduced that same malformed shape
+under the same initial context. These artifacts remain part of the experiment
+record.
+
+The experiment studies whether independently generated intelligence can propose
+work while the trusted host and Veil retain authority. It is not intended to
+measure spontaneous compliance with an arbitrary JSON serialization instruction.
+The OpenAI adapter consequently uses the Responses API structured `json_object`
+text mode and accepts exactly one unambiguous public assistant proposal: one
+assistant message containing one `output_text` part. The documented
+non-proposal `reasoning` item type may coexist when it is structurally
+classified; its
+private content is never retained or projected. Unknown, tool, refusal, or
+otherwise ambiguous public content is rejected rather than concatenated or
+repaired.
+This constrains only the wire grammar, not correctness or authority: capability
+names and versions, plan versions, resource identifiers, inputs, and terminal
+claims remain model-authored and untrusted, and the existing decoder and Veil
+admission/authorization paths remain authoritative. Bounded non-sensitive output
+shape counts are retained to diagnose provider multiplicity without persisting
+provider-private content.
+
+The first post-instrumentation cardinality smoke returned two output items,
+both assistant messages, with one `output_text` part in each (two public text
+parts total). The adapter correctly rejected the response without selecting
+or concatenating either proposal. The HTTP/provider response completed, but
+the provider-neutral result was `invalid-provider-response`; no trusted-host,
+Veil, authorization, capability, or fake-world boundary was crossed. This
+proves the raw structure of that live response only. It does not establish
+that the historical smoke-3, smoke-4, or structured-smoke responses had the
+same raw structure because those traces retained only projected text.
+
+The provider-native wire mode is recorded in each manifest as `wireOutput` with
+schema revision `experiment-protocol-v1-json-object`. Provider/model comparisons
+must account for this limitation: structured OpenAI output and prompt-only
+Anthropic output share the same provider-neutral protocol, but raw malformed-wire
+rates are not comparable unless the wire constraint mode is matched.
+
 Approved design and implementation checkpoint, 2026-09-24. The Experiment II
-harness is implemented and verified offline. No real-model trial has been run;
-credentials, model selection and a run budget remain unavailable in this
-environment. The architecture tagged `v0.1.0-arch-lock` remains locked.
-The architecture tagged `v0.1.0-arch-lock` remains locked.
+harness is implemented and verified offline. Prompt-only OpenAI smoke evidence
+exists for smoke-2, smoke-3 and smoke-4; the post-correction cardinality smoke
+is retained as infrastructure evidence. The architecture tagged
+`v0.1.0-arch-lock` remains locked.
 
 ## 1. Research question
 
@@ -582,9 +625,10 @@ whitespace and the final recommendation were checked successfully.
   **+1340/-10 (net +1330)**, harness **+58/-8 (net +50)**. Task-local deltas in
   all three categories are **zero**; direct dependencies and lockfile unchanged.
 
-Implementation and offline verification are complete. Provider access
-verification and all real-model trials remain future work. The fixed-base quality
-findings remain visible; passing the functional/package gate does not erase them.
+Implementation, offline verification, pilot execution, and the 45-trial primary
+matrix are complete. The fixed-base quality findings remain visible; passing
+the functional/package gate does not erase them. Primary results are recorded
+in `docs/architecture/external-model-reasoner-primary-results.md`.
 
 ### Current implementation checkpoint
 
@@ -596,8 +640,8 @@ only serialized public text; the Anthropic adapter is experiment-local and
 credential-free in the host. The runner supports smoke, two-trial pilot and
 45-trial primary matrices, fresh-process reset, bounded turns/submissions/
 exchanges/tokens, retained JSONL ledgers, manifest hashes and interruption
-checkpoints. `README.md` in the experiment records the live workflow and
-`READY_FOR_LIVE_RUN` status.
+checkpoints. `README.md` in the experiment records the live workflow and the
+completed primary checkpoint.
 
 The final verification recorded for this checkpoint is:
 
@@ -617,10 +661,8 @@ The final verification recorded for this checkpoint is:
   trials. No provider request, real external side effect or hidden reasoning was
   recorded.
 
-The next exact workflow is to configure `ANTHROPIC_API_KEY`,
-`VEIL_EXPERIMENT_MODEL`, `VEIL_EXPERIMENT_MAX_TOKENS` and optional sampling/rate
-metadata, run the smoke command, inspect its manifest/trace for boundary
-invariants, then run pilots before the gated primary matrix. Missing access is a
-clean checkpoint, not an experiment result.
+The completed primary dataset is retained under the local ignored `.tmp`
+directory and is not part of the commit. Future provider or schema variants
+would be new experiments and must not be retrofitted into these results.
 
-READY TO IMPLEMENT
+PRIMARY_MATRIX_COMPLETE
