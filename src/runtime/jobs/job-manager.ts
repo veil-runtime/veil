@@ -1,3 +1,4 @@
+import { AdmissionOwner, issuePlanAdmissionError } from '../execution/plan-admission-error.js';
 import { randomUUID } from 'node:crypto';
 
 import { capabilityRegistry } from '../registry/registry.js';
@@ -26,8 +27,18 @@ class JobManager {
     plan: ExecutionPlan,
     caller?: ExecutionCaller,
     authorizer: ExecutionAuthorizer =
-      defaultExecutionAuthorizer
+      defaultExecutionAuthorizer,
+    admissionOwner: AdmissionOwner = {}
   ): Promise<Job> {
+    const version = plan.version;
+    if (version !== '1.0') {
+      throw issuePlanAdmissionError(
+        admissionOwner,
+        "Execution plan version is not supported; expected '1.0'.",
+        [{ code: 'UNSUPPORTED_PLAN_VERSION' }]
+      );
+    }
+
     // Own the structural envelope before admission; nested input remains shared.
     const capturedGoal = plan.goal;
     const idempotencyKey = plan.idempotencyKey;
@@ -47,17 +58,21 @@ class JobManager {
     }
 
     if (!steps.length) {
-      throw new Error(
-        'Execution plan contains no steps'
+      throw issuePlanAdmissionError(
+        admissionOwner,
+        'Execution plan contains no steps',
+        [{ code: 'EMPTY_PLAN' }]
       );
     }
 
     const validation = validatePlan(steps);
     if (!validation.valid) {
-      throw new Error(
+      throw issuePlanAdmissionError(
+        admissionOwner,
         `Execution plan failed validation: ${validation.errors
           .map((error) => error.message)
-          .join('; ')}`
+          .join('; ')}`,
+        validation.errors
       );
     }
 

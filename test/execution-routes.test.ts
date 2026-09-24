@@ -74,6 +74,7 @@ test('HTTP invalid input never reaches authorization or execution', async (t) =>
     const response = await f.request({ input });
     assert.equal(response.statusCode, 400);
     assert.match(response.json().error, /^Execution plan failed validation:/);
+    assert.deepEqual(Object.keys(response.json()), ['error']);
   }
   assert.equal(authorizations, 0);
   assert.equal(f.executions(), 0);

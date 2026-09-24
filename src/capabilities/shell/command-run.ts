@@ -9,7 +9,7 @@ import { Capability } from '../../runtime/registry/capability.js';
 import { evaluateCommandPolicy } from '../../runtime/permissions/command-policy.js';
 
 interface ShellCommandRunInput {
-  command: string | string[];
+  command: string;
   args?: string[];
   cwd?: string;
 }
@@ -27,18 +27,6 @@ interface NormalizedCommand {
   command: string;
   args: string[];
 }
-
-const ALLOWED_COMMANDS = new Set([
-  'git',
-  'node',
-  'npm',
-  'npx',
-  'pnpm',
-  'python',
-  'python3',
-  'dotnet',
-  'docker',
-]);
 
 const ALLOWED_ROOT = resolve(
   process.env.OPERATOR_FILES_ROOT ??
@@ -73,130 +61,22 @@ function resolveSafeCwd(
   return candidate;
 }
 
-function parseCommandParts(
-  command: string | string[]
-): string[] {
-  if (Array.isArray(command)) {
-    if (
-      command.length === 0 ||
-      command.some(
-        (part) =>
-          typeof part !== 'string'
-      )
-    ) {
-      throw new Error(
-        'command array must contain strings'
-      );
-    }
-
-    return command;
+// Accept a single representation. Policy and dispatch must not reinterpret a
+// command string or discard embedded arguments after runtime authorization.
+function normalizeCommand(input: ShellCommandRunInput): NormalizedCommand {
+  const command = input?.command;
+  if (typeof command !== 'string' || !/^[a-z][a-z0-9-]*$/.test(command)) {
+    throw new Error('command must be a single executable basename; supply arguments separately');
   }
-
-  const trimmed = command.trim();
-
-  if (!trimmed) {
-    throw new Error(
-      'command is required'
-    );
+  const suppliedArgs = input.args ?? [];
+  if (!Array.isArray(suppliedArgs)) {
+    throw new Error('args must be an array of strings');
   }
-
-  /*
-   * Some planners may return:
-   *
-   * ["git", "status"]
-   *
-   * as a JSON-encoded string.
-   */
-  if (
-    trimmed.startsWith('[') &&
-    trimmed.endsWith(']')
-  ) {
-    try {
-      const parsed = JSON.parse(trimmed);
-
-      if (
-        Array.isArray(parsed) &&
-        parsed.length > 0 &&
-        parsed.every(
-          (part) =>
-            typeof part === 'string'
-        )
-      ) {
-        return parsed;
-      }
-    } catch {
-      // Fall through to normal command parsing.
-    }
+  const args = Array.from(suppliedArgs);
+  if (args.some(arg => typeof arg !== 'string')) {
+    throw new Error('args must be a dense array of strings');
   }
-
-  return trimmed
-    .split(/\s+/)
-    .filter(Boolean);
-}
-
-function normalizeCommand(
-  input: ShellCommandRunInput
-): NormalizedCommand {
-  if (!input?.command) {
-    throw new Error(
-      'command is required'
-    );
-  }
-
-  if (
-    input.args !== undefined &&
-    (
-      !Array.isArray(input.args) ||
-      input.args.some(
-        (arg) =>
-          typeof arg !== 'string'
-      )
-    )
-  ) {
-    throw new Error(
-      'args must be an array of strings'
-    );
-  }
-
-  const commandParts =
-    parseCommandParts(input.command);
-
-  const command =
-    commandParts[0];
-
-  if (!command) {
-    throw new Error(
-      'command is required'
-    );
-  }
-
-  const embeddedArgs =
-    commandParts.slice(1);
-
-  const suppliedArgs =
-    input.args ?? [];
-
-  /*
-   * Explicit args win when provided.
-   *
-   * This avoids:
-   *
-   * command = "git status"
-   * args = ["status"]
-   *
-   * becoming:
-   *
-   * ["status", "status"]
-   */
-  const args =
-    suppliedArgs.length > 0
-      ? suppliedArgs
-      : embeddedArgs;
-
-  return {
-    command,
-    args,
-  };
+  return { command, args };
 }
 
 export const shellCommandRunCapability: Capability<
@@ -208,23 +88,24 @@ export const shellCommandRunCapability: Capability<
   version: '1.0.0',
 
   description:
-    'Run an approved executable inside the configured Operator workspace without invoking a shell. Operator safely normalizes common command representations before policy evaluation.',
+    'Run an explicitly authorized, exact command invocation without a shell. Only reviewed executable and argument tuples are supported; executable, environment and workspace contents must be trusted.',
 
-  risk: 'read',
+  // Ambient executable/configuration effects are not proven read-only.
+  risk: 'destructive',
 
   inputSchema: {
     command: {
       type: 'string',
       required: true,
       description:
-        'Command to execute. Preferred form: command="git" with args=["status"]. Simple forms such as "git status" may also be normalized safely.',
+        'Single executable basename, for example "git". Command lines, paths and encoded arrays are rejected; supply args separately.',
     },
 
     args: {
       type: 'array',
       required: false,
       description:
-        'Optional command arguments as separate strings. Example: ["status"]. Preserve requested subcommands and do not include shell operators.',
+        'Complete argument vector as separate strings, for example ["status"]. Only exact reviewed tuples are permitted; extra options or operands are rejected.',
     },
 
     cwd: {
@@ -240,12 +121,6 @@ export const shellCommandRunCapability: Capability<
       command,
       args,
     } = normalizeCommand(input);
-
-    if (!ALLOWED_COMMANDS.has(command)) {
-      throw new Error(
-        `Command is not allowed: ${command}`
-      );
-    }
 
     const policy =
       evaluateCommandPolicy(
@@ -264,8 +139,7 @@ export const shellCommandRunCapability: Capability<
       'Command policy evaluated',
       {
         command,
-        args,
-        risk: policy.risk,
+        args: [...args],
       }
     );
 
@@ -276,7 +150,7 @@ export const shellCommandRunCapability: Capability<
       'Running approved command',
       {
         command,
-        args,
+        args: [...args],
         cwd,
       }
     );
@@ -350,7 +224,7 @@ export const shellCommandRunCapability: Capability<
       'Approved command completed',
       {
         command,
-        args,
+        args: [...args],
         exitCode:
           result.exitCode,
       }

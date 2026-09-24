@@ -176,7 +176,8 @@ test('changing accessors are read once; unused plan and step fields are not cons
   Object.defineProperty(p, 'idempotencyKey', { get: () => 'plan-key' });
   once(p, 'steps', [first]);
   once(p, 'goal', p.goal);
-  for (const key of ['id', 'metadata', 'version']) {
+  once(p, 'version', '1.0');
+  for (const key of ['id', 'metadata']) {
     Object.defineProperty(p, key, { get() { throw new Error(`unused ${key}`); } });
   }
   Object.defineProperty(first, 'extra', { enumerable: true, get() { throw new Error('unused extra'); } });

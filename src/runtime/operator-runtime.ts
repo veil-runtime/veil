@@ -1,3 +1,4 @@
+import { containForeignAdmissionError } from './execution/plan-admission-error.js';
 import type { CapabilityDescriptor } from './registry/capability.js';
 import { Job } from './jobs/job.js';
 import { JobListFilter } from './jobs/job-store.js';
@@ -106,11 +107,17 @@ export class OperatorRuntime {
     plan: ExecutionPlan,
     options: ExecutePlanOptions = {}
   ): Promise<Job> {
-    return jobManager.executePlan(
-      plan,
-      immutableCaller(options.caller),
-      this.authorizer
-    );
+    const admissionOwner = {};
+    try {
+      return await jobManager.executePlan(
+        plan,
+        immutableCaller(options.caller),
+        this.authorizer,
+        admissionOwner
+      );
+    } catch (error) {
+      throw containForeignAdmissionError(admissionOwner, error);
+    }
   }
 
   async run(

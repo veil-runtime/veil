@@ -9,53 +9,39 @@
       "reason": "Existing direct capability unit test; intentionally exercises the capability in isolation."
     },
     {
-      "path": "src/api/routes/jobs.routes.ts",
-      "anchor": "858ad85bad935d26844bc549f14140c53a713e3417e9d66999dad1f3f187b0b9",
-      "kind": "job-manager",
-      "classification": "LEGACY_BYPASS",
-      "reason": "Legacy HTTP job execution enters JobManager directly; retains per-step authorization but skips OperatorRuntime and plan admission. Retire when migrated."
-    },
-    {
-      "path": "src/api/routes/linkedin.routes.ts",
-      "anchor": "01bd3bcf2bb5f66c04010457c206aa4a030331f34d9c8a0efe83098966bb5ad9",
-      "kind": "execute",
-      "classification": "LEGACY_BYPASS",
-      "reason": "Legacy LinkedIn status HTTP route directly invokes a capability. Retire when migrated to OperatorRuntime."
-    },
-    {
       "path": "src/runtime/execution/plan-validator.ts",
-      "anchor": "d8937f3f002890312f040f4917be0c4aaeb380635ba7637b774d6278e32229cf",
+      "anchor": "56e72b010dc9a4c6c38fe49f317cebdf7bf52424d0bdc154a74214b5c867f0c4",
       "kind": "dynamic",
       "classification": "GOVERNED_MACHINERY",
-      "reason": "Existing TYPE_CHECKS lookup selects an input-validation predicate, called as check(value); it is not capability dispatch."
+      "reason": "ADR-0012 inventory review M1 approved: existing TYPE_CHECKS schema predicate lookup/call is unchanged; source issue codes and import shift its enclosing-statement anchor. Validation only, no dispatch or authority change."
     },
     {
       "path": "src/runtime/jobs/job-manager.ts",
-      "anchor": "13fce248843444d387420b751d6e621dc142722e6d02bd588fe58b8ff5710ba5",
+      "anchor": "75b4703be8dcf754f100d3231e3da7a1fd53e3a04ac00b132be0953305ca87bc",
       "kind": "job-manager",
       "classification": "GOVERNED_MACHINERY",
-      "reason": "Approved internal execution loop: plan admission delegates here and capability dispatch follows per-step authorization."
+      "reason": "Version-admission inventory review V1 approved: strict plan.version === '1.0' pre-Job rejection changes the enclosing class anchor only. Existing this.execute(job.id, caller, authorizer) remains after admission/materialization; no new entrance or authority path. ADR-0012 M2 classification retained."
     },
     {
       "path": "src/runtime/jobs/job-manager.ts",
-      "anchor": "31a7754a040e7469f1201d936db763818a90e448d07e25b4b6b1179bcbac52a9",
+      "anchor": "db7d11c496d45d0718ae5a3bb1c0b98fa7a1ee42ff113f63572d653801e6eb2c",
       "kind": "execute",
       "classification": "GOVERNED_MACHINERY",
-      "reason": "Approved internal execution loop: plan admission delegates here and capability dispatch follows per-step authorization."
+      "reason": "Version-admission inventory review V2 approved: preceding version gate changes the enclosing class anchor only. Existing capability.execute(resolvedInput, context) and explicit per-step authorization are unchanged; no new provider, registry or execution path. ADR-0012 M3 classification retained."
     },
     {
       "path": "src/runtime/operator-runtime.ts",
-      "anchor": "6bfbeefd5ca8028fffeeee37c2785a3650cbdf19d1201c33926dd40d679304c6",
+      "anchor": "815c4aa9b00ff58a8ddfa02a86ddd489d3f1c79f39eba998da9b89c1ea369d93",
       "kind": "job-manager",
       "classification": "GOVERNED_MACHINERY",
-      "reason": "Approved runtime delegation to JobManager or planner strategy; strategy produces a plan."
+      "reason": "ADR-0012 inventory review M4 approved: executePlan now awaits the same JobManager admission path with a private per-call owner and contains foreign diagnostics. Trusted caller/authorizer forwarding remains; no alternative execution entrance."
     },
     {
       "path": "src/runtime/operator-runtime.ts",
-      "anchor": "2d0d6f2fdfeca15da7dc35e76568603be9da04167c1ecced1ebe407c9f293e7a",
+      "anchor": "0c72436533d158d736935e3f29f2033715f419f886e716d89bb4c861b111e4bf",
       "kind": "execute",
       "classification": "LEGITIMATE_NON_CAPABILITY_EXECUTE",
-      "reason": "Planner strategy execution produces an ExecutionPlan; capability dispatch follows through OperatorRuntime.executePlan."
+      "reason": "ADR-0012 inventory review M5 approved: existing strategy.execute produces a plan and still delegates to this.executePlan. The adjacent executePlan ownership change alters the enclosing class anchor; planner invocation itself is unchanged."
     },
     {
       "path": "src/sdk/capability/create-capability.ts",
@@ -112,6 +98,55 @@
       "kind": "execute",
       "classification": "TEST_OR_FIXTURE",
       "reason": "Planner strategy unit test; executes reasoning, not capability work."
+    },
+    {
+      "path": "test/plan-admission.test.ts",
+      "anchor": "0187fa2f4b6daff3da9797f03c97152101c7318704c3dd988042fa700a86fe3d",
+      "kind": "dynamic",
+      "classification": "TEST_OR_FIXTURE",
+      "reason": "ADR-0012 inventory review T1 approved: test-only: inspect own descriptors for literal code/issues keys to prove non-writable/non-configurable/non-enumerable properties. No executable extraction; excluded from production build."
+    },
+    {
+      "path": "test/plan-admission.test.ts",
+      "anchor": "b66fcc08bfab183eb951c39f40e1ad47a29208aa33e1285ee7f8bb912a66335d",
+      "kind": "dynamic",
+      "classification": "TEST_OR_FIXTURE",
+      "reason": "ADR-0012 inventory review T2 approved: test-only: copy a genuine Error prototype/descriptors to prove a lookalike lacks issuance identity. Local negative fixture only; excluded from production build."
+    },
+    {
+      "path": "test/plan-admission.test.ts",
+      "anchor": "e5a2f8f0399da97e329901facf8636b7d550dac8fad166fcd39a21f2e2bc08d8",
+      "kind": "dynamic",
+      "classification": "TEST_OR_FIXTURE",
+      "reason": "ADR-0012 inventory review T3 approved: test-only: resolve the fixed diagnostic-module literal for a separate-instance WeakMap regression. No request-controlled path or provider loading; excluded from production build."
+    },
+    {
+      "path": "test/plan-admission.test.ts",
+      "anchor": "9a74dee9a6be95e8470eec859dc028791944182a248397608a35313d8820c1bf",
+      "kind": "dynamic",
+      "classification": "TEST_OR_FIXTURE",
+      "reason": "ADR-0012 inventory review T4 approved: test-only: reload that fixed diagnostic module to prove another module instance rejects the original evidence; restore require.cache in finally. Test-process cache only; excluded from production build."
+    },
+    {
+      "path": "experiments/external-model-reasoner/model-adapter.mjs",
+      "anchor": "3ce99c733a6b8361c93f99586ffd11052a5349ef101fcd0f7209eae0c8619aca",
+      "kind": "dynamic",
+      "classification": "TEST_OR_FIXTURE",
+      "reason": "Experiment II inventory review E1 approved: computed metadata read uses a fixed allowlisted string key while projecting provider response metadata; model output cannot select the key or a callable target, and the adapter has no Veil imports or execution entrance."
+    },
+    {
+      "path": "experiments/external-model-reasoner/model-adapter.mjs",
+      "anchor": "831d7e9839db212ff938e48c5435c84716d5e1f5a597f44af136590be5f821d9",
+      "kind": "dynamic",
+      "classification": "TEST_OR_FIXTURE",
+      "reason": "Experiment II inventory review E2 approved: computed usage metadata read is bounded to fixed token/latency keys and Number.isFinite; provider/model text is data only, with no dynamic call, Veil import, registry access or authority construction."
+    },
+    {
+      "path": "experiments/external-model-reasoner/run.mjs",
+      "anchor": "1d26df406ab4b09a37fd7b43cd439117a32225515f6ae5ee28c63f49ffff7bc4",
+      "kind": "dynamic",
+      "classification": "TEST_OR_FIXTURE",
+      "reason": "Experiment II inventory review E3 approved: computed CLI option key writes only into a local runner-options record after a fixed allowlist check; model output cannot reach argv parsing, and this launcher owns no Veil execution, authorization, provider or registry entrance."
     }
   ]
 }

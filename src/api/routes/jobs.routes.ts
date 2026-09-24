@@ -1,9 +1,10 @@
-import { FastifyInstance } from 'fastify';
+import { FastifyInstance, FastifyRequest } from 'fastify';
 
 import { jobManager } from '../../runtime/jobs/job-manager.js';
-import { operatorRuntime } from '../../runtime/operator-runtime.js';
+import { OperatorRuntime, operatorRuntime } from '../../runtime/operator-runtime.js';
 import { executionLogStore } from '../../runtime/logging/execution-log-store.js';
 import { ExecutionPlan } from '../../runtime/planner/planner.js';
+import { ExecutionCaller } from '../../runtime/execution/execution-context.js';
 
 interface CreateJobBody {
   goal: string;
@@ -31,9 +32,17 @@ interface ReviewJobBody {
   notes?: string;
 }
 
+interface JobsRoutesOptions {
+  runtime?: OperatorRuntime;
+  // Trusted host configuration; never copy identity from proposed plan/body fields.
+  resolveCaller?: (request: FastifyRequest) => ExecutionCaller | undefined | Promise<ExecutionCaller | undefined>;
+}
+
 export async function jobsRoutes(
-  app: FastifyInstance
+  app: FastifyInstance,
+  options: JobsRoutesOptions = {},
 ) {
+  const runtime = options.runtime ?? operatorRuntime;
   app.post<{
     Body: CreateJobBody;
   }>('/jobs', async (request, reply) => {
@@ -63,8 +72,9 @@ export async function jobsRoutes(
     async (request, reply) => {
       try {
         const job =
-          await operatorRuntime.executePlan(
-            request.body
+          await runtime.executePlan(
+            request.body,
+            { caller: await options.resolveCaller?.(request) }
           );
 
         return reply
@@ -237,30 +247,12 @@ export async function jobsRoutes(
     };
   });
 
-  app.post<{
-    Params: JobParams;
-  }>(
-    '/jobs/:id/execute',
-    async (request, reply) => {
-      try {
-        const job =
-          await jobManager.execute(
-            request.params.id
-          );
-
-        return job;
-      } catch (error) {
-        const message =
-          error instanceof Error
-            ? error.message
-            : 'Unable to execute job';
-
-        return reply.status(400).send({
-          error: message,
-        });
-      }
-    }
-  );
+  // Retired: a stored Job is an execution record, not a resumable proposal.
+  app.post('/jobs/:id/execute', async (_request, reply) => {
+    return reply.status(410).send({
+      error: 'Stored-job execution is retired. Submit a new ExecutionPlan to /api/jobs/execute-plan.',
+    });
+  });
 
   app.post<{
     Body: CreateJobBody;
@@ -269,11 +261,12 @@ export async function jobsRoutes(
     async (request, reply) => {
       try {
         const job =
-          await operatorRuntime.run(
+          await runtime.run(
             request.body.goal,
             {
               planner:
                 request.body.planner,
+              caller: await options.resolveCaller?.(request),
             }
           );
 

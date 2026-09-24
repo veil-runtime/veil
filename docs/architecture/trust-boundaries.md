@@ -80,10 +80,18 @@ The following scoped guarantees are **v0.2.0 work**, established in `develop` at
 Evidence: `test/memory-event-bus.test.ts`, `test/execution-contract.test.ts`,
 `test/result-reference.test.ts`, `test/plan-validator.test.ts` and
 `test/structural-ownership.test.ts`, alongside their runtime implementations.
-These are scoped guarantees of the governed path, not a claim that the tracked
-legacy bypasses below are eliminated.
+These were scoped guarantees of the governed path. The later
+[entry hardening](governance-hardening.html) migrates LinkedIn status and retires
+stored-job execution; it does not expand the value-ownership guarantees.
 
 ## Invocation-value stability: open, implementation deferred
+
+The [2026-09-23 ownership investigation](value-ownership-investigation.html)
+adds a complete alias map and deterministic mutation/value-domain fixtures.
+[Draft ADR-0011](../adr/0011-governed-value-ownership.html) proposes a separate
+decision for immutable authorization input and equivalent capability-entry
+values. It is not accepted and changes no runtime behavior. Provider-operation
+equivalence and committed-result stability remain distinct properties.
 
 The authorization-to-execution investigation is complete. The unresolved target
 guarantee is:
@@ -184,6 +192,11 @@ route-specific audit calls are replaced by runtime job/event recording.
 
 Clients relying on `requiresApproval`/`reason` in the old denial response must
 migrate to the new error response and host-owned authorization. This migration
-covers only the generic capability endpoint; the LinkedIn status and existing-job
-execution routes remain tracked legacy bypasses. See the
-[governance inventory](../contributing/quality-harness.html).
+originally covered only the generic capability endpoint. Subsequent
+[entry hardening](governance-hardening.html) migrates LinkedIn status to a plan,
+retires existing-job execution with 410, and removes both legacy allowances.
+All three execution route modules now accept trusted host runtime/caller
+configuration. The bundled local server remains unauthenticated; request
+identity claims are not authority. `http.request` now declares conservative
+`destructive` risk for its full method surface and is default-denied even for GET.
+See the [governance inventory](../contributing/quality-harness.html).

@@ -1,7 +1,8 @@
-import { FastifyInstance } from 'fastify';
+import { FastifyInstance, FastifyRequest } from 'fastify';
 import { randomUUID } from 'node:crypto';
 import { OperatorRuntime, operatorRuntime } from '../../runtime/operator-runtime.js';
 import { ExecutionPlan } from '../../runtime/planner/planner.js';
+import { ExecutionCaller } from '../../runtime/execution/execution-context.js';
 
 interface ExecuteParams {
   name: string;
@@ -13,6 +14,8 @@ interface ExecuteBody {
 
 interface ExecutionRoutesOptions {
   runtime?: OperatorRuntime;
+  // Trusted host configuration; never copy identity from proposed plan/body fields.
+  resolveCaller?: (request: FastifyRequest) => ExecutionCaller | undefined | Promise<ExecutionCaller | undefined>;
 }
 
 export async function executionRoutes(
@@ -47,7 +50,8 @@ export async function executionRoutes(
     };
 
     try {
-      const job = await runtime.executePlan(plan);
+      const caller = await options.resolveCaller?.(request);
+      const job = await runtime.executePlan(plan, { caller });
 
       if (job.status === 'failed') {
         const denied = job.events.some(

@@ -9,6 +9,7 @@ This page summarizes the root src/index.ts and package root export for v0.2.0, i
 
 - OperatorRuntime: public execution facade; construct it with an optional authorizer.
 - operatorRuntime: default OperatorRuntime instance.
+- isPlanAdmissionError: identity-based local admission evidence predicate; see [direct-call provenance](operator-runtime.html).
 - McpAdapter: inbound MCP adapter that maps exposed tools to governed one-step plans.
 
 ## Runtime and planning types
@@ -23,6 +24,13 @@ This page summarizes the root src/index.ts and package root export for v0.2.0, i
 - Capability, CapabilityInputField, CapabilityRisk: operation contract, field descriptors, and read/write/destructive classification.
 - CapabilityDescriptor (v0.2.0): detached mutable execution metadata returned by listCapabilities and exact describeCapability; introspection is not authorization.
 - CapabilityModule, CapabilityModuleManifest: module packaging and manifest metadata.
+
+## Admission diagnostic types
+
+- PlanAdmissionError: ordinary Error with immutable code/issues; type only, no public constructor.
+- PlanAdmissionIssue, PlanAdmissionIssueCode: sanitized issue records and ten admission rejection categories (including plan-version enforcement).
+
+The issuer, ownership context and containment helpers are not root exports.
 
 ## Authorization types
 

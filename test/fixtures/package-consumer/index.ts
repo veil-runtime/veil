@@ -1,5 +1,7 @@
 import {
   createCapability,
+  isPlanAdmissionError,
+  type PlanAdmissionError,
   McpAdapter,
   OperatorRuntime,
   type CapabilityAuthorizationDecision,
@@ -66,6 +68,14 @@ export async function validateConsumer(): Promise<void> {
     throw new Error('Public capability introspection failed.');
   }
 
+  try {
+    await runtime.executePlan({ version: '1.0', steps: [] });
+    throw new Error('Expected admission rejection');
+  } catch (error) {
+    if (!isPlanAdmissionError(error)) throw error;
+    const diagnostic: PlanAdmissionError = error;
+    if (diagnostic.issues[0].code !== 'EMPTY_PLAN') throw new Error('Wrong issue');
+  }
   const job = await runtime.executePlan(plan);
   if (job.status !== 'completed') {
     throw new Error(`Unexpected status: ${job.status}: ${job.error ?? 'unknown error'}`);

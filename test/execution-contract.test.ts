@@ -213,6 +213,7 @@ for (const [label, version, accepted] of [
       : {
         valid: false,
         errors: [{
+          code: 'CAPABILITY_VERSION_MISMATCH', stepIndex: 0,
           stepId: 'step',
           capability,
           message: `Capability version mismatch for '${capability}': requested ${version}, registered 1.0.0`,

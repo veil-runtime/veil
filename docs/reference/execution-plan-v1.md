@@ -24,7 +24,7 @@ interface ExecutionStep {
 }
 ~~~
 
-Use version '1.0' for the current v1 contract. The TypeScript interface itself does not restrict the string, and the current runtime validator does not compare plan.version; documentation uses 1.0 because that is the supported current plan format.
+ExecutionPlan v1 is the currently supported plan protocol. Supply exactly the string '1.0'. Admission rejects missing, malformed or unsupported versions with UNSUPPORTED_PLAN_VERSION before Job creation, authorization or invocation. No coercion or fallback is performed. The TypeScript field remains string; runtime admission enforces support. Future versions may define different semantics, but none are defined here. See [version admission](../architecture/execution-plan-version-admission.html).
 
 ## Properties
 
@@ -36,15 +36,16 @@ In **v0.2.0**, step IDs MUST be unique within a single plan, using exact-string 
 
 ## Structural ownership at submission (v0.2.0)
 
-At the beginning of JobManager.executePlan, synchronously before the empty-plan
+JobManager.executePlan first reads version once and requires '1.0'. For supported
+plans, synchronously before the empty-plan
 check, validation, job creation, or any await, Veil captures goal, the plan
 idempotency key, and an independent steps array preserving membership, order and
 holes. Each present step becomes a runtime-owned shallow record of id,
 capability, capabilityVersion, input root binding, reason and idempotencyKey.
 Admission and job materialization consume the same captured envelope. Replacing
 caller steps, changing their structural fields, or assigning a different
-step.input after capture cannot change submitted execution. Plan id, metadata
-and version are not newly consumed by this capture.
+step.input after capture cannot change submitted execution. Plan id and metadata
+are not consumed by this capture; version is consumed by the preceding admission gate.
 
 This does not make plans or inputs generally immutable. Nested input contents
 remain shared: changing input.value, an array element, or a reference object's

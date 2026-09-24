@@ -85,3 +85,58 @@ The selection and reasoning functions above belong to the application, not Veil.
 The inbound `McpAdapter` still captures inventory at construction time; later
 registration does not update an existing adapter's tools. See
 [capability metadata contract](capability-api.html).
+
+## Structured admission diagnostics (ADR-0012)
+
+Import `isPlanAdmissionError` from `@veil-runtime/core`. Apply it to the rejection
+caught directly from `await runtime.executePlan(...)`, using the same loaded
+package instance. A recognized rejection means this call was rejected at unsupported-version, empty
+plan or explicit validation admission, before Job creation, step authorization or
+its governed capability invocation sequence. It is not authorization, retry
+advice, or a claim that unrelated host code had no effects.
+
+The diagnostic is an ordinary Error (`name === 'Error'`) with compatible legacy
+`message`. Its non-enumerable `code` is `PLAN_ADMISSION_REJECTED`; `issues` contains
+fixed messages and issue codes with optional captured zero-based `stepIndex` and
+schema `field`. Both properties are non-writable/non-configurable. The detached
+issue records and array are frozen; the whole Error is not.
+
+Codes: `UNSUPPORTED_PLAN_VERSION`, `EMPTY_PLAN`, `DUPLICATE_STEP_ID`, `UNKNOWN_CAPABILITY`,
+`CAPABILITY_VERSION_MISMATCH`, `REQUIRED_INPUT_MISSING`, `INPUT_TYPE_MISMATCH`,
+`UNSUPPORTED_INPUT_SCHEMA`, `INVALID_RESULT_REFERENCE`,
+`RESULT_REFERENCE_NOT_EARLIER`.
+
+```ts
+import { isPlanAdmissionError } from '@veil-runtime/core';
+
+try {
+  await runtime.executePlan(plan, { caller: trustedHostCaller });
+} catch (error) {
+  if (!isPlanAdmissionError(error)) throw error;
+  // Host must still filter schema fields against the caller's exposed surface.
+  const feedback = {
+    code: error.code,
+    issues: error.issues.map(({ code, message, stepIndex }) => ({ code, message, stepIndex })),
+  };
+  sendHostFeedback(feedback);
+}
+```
+
+Never serialize the whole Error or automatically disclose legacy `message`, stack
+or cause. Fixed issue messages are sanitized; legacy messages may contain submitted
+identifiers/references. JSON feedback is trusted through the adapter/transport,
+not JS branding. Do not classify by public fields or search cause chains.
+
+The predicate tests private issuance identity without inspecting properties. A
+lookalike, clone, proxy wrapper or error from another loaded package copy is not
+recognized. A genuine diagnostic replayed through another executePlan call is
+contained in an unbranded ordinary Error with the original as local cause. Outside
+the direct caught-call boundary, predicate success means historical issuance only;
+it does not bind an arbitrary object to a submission. This is trusted-runtime
+classification, not hostile-process isolation or cryptographic authentication.
+
+Capture, storage and other unexpected exceptions remain ordinary failures;
+authorization denial, post-admission resolution and provider failures are not
+admission diagnostics. Persistence failures can still reject after invocation.
+`run` planning errors precede this boundary and must not be classified as current
+submission evidence merely by applying the predicate.
