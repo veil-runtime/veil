@@ -24,17 +24,17 @@
     },
     {
       "path": "src/runtime/jobs/job-manager.ts",
-      "anchor": "78caac8d0be6787876261e7c967199c0d9a05c0cdbeda7a8d911d9da5524ed10",
+      "anchor": "047f720846d3555ca5c4529fbb205ecf013ee054235e7047a984a5cf275169cc",
       "kind": "job-manager",
       "classification": "GOVERNED_MACHINERY",
-      "reason": "Post-ADR-0011 review: this.execute remains the existing internal JobManager dispatch after admission and now carries the private semantic version. It is not a new public entrance, authority path, registry path or provider dispatch; GOVERNED_MACHINERY classification retained."
+      "reason": "ADR-0011 conformance review: this.execute remains the same internal JobManager dispatch after admission and still carries the private semantic version. Its class-wide anchor shifted only because the V2 capability copy moved before the running/start transition. It is not a new public entrance, authority path, registry path or provider dispatch; GOVERNED_MACHINERY classification retained."
     },
     {
       "path": "src/runtime/jobs/job-manager.ts",
-      "anchor": "4b1e61a40f1b2fb175d0e53ff17bae53a20fba2ee26539fe2267d34da165dc55",
+      "anchor": "dfc3ca4baa099a6765f7fb25412620837a8307c19eee894b6d2bf79194b59f50",
       "kind": "execute",
       "classification": "GOVERNED_MACHINERY",
-      "reason": "Post-ADR-0011 review: capability.execute remains the existing governed invocation site; v2 supplies a detached copy while v1 supplies the legacy resolved value. The site can reach capability work only through the existing authorized path and adds no provider or registry entrance. GOVERNED_MACHINERY classification retained."
+      "reason": "ADR-0011 conformance review: capability.execute remains the same governed invocation site. V2 now constructs its detached input after explicit allow and before running/start; V1 still supplies the legacy resolved value. The site can reach capability work only through the existing authorized path and adds no provider or registry entrance. GOVERNED_MACHINERY classification retained."
     },
     {
       "path": "src/runtime/operator-runtime.ts",

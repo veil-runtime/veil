@@ -18,6 +18,8 @@ sections:
         url: /getting-started/first-runtime.html
       - title: Veil v0.2.0
         url: /getting-started/v0.2.0.html
+      - title: Unreleased Changes
+        url: /getting-started/unreleased.html
       - title: Next Steps
         url: /getting-started/next-steps.html
   - title: Core Concepts
@@ -56,6 +58,8 @@ sections:
         url: /guides/pass-results-between-steps.html
       - title: Protect Write Actions
         url: /guides/protect-write-actions.html
+      - title: Migrate to ExecutionPlan v2
+        url: /guides/migrate-to-execution-plan-v2.html
       - title: Add a Planner
         url: /guides/add-a-planner.html
       - title: Configure Planner Routing
@@ -86,6 +90,8 @@ sections:
     pages:
       - title: ExecutionPlan v1
         url: /reference/execution-plan-v1.html
+      - title: ExecutionPlan v2
+        url: /reference/execution-plan-v2.html
       - title: OperatorRuntime
         url: /reference/operator-runtime.html
       - title: Capability API

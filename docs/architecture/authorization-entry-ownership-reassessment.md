@@ -3,6 +3,12 @@ title: Authorization-to-capability value ownership reassessment
 ---
 # Authorization-to-capability value ownership reassessment
 
+**Current-state note (2026-09-25):** this is the pre-acceptance reassessment.
+ADR-0011 was subsequently accepted and its bounded post-resolution boundary is
+implemented as opt-in ExecutionPlan `2.0`. The recommendation and “Draft” wording
+below are retained as historical checkpoint evidence; use the [V2
+reference](../reference/execution-plan-v2.html) for the current contract.
+
 Investigation date: 2026-09-24. Source baseline:
 `103521d0d92a14d030ad56bb89e7c0a5ea902d87`.
 

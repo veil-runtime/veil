@@ -3,6 +3,13 @@ title: ADR-0012 governance inventory review
 ---
 # ADR-0012 governance inventory review
 
+**Current-state note (2026-09-25):** this review records the earlier ADR-0012
+checkpoint and its fixed-base inventory. The current candidate inventory has 24
+exact sites; the two JobManager anchors shifted again solely for the corrected
+ADR-0011 copy-before-start lifecycle and are reconciled in the current baseline.
+The historical anchors and fixed-base results below remain evidence, not the
+current baseline.
+
 Disposition: **all nine sites approved individually** under the maintainer's
 instruction to review and reconcile the Accepted ADR-0012 implementation.
 No runtime violation was found. No runtime, test, parser, classification rule,

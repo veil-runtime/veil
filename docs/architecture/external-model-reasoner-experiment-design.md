@@ -3,6 +3,11 @@ title: External Reasoner Experiment II — Model Reasoning
 ---
 # External Reasoner Experiment II — Model Reasoning
 
+**Current-state note:** this frozen experiment design predates acceptance and
+implementation of ADR-0011/ExecutionPlan `2.0`. References below to Draft
+ADR-0011 are historical experiment context. Experiment II neither tested nor
+established the later governed-value ownership guarantees.
+
 ## Prompt-only OpenAI baseline and wire correction
 
 The first live OpenAI smoke runs used prompt-only JSON transport. Smoke-2

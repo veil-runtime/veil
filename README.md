@@ -47,7 +47,7 @@ The default authorizer permits reads and denies write/destructive capabilities. 
 
 ## Status and roadmap
 
-Release candidate: **v0.2.0**. See [release notes](docs/getting-started/v0.2.0.md). The latest published package remains **v0.1.3** until publication. ExecutionPlan v1 is linear. DAGs, parallel execution, conditionals, cancellation, and retry policies are roadmap work, not current behavior.
+Release candidate: **v0.2.0**. See [release notes](docs/getting-started/v0.2.0.md) and the [unreleased reasoning-boundary notes](docs/getting-started/unreleased.md). The latest published package remains **v0.1.3** until publication. ExecutionPlan V1 remains the default; opt-in [ExecutionPlan V2](docs/reference/execution-plan-v2.md) adds governed receiving-value ownership. Both are linear. DAGs, parallel execution, conditionals, cancellation, and retry policies are roadmap work, not current behavior.
 
 ## Contributing
 

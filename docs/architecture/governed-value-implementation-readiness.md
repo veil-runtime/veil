@@ -8,6 +8,12 @@ Date: 2026-09-24. Investigated source HEAD:
 reassessment/revision and the maintainer's acceptance of
 [ADR-0011](../adr/0011-governed-value-ownership.html).
 
+**Current-state note (2026-09-25):** the later implementation allocated
+ExecutionPlan `2.0` with explicit `planVersions` opt-in and completed the bounded
+post-resolution ownership boundary, including copy-before-start ordering. The
+proposal/future tense below is retained as the historical implementation plan;
+the current public contract is [ExecutionPlan V2](../reference/execution-plan-v2.html).
+
 **Outcome: READY_TO_IMPLEMENT_VERSIONED_BOUNDARY**, for the accepted
 **post-resolution** boundary only, in a separately authorized implementation task.
 Propose exact plan version **`'2.0'`**, with legacy-only defaults and explicit

@@ -3,6 +3,13 @@ title: Governance entry hardening
 ---
 # Governance entry hardening
 
+**Current-state note (2026-09-25):** the route-hardening inventory and counts in
+this page are the historical checkpoint for that work. The current branch also
+contains the reviewed ADR-0011/0013 machinery and has 24 exact governance sites;
+see `tools/quality-governance-baseline.json` and the [research
+synthesis](reasoning-boundary-research-synthesis.html). No retired route bypass
+was restored.
+
 Research/implementation comparison base: `bb3f34e4f938096acec897159f0f56283c11697a`.
 This work follows the v0.2.0 investigation; it does not change package version,
 ExecutionPlan, OperatorRuntime, Capability, or public job/result/event contracts.

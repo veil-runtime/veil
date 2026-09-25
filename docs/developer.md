@@ -36,7 +36,7 @@ Start with [overview](getting-started/overview.html), [installation](getting-sta
 
 ## Using Veil
 
-If your application already knows the work, submit an [ExecutionPlan](reference/execution-plan-v1.html) to [OperatorRuntime](reference/operator-runtime.html). For multiple dependent operations, read [result references](concepts/result-references.html). Before allowing writes, implement [runtime-scoped authorization](guides/protect-write-actions.html).
+If your application already knows the work, submit an [ExecutionPlan](concepts/execution-plans.html) to [OperatorRuntime](reference/operator-runtime.html). V1 remains the default; use the [V2 reference](reference/execution-plan-v2.html) and [migration guide](guides/migrate-to-execution-plan-v2.html) for opt-in governed receiving values. For multiple dependent operations, read [result references](concepts/result-references.html). Before allowing writes, implement [runtime-scoped authorization](guides/protect-write-actions.html).
 
 ## Understanding Veil
 
@@ -48,7 +48,7 @@ The supported consumer surface is documented in [public exports](reference/publi
 
 ## Reference and contributing
 
-Use [execution-plan v1](reference/execution-plan-v1.html), [authorization API](reference/authorization-api.html), [job model](reference/job-model.html), and [planner API](reference/planner-api.html). Contributors should read [development setup](contributing/development-setup.html), [testing](contributing/testing.html), [package verification](contributing/package-verification.html), and [architecture rules](contributing/architecture-rules.html).
+Use [ExecutionPlan V1](reference/execution-plan-v1.html), [ExecutionPlan V2](reference/execution-plan-v2.html), [authorization API](reference/authorization-api.html), [job model](reference/job-model.html), and [planner API](reference/planner-api.html). Contributors should read [development setup](contributing/development-setup.html), [testing](contributing/testing.html), [package verification](contributing/package-verification.html), and [architecture rules](contributing/architecture-rules.html).
 
 ## Current limits
 

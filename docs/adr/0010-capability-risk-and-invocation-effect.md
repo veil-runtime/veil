@@ -4,6 +4,12 @@
 
 **Date:** 2026-09-22
 
+**Current-state note (2026-09-25):** ADR-0011 was subsequently accepted and its
+post-resolution ownership boundary implemented as opt-in ExecutionPlan `2.0`.
+References below to Draft ADR-0011 or deferred A/B ownership record this proposal's
+historical checkpoint. ADR-0010 remains Draft, and V2 does not establish the
+provider-operation/effect binding proposed here.
+
 ## Context
 
 Veil separates untrusted reasoning from runtime authority. CapabilityRisk is a

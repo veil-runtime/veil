@@ -8,6 +8,14 @@
 
 **Accepted:** 2026-09-24
 
+**Implementation reconciliation:** ExecutionPlan `2.0` now implements this
+decision behind explicit trusted-host `planVersions` opt-in. The implementation
+constructs the detached capability-entry value after explicit allow and before
+the running/`capability.started` transition. Decision-time statements below about
+an unassigned version or future implementation record the scope at acceptance;
+they are not the current implementation status. No release or default change is
+implied.
+
 ## Decision
 
 For a **new, explicitly identified ExecutionPlan semantic version**, establish
@@ -21,23 +29,27 @@ before authorization and invocation; there is no legacy fallback in this version
 **This cannot be introduced compatibly as a universal guarantee for existing
 ExecutionPlan `1.0`. Versioned semantics are required.** Existing v1 meaning must
 remain unchanged wherever v1 is supported. A package bump or unchanged TypeScript
-signatures would not identify this change in a saved or submitted plan. This
-decision defines the accepted semantics, but assigns no new version identifier,
-enables no version, changes no supported-version list and schedules no release.
+signatures would not identify this change in a saved or submitted plan. At
+acceptance, this decision defined the semantics but assigned no new version
+identifier, enabled no version, changed no supported-version list and scheduled no
+release. The subsequent implementation allocated explicit version `2.0` without
+changing the v1 default.
 
 The maintainer explicitly approved this revised decision as proposed, including
 the versioned compatibility break and limited ADR-0008 amendment below. This
-acceptance replaces the earlier directional approval; it authorizes architecture,
-not runtime implementation, a new supported version, or release work.
+acceptance replaced the earlier directional approval and, at that checkpoint,
+authorized architecture rather than runtime implementation, a new supported
+version, or release work.
 
 ## Problem and evidence
 
-Current `JobManager.execute` resolves input, validates it, awaits authorization
-on that same graph, emits `capability.started`, and passes the graph to
-`Capability.execute` (`src/runtime/jobs/job-manager.ts:200–293`). Same identity
-does not mean same contents over time. Validation returns diagnostics rather
-than an owned value. Referenced subtrees can alias producer results and live
-memory Jobs; authorizers and observers can mutate them before entry.
+At decision time, the existing v1 `JobManager.execute` path resolved input,
+validated it, awaited authorization on that same graph, emitted
+`capability.started`, and passed the graph to `Capability.execute`. That v1 path
+is unchanged. Same identity does not mean same contents over time. Validation
+returns diagnostics rather than an owned value. Referenced subtrees can alias
+producer results and live memory Jobs; authorizers and observers can mutate them
+before entry.
 
 Evidence is the [ownership investigation](../architecture/value-ownership-investigation.html),
 [compatibility assessment](../architecture/value-model-compatibility.html),
@@ -68,8 +80,8 @@ input during that awaited call, and `C0` the value at entry to the outer registe
 
 | Property | Decision scope |
 | --- | --- |
-| **Entry equivalence:** `A0 ≡ C0`, for every invocation following valid explicit allow. | Accepted requirement for the new semantics, not yet implemented. If safe capture, validation, policy or dispatch preparation fails, there is no invocation. |
-| **Authorization-view stability:** `A(t) ≡ A0` from presentation until the authorization promise settles. | Separate accepted requirement, not yet implemented. Policy receives a recursively immutable data view and a nonreplaceable input root binding. |
+| **Entry equivalence:** `A0 ≡ C0`, for every invocation following valid explicit allow. | Accepted and implemented for explicitly enabled ExecutionPlan 2.0. If safe capture, validation, policy or dispatch preparation fails, there is no invocation. |
+| **Authorization-view stability:** `A(t) ≡ A0` from presentation until the authorization promise settles. | Separately accepted and implemented for explicitly enabled ExecutionPlan 2.0. Policy receives a recursively immutable data view and a nonreplaceable input root binding. |
 | Capability-entry → provider-operation equivalence | Not guaranteed. Middleware and capability code may normalize, replace, mutate or independently construct a provider operation. |
 | Provider-operation → external-effect equivalence | Not guaranteed. Provider implementation, ambient state, credentials and external systems determine effects and their certainty. |
 | Committed-result → later `$ref` stability | Not guaranteed. Completion records a mutable result; each receiving step captures its own then-resolved value. History, persistence parity and replay remain separate. |
@@ -92,7 +104,7 @@ resolution and capture. Capture the complete returned input root and reachable
 data graph, including every selected reference subtree, into a private snapshot
 `S`. Do not reread the plan, Job, result source or policy graph for dispatch.
 
-Current sequence:
+Legacy v1 sequence (unchanged):
 
 ```text
 version admission → structural capture → plan validation → job storage/load
@@ -101,7 +113,7 @@ version admission → structural capture → plan validation → job storage/loa
   → capability.started observers → outer Capability.execute(shared input)
 ```
 
-Required sequence, only under the new semantic version once implemented:
+Required and implemented sequence for ExecutionPlan `2.0`:
 
 ```text
 version admission → structural capture → plan validation → job storage/load
@@ -327,14 +339,14 @@ this decision does not change it. An old runtime will not provide these semantic
 merely because a caller writes a new version string.
 
 There is no silent v1 upgrade, automatic saved-plan conversion or automatic
-downgrade. Any future deployment advertising the universal guarantee must admit
+downgrade. Any deployment advertising the universal guarantee must admit
 only the governed semantic version through trusted host configuration. If legacy
 v1 remains available elsewhere, it retains its documented limitations and cannot
 be a model-selectable fallback on that governed boundary. This ADR does not
-mandate permanent dual-version machinery. Identifier allocation, rollout,
-deprecation and package release require a separate implementation/release task;
-the architectural choice to version rather than reinterpret v1 is settled by
-this decision.
+mandate permanent dual-version machinery. Identifier allocation and runtime
+implementation are complete; rollout, deprecation and package release remain
+separate work. The architectural choice to version rather than reinterpret v1 is
+settled by this decision.
 
 Compared with the earlier Draft and reconciliation proposal, this is narrower:
 no pre-resolution passive-domain enforcement, no changed own-path selection,
@@ -352,8 +364,8 @@ scope of ADR-0008's preserved reference-identity behavior for the new semantic
 version only:** selected producer identity no longer crosses the authorization
 and capability-entry boundary. It does not retrospectively supersede ADR-0008,
 change v1, or turn structural ownership into admission-time deep ownership.
-The maintainer has explicitly approved that limited architectural amendment;
-it takes effect only with implementation of the new semantic version.
+The maintainer explicitly approved that limited architectural amendment; it took
+effect with implementation of ExecutionPlan `2.0`.
 
 [ADR-0010](0010-capability-risk-and-invocation-effect.html) is itself Draft, not
 an accepted effect contract. Its distinction between static risk, a potential
@@ -389,8 +401,8 @@ The existing OperatorRuntime/ExecutionPlan/Capability/provider roles remain inta
 
 ## Maintainer approval and implementation status
 
-The maintainer approved ADR-0011 as proposed. Approval establishes
-**the architecture of a future implementation**:
+The maintainer approved ADR-0011 as proposed. At the approval checkpoint, approval
+established **the architecture of a future implementation**:
 
 1. The two stated input guarantees, the resolved-value domain/equivalence,
    capture timing, detached views, and fail-closed mutation/error behavior.
@@ -401,8 +413,9 @@ The maintainer approved ADR-0011 as proposed. Approval establishes
    source result mutability and the enumerated provider/persistence exclusions.
 
 Approval does not accept ADR-0010, schedule a release, or establish provider,
-effect, result or hostile-code guarantees. The implementation task allocates the
-approved semantic identifier and applies the boundary through OperatorRuntime;
+effect, result or hostile-code guarantees. The completed implementation task
+allocated the approved semantic identifier and applied the boundary through
+OperatorRuntime;
 v1 characterizations and post-entry middleware/provider evidence remain
 unchanged. Experiment II is not ownership evidence. Existing governance review
 and verification controls still apply.

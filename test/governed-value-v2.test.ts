@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { isPlanAdmissionError, OperatorRuntime, type ExecutionPlan } from '../src/index.js';
+import { runtimeEventBus } from '../src/runtime/events/memory-event-bus.js';
 import { captureGovernedValue, GovernedValueError } from '../src/runtime/execution/governed-value.js';
 
 let capabilityNumber = 0;
@@ -50,6 +51,177 @@ test('v2 gives authorization a frozen view and capability a detached equivalent'
   assert.deepEqual(fixture.entered, { nested: { value: 1 } });
   source.nested.value = 7;
   assert.equal((fixture.entered as any).nested.value, 1);
+});
+
+test('v2 constructs capability input after allow and before the running/start transition', async t => {
+  const capabilityName = `test.governed-v2.order-${capabilityNumber++}`;
+  const order: string[] = [];
+  const originalGetPrototypeOf = Object.getPrototypeOf;
+  t.after(() => { Object.getPrototypeOf = originalGetPrototypeOf; });
+
+  const instance = new OperatorRuntime({
+    planVersions: ['2.0'],
+    authorizer: {
+      async authorize({ caller }) {
+        order.push('authorize');
+        assert.equal(caller?.subject, 'host-user');
+        assert.deepEqual(caller?.scopes, ['capability:execute']);
+        Object.getPrototypeOf = value => {
+          order.push('copy');
+          return originalGetPrototypeOf(value);
+        };
+        return { decision: 'allow' };
+      },
+    },
+  });
+  instance.use({
+    manifest: { name: capabilityName, version: '1', capabilities: [capabilityName] },
+    capabilities: [{
+      name: capabilityName,
+      version: '1',
+      risk: 'read',
+      description: 'v2 ordering fixture',
+      async execute() {
+        order.push('execute');
+        return { effected: true };
+      },
+    }],
+  });
+  t.after(runtimeEventBus.subscribe('capability.started', event => {
+    if (event.data?.capability === capabilityName) order.push('started');
+  }));
+
+  const job = await instance.executePlan({
+    version: '2.0',
+    steps: [{ id: 'ordered', capability: capabilityName, input: { value: 'ok' } }],
+  }, { caller: { subject: 'host-user', scopes: ['capability:execute'] } });
+
+  Object.getPrototypeOf = originalGetPrototypeOf;
+  assert.equal(job.status, 'completed');
+  assert.deepEqual(order, ['authorize', 'copy', 'started', 'execute']);
+  assert.ok(job.steps[0].startedAt);
+  assert.ok(job.events.some(event => event.type === 'capability.started'));
+});
+
+test('v2 capability-copy failure after allow has no running/start transition or effect', async t => {
+  const capabilityName = `test.governed-v2.copy-failure-${capabilityNumber++}`;
+  const copyFailure = new Error('detached capability copy failed');
+  const originalGetPrototypeOf = Object.getPrototypeOf;
+  t.after(() => { Object.getPrototypeOf = originalGetPrototypeOf; });
+  let authorizations = 0;
+  let decisionReads = 0;
+  let invocations = 0;
+  let effects = 0;
+
+  const instance = new OperatorRuntime({
+    planVersions: ['2.0'],
+    authorizer: {
+      async authorize({ caller }) {
+        authorizations += 1;
+        assert.equal(caller?.subject, 'host-user');
+        assert.deepEqual(caller?.scopes, ['capability:execute']);
+        return Object.defineProperty({}, 'decision', {
+          enumerable: true,
+          get() {
+            decisionReads += 1;
+            Object.getPrototypeOf = () => {
+              Object.getPrototypeOf = originalGetPrototypeOf;
+              throw copyFailure;
+            };
+            return 'allow';
+          },
+        }) as { decision: 'allow' };
+      },
+    },
+  });
+  instance.use({
+    manifest: { name: capabilityName, version: '1', capabilities: [capabilityName] },
+    capabilities: [{
+      name: capabilityName,
+      version: '1',
+      risk: 'read',
+      description: 'v2 copy-failure fixture',
+      async execute() {
+        invocations += 1;
+        effects += 1;
+      },
+    }],
+  });
+
+  const job = await instance.executePlan({
+    version: '2.0',
+    steps: [{
+      id: 'copy-failure',
+      capability: capabilityName,
+      input: {
+        value: 'supported',
+        caller: { subject: 'forged' },
+        scopes: ['*'],
+      },
+    }],
+  }, { caller: { subject: 'host-user', scopes: ['capability:execute'] } });
+
+  Object.getPrototypeOf = originalGetPrototypeOf;
+  assert.equal(authorizations, 1);
+  assert.equal(decisionReads, 1);
+  assert.equal(invocations, 0);
+  assert.equal(effects, 0);
+  assert.equal(job.status, 'failed');
+  assert.equal(job.steps[0].status, 'failed');
+  assert.equal(job.steps[0].startedAt, undefined);
+  assert.equal(job.steps[0].error, copyFailure.message);
+  // The job-wide execution envelope starts before step processing; it is not a
+  // capability running/start transition.
+  assert.ok(job.events.some(event => event.type === 'execution.started'));
+  assert.ok(job.events.some(event => event.type === 'capability.failed'));
+  assert.ok(job.events.some(event => event.type === 'job.failed'));
+  assert.ok(!job.events.some(event => event.type === 'capability.started'));
+});
+
+test('v1 retains allow then start/execute without a governed capability copy', async t => {
+  const capabilityName = `test.governed-v2.v1-order-${capabilityNumber++}`;
+  const originalGetPrototypeOf = Object.getPrototypeOf;
+  t.after(() => { Object.getPrototypeOf = originalGetPrototypeOf; });
+  let invocations = 0;
+
+  const instance = new OperatorRuntime({
+    planVersions: ['1.0', '2.0'],
+    authorizer: {
+      async authorize({ caller }) {
+        assert.equal(caller?.subject, 'host-user');
+        Object.getPrototypeOf = () => {
+          Object.getPrototypeOf = originalGetPrototypeOf;
+          throw new Error('v1 must not copy after authorization');
+        };
+        return { decision: 'allow' };
+      },
+    },
+  });
+  instance.use({
+    manifest: { name: capabilityName, version: '1', capabilities: [capabilityName] },
+    capabilities: [{
+      name: capabilityName,
+      version: '1',
+      risk: 'read',
+      description: 'v1 ordering fixture',
+      async execute() {
+        Object.getPrototypeOf = originalGetPrototypeOf;
+        invocations += 1;
+        return { effected: true };
+      },
+    }],
+  });
+
+  const job = await instance.executePlan({
+    version: '1.0',
+    steps: [{ id: 'legacy', capability: capabilityName, input: { value: 'legacy' } }],
+  }, { caller: { subject: 'host-user', scopes: ['capability:execute'] } });
+
+  Object.getPrototypeOf = originalGetPrototypeOf;
+  assert.equal(job.status, 'completed');
+  assert.equal(invocations, 1);
+  assert.ok(job.steps[0].startedAt);
+  assert.ok(job.events.some(event => event.type === 'capability.started'));
 });
 
 test('v2 preserves aliases within each owned representation', async () => {

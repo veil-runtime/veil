@@ -5,7 +5,29 @@ title: OperatorRuntime
 
 ## Construction
 
-new OperatorRuntime(options?) accepts optional { authorizer?: ExecutionAuthorizer }. Without one, defaultExecutionAuthorizer allows read capability risk and denies write/destructive. operatorRuntime is a module-level default instance.
+`new OperatorRuntime(options?)` accepts:
+
+```ts
+interface OperatorRuntimeOptions {
+  readonly authorizer?: ExecutionAuthorizer;
+  readonly planVersions?: readonly string[];
+}
+```
+
+Without an authorizer, `defaultExecutionAuthorizer` allows read capability risk
+and denies write/destructive. `operatorRuntime` is a module-level default instance.
+
+`planVersions` is trusted host admission policy. Veil currently implements exact
+versions `1.0` and `2.0`. Omission defaults to `['1.0']`; V2 is never enabled by a
+plan, caller or model field. `['2.0']` creates a V2-only boundary, while
+`['1.0', '2.0']` deliberately admits both semantics. The list must be nonempty,
+contain only implemented versions and contain no duplicates. Invalid constructor
+configuration throws.
+
+At submission, a version that is not implemented or not enabled rejects with
+`UNSUPPORTED_PLAN_VERSION` before structural capture, Job creation, authorization
+or invocation. There is no automatic upgrade, downgrade or fallback. See the
+[V1](execution-plan-v1.html) and [V2](execution-plan-v2.html) contracts.
 
 ## Public methods
 

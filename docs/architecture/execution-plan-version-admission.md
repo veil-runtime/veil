@@ -3,9 +3,17 @@ title: ExecutionPlan version admission
 ---
 # ExecutionPlan version admission
 
+**Current-state note (2026-09-25):** this page records the original V1 admission
+decision and its historical implementation checkpoint. The runtime now also
+implements opt-in ExecutionPlan `2.0`; see the [V2 reference](../reference/execution-plan-v2.html)
+and [migration guide](../guides/migrate-to-execution-plan-v2.html). The V1-only
+statements below remain accurate for the V1 semantic version, not for the current
+supported-version set as a whole.
+
 Decision authorized by the maintainer's narrowly scoped version-enforcement task:
-**ExecutionPlan v1, represented by the exact string `'1.0'`, is the only currently
-supported plan protocol.** No other version's semantics are defined here.
+**ExecutionPlan v1, represented by the exact string `'1.0'`, is the only protocol
+defined by this historical decision.** No other version's semantics are defined
+here.
 
 ## Contract and compatibility investigation
 
@@ -84,7 +92,7 @@ constructs '1.0' itself. No new information is automatically serialized.
 
 ## Non-goals and verification scope
 
-No v2, negotiation, compatibility mode, ADR-0011, $ref changes, descriptor changes,
+No V2 implementation, negotiation, compatibility mode, ADR-0011, $ref changes, descriptor changes,
 planner framework, package version change or release. The type remains string;
 runtime admission determines support. Future semantic versions require a separate
 architecture decision; this note specifies none.
@@ -152,6 +160,7 @@ from its trusted manifest and review-required controls; no base or check changed
 The review-only diff contains exactly two inventory reason changes and this
 record. Runtime/checker hashes are unchanged. `git diff --check` retains only
 historical CRLF findings in prior hardening files; review files are clean.
-The version-admission implementation and its two-site review are complete.
-Normal trusted-branch adoption remains a repository workflow step, not an
-unresolved architecture or implementation defect.
+The V1 version-admission implementation and its two-site historical review are
+complete. Subsequent ADR-0011 work added the separately documented V2 semantic
+version; normal trusted-branch adoption remains a repository workflow step, not
+an unresolved architecture or implementation defect.

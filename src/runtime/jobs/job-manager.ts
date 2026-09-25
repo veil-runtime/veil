@@ -286,6 +286,12 @@ class JobManager {
             throw new AuthorizationDeniedError(message);
           }
 
+          // ADR-0011 requires the detached v2 entry value to exist before the
+          // running/start transition. V1 retains its historical shared input.
+          const capabilityInput = semanticVersion === '2.0'
+            ? copyGovernedValue(governedInput)
+            : resolvedInput;
+
           step.status = 'running';
           step.startedAt = new Date().toISOString();
 
@@ -303,9 +309,6 @@ class JobManager {
             ])
           );
 
-          const capabilityInput = semanticVersion === '2.0'
-            ? copyGovernedValue(governedInput)
-            : resolvedInput;
           const result = await capability.execute(
             capabilityInput,
             {

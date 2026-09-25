@@ -16,6 +16,10 @@ runtime/governance hardening, the local quality harness, and the website/docs re
 The earlier v0.1.4 target was reassigned to v0.2.0; no v0.1.4 release is implied.
 Historical release work remains under `docs/release/`, which is excluded from Pages.
 
+Current reasoning-boundary work is recorded in the
+[unreleased compatibility notes](../getting-started/unreleased.md). Those notes do not
+select a release number or change the historical v0.2.0 candidate scope.
+
 ## Accepted governance baseline
 
 The maintainer accepted Recommendation B for v0.2.0: the 14 reviewed non-legacy

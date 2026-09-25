@@ -24,7 +24,16 @@ interface ExecutionStep {
 }
 ~~~
 
-ExecutionPlan v1 is the currently supported plan protocol. Supply exactly the string '1.0'. Admission rejects missing, malformed or unsupported versions with UNSUPPORTED_PLAN_VERSION before Job creation, authorization or invocation. No coercion or fallback is performed. The TypeScript field remains string; runtime admission enforces support. Future versions may define different semantics, but none are defined here. See [version admission](../architecture/execution-plan-version-admission.html).
+ExecutionPlan V1 is the default, legacy plan protocol. Supply exactly the string
+`'1.0'`. Admission rejects missing, malformed, unsupported or host-disabled
+versions with `UNSUPPORTED_PLAN_VERSION` before structural capture, Job creation,
+authorization or invocation. No coercion or fallback is performed. The
+TypeScript field remains `string`; runtime admission enforces support.
+
+ExecutionPlan [V2](execution-plan-v2.html) is also implemented, but only through
+explicit trusted-host `planVersions` opt-in. Omitting that option remains V1-only.
+A host may deliberately admit both versions; the plan version then selects
+semantics for that submission. See [version admission](../architecture/execution-plan-version-admission.html).
 
 ## Properties
 
@@ -91,3 +100,9 @@ A missing registered capability or mismatched capabilityVersion rejects plan adm
 ## Failure semantics and limits
 
 Admission failure throws before job creation. After creation, a missing path, failed source, invalid resolved input, denial, authorizer error, or capability error produces a failed job and stops following steps. v0.2.0 implements no DAG/dependency graph, parallelism, conditional execution, retries, cancellation, or plan-level idempotency enforcement. No roadmap syntax is defined.
+
+V1 does not provide ADR-0011's detached/frozen authorization view or detached
+capability-entry value. Authorization and outer entry use the legacy resolved
+input, so references and mutations may remain shared. Choose V2 when that
+receiving-value ownership guarantee is required; see the [migration
+guide](../guides/migrate-to-execution-plan-v2.html).

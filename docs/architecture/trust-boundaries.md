@@ -64,9 +64,11 @@ JavaScript objects. Caller objects are neither mutated nor frozen.
 
 Nested input contents, arrays and reference objects intentionally remain shared;
 exact values validated at admission may change before resolution. Result
-ownership and mutability are unchanged. This boundary does not cover stored-job
-execution/replay, registry mutation, or authorization-to-invocation mutation.
-See the [ExecutionPlan reference](../reference/execution-plan-v1.html).
+ownership and mutability are unchanged. This structural boundary does not cover
+stored-job execution/replay or registry mutation. V1 also retains
+authorization-to-invocation sharing; V2 adds the separate post-resolution
+receiving-value boundary below. See [V1](../reference/execution-plan-v1.html) and
+[V2](../reference/execution-plan-v2.html).
 
 ## Two validation points
 
@@ -128,12 +130,13 @@ to the new semantic version; its structural ownership requirement remains intact
 ExecutionPlan `2.0`, when explicitly enabled by the trusted host, now applies
 the sequence below. ExecutionPlan `1.0` retains its historical behavior.
 
-The accepted future sequence is:
+The implemented V2 sequence is:
 
 ~~~text
 existing resolution → governed capture → validation of captured input
 → immutable authorization view → explicit allow
 → detached equivalent capability-entry value
+→ running / capability.started → outer capability entry
 ~~~
 
 The guarantee starts after resolution. Existing getter/Proxy execution during
@@ -151,6 +154,11 @@ stability remain separate trust boundaries. Governed capture owns the value that
 resolution returned; it does not retroactively govern behavior used to select that
 value. See the
 [pre-capture boundary investigation](pre-capture-result-reference-boundary.html).
+
+The trusted host enables V2 through `OperatorRuntimeOptions.planVersions`.
+Omission remains V1-only; there is no plan-controlled upgrade or downgrade. See
+the [V2 reference](../reference/execution-plan-v2.html) and [migration
+guide](../guides/migrate-to-execution-plan-v2.html).
 
 ## Provider boundary
 
