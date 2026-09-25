@@ -63,7 +63,7 @@ ignore CRLF/LF differences but otherwise flag even benign edits for review.
 ## Governance reference check (VEIL-GOV-001)
 
 The checker requires **Node >=24.11** because its direct development dependency
-is pinned to `@babel/parser` **8.0.5**. Veil's runtime engine declaration remains
+is pinned to `@babel/parser` **8.0.6**. Veil's runtime engine declaration remains
 **Node >=24**. Older Node 24 releases cannot run this development tool; installing
 development dependencies there may also produce engine warnings. Production
 runtime compatibility is not redefined by this tool.
