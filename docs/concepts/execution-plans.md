@@ -9,7 +9,25 @@ ExecutionPlan is the explicit handoff from reasoning to governed execution. Its 
 
 ## How Veil uses it
 
-executePlan validates every step before it creates a job. It then creates a job, turns steps into pending job steps, and executes them in their array order. The goal is stored after trimming; absent/blank goal becomes External execution plan. On success job.result is one value for one step or an ordered result array for many steps.
+`OperatorRuntime` first admits the exact plan version enabled by trusted host
+configuration. It then captures and validates every step before it creates a job,
+turns steps into pending job steps, and executes them in array order. The goal is
+stored after trimming; absent/blank goal becomes `External execution plan`. On
+success `job.result` is one value for one step or an ordered result array for many
+steps.
+
+Veil implements two semantic versions:
+
+- `1.0` is the default legacy behavior. Authorization and capability entry use
+  the legacy resolved value and may share object identity.
+- `2.0` is opt-in through trusted-host `planVersions`. It captures the resolved
+  value, validates that capture, gives authorization a frozen detached copy,
+  requires explicit allow, constructs a detached capability copy, and only then
+  starts the capability.
+
+There is no automatic version upgrade or downgrade. See the [V2
+reference](../reference/execution-plan-v2.html) and [migration
+guide](../guides/migrate-to-execution-plan-v2.html).
 
 ## Validation and failure
 
@@ -33,4 +51,5 @@ const plan = {
 };
 ~~~
 
-See [ExecutionPlan v1](../reference/execution-plan-v1.html) and [result references](result-references.html).
+See [ExecutionPlan V1](../reference/execution-plan-v1.html), [ExecutionPlan
+V2](../reference/execution-plan-v2.html), and [result references](result-references.html).

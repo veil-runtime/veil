@@ -18,6 +18,40 @@ async function compare(source, current, { candidateBaseline, candidatePath = pat
     before: (file) => original.get(file), after: (file) => candidate.get(file) });
 }
 
+for (const source of [
+  'capability.execute(input);',
+  'const { execute: invoke } = capability; invoke(input);',
+  'import { jobManager as manager } from "../../runtime/jobs/job-manager.js"; manager.executePlan(plan);',
+  'jobManager.execute(id);',
+  'capability[key](input);',
+  'import { provider } from "../../providers/http/provider.js"; provider.request(input);',
+  'const cap = require("../../capabilities/http/request.js");',
+  'const provider = await import("../../providers/http/provider.js");',
+]) test(`API route bypass remains rejected even with a trusted allowance: ${source}`, async () => {
+  const route = 'src/api/routes/fixture.ts';
+  const original = new Map([[route, source], [baselinePath, await baseline(source, route)]]);
+  const candidate = new Map([[route, source], [baselinePath, '{"version":1,"sites":[]}']]);
+  const result = await checkGovernance({ paths: [...original.keys()],
+    before: file => original.get(file), after: file => candidate.get(file) });
+  assert.notEqual(result.status, 0);
+  assert.match(result.output, /API route references cannot be allowed by a baseline/);
+});
+
+test('candidate route allowances must be removed, including retired exceptions', async () => {
+  const route = 'src/api/routes/linkedin.routes.ts';
+  const source = 'capability.execute(input);';
+  const original = new Map([[route, source], [baselinePath, await baseline(source, route)]]);
+  await assert.rejects(checkGovernance({ paths: [...original.keys()],
+    before: file => original.get(file),
+    after: file => file === route ? 'runtime.executePlan(plan);' : original.get(file),
+  }), /API route execution allowances are forbidden/);
+});
+
+test('API routes can use runtime entry points and nonexecuting job APIs', async () => {
+  const source = 'runtime.executePlan(plan); runtime.run(goal); jobManager.get(id); jobManager.list();';
+  assert.deepEqual(await inspectSource('src/api/routes/fixture.ts', source), []);
+});
+
 for (const [label, source] of [
   ['direct execute', 'obj.execute(input);'],
   ['optional receiver', 'obj?.execute(input);'],
@@ -220,15 +254,20 @@ test('complete relevant repository parses and current individual sites classify 
   const sites = parseBaseline(read(baselinePath), 'inventory');
   const key = ({ path, anchor, kind }) => `${path}:${anchor}:${kind}`;
   assert.deepEqual(report.findings.map(key).sort(), sites.map(key).sort());
-  assert.equal(sites.length, 16);
-  assert.ok(!sites.some((site) => site.path === 'src/api/routes/execution.routes.ts'));
-  assert.equal(sites.filter((site) => site.classification === 'LEGACY_BYPASS').length, 2);
+  assert.equal(sites.length, 24);
+  assert.ok(!sites.some((site) => site.path.startsWith('src/api/routes/')));
+  assert.equal(sites.filter((site) => site.classification === 'LEGACY_BYPASS').length, 0);
   assert.deepEqual(sites.filter((site) => site.kind === 'dynamic').map((site) => site.path), [
-    'src/runtime/execution/plan-validator.ts', 'test/fixtures/package-consumer/verify.mjs',
+    'src/runtime/execution/plan-validator.ts',
+    'src/runtime/execution/result-reference.ts',
+    'src/runtime/execution/governed-value.ts', 'src/runtime/execution/governed-value.ts',
+    'test/fixtures/package-consumer/verify.mjs',
+    'test/plan-admission.test.ts', 'test/plan-admission.test.ts',
+    'test/plan-admission.test.ts', 'test/plan-admission.test.ts',
+    'experiments/external-model-reasoner/model-adapter.mjs',
+    'experiments/external-model-reasoner/model-adapter.mjs',
+    'experiments/external-model-reasoner/run.mjs',
   ]);
-  for (const file of ['src/api/routes/linkedin.routes.ts', 'src/api/routes/jobs.routes.ts']) {
-    assert.ok(sites.some((site) => site.path === file && site.classification === 'LEGACY_BYPASS'));
-  }
   console.log(`Parser compatibility: ${report.files} relevant repository files; ${sites.length} individually classified sites; Node ${process.versions.node}.`);
 });
 

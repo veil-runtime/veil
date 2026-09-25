@@ -20,3 +20,6 @@ for (const privateImport of [
 
 assert.equal('CapabilityRegistry' in publicApi, false);
 assert.equal('capabilityRegistry' in publicApi, false);
+
+for (const name of ['PlanAdmissionError', 'issuePlanAdmissionError', 'containForeignAdmissionError', 'AdmissionOwner']) assert.equal(name in publicApi, false);
+assert.equal(typeof publicApi.isPlanAdmissionError, 'function');

@@ -22,6 +22,36 @@ planner/application intent
 
 Planner output is not permission: a planner returns a plan, and planning failure never gives it access to providers. Capability registration is not permission: registration only makes a capability resolvable in the process. The default authorizer still denies write and destructive risk.
 
+## Trusted host code is not authorization
+
+Veil governs whether proposed capability work may start; it does not isolate
+arbitrary hostile JavaScript inside the host process. Installed capability,
+middleware and provider implementations execute as trusted host code unless a
+separate documented isolation mechanism says otherwise. “Trusted” here describes
+code/process placement, not permission ownership: these components do not authorize
+themselves. The configured host authorizer remains the authority for each governed
+capability invocation.
+
+A capability or provider can return a live in-process JavaScript graph containing
+accessors, Proxies, aliases or custom prototypes. When a later step selects
+`steps.<stepId>.result.<path>`, own getters and Proxy reflection/read traps may run
+before receiving-step validation, authorization and ADR-0011 governed capture. Such
+code can mutate host/producer state, throw or reenter a runtime using a handle it
+already retained. Traversal supplies no caller, scopes, capability or provider
+authority; a reentrant submission still has its own admission and authorization.
+A traversal failure prevents the receiving capability from starting, but does not
+roll back behavior that already occurred.
+
+Model-authored or otherwise serialized JSON does not itself encode executable
+JavaScript accessors, Proxies or closures. An in-process host integration must
+introduce an active value. Memory storage retains live graphs. SQLite does not
+serialize/reload newly produced results between active steps; a later JSON reload
+can yield lossy ordinary data, while serialization may itself invoke behavior.
+Materialization is therefore not a security/isolation guarantee or a promise of
+stable committed results. See the
+[pre-capture result-reference investigation](pre-capture-result-reference-boundary.html)
+for the detailed evidence and alternatives.
+
 ## Structural ownership
 
 Before admission, JobManager.executePlan synchronously captures a runtime-owned
@@ -34,9 +64,11 @@ JavaScript objects. Caller objects are neither mutated nor frozen.
 
 Nested input contents, arrays and reference objects intentionally remain shared;
 exact values validated at admission may change before resolution. Result
-ownership and mutability are unchanged. This boundary does not cover stored-job
-execution/replay, registry mutation, or authorization-to-invocation mutation.
-See the [ExecutionPlan reference](../reference/execution-plan-v1.html).
+ownership and mutability are unchanged. This structural boundary does not cover
+stored-job execution/replay or registry mutation. V1 also retains
+authorization-to-invocation sharing; V2 adds the separate post-resolution
+receiving-value boundary below. See [V1](../reference/execution-plan-v1.html) and
+[V2](../reference/execution-plan-v2.html).
 
 ## Two validation points
 
@@ -80,79 +112,63 @@ The following scoped guarantees are **v0.2.0 work**, established in `develop` at
 Evidence: `test/memory-event-bus.test.ts`, `test/execution-contract.test.ts`,
 `test/result-reference.test.ts`, `test/plan-validator.test.ts` and
 `test/structural-ownership.test.ts`, alongside their runtime implementations.
-These are scoped guarantees of the governed path, not a claim that the tracked
-legacy bypasses below are eliminated.
+These were scoped guarantees of the governed path. The later
+[entry hardening](governance-hardening.html) migrates LinkedIn status and retires
+stored-job execution; it does not expand the value-ownership guarantees.
 
-## Invocation-value stability: open, implementation deferred
+## Invocation-value ownership: accepted v2 boundary
 
-The authorization-to-execution investigation is complete. The unresolved target
-guarantee is:
+On 2026-09-24 the maintainer accepted
+[ADR-0011](../adr/0011-governed-value-ownership.html). For a new explicit plan
+semantic version, it requires capture after resolution and before validation,
+an immutable authorization input, and a detached structurally equivalent value
+at outer capability entry after explicit allow. Unsupported resolved values
+fail closed. Existing ExecutionPlan `1.0` semantics must not be silently changed.
+The limited amendment to ADR-0008's reference-identity preservation applies only
+to the new semantic version; its structural ownership requirement remains intact.
 
-> The capability begins execution with a value equivalent to the value authorization approved.
+ExecutionPlan `2.0`, when explicitly enabled by the trusted host, now applies
+the sequence below. ExecutionPlan `1.0` retains its historical behavior.
 
-**Current behavior does not guarantee this.** Resolved input is validated before
-authorization, but authorization and capability invocation share the same
-resolved input graph. Authorization can mutate values before invocation,
-including schema-invalid changes; there is no intervening revalidation.
-Reference-resolved values may alias retained producer results. Runtime validation
-checks values rather than materializing a validated replacement. TypeScript
-`readonly` does not provide deep runtime immutability. Isolation from hostile
-host JavaScript is not the objective.
-
-This finding follows from `src/runtime/jobs/job-manager.ts` passing the same
-`resolvedInput` to validation, authorization and invocation;
-`src/runtime/execution/plan-validator.ts` returning validation diagnostics; and
-`src/runtime/execution/result-reference.ts` returning referenced values directly.
-The result-reference and structural-ownership tests explicitly preserve result
-identity and mutability. Structural ownership does not establish value stability.
-
-Implementation is deliberately deferred until an explicit Veil invocation-value
-model is designed. This open finding closes the current core-hardening cycle
-without changing runtime behavior or accepting a new value contract. It belongs
-here with existing boundary limits rather than in an accepted ADR; a future
-decision affecting locked contracts requires an explicit maintainer architecture
-decision.
-
-### Questions for the future value model
-
-1. What value domain crosses governed execution boundaries?
-2. Are inputs passive structured data or arbitrary JavaScript values?
-3. What does value equivalence mean?
-4. Are object identities contractual?
-5. Are repeated aliases/cycles preserved, rejected, or normalized?
-6. Are Date/Map/Set/class instances supported?
-7. Are getters/proxies permitted across governed boundaries?
-8. Should authorization receive a stable immutable/materialized view?
-9. Should capability execution receive a detached equivalent mutable value?
-10. How should result references cross invocation boundaries?
-11. What correspondence is required between in-memory and persisted values?
-12. What compatibility treatment is required for existing reference identity semantics?
-
-### Candidate architecture, not an accepted decision
-
-The leading candidate from the investigation is:
+The implemented V2 sequence is:
 
 ~~~text
-resolve
-→ materialize owned value
-→ validate owned value
-→ authorize stable policy view
-→ if allowed, invoke with detached equivalent mutable value
+existing resolution → governed capture → validation of captured input
+→ immutable authorization view → explicit allow
+→ detached equivalent capability-entry value
+→ running / capability.started → outer capability entry
 ~~~
 
-No mechanism has been selected: `structuredClone`, JSON serialization, deep
-freeze, schema rematerialization, and all other mechanisms remain undecided.
-The candidate depends on the value model and its equivalence/compatibility rules.
+The guarantee starts after resolution. Existing getter/Proxy execution during
+admission and reference traversal is not removed by this decision. Middleware
+and capability code remain responsible for post-entry input use and provider
+translation. Provider-operation/external-effect equivalence, committed-result
+stability, storage parity, exactly-once execution and whole-context ownership
+remain outside the guarantee. Experiment II's frozen passive fixture does not
+prove these ownership properties.
 
-Before choosing that model, exercise Veil through real integrations such as
-Mycelia/Mizan and observe the actual capability input/result shapes required in
-practice. Use that evidence to determine whether a passive structured-data domain
-is sufficient, then resolve the questions above and record the architecture
-decision before implementing invocation-value isolation.
+See the [implementation-readiness investigation](governed-value-implementation-readiness.html)
+for the migration and test basis. The boundary begins after existing resolution;
+getter/Proxy-free `$ref` traversal, provider translation and persisted-result
+stability remain separate trust boundaries. Governed capture owns the value that
+resolution returned; it does not retroactively govern behavior used to select that
+value. See the
+[pre-capture boundary investigation](pre-capture-result-reference-boundary.html).
+
+The trusted host enables V2 through `OperatorRuntimeOptions.planVersions`.
+Omission remains V1-only; there is no plan-controlled upgrade or downgrade. See
+the [V2 reference](../reference/execution-plan-v2.html) and [migration
+guide](../guides/migrate-to-execution-plan-v2.html).
 
 ## Provider boundary
 
-A provider is downstream code used by a capability to talk to a remote system. Veil's runtime governance occurs before the capability starts; it does not prove that provider credentials are correct, that an external API will honor a request, or that provider code is safe. Capability authors and applications remain responsible for provider-specific security and secrets.
+A provider is downstream code used by a capability to talk to a remote system.
+Veil's runtime governance occurs before the capability starts; it does not prove
+that provider credentials are correct, that an external API will honor a request,
+or that provider code is safe. Provider code runs inside the trusted host boundary,
+but does not own Veil's authorization decision. Capability authors and applications
+remain responsible for provider-specific security, secrets and passive result
+normalization where their deployment requires it.
 
 ## Limits
 
@@ -184,6 +200,11 @@ route-specific audit calls are replaced by runtime job/event recording.
 
 Clients relying on `requiresApproval`/`reason` in the old denial response must
 migrate to the new error response and host-owned authorization. This migration
-covers only the generic capability endpoint; the LinkedIn status and existing-job
-execution routes remain tracked legacy bypasses. See the
-[governance inventory](../contributing/quality-harness.html).
+originally covered only the generic capability endpoint. Subsequent
+[entry hardening](governance-hardening.html) migrates LinkedIn status to a plan,
+retires existing-job execution with 410, and removes both legacy allowances.
+All three execution route modules now accept trusted host runtime/caller
+configuration. The bundled local server remains unauthenticated; request
+identity claims are not authority. `http.request` now declares conservative
+`destructive` risk for its full method surface and is default-denied even for GET.
+See the [governance inventory](../contributing/quality-harness.html).

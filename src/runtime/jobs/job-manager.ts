@@ -1,6 +1,8 @@
+import { AdmissionOwner, issuePlanAdmissionError } from '../execution/plan-admission-error.js';
 import { randomUUID } from 'node:crypto';
 
 import { capabilityRegistry } from '../registry/registry.js';
+import type { Capability } from '../registry/capability.js';
 import {
   defaultExecutionAuthorizer,
   ExecutionAuthorizer,
@@ -9,6 +11,10 @@ import { ExecutionPlan, ExecutionStep } from '../planner/planner.js';
 import { validatePlan, validateStepInput } from '../execution/plan-validator.js';
 import { ExecutionCaller } from '../execution/execution-context.js';
 import { resolveResultReferences } from '../execution/result-reference.js';
+import {
+  captureGovernedValue,
+  copyGovernedValue,
+} from '../execution/governed-value.js';
 import { runtimeEventBus } from '../events/memory-event-bus.js';
 
 import { Job, JobOutcome } from './job.js';
@@ -26,8 +32,19 @@ class JobManager {
     plan: ExecutionPlan,
     caller?: ExecutionCaller,
     authorizer: ExecutionAuthorizer =
-      defaultExecutionAuthorizer
+      defaultExecutionAuthorizer,
+    admissionOwner: AdmissionOwner = {},
+    enabledVersions: ReadonlySet<string> = new Set(['1.0'])
   ): Promise<Job> {
+    const version = plan.version;
+    if ((version !== '1.0' && version !== '2.0') || !enabledVersions.has(version)) {
+      throw issuePlanAdmissionError(
+        admissionOwner,
+        "Execution plan version is not supported; expected '1.0'.",
+        [{ code: 'UNSUPPORTED_PLAN_VERSION' }]
+      );
+    }
+
     // Own the structural envelope before admission; nested input remains shared.
     const capturedGoal = plan.goal;
     const idempotencyKey = plan.idempotencyKey;
@@ -47,17 +64,21 @@ class JobManager {
     }
 
     if (!steps.length) {
-      throw new Error(
-        'Execution plan contains no steps'
+      throw issuePlanAdmissionError(
+        admissionOwner,
+        'Execution plan contains no steps',
+        [{ code: 'EMPTY_PLAN' }]
       );
     }
 
     const validation = validatePlan(steps);
     if (!validation.valid) {
-      throw new Error(
+      throw issuePlanAdmissionError(
+        admissionOwner,
         `Execution plan failed validation: ${validation.errors
           .map((error) => error.message)
-          .join('; ')}`
+          .join('; ')}`,
+        validation.errors
       );
     }
 
@@ -83,7 +104,8 @@ class JobManager {
     return this.execute(
       job.id,
       caller,
-      authorizer
+      authorizer,
+      version
     );
   }
 
@@ -149,7 +171,8 @@ class JobManager {
     id: string,
     caller?: ExecutionCaller,
     authorizer: ExecutionAuthorizer =
-      defaultExecutionAuthorizer
+      defaultExecutionAuthorizer,
+    semanticVersion: '1.0' | '2.0' = '1.0'
   ): Promise<Job> {
     const job = await jobStore.get(id);
 
@@ -182,13 +205,19 @@ class JobManager {
             0,
             job.steps.indexOf(step)
           );
+          // ADR-0011 begins after the existing resolver. Reference traversal
+          // may retain its legacy getter/Proxy behavior; capture governs only
+          // the representation returned by that resolver.
           const resolvedInput = resolveResultReferences(
             step.input,
             completedSteps
           );
+          const governedInput = semanticVersion === '2.0'
+            ? captureGovernedValue(resolvedInput)
+            : resolvedInput;
           const inputValidation = validateStepInput(
             step,
-            resolvedInput
+            governedInput
           );
 
           if (!inputValidation.valid) {
@@ -199,18 +228,25 @@ class JobManager {
             );
           }
 
-          const authorization =
-            await authorizer.authorize({
-              jobId: job.id,
-              stepId: step.id,
-              capability: {
-                name: capability.name,
-                version: capability.version,
-                risk: capability.risk,
-              },
-              input: resolvedInput,
-              caller,
-            });
+          const authorization = semanticVersion === '2.0'
+            ? await authorizer.authorize(createGovernedAuthorizationContext(
+              job.id,
+              step.id,
+              capability,
+              copyGovernedValue(governedInput, true),
+              caller
+            ))
+            : await authorizer.authorize({
+                jobId: job.id,
+                stepId: step.id,
+                capability: {
+                  name: capability.name,
+                  version: capability.version,
+                  risk: capability.risk,
+                },
+                input: resolvedInput,
+                caller,
+              });
 
           if (
             typeof authorization !== 'object' ||
@@ -250,6 +286,12 @@ class JobManager {
             throw new AuthorizationDeniedError(message);
           }
 
+          // ADR-0011 requires the detached v2 entry value to exist before the
+          // running/start transition. V1 retains its historical shared input.
+          const capabilityInput = semanticVersion === '2.0'
+            ? copyGovernedValue(governedInput)
+            : resolvedInput;
+
           step.status = 'running';
           step.startedAt = new Date().toISOString();
 
@@ -268,7 +310,7 @@ class JobManager {
           );
 
           const result = await capability.execute(
-            resolvedInput,
+            capabilityInput,
             {
               jobId: job.id,
               stepId: step.id,
@@ -401,6 +443,42 @@ class JobManager {
 
     return event;
   }
+}
+
+function createGovernedAuthorizationContext(
+  jobId: string,
+  stepId: string,
+  capability: Capability,
+  input: unknown,
+  caller?: ExecutionCaller
+) {
+  const context = {
+    jobId,
+    stepId,
+    capability: {
+      name: capability.name,
+      version: capability.version,
+      risk: capability.risk,
+    },
+    caller,
+  } as {
+    jobId: string;
+    stepId: string;
+    capability: {
+      name: string;
+      version: string;
+      risk: Capability['risk'];
+    };
+    input: unknown;
+    caller?: ExecutionCaller;
+  };
+  Object.defineProperty(context, 'input', {
+    value: input,
+    enumerable: true,
+    configurable: false,
+    writable: false,
+  });
+  return context;
 }
 
 class AuthorizationDeniedError extends Error {}

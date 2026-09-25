@@ -1,3 +1,4 @@
+import { containForeignAdmissionError } from './execution/plan-admission-error.js';
 import type { CapabilityDescriptor } from './registry/capability.js';
 import { Job } from './jobs/job.js';
 import { JobListFilter } from './jobs/job-store.js';
@@ -45,6 +46,7 @@ export interface ExecutePlanOptions {
 
 export interface OperatorRuntimeOptions {
   readonly authorizer?: ExecutionAuthorizer;
+  readonly planVersions?: readonly string[];
 }
 
 function immutableCaller(
@@ -65,6 +67,7 @@ function immutableCaller(
 
 export class OperatorRuntime {
   private readonly authorizer: ExecutionAuthorizer;
+  private readonly planVersions: ReadonlySet<string>;
 
   constructor(
     options: OperatorRuntimeOptions = {}
@@ -72,6 +75,16 @@ export class OperatorRuntime {
     this.authorizer =
       options.authorizer ??
       defaultExecutionAuthorizer;
+    const versions = options.planVersions ?? ['1.0'];
+    if (
+      !Array.isArray(versions) ||
+      versions.length === 0 ||
+      versions.some((version) => version !== '1.0' && version !== '2.0') ||
+      new Set(versions).size !== versions.length
+    ) {
+      throw new Error('planVersions must contain unique supported semantic versions');
+    }
+    this.planVersions = new Set(versions);
   }
 
   use(
@@ -106,11 +119,18 @@ export class OperatorRuntime {
     plan: ExecutionPlan,
     options: ExecutePlanOptions = {}
   ): Promise<Job> {
-    return jobManager.executePlan(
-      plan,
-      immutableCaller(options.caller),
-      this.authorizer
-    );
+    const admissionOwner = {};
+    try {
+      return await jobManager.executePlan(
+        plan,
+        immutableCaller(options.caller),
+        this.authorizer,
+        admissionOwner,
+        this.planVersions
+      );
+    } catch (error) {
+      throw containForeignAdmissionError(admissionOwner, error);
+    }
   }
 
   async run(

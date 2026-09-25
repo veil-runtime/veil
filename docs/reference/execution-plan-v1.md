@@ -24,7 +24,16 @@ interface ExecutionStep {
 }
 ~~~
 
-Use version '1.0' for the current v1 contract. The TypeScript interface itself does not restrict the string, and the current runtime validator does not compare plan.version; documentation uses 1.0 because that is the supported current plan format.
+ExecutionPlan V1 is the default, legacy plan protocol. Supply exactly the string
+`'1.0'`. Admission rejects missing, malformed, unsupported or host-disabled
+versions with `UNSUPPORTED_PLAN_VERSION` before structural capture, Job creation,
+authorization or invocation. No coercion or fallback is performed. The
+TypeScript field remains `string`; runtime admission enforces support.
+
+ExecutionPlan [V2](execution-plan-v2.html) is also implemented, but only through
+explicit trusted-host `planVersions` opt-in. Omitting that option remains V1-only.
+A host may deliberately admit both versions; the plan version then selects
+semantics for that submission. See [version admission](../architecture/execution-plan-version-admission.html).
 
 ## Properties
 
@@ -36,15 +45,16 @@ In **v0.2.0**, step IDs MUST be unique within a single plan, using exact-string 
 
 ## Structural ownership at submission (v0.2.0)
 
-At the beginning of JobManager.executePlan, synchronously before the empty-plan
+JobManager.executePlan first reads version once and requires '1.0'. For supported
+plans, synchronously before the empty-plan
 check, validation, job creation, or any await, Veil captures goal, the plan
 idempotency key, and an independent steps array preserving membership, order and
 holes. Each present step becomes a runtime-owned shallow record of id,
 capability, capabilityVersion, input root binding, reason and idempotencyKey.
 Admission and job materialization consume the same captured envelope. Replacing
 caller steps, changing their structural fields, or assigning a different
-step.input after capture cannot change submitted execution. Plan id, metadata
-and version are not newly consumed by this capture.
+step.input after capture cannot change submitted execution. Plan id and metadata
+are not consumed by this capture; version is consumed by the preceding admission gate.
 
 This does not make plans or inputs generally immutable. Nested input contents
 remain shared: changing input.value, an array element, or a reference object's
@@ -65,7 +75,7 @@ Optional captured fields may be present with undefined values.
 
 ## References and ordering
 
-A reference object is exactly { $ref: 'steps.<earlier-step-id>.result' } with optional dot-separated result path. All references in objects and arrays are discovered during validation and must name an earlier declared step. Steps execute in literal list order. At execution, only prior completed job steps are eligible.
+A reference object is exactly { $ref: 'steps.<earlier-step-id>.result' } with optional dot-separated result path. At the JavaScript boundary it must have exactly one own key across enumerable, nonenumerable and symbol keys: an enumerable own `$ref` data property containing a primitive string. Descriptor writability/configurability and prototype identity are irrelevant; arrays, accessors, inherited `$ref` and additional own keys do not qualify. Proxies are not rejected and their reflection traps may run. All references in objects and arrays are discovered during validation and must name an earlier declared step. Steps execute in literal list order. At execution, only prior completed job steps are eligible.
 
 ## Valid example
 
@@ -90,3 +100,9 @@ A missing registered capability or mismatched capabilityVersion rejects plan adm
 ## Failure semantics and limits
 
 Admission failure throws before job creation. After creation, a missing path, failed source, invalid resolved input, denial, authorizer error, or capability error produces a failed job and stops following steps. v0.2.0 implements no DAG/dependency graph, parallelism, conditional execution, retries, cancellation, or plan-level idempotency enforcement. No roadmap syntax is defined.
+
+V1 does not provide ADR-0011's detached/frozen authorization view or detached
+capability-entry value. Authorization and outer entry use the legacy resolved
+input, so references and mutations may remain shared. Choose V2 when that
+receiving-value ownership guarantee is required; see the [migration
+guide](../guides/migrate-to-execution-plan-v2.html).

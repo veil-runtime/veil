@@ -37,6 +37,23 @@ const createOrder = createCapability<CreateOrderInput, CreateOrderResult>({
 
 The schema supports only declared fields of type string, number, boolean, object, or array. Required fields must exist; unspecified input fields are not rejected by this validator. The runtime validates direct values at plan admission and resolved values immediately before authorization.
 
+## Host-code trust and results
+
+Registration makes a capability available; it does not authorize an invocation.
+The runtime's configured host authorizer remains responsible for allow/deny
+decisions. After an allow, the installed capability implementation and its
+middleware execute as trusted in-process host code, not as code isolated by a Veil
+sandbox. This code trust does not give the capability authority to approve itself.
+
+The public result type is unconstrained. A capability can return a live JavaScript
+graph containing aliases, getters, Proxies or provider-derived objects. If a later
+step selects a path from that result, active language behavior may run before the
+receiving value enters ADR-0011 capture and authorization. A host that requires
+passive result data must normalize or detach it in its trusted capability/provider
+integration; persistence/reload is not a security guarantee. See
+[result references](result-references.html), [providers](providers.html), and
+[trust boundaries](../architecture/trust-boundaries.html).
+
 ## Registration consequences
 
 runtime.use registers module capabilities in a process-global registry. Therefore separate runtime instances share registered capabilities, while their authorizers remain runtime-scoped. Duplicate capability names are rejected, even when their versions differ; use unique stable names, especially in tests.

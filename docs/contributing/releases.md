@@ -16,6 +16,10 @@ runtime/governance hardening, the local quality harness, and the website/docs re
 The earlier v0.1.4 target was reassigned to v0.2.0; no v0.1.4 release is implied.
 Historical release work remains under `docs/release/`, which is excluded from Pages.
 
+Current reasoning-boundary work is recorded in the
+[unreleased compatibility notes](../getting-started/unreleased.md). Those notes do not
+select a release number or change the historical v0.2.0 candidate scope.
+
 ## Accepted governance baseline
 
 The maintainer accepted Recommendation B for v0.2.0: the 14 reviewed non-legacy
@@ -38,8 +42,11 @@ subsequent changes; it does not retroactively clear the initial-adoption report.
 The release verifier's expected-version change from `0.1.3` to `0.2.0` remains
 a review-required control change, already included in the accepted review.
 
-`POST /api/jobs/:id/execute` and `GET /api/linkedin/status` remain explicitly
-deferred technical debt, not governed routes. Acceptance does not establish that
+At that accepted release baseline, `POST /api/jobs/:id/execute` and
+`GET /api/linkedin/status` remained explicitly deferred technical debt.
+Subsequent [entry hardening](../architecture/governance-hardening.html) retires
+the former and governs the latter, removing their two candidate allowances.
+The historical 16-entry adoption above is unchanged. Acceptance does not establish that
 every execution path is governed, that every bypass can be detected, or that
 legacy debt is resolved. The [checker limitations](quality-harness.html#review-and-limitations)
 continue to apply.

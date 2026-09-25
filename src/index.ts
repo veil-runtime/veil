@@ -31,3 +31,6 @@ export type { RuntimeEvent } from './runtime/events/runtime-event.js';
 export { McpAdapter } from './integrations/mcp/inbound/mcp-adapter.js';
 
 export * from './sdk/index.js';
+
+export { isPlanAdmissionError } from './runtime/execution/plan-admission-error.js';
+export type { PlanAdmissionError, PlanAdmissionIssue, PlanAdmissionIssueCode } from './runtime/execution/plan-admission-error.js';
