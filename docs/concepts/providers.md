@@ -19,6 +19,21 @@ If remote I/O occurs inside a capability without a clear operation boundary, aut
 
 Veil does not call a provider directly. It validates, resolves input, authorizes, and calls capability.execute; only then can that capability use a provider. A provider failure surfaces as a capability execution failure and fails the current job. Veil makes no broader guarantee about remote-system transactionality, credential storage, or retries.
 
+Provider implementations execute as trusted host code inside their containing
+capability; they are not authorization decision makers and cannot authorize that
+capability invocation. A provider-derived object can remain a live JavaScript graph
+when the capability returns it. Getters or Proxies on that graph may later run while
+a `$ref` path is selected, before the receiving value enters ADR-0011 capture and
+authorization. External/model-authored JSON does not itself encode those executable
+mechanics; provider or other host code must introduce them in-process.
+
+If an integration requires passive result data, its trusted capability/provider
+adapter must normalize or detach the result deliberately. A later SQLite/JSON reload
+may create a lossy ordinary-data representation, but Veil does not treat that as
+hostile-code isolation, committed-result immutability or storage parity. See
+[result references](result-references.html), [trust boundaries](../architecture/trust-boundaries.html),
+and the [pre-capture investigation](../architecture/pre-capture-result-reference-boundary.html).
+
 ## Current limits
 
 Built-in provider implementations and outbound MCP provider helpers are internal paths. Do not import them from src or dist as a consumer. Use application-owned provider code behind public capability APIs.

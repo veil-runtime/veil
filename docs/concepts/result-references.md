@@ -28,9 +28,10 @@ This wrapper rule applies to ExecutionPlan 1.0 and 2.0.
 1. Step A completes and its result is recorded on its JobStep.
 2. Before Step B executes, Veil walks B's input recursively.
 3. Each reference is replaced with the earlier completed step result or requested property.
-4. Veil validates B's resolved input schema.
-5. Veil authorizes B using that resolved input.
-6. Only an allow starts B's capability.
+4. For ExecutionPlan 2.0, Veil applies [ADR-0011](../adr/0011-governed-value-ownership.html) governed capture to the complete resolved receiving value.
+5. Veil validates B's receiving input (the captured representation under ExecutionPlan 2.0).
+6. Veil authorizes B using that resolved input or its governed authorization view.
+7. Only an allow starts B's capability.
 
 References can be scalar fields, nested object members, array items, or objects inside arrays because resolution recursively maps arrays and object entries.
 
@@ -48,12 +49,34 @@ Numeric dot segments such as items.0 work because the resolver uses property loo
 
 Every result-path segment must be an own property of the current object.
 Inherited properties are rejected; own special names are valid data. Getters
-and proxy traps may run. Referenced objects retain identity and mutability;
-resolution does not isolate values or stabilize them between authorization
-and invocation.
+and Proxy traps may run. Under ExecutionPlan 1.0, referenced objects retain
+identity and mutability; resolution does not isolate values or stabilize them
+between authorization and invocation. Under ExecutionPlan 2.0, traversal is still
+active, but the value returned by resolution then enters ADR-0011 governed capture
+before receiving-step validation and authorization.
 
-The exact wrapper rule does not make result-path traversal passive, getter-safe or
-Proxy-safe. It changes only whether an input object represents a `$ref` instruction.
+This ordering matters for live in-process results. A capability/provider-produced
+getter or Proxy can mutate host or producer state, affect later selections, throw,
+or reenter a runtime before the receiving value is captured or authorized. That is
+trusted host-code behavior, not the receiving capability invocation and not an
+authorization grant. Traversal supplies no caller/scopes or execution handle, and a
+reentrant submission must pass its own admission and authorization. A traversal
+error prevents receiving-step authorization and entry, but does not roll back prior
+host behavior.
+
+[ADR-0013](../adr/0013-result-reference-object-shape.html) defines only whether an input object is a result-reference wrapper. It does
+not make referenced-result traversal passive, getter-safe, Proxy-safe or side-effect
+free. ADR-0011 begins when the already-resolved receiving value is captured; it does
+not retroactively govern selection behavior. Model-authored or serialized JSON does
+not itself contain executable JavaScript behavior; an in-process capability,
+provider or host integration must introduce the active value.
+
+Persistence is not an isolation boundary. Memory Jobs retain live graphs, and
+SQLite does not reload a newly produced result between active steps. Later JSON
+serialization/reload can invoke behavior and produce a lossy ordinary-data
+representation; that does not establish committed-result immutability or stable
+cross-store semantics. See [trust boundaries](../architecture/trust-boundaries.html)
+and the [pre-capture investigation](../architecture/pre-capture-result-reference-boundary.html).
 
 ## Parser edge cases
 

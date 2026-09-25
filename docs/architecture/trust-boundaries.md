@@ -22,6 +22,36 @@ planner/application intent
 
 Planner output is not permission: a planner returns a plan, and planning failure never gives it access to providers. Capability registration is not permission: registration only makes a capability resolvable in the process. The default authorizer still denies write and destructive risk.
 
+## Trusted host code is not authorization
+
+Veil governs whether proposed capability work may start; it does not isolate
+arbitrary hostile JavaScript inside the host process. Installed capability,
+middleware and provider implementations execute as trusted host code unless a
+separate documented isolation mechanism says otherwise. “Trusted” here describes
+code/process placement, not permission ownership: these components do not authorize
+themselves. The configured host authorizer remains the authority for each governed
+capability invocation.
+
+A capability or provider can return a live in-process JavaScript graph containing
+accessors, Proxies, aliases or custom prototypes. When a later step selects
+`steps.<stepId>.result.<path>`, own getters and Proxy reflection/read traps may run
+before receiving-step validation, authorization and ADR-0011 governed capture. Such
+code can mutate host/producer state, throw or reenter a runtime using a handle it
+already retained. Traversal supplies no caller, scopes, capability or provider
+authority; a reentrant submission still has its own admission and authorization.
+A traversal failure prevents the receiving capability from starting, but does not
+roll back behavior that already occurred.
+
+Model-authored or otherwise serialized JSON does not itself encode executable
+JavaScript accessors, Proxies or closures. An in-process host integration must
+introduce an active value. Memory storage retains live graphs. SQLite does not
+serialize/reload newly produced results between active steps; a later JSON reload
+can yield lossy ordinary data, while serialization may itself invoke behavior.
+Materialization is therefore not a security/isolation guarantee or a promise of
+stable committed results. See the
+[pre-capture result-reference investigation](pre-capture-result-reference-boundary.html)
+for the detailed evidence and alternatives.
+
 ## Structural ownership
 
 Before admission, JobManager.executePlan synchronously captures a runtime-owned
@@ -117,11 +147,20 @@ prove these ownership properties.
 See the [implementation-readiness investigation](governed-value-implementation-readiness.html)
 for the migration and test basis. The boundary begins after existing resolution;
 getter/Proxy-free `$ref` traversal, provider translation and persisted-result
-stability remain separate trust boundaries.
+stability remain separate trust boundaries. Governed capture owns the value that
+resolution returned; it does not retroactively govern behavior used to select that
+value. See the
+[pre-capture boundary investigation](pre-capture-result-reference-boundary.html).
 
 ## Provider boundary
 
-A provider is downstream code used by a capability to talk to a remote system. Veil's runtime governance occurs before the capability starts; it does not prove that provider credentials are correct, that an external API will honor a request, or that provider code is safe. Capability authors and applications remain responsible for provider-specific security and secrets.
+A provider is downstream code used by a capability to talk to a remote system.
+Veil's runtime governance occurs before the capability starts; it does not prove
+that provider credentials are correct, that an external API will honor a request,
+or that provider code is safe. Provider code runs inside the trusted host boundary,
+but does not own Veil's authorization decision. Capability authors and applications
+remain responsible for provider-specific security, secrets and passive result
+normalization where their deployment requires it.
 
 ## Limits
 
