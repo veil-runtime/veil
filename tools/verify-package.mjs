@@ -25,7 +25,7 @@ try {
   const files = pack.files.map(({ path }) => path).sort();
 
   assert.equal(pack.name, '@veil-runtime/core');
-  assert.equal(pack.version, '0.2.0');
+  assert.equal(pack.version, '0.3.0');
   assert.ok(files.includes('dist/index.js'));
   assert.ok(files.includes('dist/index.d.ts'));
   assert.ok(files.includes('README.md'));
