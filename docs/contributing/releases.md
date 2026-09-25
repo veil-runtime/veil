@@ -3,22 +3,26 @@ title: Releases
 ---
 # Releases
 
-The current release candidate is **v0.2.0**. Package metadata and package verification
-both target `@veil-runtime/core@0.2.0`. v0.1.3 remains the latest published package
+The current release candidate is **v0.3.0**. Package metadata and package verification
+both target `@veil-runtime/core@0.3.0`. v0.2.0 remains the latest published package
 until publication; local source and a packed tarball do not establish npm availability.
 
 ## Candidate scope
 
-The [v0.2.0 release notes](../getting-started/v0.2.0.html) cover changes present
-between `main` at `0b591f38b6146179cfea9d66f5bf50a1773520d7` and `develop` at
-`e4df5be69105e8d2fcb76bd6b9c8e249beec3064`: capability introspection,
-runtime/governance hardening, the local quality harness, and the website/docs refresh.
-The earlier v0.1.4 target was reassigned to v0.2.0; no v0.1.4 release is implied.
-Historical release work remains under `docs/release/`, which is excluded from Pages.
+The [v0.3.0 release notes](../getting-started/v0.3.0.html) cover the public delta
+from the published v0.2.0 tag at
+`bb3f34e4f938096acec897159f0f56283c11697a` through the synchronized develop
+checkpoint at `e5aae087ad201369efaf9f28b6b8d03be314b71e`: opt-in ExecutionPlan V2,
+structured version admission, exact result-reference recognition, entry and
+authorization hardening, conservative HTTP/shell policy, bounded research
+evidence, dependency refreshes and starter lock remediation. Historical release
+work remains under `docs/release/`, which is excluded from Pages.
 
-Current reasoning-boundary work is recorded in the
-[unreleased compatibility notes](../getting-started/unreleased.md). Those notes do not
-select a release number or change the historical v0.2.0 candidate scope.
+The release-only metadata delta is intentionally bounded to the root package and
+lock version, the package verifier's expected tarball version, and the starter
+lock's linked-root version. The `tools/verify-package.mjs` change from `0.2.0` to
+`0.3.0` is an expected verification-control change reviewed as part of this
+candidate preparation; its content/exclusion checks are otherwise unchanged.
 
 ## Accepted governance baseline
 
@@ -67,11 +71,12 @@ The fixed comparison remains:
 npm run quality -- --base v0.2.0
 ```
 
-It must continue to report review-required controls, 15 candidate sites and
-seven retired historical sites until this reviewed candidate is committed into
-a later trusted comparison base. The candidate manifest does not authorize
-itself. A secondary comparison may prove no drift from an already reviewed
-post-v0.2.0 checkpoint, but cannot replace this historical review.
+It continues to report review-required controls, 15 candidate sites and seven
+retired historical sites because the immutable historical base cannot trust a
+later candidate manifest. The candidate manifest does not authorize itself. The
+secondary comparison against accepted inventory checkpoint
+`991c73fef8fbaedee1c71aa3ee003f8a51f4b1d1` proves no governance/source/test/
+harness drift, but cannot replace this historical review.
 
 ### Growth and verification-control review
 
@@ -196,7 +201,7 @@ Release preparation does not publish, tag, push, merge, or create a GitHub relea
 ## After an authorized publication
 
 Verify the published npm package and rerun consumer examples against it before
-changing candidate labels and latest-published text in the README, homepage,
-docs layout, developer portal, installation page, and release notes. Add release
-announcement links only when their targets exist. Publishing and these follow-up
-changes are separate from candidate preparation.
+changing the latest-published version from v0.2.0 to v0.3.0 and removing candidate
+labels in the README, homepage, docs layout, developer portal, installation page,
+and release notes. Add release announcement links only when their targets exist.
+Publishing and these follow-up changes are separate from candidate preparation.

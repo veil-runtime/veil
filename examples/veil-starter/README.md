@@ -63,7 +63,7 @@ This separation is intentional. Capabilities may eventually access APIs, files, 
 
 You need:
 
-- Node.js
+- Node.js 24 or newer
 - npm
 - a local clone of the Veil repository
 
