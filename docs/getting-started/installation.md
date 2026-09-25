@@ -3,10 +3,11 @@ title: Installation
 ---
 # Installation
 
-`@veil-runtime/core` requires Node.js **24 or newer**. **v0.1.3 remains the latest
-published package until v0.2.0 is published.** These docs target the
-[v0.2.0 release candidate](v0.2.0.html). The registry install below currently
-installs v0.1.3 and does not include the new hardening or introspection API.
+`@veil-runtime/core` requires Node.js **24 or newer**. **v0.2.0 remains the latest
+published package until v0.3.0 is published.** These docs target the
+[v0.3.0 release candidate](v0.3.0.html). The registry install below currently
+installs v0.2.0 and does not include the candidate's ExecutionPlan V2 or later
+admission and execution hardening.
 
 ```bash
 npm install @veil-runtime/core
@@ -14,7 +15,7 @@ npm install @veil-runtime/core
 
 ## Install the release candidate locally
 
-From a checkout of the v0.2.0 candidate, build and pack without publishing:
+From a checkout of the v0.3.0 candidate, build and pack without publishing:
 
 ```bash
 npm ci
@@ -25,11 +26,13 @@ npm pack
 In a consumer project, install the generated tarball by its actual path:
 
 ```bash
-npm install /path/to/veil/veil-runtime-core-0.2.0.tgz
+npm install /path/to/veil/veil-runtime-core-0.3.0.tgz
 ```
 
-Package version `0.2.0`, capability versions such as `1.0.0`, and ExecutionPlan
-format `version: '1.0'` are independent. No npm publication is implied by a local pack.
+Package version `0.3.0`, capability versions such as `1.0.0`, and ExecutionPlan
+formats `version: '1.0'` and `version: '2.0'` are independent. V1 remains the
+default; V2 requires explicit trusted-host configuration. No npm publication is
+implied by a local pack.
 
 Consumers import only from the root entry point:
 

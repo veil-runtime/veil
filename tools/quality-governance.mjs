@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 export const baselinePath = 'tools/quality-governance-baseline.json';
 export const relevantCode = (path) => /\.(?:[cm]?[jt]sx?)$/.test(path);
 const prefix = 'VEIL-GOV-001';
+const apiRoute = (path) => path.startsWith('src/api/routes/');
 const fail = (message) => new Error(`${prefix} ${message}`);
 const member = (node) => ['MemberExpression', 'OptionalMemberExpression'].includes(node?.type);
 const unwrap = (node) => ['TSAsExpression', 'TSTypeAssertion', 'TSNonNullExpression',
@@ -250,6 +251,13 @@ export async function inspectSource(path, source) {
         kind = 'dynamic';
         detail = 'unsupported dynamic module loading or JobManager require/re-export; use a static named import for analysis';
       }
+      const moduleName = node.source?.value ?? (node.type === 'CallExpression'
+        && node.callee?.name === 'require' ? node.arguments?.[0]?.value : undefined);
+      if (apiRoute(path) && typeof moduleName === 'string'
+        && /(?:^|\/)(?:capabilities|providers)\//.test(moduleName)) {
+        kind = 'dynamic';
+        detail = 'API routes must not import capability or provider implementations';
+      }
       if (!kind) return;
       const anchor = createHash('sha256').update(JSON.stringify([index, address, owner])).digest('hex');
       findings.push({ path, anchor, kind, line: node.loc.start.line, column: node.loc.start.column + 1,
@@ -299,7 +307,12 @@ export function parseBaseline(text, where) {
 export async function checkGovernance({ paths, before, after }) {
   const baseText = before(baselinePath);
   const candidateText = after(baselinePath);
-  if (candidateText !== undefined) parseBaseline(candidateText, 'candidate'); // Validate, never authorize.
+  if (candidateText !== undefined) {
+    const sites = parseBaseline(candidateText, 'candidate'); // Validate, never authorize.
+    if (sites.some(site => apiRoute(site.path))) {
+      throw fail('candidate: API route execution allowances are forbidden; remove retired route entries');
+    }
+  }
   const allowances = baseText === undefined ? [] : parseBaseline(baseText, 'base');
   if (baseText !== undefined) {
     const original = await inspectTree(paths, before);
@@ -319,7 +332,11 @@ export async function checkGovernance({ paths, before, after }) {
   for (const site of candidate.findings) {
     const allowance = allowed.get(identity(site));
     const location = `${site.path}:${site.line}:${site.column}`;
-    if (allowance) {
+    if (apiRoute(site.path)) {
+      output.push(`  ${prefix} ${location}: ${site.detail}; API route references cannot be allowed by a baseline. Use OperatorRuntime.run/executePlan.`);
+      status = Math.max(status, site.kind === 'dynamic' ? 2 : 1);
+      allowed.delete(identity(site));
+    } else if (allowance) {
       output.push(`  ${allowance.classification}: ${location} — ${allowance.reason}`);
       allowed.delete(identity(site)); // An allowance can match exactly once.
     } else {

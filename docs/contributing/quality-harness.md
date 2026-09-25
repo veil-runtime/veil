@@ -63,7 +63,7 @@ ignore CRLF/LF differences but otherwise flag even benign edits for review.
 ## Governance reference check (VEIL-GOV-001)
 
 The checker requires **Node >=24.11** because its direct development dependency
-is pinned to `@babel/parser` **8.0.5**. Veil's runtime engine declaration remains
+is pinned to `@babel/parser` **8.0.6**. Veil's runtime engine declaration remains
 **Node >=24**. Older Node 24 releases cannot run this development tool; installing
 development dependencies there may also produce engine warnings. Production
 runtime compatibility is not redefined by this tool.
@@ -100,17 +100,30 @@ rule cannot distinguish it from an executable extraction. Renaming `fn` to
 
 Computed destructuring, reflective getter references, nonliteral module loading,
 and JobManager require/re-export forms remain conservative unsupported findings.
-The two remaining dynamic sites have individual, specific explanations: the
+The two pre-ADR-0012 dynamic sites have individual, specific explanations: the
 input validator selects and **calls** `TYPE_CHECKS[definition.type]`, and the
 package fixture intentionally imports enumerated private paths to assert rejection.
 Neither receives a general data-access exemption.
 
-The current inventory contains **16 sites**: six `GOVERNED_MACHINERY`, two
-temporary `LEGACY_BYPASS`, one `LEGITIMATE_NON_CAPABILITY_EXECUTE`, and seven
-`TEST_OR_FIXTURE`. Twenty-four ordinary data/collection accesses from the initial
-41-site inventory disappeared during harness hardening. Migrating the generic
-HTTP capability endpoint to OperatorRuntime retires one further site (17 → 16).
-The 16 retained entries are unchanged; no replacement allowance was added.
+The post-bypass-removal inventory contained **14 sites**: six `GOVERNED_MACHINERY`,
+one `LEGITIMATE_NON_CAPABILITY_EXECUTE`, and seven `TEST_OR_FIXTURE`.
+The earlier generic HTTP migration reduced 17 sites to 16. The subsequent
+LinkedIn migration and stored-job endpoint retirement remove the last two
+`LEGACY_BYPASS` entries (16 → 14); the other 14 entries are unchanged.
+No replacement allowance was added for those retired routes.
+
+ADR-0012 updates five anchors in the edited validator/runtime/JobManager declarations
+and adds four individually reviewed diagnostic-test sites: descriptor inspection,
+descriptor copying, fixed-module resolution and fixed-module reload. These test
+sites exercise immutability and separate-module issuance identity, not capability
+execution. The candidate inventory now has **18 sites** (six governed, one
+legitimate non-capability execution, eleven test/fixture). The checker is unchanged;
+there remain zero route allowances and zero legacy bypass entries. Against the
+fixed pre-change base, moved/new anchors remain untrusted even after this inventory
+update; unsupported dynamic findings retain exit 2 pending trusted-branch adoption.
+The [ADR-0012 individual inventory review](../architecture/adr-0012-governance-inventory-review.html)
+approves those exact nine changes and records why the fixed-base comparison
+continues to treat them as untrusted; no checker rule changes.
 
 Each entry in `tools/quality-governance-baseline.json` records a path, kind,
 classification, reason and SHA-256 anchor. The anchor includes the normalized
@@ -143,11 +156,28 @@ against `0b591f38b6146179cfea9d66f5bf50a1773520d7` remains exit 2, not a pass.
 See the [adoption record](releases.html#accepted-governance-baseline). This human
 decision grants no additional allowances and does not change checker behavior.
 
-The two remaining legacy exceptions are direct capability dispatch in
-`src/api/routes/linkedin.routes.ts` and direct internal job execution in
-`src/api/routes/jobs.routes.ts`. The latter still performs per-step authorization
-but skips OperatorRuntime and plan admission. Approved machinery and isolated
-unit-test references have separate individual classifications.
+The former LinkedIn and stored-job route exceptions are removed in the current
+hardening work, compared against `bb3f34e4f938096acec897159f0f56283c11697a`.
+LinkedIn status submits a plan through OperatorRuntime; stored-job execution
+returns 410 without loading or executing a job. The historical v0.2.0 adoption
+record above remains a record of that earlier scope.
+
+For `src/api/routes/`, recognized execution references (including direct
+JobManager entry and unsupported dynamic accesses) cannot use baseline
+allowances, even if an old trusted baseline contains one. Candidate manifests
+containing route allowances are rejected. Direct import/require/re-export source
+strings containing `capabilities/` or `providers/` are also rejected there.
+Normal runtime `run`/`executePlan` references remain permitted; their receiver's
+identity is not proven by this syntax check. Nonexecuting JobManager methods
+are not prohibited. Inventory tests require zero route or legacy allowances
+and exact correspondence between discovered sites and the 18 current entries.
+
+This proves absence of the recognized forbidden syntax within the analyzed
+route files, not transitive absence of provider access. Helpers imported under
+other names, barrels, alias module paths, callbacks, raw `fetch`/process APIs,
+or code outside this route directory can require separate review. Existing
+whole-tree execution-reference checks still apply elsewhere. See the
+[entry inventory and behavior changes](../architecture/governance-hardening.html).
 
 ## Review and limitations
 
@@ -167,7 +197,7 @@ and line diffs. Run against a quiescent working tree; concurrent edits are not a
 atomic snapshot. Relevant symlink/non-regular working-tree files are rejected.
 This is not an exhaustive repository-integrity or filesystem-security checker.
 
-The reference rule does not track new callers of legacy HTTP endpoints, perform
+The reference rule does not track endpoint callers or HTTP wiring, perform
 call-graph analysis, follow objects through arbitrary function calls/containers,
 prove authorization semantics, or detect arbitrary eval/proxy/reflective aliases.
 Simple alias recognition is conservative and can over-report shadowed names.

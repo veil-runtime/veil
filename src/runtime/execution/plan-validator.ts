@@ -1,9 +1,12 @@
+import type { PlanAdmissionIssueCode } from './plan-admission-error.js';
 import { ExecutionStep } from '../planner/planner.js';
 import { Capability } from '../registry/capability.js';
 import { capabilityRegistry } from '../registry/registry.js';
 import { isResultReference, parseResultReference } from './result-reference.js';
 
 export interface PlanValidationError {
+  code: PlanAdmissionIssueCode;
+  stepIndex?: number;
   stepId: string;
   capability: string;
   field?: string;
@@ -40,6 +43,7 @@ function validateInput(
         stepId: step.id,
         capability: step.capability,
         field,
+        code: 'REQUIRED_INPUT_MISSING',
         message: `Required input '${field}' is missing for capability '${step.capability}'`,
       });
       continue;
@@ -55,6 +59,7 @@ function validateInput(
         stepId: step.id,
         capability: step.capability,
         field,
+        code: 'UNSUPPORTED_INPUT_SCHEMA',
         message: `Unsupported schema type '${definition.type}' for capability '${step.capability}'`,
       });
     } else if (!check(value)) {
@@ -62,6 +67,7 @@ function validateInput(
         stepId: step.id,
         capability: step.capability,
         field,
+        code: 'INPUT_TYPE_MISMATCH',
         message: `Input '${field}' must be of type '${definition.type}' for capability '${step.capability}'`,
       });
     }
@@ -90,6 +96,7 @@ export function validateStepInput(
       errors: [{
         stepId: step.id,
         capability: step.capability,
+        code: 'UNKNOWN_CAPABILITY',
         message: `Unknown capability: ${step.capability}`,
       }],
     };
@@ -105,11 +112,13 @@ export function validatePlan(
   const errors: PlanValidationError[] = [];
   const seenStepIds = new Set<string>();
 
-  for (const step of steps) {
+  for (const [stepIndex, step] of steps.entries()) {
+    const firstIssue = errors.length;
     if (seenStepIds.has(step.id)) {
       errors.push({
         stepId: step.id,
         capability: step.capability,
+        code: 'DUPLICATE_STEP_ID',
         message: `Duplicate step ID: ${step.id}`,
       });
     }
@@ -119,8 +128,10 @@ export function validatePlan(
       errors.push({
         stepId: step.id,
         capability: step.capability,
+        code: 'UNKNOWN_CAPABILITY',
         message: `Unknown capability: ${step.capability}`,
       });
+      for (let i = firstIssue; i < errors.length; i++) errors[i].stepIndex = stepIndex;
       seenStepIds.add(step.id);
       continue;
     }
@@ -129,6 +140,7 @@ export function validatePlan(
       errors.push({
         stepId: step.id,
         capability: step.capability,
+        code: 'CAPABILITY_VERSION_MISMATCH',
         message: `Capability version mismatch for '${step.capability}': requested ${step.capabilityVersion}, registered ${capability.version}`,
       });
     }
@@ -142,6 +154,7 @@ export function validatePlan(
           errors.push({
             stepId: step.id,
             capability: step.capability,
+            code: 'RESULT_REFERENCE_NOT_EARLIER',
             message: `Result reference must target an earlier step: ${reference}`,
           });
         }
@@ -149,11 +162,13 @@ export function validatePlan(
         errors.push({
           stepId: step.id,
           capability: step.capability,
+          code: 'INVALID_RESULT_REFERENCE',
           message: error instanceof Error ? error.message : 'Invalid result reference',
         });
       }
     }
 
+    for (let i = firstIssue; i < errors.length; i++) errors[i].stepIndex = stepIndex;
     seenStepIds.add(step.id);
   }
 

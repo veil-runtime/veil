@@ -1,6 +1,6 @@
 {
   "name": "@veil-runtime/core",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A governed, capability-driven execution runtime",
   "license": "Apache-2.0",
   "repository": {
@@ -63,7 +63,7 @@
     "better-sqlite3": "^13.0.3"
   },
   "devDependencies": {
-    "@babel/parser": "8.0.5",
+    "@babel/parser": "8.0.6",
     "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^26.2.0",
     "fastify": "^5.11.3",

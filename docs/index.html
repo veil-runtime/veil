@@ -1633,7 +1633,7 @@ description: Veil is a capability-driven runtime between reasoning and infrastru
           <p>
             Install <code>@veil-runtime/core</code> on Node.js 24 or newer to define
             capabilities and execute explicit plans. The latest published version
-            is <strong>v0.1.3</strong>. These docs target the <strong>v0.2.0 release candidate</strong>.
+            is <strong>v0.2.0</strong>. These docs target the <strong>v0.3.0 release candidate</strong>.
           </p>
         </div>
 
@@ -1995,7 +1995,7 @@ description: Veil is a capability-driven runtime between reasoning and infrastru
 
             <div class="code-bar">
               capability.ts
-              <span>public API · v0.2.0 candidate</span>
+              <span>public API · v0.3.0 candidate</span>
             </div>
 
             <pre><code>import { createCapability } from "@veil-runtime/core";
@@ -2023,7 +2023,7 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
           capability through <code>runtime.use(module)</code>, as shown below.
           Writes require an application-configured
           <a href="{{ '/guides/protect-write-actions.html' | relative_url }}">authorizer</a>;
-          the default policy denies them. The quickstart uses the public API shared by v0.1.3 and the v0.2.0 candidate.
+          the default policy denies them. The quickstart uses the public API shared by v0.2.0 and the v0.3.0 candidate.
         </p>
 
       </div>
@@ -2254,8 +2254,8 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
             MCP is an interoperability layer around Veil, not a second
             execution path. Adapters can translate MCP invocations into
             <code>ExecutionPlan</code> instances, and MCP-backed capabilities
-            can sit behind the same runtime boundary. Veil Core v0.2.0 publicly
-            exports the inbound <code>McpAdapter</code>, which requires an
+            can sit behind the same runtime boundary. The v0.3.0 candidate continues
+            to export the inbound <code>McpAdapter</code>, which requires an
             <code>OperatorRuntime</code> and creates no alternate execution path.
           </p>
         </div>
@@ -2275,8 +2275,9 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
           </div>
 
           <p>
-            <code>@veil-runtime/core</code> v0.2.0 provides the public execution
-            boundary, contextual authorization, and inbound MCP adapter.
+            <code>@veil-runtime/core</code> v0.3.0 candidate provides the public
+            execution boundary, contextual authorization, structured admission
+            diagnostics, and inbound MCP adapter.
             Providers and integrations can be composed around that boundary
             without changing the execution model.
           </p>
@@ -2335,47 +2336,46 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
 
     <!-- RELEASE CANDIDATE -->
 
-    <section id="v020">
+    <section id="v030">
       <div class="wrap">
         <div class="section-head reveal">
           <div>
-            <div class="kicker">v0.2.0 · release candidate</div>
-            <h2>Know what is registered. Govern what runs.</h2>
+            <div class="kicker">v0.3.0 · release candidate</div>
+            <h2>Choose value semantics. Keep authority with the host.</h2>
           </div>
           <p>
-            Deterministic capability introspection describes the registered execution
-            surface. <code>listCapabilities()</code> returns inventory;
-            <code>describeCapability(name, version?)</code> performs exact lookup.
-            The new <code>CapabilityDescriptor</code> contains detached, mutable metadata.
-            This contract is included in the v0.2.0 candidate; see <a href="{{ '/getting-started/installation.html' | relative_url }}">local candidate installation</a>.
+            ExecutionPlan 2.0 adds governed receiving-value ownership behind an
+            explicit trusted-host <code>planVersions</code> opt-in. V1 remains the
+            default and can coexist with V2. Structured version admission and exact
+            result-reference recognition apply before governed capability work.
+            See <a href="{{ '/getting-started/installation.html' | relative_url }}">local candidate installation</a>.
           </p>
         </div>
         <div class="triad">
           <article class="card reveal">
-            <span class="number">01 / INTROSPECTION</span>
-            <h3>What is registered?</h3>
-            <p>Names, versions, descriptions, risk and declared input fields.
-              Inventory follows registration order; lookup matches names and versions exactly.</p>
+            <span class="number">01 / VERSION</span>
+            <h3>Which semantics are admitted?</h3>
+            <p>The trusted host enables V1, V2 or both. Proposal data cannot enable a
+              plan version, and omission remains V1-only.</p>
           </article>
           <article class="card reveal">
-            <span class="number">02 / APPLICATION</span>
-            <h3>What is relevant?</h3>
-            <p>Your reasoning or application logic selects the capability.
-              Veil adds no semantic search, ranking, embeddings or LLM-driven selection.</p>
+            <span class="number">02 / VALUE</span>
+            <h3>What reaches policy and work?</h3>
+            <p>V2 gives authorization a frozen detached view and capability entry a
+              separate mutable equivalent after explicit allow.</p>
           </article>
           <article class="card reveal">
             <span class="number">03 / AUTHORIZATION</span>
-            <h3>May this caller execute it?</h3>
-            <p>Introspection grants no permission and does not establish provider readiness.
-              Submit an ExecutionPlan through the normal governed execution path.</p>
+            <h3>Who grants authority?</h3>
+            <p>Only trusted host configuration supplies callers and policy. Request,
+              plan and model fields remain proposed data, never approval.</p>
           </article>
         </div>
         <p class="api-note reveal">
-          v0.2.0 also contains event-subscriber failures, rejects malformed authorization,
-          requires own properties in result paths and unique step IDs per plan,
-          and captures plan structure before admission. Nested input values remain shared:
-          authorization-to-invocation deep value stability is not guaranteed.
-          <a href="{{ '/getting-started/v0.2.0.html' | relative_url }}">Read the scope and limits</a>.
+          v0.3.0 also tightens result-reference shape, route entry, HTTP risk and
+          shell tuple policy. It does not provide hostile-code isolation, passive
+          Proxy/getter traversal, rollback, exactly-once effects or persistence parity.
+          <a href="{{ '/getting-started/v0.3.0.html' | relative_url }}">Read the scope, migration notes and limits</a>.
         </p>
       </div>
     </section>
@@ -2392,9 +2392,9 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
           </div>
 
           <p>
-            The v0.2.0 candidate includes governed-execution hardening, deterministic
-            capability introspection, and the developer documentation refresh.
-            <a href="{{ '/getting-started/v0.2.0.html' | relative_url }}">See the v0.2.0 scope and limits</a>.
+            The v0.3.0 candidate adds opt-in governed receiving values, structured
+            admission and execution-entry hardening while preserving V1 by default.
+            <a href="{{ '/getting-started/v0.3.0.html' | relative_url }}">See the v0.3.0 scope and limits</a>.
           </p>
         </div>
 
@@ -2402,17 +2402,17 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
 
           <div class="phase current">
             <small>PUBLISHED</small>
-            <b>Public Core v0.1.3</b>
+            <b>Public Core v0.2.0</b>
           </div>
 
           <div class="phase">
             <small>CANDIDATE</small>
-            <b>v0.2.0 · hardening + introspection</b>
+            <b>v0.3.0 · governed values + admission</b>
           </div>
 
           <div class="phase">
-            <small>IN v0.2.0</small>
-            <b>Developer documentation refresh</b>
+            <small>IN CANDIDATE</small>
+            <b>V1 default + explicit V2 opt-in</b>
           </div>
 
           <div class="phase">
@@ -2469,7 +2469,7 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
 
   <footer class="footer wrap">
     <span>
-      Veil Core v0.2.0 candidate — Apache-2.0 · Copyright 2026 Mustapha Keraan.
+      Veil Core v0.3.0 candidate — Apache-2.0 · Copyright 2026 Mustapha Keraan.
     </span>
 
     <span>

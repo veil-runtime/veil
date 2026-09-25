@@ -21,7 +21,7 @@ Requires Node.js 24+.
 
     npm install @veil-runtime/core
 
-This installs the published package. To verify v0.2.0 before publication, see [candidate installation](docs/getting-started/installation.md).
+This installs the published package. To verify the v0.3.0 candidate before publication, see [candidate installation](docs/getting-started/installation.md).
 
 ## Smallest working example
 
@@ -47,7 +47,7 @@ The default authorizer permits reads and denies write/destructive capabilities. 
 
 ## Status and roadmap
 
-Release candidate: **v0.2.0**. See [release notes](docs/getting-started/v0.2.0.md). The latest published package remains **v0.1.3** until publication. ExecutionPlan v1 is linear. DAGs, parallel execution, conditionals, cancellation, and retry policies are roadmap work, not current behavior.
+Release candidate: **v0.3.0**. See the [v0.3.0 release notes](docs/getting-started/v0.3.0.md). The latest published package remains **v0.2.0** until publication. ExecutionPlan V1 remains the default; opt-in [ExecutionPlan V2](docs/reference/execution-plan-v2.md) adds governed receiving-value ownership. Both are linear. DAGs, parallel execution, conditionals, cancellation, and retry policies are roadmap work, not current behavior.
 
 ## Contributing
 

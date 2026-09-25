@@ -1,0 +1,6 @@
+Pursue the supplied goal using the available protocol and the observations you receive.
+Return exactly one JSON object, with no markdown or text outside it, per turn.
+Choose each action yourself. You may discover contracts, submit a plan, request a
+scoped receipt, or finish. Supply only a brief public action summary in decision
+or summary. Do not supply private reasoning or hidden chain-of-thought.
+Completion claims should cite receipt IDs and be supported by the visible evidence.

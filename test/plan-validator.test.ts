@@ -23,7 +23,8 @@ for (const name of [success, failure]) {
 }
 
 const step = (id: string, capability = success, input?: unknown) => ({ id, capability, input });
-const duplicate = (id: string, capability = success) => ({
+const duplicate = (id: string, capability = success, stepIndex = 1) => ({
+  code: 'DUPLICATE_STEP_ID', stepIndex,
   stepId: id, capability, message: `Duplicate step ID: ${id}`,
 });
 
@@ -31,7 +32,7 @@ for (const ids of [['a', 'a'], ['a', 'b', 'a'], ['a', 'a', 'a'], ['a', 'b', 'a',
   test(`duplicate occurrences aggregate: ${JSON.stringify(ids)}`, () => {
     assert.deepEqual(validatePlan(ids.map(id => step(id))), {
       valid: false,
-      errors: ids.slice(1).filter(id => id === 'a').map(() => duplicate('a')),
+      errors: ids.flatMap((id, index) => index > 0 && id === 'a' ? [duplicate('a', success, index)] : []),
     });
   });
 }
@@ -54,10 +55,10 @@ test('duplicates aggregate with unknown capabilities, including an unknown first
   assert.deepEqual(validatePlan([step('a', unknown), step('a', unknown), step('a')]), {
     valid: false,
     errors: [
-      { stepId: 'a', capability: unknown, message: `Unknown capability: ${unknown}` },
+      { code: 'UNKNOWN_CAPABILITY', stepIndex: 0, stepId: 'a', capability: unknown, message: `Unknown capability: ${unknown}` },
       duplicate('a', unknown),
-      { stepId: 'a', capability: unknown, message: `Unknown capability: ${unknown}` },
-      duplicate('a'),
+      { code: 'UNKNOWN_CAPABILITY', stepIndex: 1, stepId: 'a', capability: unknown, message: `Unknown capability: ${unknown}` },
+      duplicate('a', success, 2),
     ],
   });
 });
@@ -72,9 +73,9 @@ test('reference ordering and error aggregation retain earlier-step semantics', (
   ]), {
     valid: false,
     errors: [
-      { stepId: 'a', capability: success, message: 'Result reference must target an earlier step: steps.a.result' },
-      { stepId: 'b', capability: success, message: 'Result reference must target an earlier step: steps.c.result' },
-      duplicate('a'),
+      { code: 'RESULT_REFERENCE_NOT_EARLIER', stepIndex: 0, stepId: 'a', capability: success, message: 'Result reference must target an earlier step: steps.a.result' },
+      { code: 'RESULT_REFERENCE_NOT_EARLIER', stepIndex: 1, stepId: 'b', capability: success, message: 'Result reference must target an earlier step: steps.c.result' },
+      duplicate('a', success, 3),
     ],
   });
   assert.deepEqual(validatePlan([step('a'), step('b', success, ref('a'))]), {

@@ -106,7 +106,9 @@ export const httpRequestCapability: Capability<
   description:
     'Send an HTTP request to a public HTTP or HTTPS endpoint and return the structured response',
 
-  risk: 'read',
+  // One static risk covers every supported operation, including DELETE.
+  // Hosts may authorize narrower requests using resolved input.
+  risk: 'destructive',
 
   inputSchema: {
     method: {

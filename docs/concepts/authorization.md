@@ -31,7 +31,10 @@ const runtime = new OperatorRuntime({
 });
 ~~~
 
-The input in this policy is not a reference object: Veil resolves references and validates fields first. Caller is the runtime's immutable shallow snapshot.
+The input in this policy is not a reference object: Veil resolves references and
+validates fields first. Under V1 it is the legacy resolved input. Under V2 it is
+a detached recursively frozen copy of the captured, validated receiving value.
+Caller is the runtime's immutable shallow snapshot in either version.
 
 ## Lifecycle and failures
 
@@ -49,6 +52,10 @@ Execution requires a non-null, non-array object with an own `decision` property,
 read once, equal to `allow`. A valid `deny` prevents execution; malformed decisions
 and authorizer failures fail closed. A denial reason, if supplied, must be a string.
 
-This does not establish deep value stability. Authorization and invocation share
-resolved input; authorization can mutate it, and Veil does not revalidate it
-before invocation. See [trust boundaries](../architecture/trust-boundaries.html).
+Under V1, decision hardening does not establish deep value stability:
+authorization and invocation share the legacy resolved input, which policy can
+mutate. Under V2, ADR-0011 separately guarantees a stable frozen authorization
+view and a detached equivalent value at outer capability entry. It does not bind
+later middleware/provider operations or effects. See [ExecutionPlan
+V2](../reference/execution-plan-v2.html) and [trust
+boundaries](../architecture/trust-boundaries.html).

@@ -5,11 +5,12 @@ title: Veil developer documentation
 
 Veil is a governed, capability-driven execution runtime. It separates deciding what should happen from performing it. A human, application, deterministic program, or planner can produce an ExecutionPlan; Veil validates and executes that plan through registered capabilities.
 
-## v0.2.0 release candidate
+## v0.3.0 release candidate
 
-These docs describe the **v0.2.0 release candidate**. v0.1.3 remains the latest
-published package until publication. Read [v0.2.0](getting-started/v0.2.0.html)
-for governed-execution hardening, deterministic capability introspection, and their limits.
+These docs describe the **v0.3.0 release candidate**. v0.2.0 remains the latest
+published package until publication. Read [v0.3.0](getting-started/v0.3.0.html)
+for opt-in ExecutionPlan V2, admission and route hardening, compatibility notes,
+research boundaries, and their limits.
 
 ## The mental model
 
@@ -36,7 +37,7 @@ Start with [overview](getting-started/overview.html), [installation](getting-sta
 
 ## Using Veil
 
-If your application already knows the work, submit an [ExecutionPlan](reference/execution-plan-v1.html) to [OperatorRuntime](reference/operator-runtime.html). For multiple dependent operations, read [result references](concepts/result-references.html). Before allowing writes, implement [runtime-scoped authorization](guides/protect-write-actions.html).
+If your application already knows the work, submit an [ExecutionPlan](concepts/execution-plans.html) to [OperatorRuntime](reference/operator-runtime.html). V1 remains the default; use the [V2 reference](reference/execution-plan-v2.html) and [migration guide](guides/migrate-to-execution-plan-v2.html) for opt-in governed receiving values. For multiple dependent operations, read [result references](concepts/result-references.html). Before allowing writes, implement [runtime-scoped authorization](guides/protect-write-actions.html).
 
 ## Understanding Veil
 
@@ -44,12 +45,12 @@ Read [reasoning and execution](concepts/reasoning-and-execution.html), the canon
 
 ## Extending Veil
 
-The supported consumer surface is documented in [public exports](reference/public-exports.html). Build capabilities and modules; use an authorizer; create plans directly. [MCP inbound](guides/inbound-mcp.html) exposes registered work through the same governed path. Planner implementation and outbound MCP integration APIs are internal in v0.2.0.
+The supported consumer surface is documented in [public exports](reference/public-exports.html). Build capabilities and modules; use an authorizer; create plans directly. [MCP inbound](guides/inbound-mcp.html) exposes registered work through the same governed path. Planner implementation and outbound MCP integration APIs remain internal in v0.3.0.
 
 ## Reference and contributing
 
-Use [execution-plan v1](reference/execution-plan-v1.html), [authorization API](reference/authorization-api.html), [job model](reference/job-model.html), and [planner API](reference/planner-api.html). Contributors should read [development setup](contributing/development-setup.html), [testing](contributing/testing.html), [package verification](contributing/package-verification.html), and [architecture rules](contributing/architecture-rules.html).
+Use [ExecutionPlan V1](reference/execution-plan-v1.html), [ExecutionPlan V2](reference/execution-plan-v2.html), [authorization API](reference/authorization-api.html), [job model](reference/job-model.html), and [planner API](reference/planner-api.html). Contributors should read [development setup](contributing/development-setup.html), [testing](contributing/testing.html), [package verification](contributing/package-verification.html), and [architecture rules](contributing/architecture-rules.html).
 
 ## Current limits
 
-v0.2.0 runs a plan's steps sequentially. It has no ExecutionPlan syntax or runtime implementation for DAGs, parallel work, conditionals, retries, cancellation, or idempotency enforcement. Plan and step idempotency keys are recorded, not enforced.
+v0.3.0 runs a plan's steps sequentially. It has no ExecutionPlan syntax or runtime implementation for DAGs, parallel work, conditionals, retries, cancellation, or idempotency enforcement. Plan and step idempotency keys are recorded, not enforced.
