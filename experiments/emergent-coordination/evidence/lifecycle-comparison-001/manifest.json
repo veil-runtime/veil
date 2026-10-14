@@ -1,0 +1,190 @@
+{
+  "schemaVersion": 1,
+  "experimentVersion": "phase2-lifecycle-comparison-v1",
+  "evidenceClass": "exploratory-lifecycle-comparison",
+  "mode": "live-comparison",
+  "gitHead": "5c5fcb19d45add63804f8cb8a70dd68185230c84",
+  "gitDirty": "true",
+  "sourceSha256": {
+    "experiments/emergent-coordination/phase2/comparison/preregistration.md": "aebe616fab59d0da11eea6fbd843962505209c05cbed001b2be07ff4be87bd17",
+    "experiments/emergent-coordination/phase2/comparison/lifecycle.txt": "3be09c1b434e447d19fe2739d567400e79d1e44801162b3d7e0492f0f363ffe3",
+    "experiments/emergent-coordination/phase2/comparison/driver.mjs": "da4dbb94595b5fecd308fec023936d266014a5ac0d6eeb7e61652473b74dcdb2",
+    "experiments/emergent-coordination/phase2/comparison/outcomes.mjs": "6e911c1fe4310c90f6518598cdadd999cf6bedaa5a74e14fee1dd01242484641",
+    "experiments/emergent-coordination/phase2/comparison/run.mjs": "dbb0f0893c2a16658f05657d89e9d50ba76d346036fd4840b2d706ea8dfe62da",
+    "experiments/emergent-coordination/phase2/comparison/offline.test.mjs": "098b7a0096c94fa78326b4c64e8ef9a5b96abe91b01157ef2d47391f5592c16f",
+    "experiments/emergent-coordination/phase2/participant-prompt.txt": "77d5f1895950acff5dfad26be7e49c4911bee5acdb85e48216b6584d7c759916",
+    "experiments/emergent-coordination/phase2/central-prompt.txt": "9022134246dfcd66cfc9ea1c6434e161d54d1ff1eb939d5a27988984698ec4de",
+    "experiments/emergent-coordination/phase2/protocol.md": "c4071ec3add2e9d41f56fc1bfa8f1cdc2c4344d13e744eddb2b5b6552e2cc335",
+    "experiments/emergent-coordination/phase2/host.mjs": "0b8c5ab13cd3f08e9b1fb9a28aecd3de3c298bc06eac72dfa99d57272441f498",
+    "experiments/emergent-coordination/phase2/host-worker.mjs": "e4c472985d835487bf24ae1850e1d70468921fc5bcca15c436e46a07ed9eb0d4",
+    "experiments/emergent-coordination/phase2/evaluate.mjs": "aee3eee647c9f6752622cb0e98089d391ac0f23fa6e927686629d6ee16f77077",
+    "experiments/emergent-coordination/phase2/budget.mjs": "fcb6e222fc18f3301a4f4dff95fa6dc18e7ef201af7a9e759bcd3da5d466eda2",
+    "experiments/emergent-coordination/phase2/openai-http.mjs": "679dca0bd5a204acde71f1ad1b807c316a8bbdbe641355f0858361b8830db5bf",
+    "experiments/external-model-reasoner/model-adapter.mjs": "2f59182f276d44981eacfe80498e1dddd3f23475d3a68f161b870b9bfff7bd8e",
+    "experiments/external-model-reasoner/providers/openai.mjs": "ac546a086a62d14a90ec4a9aa7175d1a69dd81a9b9b4ecc1a5d76bd043275a13"
+  },
+  "promptSha256": {
+    "participantPromptSha256": "77d5f1895950acff5dfad26be7e49c4911bee5acdb85e48216b6584d7c759916",
+    "baselineProtocolSha256": "c4071ec3add2e9d41f56fc1bfa8f1cdc2c4344d13e744eddb2b5b6552e2cc335",
+    "lifecycleAddendumSha256": "3be09c1b434e447d19fe2739d567400e79d1e44801162b3d7e0492f0f363ffe3",
+    "clarifiedProtocolSha256": "f13ac52b2cf68c82dc22c4207ffa13d88502c2df650491fc1f6df877d8853867"
+  },
+  "provider": "openai",
+  "apiVersion": "responses-v1",
+  "wireOutput": {
+    "mode": "json_object",
+    "schemaRevision": "experiment-protocol-v1-json-object"
+  },
+  "model": "gpt-4.1-mini",
+  "temperature": "omit",
+  "providerSeed": "not-supported-by-adapter",
+  "budget": {
+    "aggregateCeiling": 600000,
+    "perTrialCeiling": 50000,
+    "outputTokenCap": 512,
+    "callLimit": 18,
+    "method": "settled-token-budget-v1"
+  },
+  "hostLimits": {
+    "callsPerTrial": 30,
+    "callsPerAudience": 12,
+    "contextTokens": 24000,
+    "trialMs": 180000,
+    "outputTokensPerCall": 2048
+  },
+  "matrix": [
+    {
+      "seed": 12,
+      "condition": "A",
+      "messagingEnabled": true,
+      "lifecycleClarified": false,
+      "hostCondition": "distributed",
+      "fault": "primary-failure",
+      "openChoice": false,
+      "activationLimit": 18,
+      "callLimit": 18
+    },
+    {
+      "seed": 12,
+      "condition": "B",
+      "messagingEnabled": false,
+      "lifecycleClarified": false,
+      "hostCondition": "no-communication",
+      "fault": "primary-failure",
+      "openChoice": false,
+      "activationLimit": 18,
+      "callLimit": 18
+    },
+    {
+      "seed": 12,
+      "condition": "C",
+      "messagingEnabled": true,
+      "lifecycleClarified": true,
+      "hostCondition": "distributed",
+      "fault": "primary-failure",
+      "openChoice": false,
+      "activationLimit": 18,
+      "callLimit": 18
+    },
+    {
+      "seed": 12,
+      "condition": "D",
+      "messagingEnabled": false,
+      "lifecycleClarified": true,
+      "hostCondition": "no-communication",
+      "fault": "primary-failure",
+      "openChoice": false,
+      "activationLimit": 18,
+      "callLimit": 18
+    },
+    {
+      "seed": 13,
+      "condition": "B",
+      "messagingEnabled": false,
+      "lifecycleClarified": false,
+      "hostCondition": "no-communication",
+      "fault": "primary-failure",
+      "openChoice": false,
+      "activationLimit": 18,
+      "callLimit": 18
+    },
+    {
+      "seed": 13,
+      "condition": "A",
+      "messagingEnabled": true,
+      "lifecycleClarified": false,
+      "hostCondition": "distributed",
+      "fault": "primary-failure",
+      "openChoice": false,
+      "activationLimit": 18,
+      "callLimit": 18
+    },
+    {
+      "seed": 13,
+      "condition": "D",
+      "messagingEnabled": false,
+      "lifecycleClarified": true,
+      "hostCondition": "no-communication",
+      "fault": "primary-failure",
+      "openChoice": false,
+      "activationLimit": 18,
+      "callLimit": 18
+    },
+    {
+      "seed": 13,
+      "condition": "C",
+      "messagingEnabled": true,
+      "lifecycleClarified": true,
+      "hostCondition": "distributed",
+      "fault": "primary-failure",
+      "openChoice": false,
+      "activationLimit": 18,
+      "callLimit": 18
+    },
+    {
+      "seed": 14,
+      "condition": "C",
+      "messagingEnabled": true,
+      "lifecycleClarified": true,
+      "hostCondition": "distributed",
+      "fault": "primary-failure",
+      "openChoice": false,
+      "activationLimit": 18,
+      "callLimit": 18
+    },
+    {
+      "seed": 14,
+      "condition": "D",
+      "messagingEnabled": false,
+      "lifecycleClarified": true,
+      "hostCondition": "no-communication",
+      "fault": "primary-failure",
+      "openChoice": false,
+      "activationLimit": 18,
+      "callLimit": 18
+    },
+    {
+      "seed": 14,
+      "condition": "A",
+      "messagingEnabled": true,
+      "lifecycleClarified": false,
+      "hostCondition": "distributed",
+      "fault": "primary-failure",
+      "openChoice": false,
+      "activationLimit": 18,
+      "callLimit": 18
+    },
+    {
+      "seed": 14,
+      "condition": "B",
+      "messagingEnabled": false,
+      "lifecycleClarified": false,
+      "hostCondition": "no-communication",
+      "fault": "primary-failure",
+      "openChoice": false,
+      "activationLimit": 18,
+      "callLimit": 18
+    }
+  ],
+  "interpretation": "Exploratory comparison; neither task success nor messaging alone establishes emergence"
+}

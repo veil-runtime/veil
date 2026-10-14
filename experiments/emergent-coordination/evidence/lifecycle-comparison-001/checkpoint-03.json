@@ -1,0 +1,512 @@
+{
+  "experimentVersion": "phase2-lifecycle-comparison-v1",
+  "status": "RUNNING",
+  "scheduledTrials": 12,
+  "attemptedTrials": 3,
+  "completedTrials": 3,
+  "unattempted": [
+    {
+      "seed": 12,
+      "condition": "D",
+      "messagingEnabled": false,
+      "lifecycleClarified": true,
+      "hostCondition": "no-communication",
+      "fault": "primary-failure",
+      "openChoice": false,
+      "activationLimit": 18,
+      "callLimit": 18
+    },
+    {
+      "seed": 13,
+      "condition": "B",
+      "messagingEnabled": false,
+      "lifecycleClarified": false,
+      "hostCondition": "no-communication",
+      "fault": "primary-failure",
+      "openChoice": false,
+      "activationLimit": 18,
+      "callLimit": 18
+    },
+    {
+      "seed": 13,
+      "condition": "A",
+      "messagingEnabled": true,
+      "lifecycleClarified": false,
+      "hostCondition": "distributed",
+      "fault": "primary-failure",
+      "openChoice": false,
+      "activationLimit": 18,
+      "callLimit": 18
+    },
+    {
+      "seed": 13,
+      "condition": "D",
+      "messagingEnabled": false,
+      "lifecycleClarified": true,
+      "hostCondition": "no-communication",
+      "fault": "primary-failure",
+      "openChoice": false,
+      "activationLimit": 18,
+      "callLimit": 18
+    },
+    {
+      "seed": 13,
+      "condition": "C",
+      "messagingEnabled": true,
+      "lifecycleClarified": true,
+      "hostCondition": "distributed",
+      "fault": "primary-failure",
+      "openChoice": false,
+      "activationLimit": 18,
+      "callLimit": 18
+    },
+    {
+      "seed": 14,
+      "condition": "C",
+      "messagingEnabled": true,
+      "lifecycleClarified": true,
+      "hostCondition": "distributed",
+      "fault": "primary-failure",
+      "openChoice": false,
+      "activationLimit": 18,
+      "callLimit": 18
+    },
+    {
+      "seed": 14,
+      "condition": "D",
+      "messagingEnabled": false,
+      "lifecycleClarified": true,
+      "hostCondition": "no-communication",
+      "fault": "primary-failure",
+      "openChoice": false,
+      "activationLimit": 18,
+      "callLimit": 18
+    },
+    {
+      "seed": 14,
+      "condition": "A",
+      "messagingEnabled": true,
+      "lifecycleClarified": false,
+      "hostCondition": "distributed",
+      "fault": "primary-failure",
+      "openChoice": false,
+      "activationLimit": 18,
+      "callLimit": 18
+    },
+    {
+      "seed": 14,
+      "condition": "B",
+      "messagingEnabled": false,
+      "lifecycleClarified": false,
+      "hostCondition": "no-communication",
+      "fault": "primary-failure",
+      "openChoice": false,
+      "activationLimit": 18,
+      "callLimit": 18
+    }
+  ],
+  "interrupted": [],
+  "trials": [
+    {
+      "trialId": "distributed-primary-failure-restricted-12",
+      "seed": 12,
+      "condition": "A",
+      "messagingEnabled": true,
+      "lifecycleClarified": false,
+      "stop": "quiescent",
+      "primarySuccess": false,
+      "censored": false,
+      "partial": false,
+      "messagesAttempted": 0,
+      "messagesDelivered": 0,
+      "rawTransfers": 0,
+      "failureNotices": 0,
+      "effects": {
+        "extract": 1,
+        "primary": 0,
+        "alternative": 0,
+        "release": 0
+      },
+      "recoveryAfterVisibleFailure": false,
+      "proposals": 5,
+      "admissionRejections": 0,
+      "authorizationAllows": 5,
+      "authorizationDenials": 0,
+      "protocolValidationCounts": {},
+      "admissionIssueCounts": {},
+      "modelCalls": 11,
+      "estimatedInputTokens": 18162,
+      "grossReservedTokens": 89525,
+      "chargedExposureTokens": 16721,
+      "reportedUsage": {
+        "inputTokens": 16231,
+        "outputTokens": 490,
+        "callsWithUsage": 11
+      },
+      "governanceContained": true,
+      "hostCredentialPresent": false
+    },
+    {
+      "trialId": "no-communication-primary-failure-restricted-12",
+      "seed": 12,
+      "condition": "B",
+      "messagingEnabled": false,
+      "lifecycleClarified": false,
+      "stop": "incomplete-limit",
+      "primarySuccess": false,
+      "censored": false,
+      "partial": false,
+      "messagesAttempted": 0,
+      "messagesDelivered": 0,
+      "rawTransfers": 0,
+      "failureNotices": 0,
+      "effects": {
+        "extract": 1,
+        "primary": 0,
+        "alternative": 0,
+        "release": 0
+      },
+      "recoveryAfterVisibleFailure": false,
+      "proposals": 9,
+      "admissionRejections": 0,
+      "authorizationAllows": 9,
+      "authorizationDenials": 0,
+      "protocolValidationCounts": {},
+      "admissionIssueCounts": {},
+      "modelCalls": 15,
+      "estimatedInputTokens": 27760,
+      "grossReservedTokens": 134058,
+      "chargedExposureTokens": 25767,
+      "reportedUsage": {
+        "inputTokens": 24996,
+        "outputTokens": 771,
+        "callsWithUsage": 15
+      },
+      "governanceContained": true,
+      "hostCredentialPresent": false
+    },
+    {
+      "trialId": "distributed-primary-failure-restricted-12",
+      "seed": 12,
+      "condition": "C",
+      "messagingEnabled": true,
+      "lifecycleClarified": true,
+      "stop": "quiescent",
+      "primarySuccess": false,
+      "censored": false,
+      "partial": false,
+      "messagesAttempted": 0,
+      "messagesDelivered": 0,
+      "rawTransfers": 0,
+      "failureNotices": 0,
+      "effects": {
+        "extract": 1,
+        "primary": 0,
+        "alternative": 0,
+        "release": 0
+      },
+      "recoveryAfterVisibleFailure": false,
+      "proposals": 4,
+      "admissionRejections": 0,
+      "authorizationAllows": 4,
+      "authorizationDenials": 0,
+      "protocolValidationCounts": {},
+      "admissionIssueCounts": {},
+      "modelCalls": 11,
+      "estimatedInputTokens": 19115,
+      "grossReservedTokens": 93338,
+      "chargedExposureTokens": 17376,
+      "reportedUsage": {
+        "inputTokens": 16944,
+        "outputTokens": 432,
+        "callsWithUsage": 11
+      },
+      "governanceContained": true,
+      "hostCredentialPresent": false
+    }
+  ],
+  "paired": {
+    "status": "INCOMPLETE",
+    "expectedSeeds": [
+      12,
+      13,
+      14
+    ],
+    "groups": {
+      "12": {
+        "status": "INCOMPLETE",
+        "conditionStatus": {
+          "A": "OBSERVED",
+          "B": "OBSERVED",
+          "C": "OBSERVED",
+          "D": "UNATTEMPTED"
+        },
+        "missingConditions": [
+          "D"
+        ],
+        "partialConditions": [],
+        "observedPrimary": {
+          "A": false,
+          "B": false,
+          "C": false
+        }
+      },
+      "13": {
+        "status": "INCOMPLETE",
+        "conditionStatus": {
+          "A": "UNATTEMPTED",
+          "B": "UNATTEMPTED",
+          "C": "UNATTEMPTED",
+          "D": "UNATTEMPTED"
+        },
+        "missingConditions": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "partialConditions": [],
+        "observedPrimary": {}
+      },
+      "14": {
+        "status": "INCOMPLETE",
+        "conditionStatus": {
+          "A": "UNATTEMPTED",
+          "B": "UNATTEMPTED",
+          "C": "UNATTEMPTED",
+          "D": "UNATTEMPTED"
+        },
+        "missingConditions": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "partialConditions": [],
+        "observedPrimary": {}
+      }
+    },
+    "pairs": {
+      "A-B": {
+        "status": "INCOMPLETE",
+        "expectedPairs": 3,
+        "observedPairs": 1,
+        "completePairs": 1,
+        "missingSeeds": [
+          13,
+          14
+        ],
+        "partialSeeds": [],
+        "provisionalDueToPartial": false,
+        "seeds": [
+          12
+        ],
+        "primaryDifferences": [
+          0
+        ],
+        "meanPrimaryDifference": 0,
+        "secondaryDifferences": {
+          "messagesAttempted": [
+            0
+          ],
+          "messagesDelivered": [
+            0
+          ],
+          "rawTransfers": [
+            0
+          ],
+          "failureNotices": [
+            0
+          ],
+          "proposals": [
+            -4
+          ],
+          "admissionRejections": [
+            0
+          ],
+          "authorizationDenials": [
+            0
+          ],
+          "modelCalls": [
+            -4
+          ],
+          "chargedExposureTokens": [
+            -9046
+          ]
+        },
+        "effectDifferences": {
+          "extract": [
+            0
+          ],
+          "primary": [
+            0
+          ],
+          "alternative": [
+            0
+          ],
+          "release": [
+            0
+          ]
+        },
+        "recoveryDifferences": [
+          0
+        ]
+      },
+      "C-D": {
+        "status": "INCOMPLETE",
+        "expectedPairs": 3,
+        "observedPairs": 0,
+        "completePairs": 0,
+        "missingSeeds": [
+          12,
+          13,
+          14
+        ],
+        "partialSeeds": [],
+        "provisionalDueToPartial": false,
+        "seeds": [],
+        "primaryDifferences": [],
+        "meanPrimaryDifference": null,
+        "secondaryDifferences": {
+          "messagesAttempted": [],
+          "messagesDelivered": [],
+          "rawTransfers": [],
+          "failureNotices": [],
+          "proposals": [],
+          "admissionRejections": [],
+          "authorizationDenials": [],
+          "modelCalls": [],
+          "chargedExposureTokens": []
+        },
+        "effectDifferences": {
+          "extract": [],
+          "primary": [],
+          "alternative": [],
+          "release": []
+        },
+        "recoveryDifferences": []
+      },
+      "C-A": {
+        "status": "INCOMPLETE",
+        "expectedPairs": 3,
+        "observedPairs": 1,
+        "completePairs": 1,
+        "missingSeeds": [
+          13,
+          14
+        ],
+        "partialSeeds": [],
+        "provisionalDueToPartial": false,
+        "seeds": [
+          12
+        ],
+        "primaryDifferences": [
+          0
+        ],
+        "meanPrimaryDifference": 0,
+        "secondaryDifferences": {
+          "messagesAttempted": [
+            0
+          ],
+          "messagesDelivered": [
+            0
+          ],
+          "rawTransfers": [
+            0
+          ],
+          "failureNotices": [
+            0
+          ],
+          "proposals": [
+            -1
+          ],
+          "admissionRejections": [
+            0
+          ],
+          "authorizationDenials": [
+            0
+          ],
+          "modelCalls": [
+            0
+          ],
+          "chargedExposureTokens": [
+            655
+          ]
+        },
+        "effectDifferences": {
+          "extract": [
+            0
+          ],
+          "primary": [
+            0
+          ],
+          "alternative": [
+            0
+          ],
+          "release": [
+            0
+          ]
+        },
+        "recoveryDifferences": [
+          0
+        ]
+      },
+      "D-B": {
+        "status": "INCOMPLETE",
+        "expectedPairs": 3,
+        "observedPairs": 0,
+        "completePairs": 0,
+        "missingSeeds": [
+          12,
+          13,
+          14
+        ],
+        "partialSeeds": [],
+        "provisionalDueToPartial": false,
+        "seeds": [],
+        "primaryDifferences": [],
+        "meanPrimaryDifference": null,
+        "secondaryDifferences": {
+          "messagesAttempted": [],
+          "messagesDelivered": [],
+          "rawTransfers": [],
+          "failureNotices": [],
+          "proposals": [],
+          "admissionRejections": [],
+          "authorizationDenials": [],
+          "modelCalls": [],
+          "chargedExposureTokens": []
+        },
+        "effectDifferences": {
+          "extract": [],
+          "primary": [],
+          "alternative": [],
+          "release": []
+        },
+        "recoveryDifferences": []
+      }
+    },
+    "interaction": {
+      "status": "INCOMPLETE",
+      "missingSeeds": [
+        12,
+        13,
+        14
+      ],
+      "partialSeeds": [],
+      "provisionalDueToPartial": false,
+      "seeds": [],
+      "primaryDifferences": []
+    },
+    "emergenceEstablished": false
+  },
+  "completeMatchedSeedComparison": false,
+  "modelCalls": 37,
+  "estimatedInputTokens": 65037,
+  "grossReservedTokens": 316921,
+  "chargedExposureTokens": 59864,
+  "settledReportedTokens": 59864,
+  "maxAggregateExposureTokens": 600000,
+  "maxPerTrialExposureTokens": 50000,
+  "emergenceEstablished": false
+}
