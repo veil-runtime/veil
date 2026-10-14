@@ -1,0 +1,554 @@
+{
+  "trialId": "distributed-none-no-messages-3",
+  "seed": 3,
+  "condition": "distributed",
+  "fault": "none",
+  "messages": false,
+  "policy": "scripted-infrastructure-baseline",
+  "assignment": {
+    "extract": "p1",
+    "primary": "p2",
+    "alternative": "p0",
+    "release": "p0"
+  },
+  "limits": {
+    "activations": 48,
+    "proposals": 12,
+    "messages": 24,
+    "bodyCharacters": 256
+  },
+  "stop": "quiescent",
+  "trace": [
+    {
+      "seq": 0,
+      "type": "activation",
+      "tick": 0,
+      "round": 0,
+      "participant": "p1",
+      "observation": {
+        "tick": 0,
+        "objective": "Release the refined source value",
+        "capabilities": [
+          {
+            "name": "exp005.distributed-none-no-messages-3.extract",
+            "version": "1",
+            "description": "Extract source value",
+            "risk": "read",
+            "inputSchema": {}
+          }
+        ],
+        "inbox": [],
+        "receipts": []
+      }
+    },
+    {
+      "seq": 1,
+      "type": "decision",
+      "tick": 0,
+      "participant": "p1",
+      "origin": "scripted-participant",
+      "action": {
+        "type": "submit",
+        "proposalId": "p1",
+        "plan": {
+          "version": "2.0",
+          "steps": [
+            {
+              "id": "s",
+              "capability": "exp005.distributed-none-no-messages-3.extract",
+              "capabilityVersion": "1",
+              "input": {}
+            }
+          ]
+        }
+      }
+    },
+    {
+      "seq": 2,
+      "type": "proposal",
+      "participant": "p1",
+      "origin": "scripted-participant",
+      "proposalId": "p1",
+      "submitted": {
+        "version": "2.0",
+        "steps": [
+          {
+            "id": "s",
+            "capability": "exp005.distributed-none-no-messages-3.extract",
+            "capabilityVersion": "1",
+            "input": {}
+          }
+        ]
+      },
+      "droppedAuthority": false
+    },
+    {
+      "seq": 3,
+      "type": "authorization",
+      "participant": "p1",
+      "proposalId": "p1",
+      "capability": "exp005.distributed-none-no-messages-3.extract",
+      "input": {},
+      "callerScopes": [
+        "execute:exp005.distributed-none-no-messages-3.extract"
+      ],
+      "decision": "allow"
+    },
+    {
+      "seq": 4,
+      "type": "capability-entry",
+      "participant": "p1",
+      "proposalId": "p1",
+      "capability": "exp005.distributed-none-no-messages-3.extract",
+      "input": {}
+    },
+    {
+      "seq": 5,
+      "type": "effect",
+      "participant": "p1",
+      "proposalId": "p1",
+      "kind": "extract",
+      "value": "specimen-3"
+    },
+    {
+      "seq": 6,
+      "type": "admission",
+      "participant": "p1",
+      "proposalId": "p1",
+      "outcome": "passed"
+    },
+    {
+      "seq": 7,
+      "type": "receipt",
+      "participant": "p1",
+      "receipt": {
+        "proposalId": "p1",
+        "capability": "exp005.distributed-none-no-messages-3.extract",
+        "outcome": "SUCCESS",
+        "result": {
+          "raw": "specimen-3"
+        },
+        "events": [
+          "job.created",
+          "execution.started",
+          "capability.started",
+          "capability.completed",
+          "job.completed"
+        ]
+      }
+    },
+    {
+      "seq": 8,
+      "type": "activation",
+      "tick": 1,
+      "round": 0,
+      "participant": "p0",
+      "observation": {
+        "tick": 1,
+        "objective": "Release the refined source value",
+        "capabilities": [
+          {
+            "name": "exp005.distributed-none-no-messages-3.alternative",
+            "version": "1",
+            "description": "Refine a raw source value",
+            "risk": "write",
+            "inputSchema": {
+              "raw": {
+                "type": "string",
+                "required": true,
+                "description": "Raw source value"
+              }
+            }
+          },
+          {
+            "name": "exp005.distributed-none-no-messages-3.release",
+            "version": "1",
+            "description": "Release refined value",
+            "risk": "write",
+            "inputSchema": {
+              "refined": {
+                "type": "string",
+                "required": true,
+                "description": "Refined value"
+              }
+            }
+          }
+        ],
+        "inbox": [],
+        "receipts": []
+      }
+    },
+    {
+      "seq": 9,
+      "type": "decision",
+      "tick": 1,
+      "participant": "p0",
+      "origin": "scripted-participant",
+      "action": {
+        "type": "idle"
+      }
+    },
+    {
+      "seq": 10,
+      "type": "activation",
+      "tick": 2,
+      "round": 0,
+      "participant": "p2",
+      "observation": {
+        "tick": 2,
+        "objective": "Release the refined source value",
+        "capabilities": [
+          {
+            "name": "exp005.distributed-none-no-messages-3.primary",
+            "version": "1",
+            "description": "Refine a raw source value",
+            "risk": "write",
+            "inputSchema": {
+              "raw": {
+                "type": "string",
+                "required": true,
+                "description": "Raw source value"
+              }
+            }
+          }
+        ],
+        "inbox": [],
+        "receipts": []
+      }
+    },
+    {
+      "seq": 11,
+      "type": "decision",
+      "tick": 2,
+      "participant": "p2",
+      "origin": "scripted-participant",
+      "action": {
+        "type": "idle"
+      }
+    },
+    {
+      "seq": 12,
+      "type": "activation",
+      "tick": 3,
+      "round": 1,
+      "participant": "p2",
+      "observation": {
+        "tick": 3,
+        "objective": "Release the refined source value",
+        "capabilities": [
+          {
+            "name": "exp005.distributed-none-no-messages-3.primary",
+            "version": "1",
+            "description": "Refine a raw source value",
+            "risk": "write",
+            "inputSchema": {
+              "raw": {
+                "type": "string",
+                "required": true,
+                "description": "Raw source value"
+              }
+            }
+          }
+        ],
+        "inbox": [],
+        "receipts": []
+      }
+    },
+    {
+      "seq": 13,
+      "type": "decision",
+      "tick": 3,
+      "participant": "p2",
+      "origin": "scripted-participant",
+      "action": {
+        "type": "idle"
+      }
+    },
+    {
+      "seq": 14,
+      "type": "activation",
+      "tick": 4,
+      "round": 1,
+      "participant": "p0",
+      "observation": {
+        "tick": 4,
+        "objective": "Release the refined source value",
+        "capabilities": [
+          {
+            "name": "exp005.distributed-none-no-messages-3.alternative",
+            "version": "1",
+            "description": "Refine a raw source value",
+            "risk": "write",
+            "inputSchema": {
+              "raw": {
+                "type": "string",
+                "required": true,
+                "description": "Raw source value"
+              }
+            }
+          },
+          {
+            "name": "exp005.distributed-none-no-messages-3.release",
+            "version": "1",
+            "description": "Release refined value",
+            "risk": "write",
+            "inputSchema": {
+              "refined": {
+                "type": "string",
+                "required": true,
+                "description": "Refined value"
+              }
+            }
+          }
+        ],
+        "inbox": [],
+        "receipts": []
+      }
+    },
+    {
+      "seq": 15,
+      "type": "decision",
+      "tick": 4,
+      "participant": "p0",
+      "origin": "scripted-participant",
+      "action": {
+        "type": "idle"
+      }
+    },
+    {
+      "seq": 16,
+      "type": "activation",
+      "tick": 5,
+      "round": 1,
+      "participant": "p1",
+      "observation": {
+        "tick": 5,
+        "objective": "Release the refined source value",
+        "capabilities": [
+          {
+            "name": "exp005.distributed-none-no-messages-3.extract",
+            "version": "1",
+            "description": "Extract source value",
+            "risk": "read",
+            "inputSchema": {}
+          }
+        ],
+        "inbox": [],
+        "receipts": [
+          {
+            "proposalId": "p1",
+            "capability": "exp005.distributed-none-no-messages-3.extract",
+            "outcome": "SUCCESS",
+            "result": {
+              "raw": "specimen-3"
+            },
+            "events": [
+              "job.created",
+              "execution.started",
+              "capability.started",
+              "capability.completed",
+              "job.completed"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seq": 17,
+      "type": "decision",
+      "tick": 5,
+      "participant": "p1",
+      "origin": "scripted-participant",
+      "action": {
+        "type": "send",
+        "to": "all",
+        "body": {
+          "kind": "raw",
+          "value": "specimen-3"
+        }
+      }
+    },
+    {
+      "seq": 18,
+      "type": "message-blocked",
+      "tick": 5,
+      "from": "p1",
+      "body": {
+        "kind": "raw",
+        "value": "specimen-3"
+      }
+    },
+    {
+      "seq": 19,
+      "type": "activation",
+      "tick": 6,
+      "round": 2,
+      "participant": "p1",
+      "observation": {
+        "tick": 6,
+        "objective": "Release the refined source value",
+        "capabilities": [
+          {
+            "name": "exp005.distributed-none-no-messages-3.extract",
+            "version": "1",
+            "description": "Extract source value",
+            "risk": "read",
+            "inputSchema": {}
+          }
+        ],
+        "inbox": [],
+        "receipts": []
+      }
+    },
+    {
+      "seq": 20,
+      "type": "decision",
+      "tick": 6,
+      "participant": "p1",
+      "origin": "scripted-participant",
+      "action": {
+        "type": "idle"
+      }
+    },
+    {
+      "seq": 21,
+      "type": "activation",
+      "tick": 7,
+      "round": 2,
+      "participant": "p0",
+      "observation": {
+        "tick": 7,
+        "objective": "Release the refined source value",
+        "capabilities": [
+          {
+            "name": "exp005.distributed-none-no-messages-3.alternative",
+            "version": "1",
+            "description": "Refine a raw source value",
+            "risk": "write",
+            "inputSchema": {
+              "raw": {
+                "type": "string",
+                "required": true,
+                "description": "Raw source value"
+              }
+            }
+          },
+          {
+            "name": "exp005.distributed-none-no-messages-3.release",
+            "version": "1",
+            "description": "Release refined value",
+            "risk": "write",
+            "inputSchema": {
+              "refined": {
+                "type": "string",
+                "required": true,
+                "description": "Refined value"
+              }
+            }
+          }
+        ],
+        "inbox": [],
+        "receipts": []
+      }
+    },
+    {
+      "seq": 22,
+      "type": "decision",
+      "tick": 7,
+      "participant": "p0",
+      "origin": "scripted-participant",
+      "action": {
+        "type": "idle"
+      }
+    },
+    {
+      "seq": 23,
+      "type": "activation",
+      "tick": 8,
+      "round": 2,
+      "participant": "p2",
+      "observation": {
+        "tick": 8,
+        "objective": "Release the refined source value",
+        "capabilities": [
+          {
+            "name": "exp005.distributed-none-no-messages-3.primary",
+            "version": "1",
+            "description": "Refine a raw source value",
+            "risk": "write",
+            "inputSchema": {
+              "raw": {
+                "type": "string",
+                "required": true,
+                "description": "Raw source value"
+              }
+            }
+          }
+        ],
+        "inbox": [],
+        "receipts": []
+      }
+    },
+    {
+      "seq": 24,
+      "type": "decision",
+      "tick": 8,
+      "participant": "p2",
+      "origin": "scripted-participant",
+      "action": {
+        "type": "idle"
+      }
+    }
+  ],
+  "privateWorld": {
+    "raw": "specimen-3",
+    "released": false,
+    "effects": [
+      {
+        "participant": "p1",
+        "proposalId": "p1",
+        "kind": "extract",
+        "value": "specimen-3"
+      }
+    ],
+    "injected": false
+  },
+  "evaluation": {
+    "goalSatisfied": false,
+    "confirmed": false,
+    "uncertain": false,
+    "governanceContained": true,
+    "violations": [],
+    "distinctContributors": 1,
+    "messageDependentPath": false,
+    "failureObserved": false,
+    "recoveredAfterFailure": false,
+    "recoveryLatency": null,
+    "admissionsRejected": 0,
+    "authorizationsDenied": 0,
+    "proposals": 1,
+    "messages": 0,
+    "functionCounts": {
+      "p0": {
+        "extract": 0,
+        "primary": 0,
+        "alternative": 0,
+        "release": 0
+      },
+      "p1": {
+        "extract": 1,
+        "primary": 0,
+        "alternative": 0,
+        "release": 0
+      },
+      "p2": {
+        "extract": 0,
+        "primary": 0,
+        "alternative": 0,
+        "release": 0
+      }
+    },
+    "eligibleEmergenceEvidence": false,
+    "outcome": "goal-not-met"
+  }
+}

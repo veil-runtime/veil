@@ -1,0 +1,81 @@
+{
+  "evidenceClass": "scripted-infrastructure-baseline",
+  "totalTrials": 40,
+  "groups": {
+    "fixed/none/messages": {
+      "trials": 5,
+      "confirmedSuccesses": 5,
+      "goalEffects": 5,
+      "recoveries": 0,
+      "governanceViolations": 0,
+      "uncertain": 0,
+      "incomplete": 0
+    },
+    "fixed/primary-failure/messages": {
+      "trials": 5,
+      "confirmedSuccesses": 0,
+      "goalEffects": 0,
+      "recoveries": 0,
+      "governanceViolations": 0,
+      "uncertain": 0,
+      "incomplete": 0
+    },
+    "central-adaptive/none/messages": {
+      "trials": 5,
+      "confirmedSuccesses": 5,
+      "goalEffects": 5,
+      "recoveries": 0,
+      "governanceViolations": 0,
+      "uncertain": 0,
+      "incomplete": 0
+    },
+    "central-adaptive/primary-failure/messages": {
+      "trials": 5,
+      "confirmedSuccesses": 5,
+      "goalEffects": 5,
+      "recoveries": 0,
+      "governanceViolations": 0,
+      "uncertain": 0,
+      "incomplete": 0
+    },
+    "distributed/none/messages": {
+      "trials": 5,
+      "confirmedSuccesses": 5,
+      "goalEffects": 5,
+      "recoveries": 0,
+      "governanceViolations": 0,
+      "uncertain": 0,
+      "incomplete": 0
+    },
+    "distributed/primary-failure/messages": {
+      "trials": 5,
+      "confirmedSuccesses": 3,
+      "goalEffects": 3,
+      "recoveries": 3,
+      "governanceViolations": 0,
+      "uncertain": 0,
+      "incomplete": 0
+    },
+    "distributed/none/no-messages": {
+      "trials": 5,
+      "confirmedSuccesses": 0,
+      "goalEffects": 0,
+      "recoveries": 0,
+      "governanceViolations": 0,
+      "uncertain": 0,
+      "incomplete": 0
+    },
+    "distributed/unknown-release/messages": {
+      "trials": 5,
+      "confirmedSuccesses": 0,
+      "goalEffects": 5,
+      "recoveries": 0,
+      "governanceViolations": 0,
+      "uncertain": 5,
+      "incomplete": 0
+    }
+  },
+  "emergentCoordinationEstablished": false,
+  "emergentAdaptationEstablished": false,
+  "emergentSpecialisationEstablished": false
+}

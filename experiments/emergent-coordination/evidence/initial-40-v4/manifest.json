@@ -1,0 +1,259 @@
+{
+  "evidenceClass": "scripted-infrastructure-baseline",
+  "gitHead": "5f5bbf6e203f3ed4afd9c3ec7c823d412c6781ea",
+  "gitDirty": "true",
+  "node": "v24.18.1",
+  "sourceSha256": {
+    "harness.mjs": "e50d687e8a2aefcdf20a10a95ff733ee301efbe7e9a2c92067307ab4af5ba1fa",
+    "scripted-policy.mjs": "681f15e9b1f9c48b063fdb5ed1add0d34db55eae6c778e246e1ce59863103e92",
+    "evaluate.mjs": "464b71bcde50abf962f064ea2f7859dbdeeff3346e4232b89137431c04c3a553",
+    "run.mjs": "c01d75fdc2224ca2560f3047d4dc879daa22d9822b0cfb5aec9d99dacb14514e",
+    "research-spec.md": "88d137788e0f850ca9cf554923900889fd5f19357078f3c15bf560329f023add",
+    "protocol.md": "5ebb2c15a1b1eb3b8b5fa78009ff73dd86adaab9b6094081e974d92b179101ca"
+  },
+  "matrix": [
+    {
+      "seed": 1,
+      "condition": "fixed",
+      "fault": "none",
+      "messages": true
+    },
+    {
+      "seed": 1,
+      "condition": "fixed",
+      "fault": "primary-failure",
+      "messages": true
+    },
+    {
+      "seed": 1,
+      "condition": "central-adaptive",
+      "fault": "none",
+      "messages": true
+    },
+    {
+      "seed": 1,
+      "condition": "central-adaptive",
+      "fault": "primary-failure",
+      "messages": true
+    },
+    {
+      "seed": 1,
+      "condition": "distributed",
+      "fault": "none",
+      "messages": true
+    },
+    {
+      "seed": 1,
+      "condition": "distributed",
+      "fault": "primary-failure",
+      "messages": true
+    },
+    {
+      "seed": 1,
+      "condition": "distributed",
+      "fault": "none",
+      "messages": false
+    },
+    {
+      "seed": 1,
+      "condition": "distributed",
+      "fault": "unknown-release",
+      "messages": true
+    },
+    {
+      "seed": 2,
+      "condition": "fixed",
+      "fault": "none",
+      "messages": true
+    },
+    {
+      "seed": 2,
+      "condition": "fixed",
+      "fault": "primary-failure",
+      "messages": true
+    },
+    {
+      "seed": 2,
+      "condition": "central-adaptive",
+      "fault": "none",
+      "messages": true
+    },
+    {
+      "seed": 2,
+      "condition": "central-adaptive",
+      "fault": "primary-failure",
+      "messages": true
+    },
+    {
+      "seed": 2,
+      "condition": "distributed",
+      "fault": "none",
+      "messages": true
+    },
+    {
+      "seed": 2,
+      "condition": "distributed",
+      "fault": "primary-failure",
+      "messages": true
+    },
+    {
+      "seed": 2,
+      "condition": "distributed",
+      "fault": "none",
+      "messages": false
+    },
+    {
+      "seed": 2,
+      "condition": "distributed",
+      "fault": "unknown-release",
+      "messages": true
+    },
+    {
+      "seed": 3,
+      "condition": "fixed",
+      "fault": "none",
+      "messages": true
+    },
+    {
+      "seed": 3,
+      "condition": "fixed",
+      "fault": "primary-failure",
+      "messages": true
+    },
+    {
+      "seed": 3,
+      "condition": "central-adaptive",
+      "fault": "none",
+      "messages": true
+    },
+    {
+      "seed": 3,
+      "condition": "central-adaptive",
+      "fault": "primary-failure",
+      "messages": true
+    },
+    {
+      "seed": 3,
+      "condition": "distributed",
+      "fault": "none",
+      "messages": true
+    },
+    {
+      "seed": 3,
+      "condition": "distributed",
+      "fault": "primary-failure",
+      "messages": true
+    },
+    {
+      "seed": 3,
+      "condition": "distributed",
+      "fault": "none",
+      "messages": false
+    },
+    {
+      "seed": 3,
+      "condition": "distributed",
+      "fault": "unknown-release",
+      "messages": true
+    },
+    {
+      "seed": 4,
+      "condition": "fixed",
+      "fault": "none",
+      "messages": true
+    },
+    {
+      "seed": 4,
+      "condition": "fixed",
+      "fault": "primary-failure",
+      "messages": true
+    },
+    {
+      "seed": 4,
+      "condition": "central-adaptive",
+      "fault": "none",
+      "messages": true
+    },
+    {
+      "seed": 4,
+      "condition": "central-adaptive",
+      "fault": "primary-failure",
+      "messages": true
+    },
+    {
+      "seed": 4,
+      "condition": "distributed",
+      "fault": "none",
+      "messages": true
+    },
+    {
+      "seed": 4,
+      "condition": "distributed",
+      "fault": "primary-failure",
+      "messages": true
+    },
+    {
+      "seed": 4,
+      "condition": "distributed",
+      "fault": "none",
+      "messages": false
+    },
+    {
+      "seed": 4,
+      "condition": "distributed",
+      "fault": "unknown-release",
+      "messages": true
+    },
+    {
+      "seed": 5,
+      "condition": "fixed",
+      "fault": "none",
+      "messages": true
+    },
+    {
+      "seed": 5,
+      "condition": "fixed",
+      "fault": "primary-failure",
+      "messages": true
+    },
+    {
+      "seed": 5,
+      "condition": "central-adaptive",
+      "fault": "none",
+      "messages": true
+    },
+    {
+      "seed": 5,
+      "condition": "central-adaptive",
+      "fault": "primary-failure",
+      "messages": true
+    },
+    {
+      "seed": 5,
+      "condition": "distributed",
+      "fault": "none",
+      "messages": true
+    },
+    {
+      "seed": 5,
+      "condition": "distributed",
+      "fault": "primary-failure",
+      "messages": true
+    },
+    {
+      "seed": 5,
+      "condition": "distributed",
+      "fault": "none",
+      "messages": false
+    },
+    {
+      "seed": 5,
+      "condition": "distributed",
+      "fault": "unknown-release",
+      "messages": true
+    }
+  ],
+  "planVersions": [
+    "2.0"
+  ]
+}
