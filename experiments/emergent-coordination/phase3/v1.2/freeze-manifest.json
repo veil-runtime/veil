@@ -1,0 +1,254 @@
+{
+  "schemaVersion": 1,
+  "experimentVersion": "phase3-peer-capability-visibility-v1.2-recipient-clarification-001",
+  "freezeStatus": "prepared-for-freeze-review-no-live-data-collected",
+  "amendmentBasis": "Prospective clarification of the host-enforced message recipient rule after the incomplete v1.1 study; no earlier outcome is pooled.",
+  "priorStudy": {
+    "checkpoint": ".tmp/veil-005-phase3-v1.1-replacement-001/checkpoint-07.json",
+    "status": "PROTOCOL CHECKPOINT",
+    "attemptedTrials": 7,
+    "completedTrials": 6,
+    "completeMatchedPairs": 3,
+    "manifestSha256": "5f9911fd6b80aa2863c0bf5f7b35cb9172cacb4264928d31c96e72489cd13d54",
+    "summarySha256": "be78fd5b5cad983ef6d3958d8e814b9f2d44d2d287b6738066d4c0c3378e2c47",
+    "allEvidenceFilesVerified": 24
+  },
+  "model": {
+    "provider": "openai",
+    "apiVersion": "responses-v1",
+    "identifier": "gpt-4.1-mini",
+    "temperature": "omit",
+    "maxOutputTokens": 512,
+    "providerSeed": "unsupported; none claimed"
+  },
+  "protocol": {
+    "file": "experiments/emergent-coordination/phase3/v1.2/action-protocol.md",
+    "sha256": "b628d33ad3dd77f747b491afe23a10ccd70cc695a9aa116caf064eb26c5eabc1",
+    "clarification": "A message may be addressed to another participant or `all`. A participant may not address a message to itself.",
+    "visibleInBothConditions": true,
+    "hostValidation": "unchanged Phase 3 v1 recipient validation and immediate protocol-abort behavior"
+  },
+  "treatment": {
+    "control": "v1.1 control observation unchanged; peerCapabilities absent",
+    "directory": {
+      "field": "peerCapabilities",
+      "readOnly": true,
+      "visibleInitially": true,
+      "contents": "other participant IDs and static descriptors only",
+      "excludes": [
+        "receipts",
+        "execution status",
+        "intermediate or returned values",
+        "messages and histories",
+        "memory",
+        "provider state",
+        "scopes",
+        "evaluator and world state",
+        "hidden fault schedule"
+      ]
+    }
+  },
+  "seeds": [
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32
+  ],
+  "orderSeed": 20261015,
+  "trialOrder": [
+    {
+      "run": 1,
+      "seed": 25,
+      "condition": "treatment"
+    },
+    {
+      "run": 2,
+      "seed": 25,
+      "condition": "control"
+    },
+    {
+      "run": 3,
+      "seed": 32,
+      "condition": "control"
+    },
+    {
+      "run": 4,
+      "seed": 32,
+      "condition": "treatment"
+    },
+    {
+      "run": 5,
+      "seed": 28,
+      "condition": "treatment"
+    },
+    {
+      "run": 6,
+      "seed": 28,
+      "condition": "control"
+    },
+    {
+      "run": 7,
+      "seed": 30,
+      "condition": "control"
+    },
+    {
+      "run": 8,
+      "seed": 30,
+      "condition": "treatment"
+    },
+    {
+      "run": 9,
+      "seed": 27,
+      "condition": "treatment"
+    },
+    {
+      "run": 10,
+      "seed": 27,
+      "condition": "control"
+    },
+    {
+      "run": 11,
+      "seed": 24,
+      "condition": "control"
+    },
+    {
+      "run": 12,
+      "seed": 24,
+      "condition": "treatment"
+    },
+    {
+      "run": 13,
+      "seed": 31,
+      "condition": "treatment"
+    },
+    {
+      "run": 14,
+      "seed": 31,
+      "condition": "control"
+    },
+    {
+      "run": 15,
+      "seed": 29,
+      "condition": "control"
+    },
+    {
+      "run": 16,
+      "seed": 29,
+      "condition": "treatment"
+    },
+    {
+      "run": 17,
+      "seed": 23,
+      "condition": "treatment"
+    },
+    {
+      "run": 18,
+      "seed": 23,
+      "condition": "control"
+    },
+    {
+      "run": 19,
+      "seed": 21,
+      "condition": "control"
+    },
+    {
+      "run": 20,
+      "seed": 21,
+      "condition": "treatment"
+    },
+    {
+      "run": 21,
+      "seed": 26,
+      "condition": "treatment"
+    },
+    {
+      "run": 22,
+      "seed": 26,
+      "condition": "control"
+    },
+    {
+      "run": 23,
+      "seed": 22,
+      "condition": "control"
+    },
+    {
+      "run": 24,
+      "seed": 22,
+      "condition": "treatment"
+    }
+  ],
+  "budget": {
+    "perTrialCeiling": 450000,
+    "aggregateCeiling": 10800000,
+    "outputTokenCap": 512,
+    "maxCallsPerTrial": 18,
+    "maxTrials": 24
+  },
+  "sourceSha256": {
+    "experiments/emergent-coordination/phase3/v1.2/README.md": "fa6d57fd37648fcf0c8cf3be1d55eb545b6fbaaf4f9945364725d3eb83c9b911",
+    "experiments/emergent-coordination/phase3/v1.2/amendment-001.md": "f1b878b9dd576b18010f7d3e3ffa0a79acb7a22e2ba5676828b64689baab12a3",
+    "experiments/emergent-coordination/phase3/v1.2/budget-amendment.md": "7e969820685033ce717b424db6eff91523defe9ab41135c81e2d4b6eb449a089",
+    "experiments/emergent-coordination/phase3/v1.2/preregistration.md": "beb43e1149ba115751e5c3cdc35d6b4d10a87620754086de1b55bccddd30d530",
+    "experiments/emergent-coordination/phase3/v1.2/action-protocol.md": "b628d33ad3dd77f747b491afe23a10ccd70cc695a9aa116caf064eb26c5eabc1",
+    "experiments/emergent-coordination/phase3/v1.2/context-comparison.md": "57f3766c15e423ea8a6e54a0ec18a6e975d87289fbd46b11b7c189ff37c3ccb0",
+    "experiments/emergent-coordination/phase3/v1.2/preserved-evidence.json": "f21024c3d1308b830fccb56ba4605fe1d863ca80c7a3084ecb8848d693fa0387",
+    "experiments/emergent-coordination/phase3/v1.2/offline.test.mjs": "a3248036601db95b1a8da8d1f08ad76177f0da91cd8d4e68fd4dd40d5c3568c3",
+    "experiments/emergent-coordination/phase3/v1.2/driver.mjs": "d6824c6f459ecfbaa32ba94800f0f2fbba463050f45f0952fb6dd303b83da4de",
+    "experiments/emergent-coordination/phase3/v1.2/run.mjs": "6a24dd0271c3ef6f7bd7e0613fdd3d7ea2d7475daad6043a0f9059aa931b9cd3",
+    "experiments/emergent-coordination/phase3/v1.1/README.md": "fb3329f6de30c28da4d072a823bbef902ee59c18ca22763ac5f1d7fb6584b74b",
+    "experiments/emergent-coordination/phase3/v1.1/budget-amendment.md": "f519e8c7f97d6367b13d9115e859aceb8ff74e28e6108ac7836c9c3ea3e1cf40",
+    "experiments/emergent-coordination/phase3/v1.1/preregistration.md": "1d3c0c476c71ec37c6c22f4f98b47231e1082c7a03dd67e484fa905519b19459",
+    "experiments/emergent-coordination/phase3/v1.1/offline.test.mjs": "0cd0aead9104721e6b4a2f886cecde460505aecb8863ec49219fc050247ea89d",
+    "experiments/emergent-coordination/phase3/v1.1/run.mjs": "ef49cb310668baee362c6b2be0594746999ef5f0428c103d759819a7652790f2",
+    "experiments/emergent-coordination/phase3/v1.1/freeze-manifest.json": "6af0242d39ca2f62cab8f5d41a290cd2b2100d3524821c0489c4d341497f1a52",
+    "experiments/emergent-coordination/phase3/v1.1/freeze-manifest.json.sha256": "8334d6a1f5104a6084735664fc67ac4018c3b49f2214e9588098e59898e7c023",
+    "experiments/emergent-coordination/phase3/v1/freeze-manifest.json": "9cecf88cdda35547b3f68b2787f4624c0c58d6204b82992159814c3edcf25d7e",
+    "experiments/emergent-coordination/phase3/v1/freeze-manifest.json.sha256": "0e6b9eb7d4acf0afa7eccb2c32e1ee074499d13e0ce949102c0e1183ab90ce58",
+    "experiments/emergent-coordination/phase3/v1/README.md": "223a941235bb2c547929c2f701243c0e585f4cebfdb7f3f853f63bf16bc6a723",
+    "experiments/emergent-coordination/phase3/v1/driver.mjs": "c649beb4c2beb5674436d3c9d6a252d2290860a42daaa1879e476ec51737b1e3",
+    "experiments/emergent-coordination/phase3/v1/evaluate.mjs": "5656cfaa986137c378da2caba009c877014355d2a1d1913043cdd7e4d1d32027",
+    "experiments/emergent-coordination/phase3/v1/host.mjs": "5d593515133fd6e40fc01a427b0c5964165e830e86fd0932e7c8a9f69230e818",
+    "experiments/emergent-coordination/phase3/v1/host-worker.mjs": "e4c472985d835487bf24ae1850e1d70468921fc5bcca15c436e46a07ed9eb0d4",
+    "experiments/emergent-coordination/phase3/v1/run.mjs": "30cd0983e412f970496ffd846720921873ab3a02863a6be8caae0e23dcc3c441",
+    "experiments/emergent-coordination/phase3/v1/offline.test.mjs": "3310b7b54e745a217226f9e0b6de524db26974424478c51d30ad3580f9191910",
+    "experiments/emergent-coordination/phase3/v1/preregistration.md": "59a6620a5818475037d9deb4e367a8afea0ac2c36c1a83e37829ba4411c843b5",
+    "experiments/emergent-coordination/phase3/v1/amendment-002.md": "7d5b1259416ca5693543a281462ca42c3101d9614f01db791dbb9abd44fb19fc",
+    "experiments/emergent-coordination/phase3/v1/amendment-001.md": "c736e7cf3935f29327c05b5ebdf2df9e6c84d716bdfb34695f307368db1bf21b",
+    "experiments/emergent-coordination/phase3/v1/seed13-analysis.md": "d289bdcc95f44e5acececdc7b7a3a5d766bd78422d14d4d79da05406e941dbed",
+    "experiments/emergent-coordination/phase2/host.mjs": "0b8c5ab13cd3f08e9b1fb9a28aecd3de3c298bc06eac72dfa99d57272441f498",
+    "experiments/emergent-coordination/phase2/comparison/driver.mjs": "da4dbb94595b5fecd308fec023936d266014a5ac0d6eeb7e61652473b74dcdb2",
+    "experiments/emergent-coordination/phase2/comparison/outcomes.mjs": "6e911c1fe4310c90f6518598cdadd999cf6bedaa5a74e14fee1dd01242484641",
+    "experiments/emergent-coordination/phase2/evaluate.mjs": "aee3eee647c9f6752622cb0e98089d391ac0f23fa6e927686629d6ee16f77077",
+    "experiments/emergent-coordination/phase2/protocol.md": "c4071ec3add2e9d41f56fc1bfa8f1cdc2c4344d13e744eddb2b5b6552e2cc335",
+    "experiments/emergent-coordination/phase2/participant-prompt.txt": "77d5f1895950acff5dfad26be7e49c4911bee5acdb85e48216b6584d7c759916",
+    "experiments/emergent-coordination/phase2/central-prompt.txt": "9022134246dfcd66cfc9ea1c6434e161d54d1ff1eb939d5a27988984698ec4de",
+    "experiments/emergent-coordination/phase2/budget.mjs": "fcb6e222fc18f3301a4f4dff95fa6dc18e7ef201af7a9e759bcd3da5d466eda2",
+    "experiments/emergent-coordination/phase2/openai-http.mjs": "679dca0bd5a204acde71f1ad1b807c316a8bbdbe641355f0858361b8830db5bf",
+    "experiments/external-model-reasoner/model-adapter.mjs": "2f59182f276d44981eacfe80498e1dddd3f23475d3a68f161b870b9bfff7bd8e",
+    "experiments/external-model-reasoner/providers/openai.mjs": "ac546a086a62d14a90ec4a9aa7175d1a69dd81a9b9b4ecc1a5d76bd043275a13"
+  },
+  "designSha256": {
+    "experiments/emergent-coordination/phase3/v1/seed13-analysis.md": "d289bdcc95f44e5acececdc7b7a3a5d766bd78422d14d4d79da05406e941dbed",
+    "experiments/emergent-coordination/phase3/v1/freeze-manifest.json": "9cecf88cdda35547b3f68b2787f4624c0c58d6204b82992159814c3edcf25d7e",
+    "experiments/emergent-coordination/phase3/v1.1/freeze-manifest.json": "6af0242d39ca2f62cab8f5d41a290cd2b2100d3524821c0489c4d341497f1a52",
+    "experiments/emergent-coordination/phase3/v1.2/preregistration.md": "beb43e1149ba115751e5c3cdc35d6b4d10a87620754086de1b55bccddd30d530",
+    "experiments/emergent-coordination/phase3/v1.2/amendment-001.md": "f1b878b9dd576b18010f7d3e3ffa0a79acb7a22e2ba5676828b64689baab12a3",
+    "experiments/emergent-coordination/phase3/v1.2/budget-amendment.md": "7e969820685033ce717b424db6eff91523defe9ab41135c81e2d4b6eb449a089",
+    "experiments/emergent-coordination/phase3/v1.2/action-protocol.md": "b628d33ad3dd77f747b491afe23a10ccd70cc695a9aa116caf064eb26c5eabc1",
+    "experiments/emergent-coordination/phase3/v1.2/context-comparison.md": "57f3766c15e423ea8a6e54a0ec18a6e975d87289fbd46b11b7c189ff37c3ccb0",
+    "experiments/emergent-coordination/phase3/v1.2/preserved-evidence.json": "f21024c3d1308b830fccb56ba4605fe1d863ca80c7a3084ecb8848d693fa0387"
+  },
+  "comparison": {
+    "version": "phase3-event-outcomes-v1",
+    "v1AndV1_1Excluded": true,
+    "evidenceOutput": "new exclusive directory; never resume or merge prior evidence"
+  }
+}
