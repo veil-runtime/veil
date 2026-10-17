@@ -1,0 +1,586 @@
+{
+  "schemaVersion": 1,
+  "tokenizer": {
+    "package": "js-tiktoken",
+    "version": "1.0.21",
+    "encoding": "o200k_base"
+  },
+  "entries": [
+    {
+      "seed": 33,
+      "participant": "p0",
+      "directoryPropertyTokens": 105,
+      "notes": "The gray oval appears to the right of the teal triangle. The yellow rectangle appears above the coral square. The gray rectangle appears to the right of the blue hexagon. The white rectangle appears to the right of the white hexagon. The yellow pentagon appears near the lilac triangle. The white oval appears to the right of the lilac triangle. The blue rectangle appears near the lilac square. The teal pentagon appears above the red triangle. The blue oval appears near the blue hexagon.",
+      "notesPropertyTokens": 105,
+      "notesSha256": "4b6cdf79f5010e2aa7d664c91fd0f487963ea44bec3bf7d45edc3ea739435a42"
+    },
+    {
+      "seed": 33,
+      "participant": "p1",
+      "directoryPropertyTokens": 156,
+      "notes": "The yellow pentagon appears to the left of the lilac triangle. The teal oval appears to the left of the white hexagon. The coral circle appears beside the teal triangle. The green oval appears below the yellow hexagon. The white oval appears above the lilac triangle. The red pentagon appears above the gray square. The gray oval appears above the teal triangle. The red oval appears near the red triangle. The gray pentagon appears near the green square. The lilac pentagon appears to the right of the yellow hexagon. The violet rectangle appears to the right of the red triangle. The teal circle appears below the coral square. The coral oval appears to the right of the green square. The teal pentagon appears below the red triangle.",
+      "notesPropertyTokens": 156,
+      "notesSha256": "31e4c5968b052396f5a34edbd010d4ba20649e6f8734185e810c5c464d213419"
+    },
+    {
+      "seed": 33,
+      "participant": "p2",
+      "directoryPropertyTokens": 175,
+      "notes": "The gray circle appears to the left of the yellow hexagon. The coral oval appears above the green square. The blue circle appears beside the green square. The teal circle appears beside the coral square. The white oval appears below the lilac triangle. The lilac oval appears near the gray square. The red circle appears below the white hexagon. The gray oval appears below the teal triangle. The coral rectangle appears above the violet triangle. The white circle appears to the left of the violet hexagon. The violet rectangle appears above the red triangle. The violet pentagon appears near the white hexagon. The lilac pentagon appears above the yellow hexagon. The gray pentagon appears to the left of the green square. The green pentagon appears to the right of the teal triangle. The teal rectangle appears to the right of the gray square.",
+      "notesPropertyTokens": 175,
+      "notesSha256": "f717dc3676523a62253794839e62f59955c12d9fb6b85115194803add35aa9fc"
+    },
+    {
+      "seed": 34,
+      "participant": "p0",
+      "directoryPropertyTokens": 97,
+      "notes": "The white pentagon appears beside the gray triangle. The blue circle appears above the lilac triangle. The yellow oval appears above the white square. The gray circle appears beside the blue square. The violet circle appears below the red hexagon. The lilac rectangle appears below the violet hexagon. The teal circle appears above the gray triangle. The gray pentagon appears beside the lilac triangle. The lilac circle appears to the left of the teal hexagon.",
+      "notesPropertyTokens": 97,
+      "notesSha256": "1e8ded2e2e35df3822f027b2c17b36fee9df7d2339ace6300d8dc9c8102a18c1"
+    },
+    {
+      "seed": 34,
+      "participant": "p1",
+      "directoryPropertyTokens": 144,
+      "notes": "The green oval appears below the blue square. The teal oval appears to the left of the yellow square. The gray circle appears near the blue square. The red circle appears above the yellow square. The red oval appears near the teal hexagon. The violet rectangle appears to the right of the teal hexagon. The green pentagon appears to the left of the violet hexagon. The yellow circle appears to the left of the coral triangle. The blue pentagon appears below the white hexagon. The gray pentagon appears near the lilac triangle. The violet pentagon appears beside the yellow square. The lilac oval appears beside the green triangle. The white pentagon appears near the gray triangle.",
+      "notesPropertyTokens": 144,
+      "notesSha256": "ba95f051922183a79ce12dc8782d3086ef82414ae713a8f823fcb9279f56b0d0"
+    },
+    {
+      "seed": 34,
+      "participant": "p2",
+      "directoryPropertyTokens": 163,
+      "notes": "The white circle appears to the left of the white square. The teal circle appears beside the gray triangle. The violet oval appears above the gray triangle. The teal oval appears to the right of the yellow square. The white rectangle appears below the yellow square. The red oval appears to the left of the teal hexagon. The green oval appears beside the blue square. The blue circle appears beside the lilac triangle. The coral oval appears above the lilac triangle. The gray circle appears to the left of the blue square. The yellow rectangle appears beside the gray triangle. The lilac circle appears above the teal hexagon. The coral circle appears near the violet hexagon. The blue oval appears to the right of the coral square. The teal rectangle appears to the right of the green triangle.",
+      "notesPropertyTokens": 163,
+      "notesSha256": "e76936e711588318d9a1106d09354fdda936c02405c2063aca534866ac210351"
+    },
+    {
+      "seed": 35,
+      "participant": "p0",
+      "directoryPropertyTokens": 105,
+      "notes": "The white rectangle appears to the right of the blue triangle. The coral pentagon appears below the gray triangle. The gray circle appears beside the coral triangle. The blue pentagon appears above the yellow square. The gray oval appears to the right of the white square. The blue oval appears near the gray triangle. The white oval appears to the right of the teal square. The lilac oval appears below the lilac hexagon. The red pentagon appears to the right of the lilac hexagon.",
+      "notesPropertyTokens": 105,
+      "notesSha256": "0dfcfad9a9275cf1746d82c491758b008d98b16e96f9a898cc7b831bc2a03a9f"
+    },
+    {
+      "seed": 35,
+      "participant": "p1",
+      "directoryPropertyTokens": 156,
+      "notes": "The gray circle appears near the coral triangle. The green circle appears to the left of the lilac hexagon. The yellow pentagon appears to the left of the teal square. The violet circle appears beside the teal square. The violet rectangle appears to the right of the violet square. The gray rectangle appears above the gray triangle. The yellow circle appears to the left of the gray hexagon. The coral rectangle appears to the right of the yellow square. The red oval appears near the violet square. The gray oval appears above the white square. The green rectangle appears below the red hexagon. The coral pentagon appears beside the gray triangle. The violet pentagon appears beside the blue triangle. The green pentagon appears to the left of the white square.",
+      "notesPropertyTokens": 156,
+      "notesSha256": "03e94fc1f7d29a4218c4a324356216f930d694d5a3b8acf166089b9a9ae9c908"
+    },
+    {
+      "seed": 35,
+      "participant": "p2",
+      "directoryPropertyTokens": 175,
+      "notes": "The lilac oval appears near the lilac hexagon. The white pentagon appears to the left of the green hexagon. The violet pentagon appears near the blue triangle. The teal pentagon appears beside the violet square. The yellow rectangle appears beside the green hexagon. The gray oval appears below the white square. The green pentagon appears to the right of the white square. The gray rectangle appears below the gray triangle. The green oval appears beside the coral triangle. The gray circle appears to the left of the coral triangle. The teal circle appears beside the green hexagon. The blue circle appears beside the red hexagon. The white rectangle appears below the blue triangle. The blue pentagon appears beside the yellow square. The lilac circle appears above the violet square. The teal rectangle appears to the right of the lilac hexagon.",
+      "notesPropertyTokens": 175,
+      "notesSha256": "1d58314bbeadc8e937add02bcab03455c4672671fa76d1c39336a2af94db5da9"
+    },
+    {
+      "seed": 36,
+      "participant": "p0",
+      "directoryPropertyTokens": 101,
+      "notes": "The teal pentagon appears above the white triangle. The violet rectangle appears to the left of the white triangle. The white rectangle appears to the right of the coral hexagon. The blue pentagon appears above the blue triangle. The violet oval appears to the left of the lilac square. The green pentagon appears near the yellow triangle. The blue rectangle appears near the violet square. The gray circle appears beside the gray hexagon. The green oval appears above the gray hexagon.",
+      "notesPropertyTokens": 101,
+      "notesSha256": "2dfb8f5415e9a42bb4a5bac3de57104244512f2e9ecdb519dea6564dea0b4e6e"
+    },
+    {
+      "seed": 36,
+      "participant": "p1",
+      "directoryPropertyTokens": 150,
+      "notes": "The white oval appears above the violet triangle. The blue rectangle appears to the left of the violet square. The yellow rectangle appears below the lilac square. The coral circle appears beside the yellow triangle. The blue circle appears below the teal square. The teal oval appears to the left of the coral hexagon. The gray oval appears above the yellow triangle. The lilac oval appears beside the red square. The violet rectangle appears to the right of the white triangle. The white rectangle appears above the coral hexagon. The yellow oval appears below the blue hexagon. The lilac rectangle appears beside the yellow triangle. The green oval appears below the gray hexagon. The green pentagon appears to the left of the yellow triangle.",
+      "notesPropertyTokens": 150,
+      "notesSha256": "809615b3a2c58202c60227bff1d321ae0fe2684a7fee012f31aee36a1e5684cb"
+    },
+    {
+      "seed": 36,
+      "participant": "p2",
+      "directoryPropertyTokens": 169,
+      "notes": "The coral oval appears above the teal square. The blue pentagon appears beside the blue triangle. The red pentagon appears below the red square. The gray circle appears to the left of the gray hexagon. The violet oval appears above the lilac square. The teal rectangle appears to the right of the red square. The white rectangle appears below the coral hexagon. The lilac oval appears near the red square. The lilac rectangle appears near the yellow triangle. The violet circle appears near the violet triangle. The white circle appears to the left of the blue hexagon. The gray pentagon appears to the left of the teal square. The green oval appears beside the gray hexagon. The lilac pentagon appears above the gray hexagon. The white pentagon appears to the left of the lilac square.",
+      "notesPropertyTokens": 169,
+      "notesSha256": "7f6724a19200b89989a51cfdc69d5d932515441bee4a8bcd13fb5ae203bf66a9"
+    },
+    {
+      "seed": 37,
+      "participant": "p0",
+      "directoryPropertyTokens": 101,
+      "notes": "The green circle appears near the teal triangle. The red circle appears to the right of the gray square. The lilac pentagon appears to the left of the green square. The lilac circle appears to the left of the yellow hexagon. The green pentagon appears near the blue hexagon. The blue pentagon appears above the coral hexagon. The coral rectangle appears to the left of the coral hexagon. The gray rectangle appears to the right of the lilac square.",
+      "notesPropertyTokens": 101,
+      "notesSha256": "8beded77514d6a7d36e36cc44fe5b88d089f8c8cbf30248647e3e675564740b1"
+    },
+    {
+      "seed": 37,
+      "participant": "p1",
+      "directoryPropertyTokens": 150,
+      "notes": "The gray rectangle appears above the lilac square. The gray oval appears above the blue hexagon. The coral oval appears to the right of the violet triangle. The yellow rectangle appears below the red triangle. The yellow oval appears below the coral square. The lilac circle appears to the right of the yellow hexagon. The teal pentagon appears below the yellow hexagon. The red rectangle appears near the green square. The yellow pentagon appears to the left of the white hexagon. The teal circle appears below the red triangle. The green pentagon appears to the left of the blue hexagon. The teal rectangle appears to the left of the teal triangle. The coral rectangle appears to the right of the coral hexagon.",
+      "notesPropertyTokens": 150,
+      "notesSha256": "f32ff17eb2af40064decbe403216d47b9104ffb8f7c8f33e30fca70ebb0ea2b0"
+    },
+    {
+      "seed": 37,
+      "participant": "p2",
+      "directoryPropertyTokens": 169,
+      "notes": "The teal oval appears to the right of the gray square. The lilac circle appears above the yellow hexagon. The green pentagon appears to the right of the blue hexagon. The red oval appears to the left of the yellow hexagon. The white pentagon appears to the left of the red triangle. The yellow rectangle appears beside the red triangle. The teal pentagon appears beside the yellow hexagon. The red pentagon appears below the teal triangle. The coral pentagon appears near the lilac square. The teal circle appears beside the red triangle. The yellow pentagon appears to the right of the white hexagon. The gray rectangle appears below the lilac square. The blue circle appears beside the violet triangle. The green rectangle appears beside the violet triangle. The coral rectangle appears above the coral hexagon.",
+      "notesPropertyTokens": 169,
+      "notesSha256": "bb3e1c5191316e0288c8f2ae7d4b345cad262b1d11512d7115eb48d4fb3279c7"
+    },
+    {
+      "seed": 38,
+      "participant": "p0",
+      "directoryPropertyTokens": 105,
+      "notes": "The yellow oval appears above the gray triangle. The blue pentagon appears above the gray square. The blue circle appears above the white hexagon. The lilac circle appears to the left of the blue square. The blue rectangle appears near the yellow hexagon. The white circle appears beside the gray triangle. The yellow pentagon appears near the yellow square. The green circle appears near the violet hexagon. The green oval appears above the lilac triangle. The teal rectangle appears near the violet hexagon.",
+      "notesPropertyTokens": 105,
+      "notesSha256": "5099f339cc4d415e7e538292d619b09d7975e55b619d2a3271a8d60078dca949"
+    },
+    {
+      "seed": 38,
+      "participant": "p1",
+      "directoryPropertyTokens": 156,
+      "notes": "The teal circle appears below the teal hexagon. The blue oval appears to the left of the red triangle. The blue pentagon appears below the gray square. The violet rectangle appears to the right of the blue square. The gray pentagon appears near the white hexagon. The red circle appears above the green triangle. The coral pentagon appears beside the red triangle. The yellow rectangle appears below the teal hexagon. The lilac oval appears beside the violet hexagon. The coral rectangle appears to the right of the gray square. The blue rectangle appears to the left of the yellow hexagon. The gray circle appears near the lilac triangle. The teal oval appears to the left of the green triangle. The green oval appears below the lilac triangle.",
+      "notesPropertyTokens": 156,
+      "notesSha256": "1620cf176795d67273f7343040b7ab29b1958bff097e7b906e873c73ae72cb39"
+    },
+    {
+      "seed": 38,
+      "participant": "p2",
+      "directoryPropertyTokens": 175,
+      "notes": "The blue circle appears beside the white hexagon. The red pentagon appears below the violet hexagon. The white circle appears to the left of the gray triangle. The yellow circle appears to the right of the red hexagon. The white rectangle appears below the green triangle. The lilac rectangle appears near the coral square. The blue rectangle appears to the right of the yellow hexagon. The gray rectangle appears below the red triangle. The teal circle appears beside the teal hexagon. The lilac pentagon appears above the lilac triangle. The coral oval appears above the white hexagon. The red oval appears to the left of the blue square. The coral rectangle appears above the gray square. The violet rectangle appears above the blue square. The lilac circle appears above the blue square. The blue oval appears to the right of the red triangle.",
+      "notesPropertyTokens": 175,
+      "notesSha256": "53bede981e0538d788241f87ecbe9d8d6ff273611959d67498c0e444e2447ebc"
+    },
+    {
+      "seed": 39,
+      "participant": "p0",
+      "directoryPropertyTokens": 97,
+      "notes": "The violet circle appears below the blue triangle. The red oval appears beside the coral triangle. The blue pentagon appears above the green triangle. The gray rectangle appears to the right of the teal hexagon. The white circle appears beside the green hexagon. The blue oval appears near the teal hexagon. The gray oval appears to the right of the gray triangle. The green oval appears above the red hexagon. The red rectangle appears beside the red hexagon.",
+      "notesPropertyTokens": 97,
+      "notesSha256": "1e8c35ba0c10c30f043c2f9044f8d73bd78bcb9d53e684683b753f0002f955cf"
+    },
+    {
+      "seed": 39,
+      "participant": "p1",
+      "directoryPropertyTokens": 144,
+      "notes": "The red circle appears above the lilac hexagon. The teal circle appears below the violet square. The yellow pentagon appears to the left of the blue triangle. The lilac circle appears to the right of the coral triangle. The coral oval appears to the right of the yellow square. The red pentagon appears above the white square. The yellow oval appears below the green hexagon. The white oval appears above the blue triangle. The blue oval appears to the left of the teal hexagon. The white circle appears near the green hexagon. The yellow rectangle appears below the violet square. The green rectangle appears below the yellow square. The blue rectangle appears to the left of the blue square.",
+      "notesPropertyTokens": 144,
+      "notesSha256": "184eea721d00c24a55edfcdd24b5c37dec8bc16e574df17001803bdbf0e09025"
+    },
+    {
+      "seed": 39,
+      "participant": "p2",
+      "directoryPropertyTokens": 163,
+      "notes": "The gray rectangle appears below the teal hexagon. The blue circle appears beside the yellow square. The blue pentagon appears beside the green triangle. The green pentagon appears to the right of the gray triangle. The gray oval appears below the gray triangle. The yellow rectangle appears beside the violet square. The red pentagon appears below the white square. The white rectangle appears below the lilac hexagon. The teal rectangle appears to the right of the white square. The green oval appears beside the red hexagon. The lilac pentagon appears above the red hexagon. The white pentagon appears to the left of the violet square. The white circle appears to the left of the green hexagon. The violet rectangle appears above the coral triangle. The coral oval appears above the yellow square.",
+      "notesPropertyTokens": 163,
+      "notesSha256": "e0e071b2c895150e96f274db0ad37b4730f2072c7d51c51dbf205b29d56338b2"
+    },
+    {
+      "seed": 40,
+      "participant": "p0",
+      "directoryPropertyTokens": 103,
+      "notes": "The red oval appears beside the gray hexagon. The violet circle appears below the coral hexagon. The white pentagon appears beside the white triangle. The blue oval appears near the violet square. The yellow oval appears above the lilac square. The lilac rectangle appears below the green hexagon. The white oval appears to the right of the coral hexagon. The gray rectangle appears to the right of the violet square. The coral rectangle appears to the left of the lilac hexagon.",
+      "notesPropertyTokens": 103,
+      "notesSha256": "ca9733e788dbd3de512dfee37b30ad38c6f43fbcbb0ec514e9fc770117a7605a"
+    },
+    {
+      "seed": 40,
+      "participant": "p1",
+      "directoryPropertyTokens": 153,
+      "notes": "The white circle appears near the lilac square. The yellow pentagon appears to the left of the coral hexagon. The teal rectangle appears to the left of the yellow triangle. The blue circle appears below the blue triangle. The violet oval appears to the right of the white triangle. The yellow circle appears to the left of the violet triangle. The teal oval appears to the left of the red square. The coral rectangle appears to the right of the lilac hexagon. The blue oval appears to the left of the violet square. The gray pentagon appears near the blue triangle. The coral oval appears to the right of the blue triangle. The gray oval appears above the green hexagon. The coral pentagon appears beside the violet square.",
+      "notesPropertyTokens": 153,
+      "notesSha256": "e5ce893625fe7b47878cb38f24bb1857766915ce005a7d5d5593273079284756"
+    },
+    {
+      "seed": 40,
+      "participant": "p2",
+      "directoryPropertyTokens": 172,
+      "notes": "The blue rectangle appears to the right of the coral triangle. The gray rectangle appears below the violet square. The green oval appears beside the teal square. The yellow circle appears to the right of the violet triangle. The coral rectangle appears above the lilac hexagon. The red oval appears to the left of the gray hexagon. The violet pentagon appears near the red square. The lilac pentagon appears above the teal square. The green circle appears to the right of the yellow triangle. The lilac oval appears near the yellow triangle. The gray pentagon appears to the left of the blue triangle. The green rectangle appears beside the blue triangle. The lilac rectangle appears near the green hexagon. The blue pentagon appears beside the lilac hexagon. The green pentagon appears to the right of the green hexagon.",
+      "notesPropertyTokens": 172,
+      "notesSha256": "03eec0c90478f0a487aa75d980b93bc022dbd8bd819af78ef7ac519e682e41b0"
+    },
+    {
+      "seed": 41,
+      "participant": "p0",
+      "directoryPropertyTokens": 103,
+      "notes": "The lilac circle appears to the left of the green square. The violet oval appears to the left of the yellow hexagon. The blue oval appears near the white triangle. The teal rectangle appears near the blue hexagon. The coral pentagon appears below the white triangle. The green pentagon appears near the lilac square. The white pentagon appears beside the yellow hexagon. The teal circle appears above the yellow hexagon. The gray rectangle appears to the right of the white triangle.",
+      "notesPropertyTokens": 103,
+      "notesSha256": "566ccf971e5c6509291a23c1f2c19a9bbb30a93e2e64ebcfec2f06398a4667e4"
+    },
+    {
+      "seed": 41,
+      "participant": "p1",
+      "directoryPropertyTokens": 153,
+      "notes": "The white rectangle appears above the teal triangle. The coral rectangle appears to the right of the red square. The lilac rectangle appears beside the lilac square. The red rectangle appears near the violet triangle. The violet oval appears to the right of the yellow hexagon. The coral oval appears to the right of the coral hexagon. The violet circle appears beside the gray square. The yellow circle appears to the left of the white hexagon. The white oval appears above the gray square. The teal oval appears to the left of the teal triangle. The blue oval appears to the left of the white triangle. The blue rectangle appears to the left of the gray hexagon. The lilac pentagon appears to the right of the violet triangle.",
+      "notesPropertyTokens": 153,
+      "notesSha256": "2167bf67753568c3182dddd0a9a74358209fbd3ede7d7004c36c41aef1351f47"
+    },
+    {
+      "seed": 41,
+      "participant": "p2",
+      "directoryPropertyTokens": 172,
+      "notes": "The teal circle appears beside the yellow hexagon. The violet oval appears above the yellow hexagon. The lilac circle appears above the green square. The yellow oval appears beside the red triangle. The green pentagon appears to the right of the lilac square. The blue oval appears to the right of the white triangle. The coral pentagon appears near the white triangle. The blue pentagon appears beside the red square. The green rectangle appears beside the coral hexagon. The violet rectangle appears above the green square. The yellow pentagon appears to the right of the gray square. The coral circle appears near the lilac square. The violet circle appears near the gray square. The yellow rectangle appears beside the yellow hexagon. The blue circle appears beside the coral hexagon. The red rectangle appears to the left of the violet triangle.",
+      "notesPropertyTokens": 172,
+      "notesSha256": "d50e03ca376b2077dba976c4fde768176351f0eed9fe2e2b5499ecb2e6e07299"
+    },
+    {
+      "seed": 42,
+      "participant": "p0",
+      "directoryPropertyTokens": 99,
+      "notes": "The yellow pentagon appears near the green triangle. The gray circle appears beside the white hexagon. The blue oval appears near the yellow hexagon. The coral pentagon appears below the yellow hexagon. The red rectangle appears beside the white hexagon. The white oval appears to the right of the green triangle. The gray rectangle appears to the right of the yellow hexagon. The green oval appears above the white hexagon. The coral circle appears below the red triangle.",
+      "notesPropertyTokens": 99,
+      "notesSha256": "1b469ecb79efc0133ecf89746cc146486d78163dfd3ec88fdc1971b27fe8245a"
+    },
+    {
+      "seed": 42,
+      "participant": "p1",
+      "directoryPropertyTokens": 147,
+      "notes": "The red rectangle appears near the white hexagon. The blue pentagon appears below the teal triangle. The blue oval appears to the left of the yellow hexagon. The coral pentagon appears beside the yellow hexagon. The lilac rectangle appears beside the red triangle. The green rectangle appears below the gray square. The white circle appears near the teal hexagon. The gray oval appears above the red triangle. The violet pentagon appears beside the violet hexagon. The blue circle appears below the gray square. The violet rectangle appears to the right of the lilac triangle. The yellow rectangle appears below the blue square. The teal circle appears below the blue square. The gray pentagon appears near the gray square.",
+      "notesPropertyTokens": 147,
+      "notesSha256": "acba0e5690fb96b4435da841874b3adbc784b93ba6c05d1d3bbc1fd03d642253"
+    },
+    {
+      "seed": 42,
+      "participant": "p2",
+      "directoryPropertyTokens": 166,
+      "notes": "The violet rectangle appears above the lilac triangle. The teal pentagon appears beside the lilac triangle. The green oval appears beside the white hexagon. The white circle appears to the left of the teal hexagon. The teal oval appears to the right of the violet hexagon. The gray rectangle appears below the yellow hexagon. The violet circle appears near the green triangle. The blue rectangle appears to the right of the green square. The teal rectangle appears to the right of the coral square. The violet oval appears above the blue square. The coral oval appears above the gray square. The yellow pentagon appears to the right of the green triangle. The teal circle appears beside the blue square. The gray oval appears below the red triangle. The green pentagon appears to the right of the red triangle.",
+      "notesPropertyTokens": 166,
+      "notesSha256": "dd7715c4d3e65eedb5c609f6f10d2cc26be60c741b4814d66ded92c80e82c847"
+    },
+    {
+      "seed": 43,
+      "participant": "p0",
+      "directoryPropertyTokens": 101,
+      "notes": "The lilac pentagon appears to the left of the yellow square. The teal oval appears near the white square. The coral circle appears below the teal hexagon. The white circle appears beside the violet square. The green circle appears near the gray triangle. The gray oval appears to the right of the teal hexagon. The white oval appears to the right of the lilac hexagon. The yellow oval appears above the violet square. The white pentagon appears beside the coral triangle.",
+      "notesPropertyTokens": 101,
+      "notesSha256": "53e10ff2f4332f7841ec57e3e730d6c562072a06bd4746fa4d17ddace7a5624e"
+    },
+    {
+      "seed": 43,
+      "participant": "p1",
+      "directoryPropertyTokens": 150,
+      "notes": "The teal pentagon appears below the red hexagon. The coral pentagon appears beside the blue square. The red circle appears above the white square. The green pentagon appears to the left of the teal hexagon. The violet circle appears beside the lilac hexagon. The gray rectangle appears above the blue square. The blue rectangle appears to the left of the lilac triangle. The yellow pentagon appears to the left of the lilac hexagon. The gray circle appears near the yellow square. The gray oval appears above the teal hexagon. The lilac circle appears to the right of the red hexagon. The white oval appears above the lilac hexagon. The red oval appears near the red hexagon.",
+      "notesPropertyTokens": 150,
+      "notesSha256": "a86296b63ad981d9f3ec0eb2bb26a7a746de23a1547f7e7bcf71563d4f440353"
+    },
+    {
+      "seed": 43,
+      "participant": "p2",
+      "directoryPropertyTokens": 169,
+      "notes": "The gray oval appears below the teal hexagon. The lilac pentagon appears above the yellow square. The green oval appears beside the yellow square. The teal circle appears beside the coral triangle. The green pentagon appears to the right of the teal hexagon. The lilac circle appears above the red hexagon. The violet oval appears above the coral triangle. The blue rectangle appears to the right of the lilac triangle. The coral oval appears above the green triangle. The red pentagon appears below the gray triangle. The lilac rectangle appears near the teal hexagon. The gray rectangle appears below the blue square. The blue pentagon appears beside the violet hexagon. The yellow oval appears beside the violet square. The violet circle appears near the lilac hexagon. The white rectangle appears below the white square.",
+      "notesPropertyTokens": 169,
+      "notesSha256": "9aefb08d99e93a2c7168f56e02ca2965ad64d14a66dee2ea8819695ca5c1cb12"
+    },
+    {
+      "seed": 44,
+      "participant": "p0",
+      "directoryPropertyTokens": 101,
+      "notes": "The lilac pentagon appears to the left of the blue triangle. The white rectangle appears to the right of the yellow triangle. The gray oval appears to the right of the violet square. The white circle appears beside the white triangle. The coral circle appears below the violet square. The red pentagon appears to the right of the green hexagon. The blue oval appears near the coral triangle. The green oval appears above the blue triangle. The red oval appears beside the teal square.",
+      "notesPropertyTokens": 101,
+      "notesSha256": "67655c73861ba73e7953bcf85f6f70386846a1fbc3632d0b3db6c30ec2899715"
+    },
+    {
+      "seed": 44,
+      "participant": "p1",
+      "directoryPropertyTokens": 150,
+      "notes": "The violet oval appears to the right of the gray hexagon. The gray rectangle appears above the coral triangle. The white oval appears above the red square. The lilac pentagon appears to the right of the blue triangle. The yellow pentagon appears to the left of the red square. The teal rectangle appears to the left of the green hexagon. The green rectangle appears below the lilac hexagon. The yellow oval appears below the white triangle. The blue circle appears below the lilac hexagon. The gray circle appears near the blue triangle. The gray pentagon appears near the lilac hexagon. The violet circle appears beside the red square. The coral oval appears to the right of the lilac hexagon.",
+      "notesPropertyTokens": 150,
+      "notesSha256": "f408c15a6be871538730fabf04f1229e6a1f4378fb54499ff0648c6259b63222"
+    },
+    {
+      "seed": 44,
+      "participant": "p2",
+      "directoryPropertyTokens": 169,
+      "notes": "The violet oval appears above the gray hexagon. The red rectangle appears to the left of the blue triangle. The blue rectangle appears to the right of the red hexagon. The gray oval appears below the violet square. The yellow rectangle appears beside the gray hexagon. The blue oval appears to the right of the coral triangle. The green rectangle appears beside the lilac hexagon. The blue circle appears beside the lilac hexagon. The green circle appears to the right of the green hexagon. The teal circle appears beside the gray hexagon. The white rectangle appears below the yellow triangle. The coral pentagon appears near the coral triangle. The teal oval appears to the right of the yellow triangle. The white circle appears to the left of the white triangle. The lilac oval appears near the green hexagon.",
+      "notesPropertyTokens": 169,
+      "notesSha256": "52c2e390a2c0c9360aedacceea3ff5adc68af308f2b4248c1dd4b9e39ce0c310"
+    },
+    {
+      "seed": 45,
+      "participant": "p0",
+      "directoryPropertyTokens": 95,
+      "notes": "The teal rectangle appears near the lilac square. The white rectangle appears to the right of the blue hexagon. The gray oval appears to the right of the white triangle. The violet oval appears to the left of the green square. The teal oval appears near the blue hexagon. The blue oval appears near the gray hexagon. The coral rectangle appears to the left of the yellow triangle. The white oval appears to the right of the teal triangle.",
+      "notesPropertyTokens": 95,
+      "notesSha256": "60c564100de804ff94870618fe8bfbb5cef597cda9770d568a472c6280dcf408"
+    },
+    {
+      "seed": 45,
+      "participant": "p1",
+      "directoryPropertyTokens": 141,
+      "notes": "The teal circle appears below the green square. The yellow circle appears to the left of the gray square. The lilac circle appears to the right of the violet triangle. The coral rectangle appears to the right of the yellow triangle. The yellow pentagon appears to the left of the teal triangle. The blue pentagon appears below the yellow triangle. The gray pentagon appears near the red square. The red pentagon appears above the lilac square. The green circle appears to the left of the lilac square. The green pentagon appears to the left of the white triangle. The white rectangle appears above the blue hexagon. The coral pentagon appears beside the gray hexagon.",
+      "notesPropertyTokens": 141,
+      "notesSha256": "8bed0cff1e31e3332dfc12a08f5b8b9befd5314a37e6f0e339636e8a74a76045"
+    },
+    {
+      "seed": 45,
+      "participant": "p2",
+      "directoryPropertyTokens": 160,
+      "notes": "The yellow rectangle appears beside the green square. The blue rectangle appears to the right of the teal square. The gray pentagon appears to the left of the red square. The violet oval appears above the green square. The teal pentagon appears beside the violet triangle. The gray oval appears below the white triangle. The white circle appears to the left of the yellow hexagon. The teal rectangle appears to the right of the lilac square. The violet rectangle appears above the violet triangle. The blue oval appears to the right of the gray hexagon. The yellow pentagon appears to the right of the teal triangle. The violet circle appears near the teal triangle. The red pentagon appears below the lilac square. The green pentagon appears to the right of the white triangle.",
+      "notesPropertyTokens": 160,
+      "notesSha256": "bb613a11ab5b235a1174500def5dcd3ac34b95d63a51f3f980255e813556fc3e"
+    },
+    {
+      "seed": 46,
+      "participant": "p0",
+      "directoryPropertyTokens": 97,
+      "notes": "The coral circle appears below the yellow hexagon. The red circle appears to the right of the coral square. The teal circle appears above the lilac triangle. The teal rectangle appears near the red triangle. The violet oval appears to the left of the lilac triangle. The green rectangle appears above the teal triangle. The blue oval appears near the green square. The blue circle appears above the teal triangle. The gray rectangle appears to the right of the green square.",
+      "notesPropertyTokens": 97,
+      "notesSha256": "4e73c828c8e22a9581e1929eed2ab0d5f8d476057ffea142e797e5a1700a578a"
+    },
+    {
+      "seed": 46,
+      "participant": "p1",
+      "directoryPropertyTokens": 144,
+      "notes": "The green pentagon appears to the left of the yellow hexagon. The teal circle appears below the lilac triangle. The blue pentagon appears below the blue hexagon. The teal oval appears to the left of the coral square. The coral oval appears to the right of the teal triangle. The white pentagon appears near the lilac triangle. The gray oval appears above the yellow hexagon. The white rectangle appears above the coral square. The yellow rectangle appears below the lilac triangle. The teal pentagon appears below the white hexagon. The red oval appears near the white hexagon. The lilac rectangle appears beside the yellow hexagon. The gray rectangle appears above the green square.",
+      "notesPropertyTokens": 144,
+      "notesSha256": "6c35ed855c06e3e0a9eda49a6447db99ba4c1e37b611adf9215128693b49bdc5"
+    },
+    {
+      "seed": 46,
+      "participant": "p2",
+      "directoryPropertyTokens": 163,
+      "notes": "The gray oval appears below the yellow hexagon. The teal circle appears beside the lilac triangle. The green pentagon appears to the right of the yellow hexagon. The lilac pentagon appears above the gray square. The coral oval appears above the teal triangle. The violet pentagon appears near the coral square. The violet circle appears near the violet hexagon. The white oval appears below the violet hexagon. The white circle appears to the left of the blue square. The blue oval appears to the right of the green square. The yellow pentagon appears to the right of the violet hexagon. The yellow circle appears to the right of the green triangle. The gray circle appears to the left of the gray square. The red oval appears to the left of the white hexagon.",
+      "notesPropertyTokens": 163,
+      "notesSha256": "6b4f124ea25c5a29f5378685eeb963f780b050e61c1ba433e4b53e0ab5c860a9"
+    },
+    {
+      "seed": 47,
+      "participant": "p0",
+      "directoryPropertyTokens": 99,
+      "notes": "The coral rectangle appears to the left of the coral square. The yellow rectangle appears above the red hexagon. The blue oval appears near the lilac triangle. The white oval appears to the right of the white square. The red oval appears beside the yellow square. The gray rectangle appears to the right of the lilac triangle. The violet circle appears below the white square. The yellow circle appears near the lilac hexagon. The green oval appears above the green triangle.",
+      "notesPropertyTokens": 99,
+      "notesSha256": "8df7f46baffcce14df9c843c2787beb1f78790dc417a4e2ef5e4e3cb80eaf8d3"
+    },
+    {
+      "seed": 47,
+      "participant": "p1",
+      "directoryPropertyTokens": 147,
+      "notes": "The green circle appears to the left of the teal hexagon. The lilac circle appears to the right of the yellow square. The violet pentagon appears beside the gray triangle. The blue rectangle appears to the left of the white hexagon. The teal oval appears to the left of the gray triangle. The blue circle appears below the violet hexagon. The coral pentagon appears beside the lilac triangle. The coral rectangle appears to the right of the coral square. The white rectangle appears above the gray triangle. The blue oval appears to the left of the lilac triangle. The white oval appears above the white square. The green oval appears below the green triangle. The yellow oval appears below the coral triangle.",
+      "notesPropertyTokens": 147,
+      "notesSha256": "293204ccf7d0d614bc6bcd10b2cf179860b8ba9027be15c446381db98d399441"
+    },
+    {
+      "seed": 47,
+      "participant": "p2",
+      "directoryPropertyTokens": 166,
+      "notes": "The teal rectangle appears to the right of the teal hexagon. The yellow oval appears beside the coral triangle. The coral rectangle appears above the coral square. The green rectangle appears beside the violet hexagon. The violet rectangle appears above the yellow square. The white pentagon appears to the left of the red hexagon. The white circle appears to the left of the coral triangle. The gray pentagon appears to the left of the violet hexagon. The violet circle appears near the white square. The red oval appears to the left of the yellow square. The gray circle appears to the left of the green triangle. The green oval appears beside the green triangle. The violet pentagon appears near the gray triangle. The blue pentagon appears beside the coral square. The violet oval appears above the red hexagon.",
+      "notesPropertyTokens": 166,
+      "notesSha256": "d99e2e4b7e0ca8aeaff775af59b44e06f3ee50e19d89510fd04fe7308b3242ec"
+    },
+    {
+      "seed": 48,
+      "participant": "p0",
+      "directoryPropertyTokens": 103,
+      "notes": "The white oval appears to the right of the yellow triangle. The blue circle appears above the white square. The red pentagon appears to the right of the violet square. The red circle appears to the right of the green hexagon. The yellow rectangle appears above the teal square. The gray oval appears to the right of the coral triangle. The yellow oval appears above the gray hexagon. The coral pentagon appears below the red hexagon. The yellow pentagon appears near the yellow triangle.",
+      "notesPropertyTokens": 103,
+      "notesSha256": "f687f51983ec837926052044dd40a76f17e596b91653adf05e8e85e9d9cafb5d"
+    },
+    {
+      "seed": 48,
+      "participant": "p1",
+      "directoryPropertyTokens": 153,
+      "notes": "The green rectangle appears below the white square. The blue rectangle appears to the left of the yellow square. The coral pentagon appears beside the red hexagon. The yellow pentagon appears to the left of the yellow triangle. The violet circle appears beside the yellow triangle. The red pentagon appears above the violet square. The gray pentagon appears near the white square. The lilac pentagon appears to the right of the lilac hexagon. The violet pentagon appears beside the green hexagon. The blue circle appears below the white square. The lilac oval appears beside the violet square. The teal circle appears below the teal square. The white pentagon appears near the teal square. The gray rectangle appears above the red hexagon.",
+      "notesPropertyTokens": 153,
+      "notesSha256": "24ac848f39c4b5d8552bdb01cf0c860feb9bf341fbf3e28e4def8c3cfa660e96"
+    },
+    {
+      "seed": 48,
+      "participant": "p2",
+      "directoryPropertyTokens": 172,
+      "notes": "The violet circle appears near the yellow triangle. The white pentagon appears to the left of the teal square. The coral rectangle appears above the gray triangle. The yellow pentagon appears to the right of the yellow triangle. The lilac rectangle appears near the coral triangle. The lilac pentagon appears above the lilac hexagon. The gray circle appears to the left of the lilac hexagon. The white rectangle appears below the green hexagon. The violet rectangle appears above the blue triangle. The yellow oval appears beside the gray hexagon. The gray pentagon appears to the left of the white square. The coral oval appears above the white square. The gray rectangle appears below the red hexagon. The teal oval appears to the right of the green hexagon. The blue oval appears to the right of the red hexagon.",
+      "notesPropertyTokens": 172,
+      "notesSha256": "ef7175a9ae2ef2fbc5f79000e8dba134edea8f063ae356335577f52d1e23e684"
+    },
+    {
+      "seed": 49,
+      "participant": "p0",
+      "directoryPropertyTokens": 99,
+      "notes": "The gray circle appears beside the red square. The violet oval appears to the left of the violet triangle. The blue circle appears above the yellow triangle. The violet pentagon appears below the lilac square. The teal oval appears near the lilac square. The lilac rectangle appears below the gray hexagon. The blue oval appears near the teal square. The gray oval appears to the right of the gray hexagon. The green pentagon appears near the gray hexagon.",
+      "notesPropertyTokens": 99,
+      "notesSha256": "010262f2768a5fc5d5def898fc504e7892f9e85fc6bdfae29648c4a9876b34dd"
+    },
+    {
+      "seed": 49,
+      "participant": "p1",
+      "directoryPropertyTokens": 147,
+      "notes": "The blue pentagon appears below the green hexagon. The green pentagon appears to the left of the gray hexagon. The lilac circle appears to the right of the coral hexagon. The red circle appears above the lilac square. The coral pentagon appears beside the teal square. The green circle appears to the left of the white triangle. The violet oval appears to the right of the violet triangle. The teal rectangle appears to the left of the white triangle. The white oval appears above the blue hexagon. The red rectangle appears near the red square. The yellow oval appears below the green square. The coral circle appears beside the gray hexagon. The gray oval appears above the gray hexagon.",
+      "notesPropertyTokens": 147,
+      "notesSha256": "1c27fa0081c595d79ed9ffd1d162d6f1adc76b1dfcfc76f6a6aee99a51ce6c45"
+    },
+    {
+      "seed": 49,
+      "participant": "p2",
+      "directoryPropertyTokens": 166,
+      "notes": "The gray oval appears below the gray hexagon. The blue oval appears to the right of the teal square. The blue rectangle appears to the right of the blue triangle. The violet oval appears above the violet triangle. The green rectangle appears beside the yellow triangle. The green circle appears to the right of the white triangle. The white oval appears below the blue hexagon. The teal oval appears to the right of the lilac square. The gray pentagon appears to the left of the yellow triangle. The yellow circle appears to the right of the teal triangle. The red rectangle appears to the left of the red square. The coral rectangle appears above the green hexagon. The yellow oval appears beside the green square. The violet circle appears near the blue hexagon. The gray rectangle appears below the teal square.",
+      "notesPropertyTokens": 166,
+      "notesSha256": "0a722dc3ae61c380ef96bb9d2c4f1e4eca790e12815d622886ac332465be8048"
+    },
+    {
+      "seed": 50,
+      "participant": "p0",
+      "directoryPropertyTokens": 101,
+      "notes": "The lilac circle appears to the left of the gray square. The violet circle appears below the coral square. The white circle appears beside the lilac triangle. The blue oval appears near the violet triangle. The teal rectangle appears near the yellow hexagon. The lilac pentagon appears to the left of the teal triangle. The yellow oval appears above the lilac triangle. The blue circle appears above the blue hexagon. The gray oval appears to the right of the green square.",
+      "notesPropertyTokens": 101,
+      "notesSha256": "9aa806621a51771260bcac765f5abc49c61bfc6c612409e3257d1dcad1b7c946"
+    },
+    {
+      "seed": 50,
+      "participant": "p1",
+      "directoryPropertyTokens": 150,
+      "notes": "The white circle appears near the lilac triangle. The violet circle appears beside the coral square. The teal oval appears to the left of the red triangle. The yellow circle appears to the left of the violet hexagon. The red rectangle appears near the teal triangle. The coral oval appears to the right of the blue hexagon. The violet pentagon appears beside the red triangle. The blue rectangle appears to the left of the coral hexagon. The yellow oval appears below the lilac triangle. The violet oval appears to the right of the white hexagon. The red pentagon appears above the yellow hexagon. The coral rectangle appears to the right of the lilac square. The green rectangle appears below the blue hexagon.",
+      "notesPropertyTokens": 150,
+      "notesSha256": "5053540ff05cdd1a7481558bdbb53fcf4a504c7d398b6a43e50e564ebe193a02"
+    },
+    {
+      "seed": 50,
+      "participant": "p2",
+      "directoryPropertyTokens": 169,
+      "notes": "The lilac circle appears above the gray square. The yellow pentagon appears to the right of the coral square. The coral pentagon appears near the violet triangle. The gray oval appears below the green square. The white oval appears below the coral square. The green rectangle appears beside the blue hexagon. The coral rectangle appears above the lilac square. The red rectangle appears to the left of the teal triangle. The white pentagon appears to the left of the white hexagon. The violet rectangle appears above the gray square. The green circle appears to the right of the yellow hexagon. The yellow rectangle appears beside the white hexagon. The blue oval appears to the right of the violet triangle. The gray pentagon appears to the left of the blue hexagon. The lilac rectangle appears near the green square.",
+      "notesPropertyTokens": 169,
+      "notesSha256": "6c3be73cca3ac1c31d7bb95e23a0edfe9a025ef9bd4d8708643932babe942933"
+    },
+    {
+      "seed": 51,
+      "participant": "p0",
+      "directoryPropertyTokens": 103,
+      "notes": "The teal circle appears above the yellow square. The lilac rectangle appears below the lilac triangle. The teal oval appears near the teal hexagon. The white pentagon appears beside the yellow square. The coral rectangle appears to the left of the red triangle. The violet oval appears to the left of the yellow square. The coral oval appears to the left of the coral square. The red pentagon appears to the right of the blue square. The teal pentagon appears above the green triangle.",
+      "notesPropertyTokens": 103,
+      "notesSha256": "8d9e564d96765c0b906b9c3ac4d43e56ce9edd35b7e58be80a897cb5f86095de"
+    },
+    {
+      "seed": 51,
+      "participant": "p1",
+      "directoryPropertyTokens": 153,
+      "notes": "The gray oval appears above the lilac triangle. The teal circle appears below the yellow square. The white rectangle appears above the teal hexagon. The red pentagon appears above the blue square. The lilac oval appears beside the blue square. The gray circle appears near the violet hexagon. The violet rectangle appears to the right of the green triangle. The blue pentagon appears below the red triangle. The violet pentagon appears beside the teal hexagon. The white circle appears near the red hexagon. The teal pentagon appears below the green triangle. The yellow rectangle appears below the yellow square. The blue circle appears below the coral square. The red oval appears near the green triangle. The red circle appears above the teal hexagon.",
+      "notesPropertyTokens": 153,
+      "notesSha256": "1752f032213b38026f95c44ab07d6b5ee636362d8f276a647b1ef366a1668262"
+    },
+    {
+      "seed": 51,
+      "participant": "p2",
+      "directoryPropertyTokens": 172,
+      "notes": "The green pentagon appears to the right of the lilac triangle. The white pentagon appears to the left of the yellow square. The lilac circle appears above the green triangle. The coral rectangle appears above the red triangle. The teal oval appears to the right of the teal hexagon. The yellow circle appears to the right of the white square. The white oval appears below the gray triangle. The gray pentagon appears to the left of the coral square. The yellow oval appears beside the red hexagon. The blue oval appears to the right of the white hexagon. The red circle appears below the teal hexagon. The gray rectangle appears below the white hexagon. The green oval appears beside the violet hexagon. The blue pentagon appears beside the red triangle. The teal rectangle appears to the right of the blue square.",
+      "notesPropertyTokens": 172,
+      "notesSha256": "a3782c5363a5cb6235d33d12ce8d15915d85005badfac3eff8cb568d9f2f82b9"
+    },
+    {
+      "seed": 52,
+      "participant": "p0",
+      "directoryPropertyTokens": 101,
+      "notes": "The yellow pentagon appears near the green hexagon. The green oval appears above the white square. The teal circle appears above the blue triangle. The gray oval appears to the right of the red hexagon. The yellow circle appears near the yellow triangle. The lilac rectangle appears below the red hexagon. The white oval appears to the right of the green hexagon. The blue pentagon appears above the teal hexagon. The red oval appears beside the lilac hexagon.",
+      "notesPropertyTokens": 101,
+      "notesSha256": "874123a7513520a20ddfd9219b31da04179234198b73fce1e31405f221df4bbb"
+    },
+    {
+      "seed": 52,
+      "participant": "p1",
+      "directoryPropertyTokens": 150,
+      "notes": "The coral circle appears beside the red hexagon. The lilac rectangle appears beside the red hexagon. The gray circle appears near the white square. The violet oval appears to the right of the blue triangle. The teal oval appears to the left of the violet square. The white rectangle appears above the violet square. The yellow circle appears to the left of the yellow triangle. The white oval appears above the green hexagon. The coral rectangle appears to the right of the teal hexagon. The gray oval appears above the red hexagon. The teal pentagon appears below the lilac hexagon. The lilac pentagon appears to the right of the white square. The blue rectangle appears to the left of the green triangle.",
+      "notesPropertyTokens": 150,
+      "notesSha256": "6778566692f8e588038ddb70784444de56b87edd37be3f1b60ed1e3d1bb6e606"
+    },
+    {
+      "seed": 52,
+      "participant": "p2",
+      "directoryPropertyTokens": 169,
+      "notes": "The yellow pentagon appears to the right of the green hexagon. The teal rectangle appears to the right of the coral triangle. The teal pentagon appears beside the lilac hexagon. The red circle appears below the violet square. The violet circle appears near the green hexagon. The violet rectangle appears above the lilac hexagon. The green rectangle appears beside the gray triangle. The red pentagon appears below the coral triangle. The blue oval appears to the right of the yellow square. The yellow rectangle appears beside the blue triangle. The green pentagon appears to the right of the red hexagon. The violet pentagon appears near the violet square. The gray pentagon appears to the left of the gray triangle. The white oval appears below the green hexagon. The gray oval appears below the red hexagon.",
+      "notesPropertyTokens": 169,
+      "notesSha256": "22853f23c71fc28a4b27d81c2ec7999471ccea38773e3795fcab4e87c168f0fd"
+    },
+    {
+      "seed": 53,
+      "participant": "p0",
+      "directoryPropertyTokens": 105,
+      "notes": "The white rectangle appears to the right of the white triangle. The white oval appears to the right of the lilac square. The blue oval appears near the blue triangle. The teal circle appears above the coral hexagon. The white circle appears beside the violet triangle. The lilac pentagon appears to the left of the yellow triangle. The yellow pentagon appears near the lilac square. The blue rectangle appears near the lilac hexagon. The coral rectangle appears to the left of the violet square.",
+      "notesPropertyTokens": 105,
+      "notesSha256": "40588bf951ae3596edb5f1b65798ebb438b855c9aca53ea7856921d809cf9828"
+    },
+    {
+      "seed": 53,
+      "participant": "p1",
+      "directoryPropertyTokens": 156,
+      "notes": "The gray rectangle appears above the blue triangle. The gray pentagon appears near the green hexagon. The coral pentagon appears beside the blue triangle. The white rectangle appears above the white triangle. The red pentagon appears above the gray hexagon. The teal circle appears below the coral hexagon. The white oval appears above the lilac square. The blue circle appears below the green hexagon. The red rectangle appears near the yellow triangle. The gray oval appears above the teal square. The yellow pentagon appears to the left of the lilac square. The green circle appears to the left of the gray hexagon. The blue rectangle appears to the left of the lilac hexagon. The violet oval appears to the right of the coral hexagon.",
+      "notesPropertyTokens": 156,
+      "notesSha256": "66f360fe9cd215a5b39c4b3baba89b62704f78b938f6bcc47f62a8dc2704cdc3"
+    },
+    {
+      "seed": 53,
+      "participant": "p2",
+      "directoryPropertyTokens": 175,
+      "notes": "The red pentagon appears below the gray hexagon. The green circle appears to the right of the gray hexagon. The red circle appears below the white triangle. The gray circle appears to the left of the yellow triangle. The yellow pentagon appears to the right of the lilac square. The green rectangle appears beside the green hexagon. The coral rectangle appears above the violet square. The yellow rectangle appears beside the coral hexagon. The gray oval appears below the teal square. The blue rectangle appears to the right of the lilac hexagon. The gray rectangle appears below the blue triangle. The white circle appears to the left of the violet triangle. The lilac circle appears above the red square. The lilac oval appears near the gray hexagon. The green oval appears beside the yellow triangle. The coral circle appears near the teal square.",
+      "notesPropertyTokens": 175,
+      "notesSha256": "c31b7f6923b68e10604f708fca806920c48f5151e947f00a481e6ce86a0c0b4c"
+    },
+    {
+      "seed": 54,
+      "participant": "p0",
+      "directoryPropertyTokens": 99,
+      "notes": "The blue rectangle appears near the red square. The green rectangle appears above the lilac square. The yellow rectangle appears above the gray square. The teal oval appears near the yellow hexagon. The white circle appears beside the white hexagon. The lilac oval appears below the green square. The teal pentagon appears above the teal triangle. The coral rectangle appears to the left of the white triangle. The lilac pentagon appears to the left of the blue hexagon.",
+      "notesPropertyTokens": 99,
+      "notesSha256": "08239fcf1c2f3cbfafbb90a9c5c2b591ec00df2c68c909c67c9553c2c82f5180"
+    },
+    {
+      "seed": 54,
+      "participant": "p1",
+      "directoryPropertyTokens": 147,
+      "notes": "The green oval appears below the blue hexagon. The blue pentagon appears below the white triangle. The violet pentagon appears beside the yellow hexagon. The coral rectangle appears to the right of the white triangle. The blue rectangle appears to the left of the red square. The white pentagon appears near the gray square. The lilac circle appears to the right of the teal triangle. The green rectangle appears below the lilac square. The violet rectangle appears to the right of the teal triangle. The white rectangle appears above the yellow hexagon. The violet oval appears to the right of the gray square. The teal rectangle appears to the left of the green square. The red oval appears near the teal triangle.",
+      "notesPropertyTokens": 147,
+      "notesSha256": "cb8d1a1cb5d62dd4c6a933529181390d0050afac278e76ad8b588668e4cd7e70"
+    },
+    {
+      "seed": 54,
+      "participant": "p2",
+      "directoryPropertyTokens": 166,
+      "notes": "The yellow circle appears to the right of the coral square. The white oval appears below the red triangle. The red circle appears below the yellow hexagon. The red pentagon appears below the green square. The green oval appears beside the blue hexagon. The red rectangle appears to the left of the blue hexagon. The gray rectangle appears below the coral hexagon. The blue rectangle appears to the right of the red square. The white circle appears to the left of the white hexagon. The gray pentagon appears to the left of the lilac square. The lilac circle appears above the teal triangle. The gray circle appears to the left of the blue hexagon. The white pentagon appears to the left of the gray square. The yellow pentagon appears to the right of the red triangle.",
+      "notesPropertyTokens": 166,
+      "notesSha256": "c13056a502e2235995f3d8e2883112e34433c106ee9d641641b97e2a49c2bcb9"
+    },
+    {
+      "seed": 55,
+      "participant": "p0",
+      "directoryPropertyTokens": 103,
+      "notes": "The violet pentagon appears below the blue square. The blue rectangle appears near the teal triangle. The white circle appears beside the yellow square. The violet oval appears to the left of the green triangle. The lilac circle appears to the left of the violet hexagon. The yellow pentagon appears near the teal hexagon. The teal pentagon appears above the violet hexagon. The yellow circle appears near the gray triangle. The red pentagon appears to the right of the lilac triangle.",
+      "notesPropertyTokens": 103,
+      "notesSha256": "4a15cfd2295d05107355e15eca5a755752b3e010ebce964699cc65cdab6b95c3"
+    },
+    {
+      "seed": 55,
+      "participant": "p1",
+      "directoryPropertyTokens": 153,
+      "notes": "The green pentagon appears to the left of the white hexagon. The gray circle appears near the coral square. The coral pentagon appears beside the gray square. The red circle appears above the blue square. The teal pentagon appears below the violet hexagon. The yellow pentagon appears to the left of the teal hexagon. The blue oval appears to the left of the gray square. The lilac circle appears to the right of the violet hexagon. The yellow rectangle appears below the green triangle. The red rectangle appears near the coral square. The red pentagon appears above the lilac triangle. The white rectangle appears above the blue square. The gray rectangle appears above the gray square. The green rectangle appears below the red triangle.",
+      "notesPropertyTokens": 153,
+      "notesSha256": "5762fa1a8822c254a7fa3ea5f15641bc97378feb0a0ed0b289ed12141c84fc2a"
+    },
+    {
+      "seed": 55,
+      "participant": "p2",
+      "directoryPropertyTokens": 172,
+      "notes": "The red pentagon appears below the lilac triangle. The blue oval appears to the right of the gray square. The lilac pentagon appears above the coral square. The blue circle appears beside the red triangle. The coral circle appears near the white hexagon. The violet rectangle appears above the violet hexagon. The lilac circle appears above the violet hexagon. The blue rectangle appears to the right of the teal triangle. The gray rectangle appears below the gray square. The lilac rectangle appears near the white hexagon. The white pentagon appears to the left of the green triangle. The gray oval appears below the white hexagon. The violet pentagon appears near the blue square. The green rectangle appears beside the red triangle. The blue pentagon appears beside the yellow hexagon. The green oval appears beside the coral square.",
+      "notesPropertyTokens": 172,
+      "notesSha256": "e6548cf52df9c0d35a8f41178af5cc3bd0f0bee5f67167d77f0a2f547cf493b4"
+    },
+    {
+      "seed": 56,
+      "participant": "p0",
+      "directoryPropertyTokens": 99,
+      "notes": "The lilac pentagon appears to the left of the gray triangle. The white oval appears to the right of the violet square. The gray rectangle appears to the right of the green triangle. The green pentagon appears near the yellow square. The green oval appears above the gray triangle. The teal oval appears near the coral triangle. The violet circle appears below the violet square. The blue pentagon appears above the blue square. The blue rectangle appears near the violet hexagon.",
+      "notesPropertyTokens": 99,
+      "notesSha256": "39bb8592970be59491a80b677829cf77acd4c8180d5e0cba903779797017a439"
+    },
+    {
+      "seed": 56,
+      "participant": "p1",
+      "directoryPropertyTokens": 147,
+      "notes": "The red rectangle appears near the gray triangle. The lilac rectangle appears beside the yellow square. The violet oval appears to the right of the lilac hexagon. The white rectangle appears above the coral triangle. The coral oval appears to the right of the teal hexagon. The green oval appears below the gray triangle. The gray rectangle appears above the green triangle. The teal rectangle appears to the left of the red hexagon. The yellow oval appears below the blue triangle. The coral rectangle appears to the right of the blue square. The blue oval appears to the left of the green triangle. The gray pentagon appears near the teal hexagon. The green pentagon appears to the left of the yellow square.",
+      "notesPropertyTokens": 147,
+      "notesSha256": "fe8aeca3201c3e0d0ddf981d9558ccfaddca0d43e632e8f993db70ab0552a9e9"
+    },
+    {
+      "seed": 56,
+      "participant": "p2",
+      "directoryPropertyTokens": 166,
+      "notes": "The coral oval appears above the teal hexagon. The violet circle appears near the violet square. The blue pentagon appears beside the blue square. The blue circle appears beside the teal hexagon. The gray pentagon appears to the left of the teal hexagon. The violet rectangle appears above the white square. The coral circle appears near the yellow square. The blue oval appears to the right of the green triangle. The white pentagon appears to the left of the lilac hexagon. The lilac rectangle appears near the yellow square. The teal pentagon appears beside the white square. The green rectangle appears beside the teal hexagon. The red oval appears to the left of the white square. The yellow rectangle appears beside the lilac hexagon. The red pentagon appears below the red hexagon.",
+      "notesPropertyTokens": 166,
+      "notesSha256": "c2aaabd3609edda392c0f7d38819b0e9b8427e306093fbf3c77f93b81f19d15c"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "name": "veil-005-phase4-v1-tokenizer",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "js-tiktoken": "1.0.21"
+  }
+}
