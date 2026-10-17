@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { runLiveTask, prices, type LiveRecord, type Transport } from './live.js';
 import { trialLimits } from './trial.js';
-import { benchmarkFixture, getTask, type Condition } from './benchmark-tasks.js';
+import { benchmarkFixture, getTask, type Condition, type FeedbackCondition } from './benchmark-tasks.js';
 
 export type Outcome = 'first-pass-success' | 'recovered-success' | 'verified-other' | 'failure-without-recovery' | 'budget-exhaustion' | 'protocol-failure' | 'infrastructure-failure' | 'accounting-failure' | 'integrity-failure';
 export const sessionDefaults = { tasks: 5, turns: 60, verifications: 15, inputTokens: 150000, outputTokens: 60000, reservedUSD: 0.20, durationMs: 660000 };
@@ -40,14 +40,17 @@ export function metrics(record: LiveRecord, durationMs: number) {
 }
 export interface BenchmarkOptions {
   mode: 'simulated' | 'live'; model: string; tasks: string[]; condition: Condition;
+  feedbackCondition?: FeedbackCondition;
   policy: 'continue-model-failures' | 'stop-on-failure'; outputDirectory: string;
   transport: (taskId: string) => Transport; secrets?: string[];
   sessionLimits?: typeof sessionDefaults;
 }
 /** Full per-task budgets are admitted before starting. Ambiguous failures always stop. */
 export async function runBenchmark(options: BenchmarkOptions) {
+  const feedbackCondition = options.feedbackCondition ?? 'sparse';
   if (!Object.hasOwn(prices, options.model)) throw Error('Unsupported model');
   if (!['simulated', 'live'].includes(options.mode) || !['standard', 'recovery'].includes(options.condition)
+    || !['sparse', 'diagnostic'].includes(feedbackCondition)
     || !['continue-model-failures', 'stop-on-failure'].includes(options.policy)) throw Error('Invalid benchmark mode, condition or policy');
   if (!options.tasks.length || new Set(options.tasks).size !== options.tasks.length) throw Error('Select distinct tasks');
   const tasks = options.tasks.map(getTask);
@@ -56,8 +59,9 @@ export async function runBenchmark(options: BenchmarkOptions) {
   for (const [key, value] of Object.entries(limits)) if (!Number.isFinite(value) || value <= 0 || (key !== 'reservedUSD' && !Number.isSafeInteger(value))) throw Error('Invalid session limits');
   await mkdir(options.outputDirectory, { recursive: true });
   const directory = await mkdtemp(join(options.outputDirectory, 'benchmark-'));
-  await writeFile(join(directory, 'manifest.json'), JSON.stringify({ schemaVersion: 1, mode: options.mode, model: options.model,
-    tasks: options.tasks, condition: options.condition, policy: options.policy, sessionLimits: limits, taskInferenceLimits: trialLimits }) + '\n', { flag: 'wx', mode: 0o600 });
+  await writeFile(join(directory, 'manifest.json'), JSON.stringify({ schemaVersion: 2, mode: options.mode, model: options.model,
+    tasks: options.tasks, condition: options.condition, feedbackCondition, policy: options.policy,
+    sessionLimits: limits, taskInferenceLimits: trialLimits }) + '\n', { flag: 'wx', mode: 0o600 });
   const started = performance.now();
   const totals = { tasks: 0, turns: 0, verifications: 0, inputTokens: 0, outputTokens: 0, reservedUSD: 0, estimatedUSD: 0 };
   const results: { taskId: string; difficulty: string; specificationSHA256: string; evidence: string; metrics: ReturnType<typeof metrics> }[] = [];
@@ -70,7 +74,7 @@ export async function runBenchmark(options: BenchmarkOptions) {
       stopReason = 'session-budget-exhaustion'; break;
     }
     let fixture: Awaited<ReturnType<typeof benchmarkFixture>>;
-    try { fixture = await benchmarkFixture(task, options.condition); }
+    try { fixture = await benchmarkFixture(task, options.condition, feedbackCondition); }
     catch { hostFailures.push({ taskId: task.id, stage: 'fixture-setup', classification: 'infrastructure-failure' }); stopReason = 'infrastructure-failure'; break; }
     const taskStarted = performance.now();
     let record: LiveRecord;
@@ -87,8 +91,10 @@ export async function runBenchmark(options: BenchmarkOptions) {
     catch { record.report.classification = 'uncertain'; record.report.reason = 'Cleanup failed'; }
     const measured = metrics(record, performance.now() - taskStarted);
     const evidence = `${task.id}.json`;
-    const specificationSHA256 = createHash('sha256').update(JSON.stringify({ task, source: fixture.source, objective: fixture.objective, condition: options.condition, profile: { ...fixture.profile, repository: '<disposable>' } })).digest('hex');
-    await writeFile(join(directory, evidence), JSON.stringify({ schemaVersion: 1, taskId: task.id, condition: options.condition, specificationSHA256, metrics: measured, record }) + '\n', { flag: 'wx', mode: 0o600 });
+    const specificationSHA256 = createHash('sha256').update(JSON.stringify({ task, source: fixture.source, objective: fixture.objective, condition: options.condition,
+      profile: { ...fixture.profile, repository: '<disposable>', acceptanceFeedback: 'summary', diagnosticCategories: undefined } })).digest('hex');
+    await writeFile(join(directory, evidence), JSON.stringify({ schemaVersion: 2, taskId: task.id, condition: options.condition,
+      feedbackCondition, specificationSHA256, metrics: measured, record }) + '\n', { flag: 'wx', mode: 0o600 });
     results.push({ taskId: task.id, difficulty: task.difficulty, specificationSHA256, evidence, metrics: measured });
     totals.tasks++; totals.turns += measured.modelTurns; totals.verifications += measured.verificationAttempts;
     totals.inputTokens += record.usage.input; totals.outputTokens += record.usage.output;
@@ -97,7 +103,7 @@ export async function runBenchmark(options: BenchmarkOptions) {
       stopReason = measured.outcome; break;
     }
   }
-  const report = { schemaVersion: 1, mode: options.mode, model: options.model, condition: options.condition, policy: options.policy,
+  const report = { schemaVersion: 2, mode: options.mode, model: options.model, condition: options.condition, feedbackCondition, policy: options.policy,
     startedAt: new Date(Date.now() - (performance.now() - started)).toISOString(), directory, sessionLimits: limits, taskInferenceLimits: trialLimits,
     selected: options.tasks, notRun: options.tasks.slice(results.length), stopReason, hostFailures, results, totals, durationMs: performance.now() - started,
     recoveryCompliance: options.condition === 'recovery' ? { followed: results.filter(r => r.metrics.recoveryConditionFollowed).length,

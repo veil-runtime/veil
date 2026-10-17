@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join, isAbsolute } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { OperatorRuntime, type Capability } from '../../src/index.js';
-import { acceptanceCapability, type AcceptanceCase, type AcceptanceResult } from './acceptance.js';
+import { acceptanceCapability, diagnosticCategories, type AcceptanceCase, type AcceptanceResult, type DiagnosticCategory } from './acceptance.js';
 import { digest, materialize, patch, readApproved, safePath, workspaceCapabilities, type Tree } from './workspace.js';
 import type { VerificationProfile } from '../../src/providers/sandbox/linux-verification-sandbox.js';
 
@@ -13,7 +13,8 @@ export interface RepositoryProfile {
   readable: string[];
   writable: string[];
   acceptance: AcceptanceCase[];
-  acceptanceFeedback?: 'summary';
+  acceptanceFeedback?: 'summary' | 'diagnostic';
+  diagnosticCategories?: readonly (DiagnosticCategory | null)[];
   limits: Omit<VerificationProfile, 'workspace' | 'executable' | 'args'>;
   maxDurationMs?: number;
   maxTurns: number;
@@ -23,6 +24,7 @@ export interface RepositoryProfile {
 export interface Feedback {
   turn: number; capability: string; authorized: boolean; revision: string;
   status: string; input: Record<string, unknown>; jobId?: string; result?: unknown; error?: string;
+  repeatedFailedRevision?: string;
 }
 export interface ReasonerContext {
   objective: string;
@@ -54,6 +56,8 @@ function validate(p: RepositoryProfile): void {
   if (p.readable.length > p.limits.snapshotFiles || new Set(p.readable).size !== p.readable.length) throw new Error('Invalid file budget/list');
   if (!p.readable.every(safePath) || !p.writable.every(f => p.readable.includes(f))) throw new Error('Invalid file permissions');
   if (!p.acceptance.every(c => p.readable.includes(c.file) && typeof c.export === 'string' && Array.isArray(c.args))) throw new Error('Invalid acceptance cases');
+  if (p.acceptanceFeedback === 'diagnostic' && (!p.diagnosticCategories || p.diagnosticCategories.length !== p.acceptance.length
+    || !p.diagnosticCategories.every(category => category === null || diagnosticCategories.includes(category)))) throw Error('Invalid diagnostic mapping');
 }
 
 export async function runRepositoryTask(objective: string, approved: RepositoryProfile, reasoner: Reasoner): Promise<TaskReport> {
@@ -64,6 +68,7 @@ export async function runRepositoryTask(objective: string, approved: RepositoryP
   let initial: Tree | undefined;
   let verifiedRevision: string | undefined;
   let verificationCount = 0;
+  const failedRevisions = new Set<string>();
   try {
     validate(p);
     if (p.maxDurationMs !== undefined && (!Number.isSafeInteger(p.maxDurationMs) || p.maxDurationMs <= 0 || p.maxDurationMs > 2_147_483_647)) throw new Error("Invalid task duration");
@@ -71,7 +76,8 @@ export async function runRepositoryTask(objective: string, approved: RepositoryP
     report.initialRevision = digest(initial);
     temporary = await mkdtemp(join(tmpdir(), 'veil-task-'));
     await materialize(temporary, initial);
-    const capabilities = [...workspaceCapabilities(temporary, p.readable, p.limits.snapshotBytes), acceptanceCapability(temporary, p.acceptance, p.limits, p.acceptanceFeedback)];
+    const capabilities = [...workspaceCapabilities(temporary, p.readable, p.limits.snapshotBytes),
+      acceptanceCapability(temporary, p.acceptance, p.limits, p.acceptanceFeedback, p.diagnosticCategories)];
     const namespace = `task.${randomUUID()}.`;
     const caller = randomUUID();
     let authorized = false;
@@ -100,7 +106,7 @@ export async function runRepositoryTask(objective: string, approved: RepositoryP
       try {
         response = await Promise.race([
           reasoner(structuredClone({ objective, capabilities: capabilities.map(({ name, description, inputSchema }) => ({ name, description, inputSchema })),
-            feedback: report.feedback, remainingTurns: p.maxTurns - turn + 1 }), controller.signal),
+            feedback: report.feedback.map(({ repeatedFailedRevision, ...entry }) => entry), remainingTurns: p.maxTurns - turn + 1 }), controller.signal),
           new Promise<never>((_, reject) => { timer = setTimeout(() => { controller.abort(); reject(new Error('Reasoner deadline exceeded')); }, Math.min(p.reasonerTimeoutMs, Math.max(1, deadline - performance.now()))); }),
         ]);
       } finally { clearTimeout(timer); controller.abort(); }
@@ -134,8 +140,10 @@ export async function runRepositoryTask(objective: string, approved: RepositoryP
         entry.error = job.steps[0]?.error ?? job.error;
         if (action.capability === 'verification.sandbox.run' && authorized) {
           verificationCount++;
+          if (failedRevisions.has(revision)) entry.repeatedFailedRevision = revision;
           const result = entry.result as AcceptanceResult | undefined;
           verifiedRevision = entry.status === 'completed' && result?.accepted ? revision : undefined;
+          if (entry.status === 'completed' && result?.accepted === false && result.status !== 'unavailable') failedRevisions.add(revision);
           if (result?.status === 'unavailable') { report.classification = 'blocked'; report.reason = result.diagnostic ?? 'Sandbox unavailable'; }
         }
       } catch (error) { entry.error = String(error); }

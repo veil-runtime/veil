@@ -241,3 +241,62 @@ version changes must not be pooled without disclosure.
 
 Ready for review and a separately approved live benchmark, subject to model/price
 availability and the documented baseline gate failures. Stop before live execution.
+
+## Phase 4A: governed diagnostic feedback (offline implementation)
+
+New runs select a host-owned `feedbackCondition`: `sparse` (default) or
+`diagnostic`. The original task seeds, objectives, acceptance inputs and expected
+values, model allowlist, budgets, sandbox, authorization and verification limits
+are unchanged. Historical version-1 evidence is untouched. The existing
+`standard`/`recovery` task condition remains a separate choice. Run the same task
+selection and task condition in each arm; do not pool either arm with historical
+results without labeling the feedback condition.
+
+After compiling the application, these are **offline simulated** commands for
+the two arms. They make no paid model calls:
+
+```sh
+npx tsc -p apps/repository-task/tsconfig.json
+node .tmp/task-build/apps/repository-task/benchmark-cli.js --dry-run /tmp/veil-phase4a-sparse gpt-4.1-mini-2025-04-14 bounded-integer standard stop-on-failure sparse
+node .tmp/task-build/apps/repository-task/benchmark-cli.js --dry-run /tmp/veil-phase4a-diagnostic gpt-4.1-mini-2025-04-14 bounded-integer standard stop-on-failure diagnostic
+```
+
+The final argument is optional and defaults to `sparse`. A future live comparison
+requires separate approval and otherwise uses the same arguments with
+`--live-paid`; no live comparison was run for Phase 4A.
+
+Diagnostic labels are fixed in the host-only `benchmark-diagnostics.ts` mapping:
+
+| Task | Failed-case categories |
+|---|---|
+| `bounded-integer` | Input form cases: `input-validation`; range and safe-bound cases: `boundary-handling` |
+| `group-totals` | `data-consistency` |
+| `interval-union` | `boundary-handling` |
+| `reservation-ledger` | `state-invariant` |
+| `record-recovery` | `error-recovery` |
+
+The evaluator collects labels only from cases that fail during function execution
+or comparison. It emits sorted, unique allowlisted labels after a private marker.
+The host discards raw sandbox stdout/stderr and returns a fixed phrase plus labels.
+An unlabeled failure, parse failure or unavailable classification returns generic
+failure. The diagnostic text contains no case index, input, expected output,
+assertion, source excerpt or stack trace. The host report still retains the
+approved cases for audit; the reasoner context does not contain the profile.
+
+New manifest, task envelope and session report records have `schemaVersion: 2`
+and `feedbackCondition`. Task evidence also records the host-owned diagnostic
+mapping inside its profile when selected. The task `specificationSHA256` excludes
+feedback metadata so the same task seed and acceptance specification produce the
+same hash in both arms. A verification feedback entry may add
+`repeatedFailedRevision` with the full SHA-256 revision when the same revision was
+previously checked and failed. This is retained in host evidence, while the
+reasoner receives the original feedback shape to avoid a second model-visible
+intervention; the request still executes and consumes an ordinary verification
+attempt. Acceptance remains tied to the host-computed current revision.
+
+The category is a coarse clue, not a proof of the defect or a guarantee that all
+failures are classified. The mapping must be reviewed when cases change. A
+candidate that fails several cases may receive several labels, which can reveal
+more about the finite oracle than sparse feedback. Comparisons must therefore
+attribute any change in model behavior to the feedback arm, not to a broader
+security or correctness claim. No capability instruction or budget was changed.

@@ -3,8 +3,10 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { RepositoryProfile } from './runner.js';
 import type { AcceptanceCase } from './acceptance.js';
+import { benchmarkDiagnostics } from './benchmark-diagnostics.js';
 
 export type Condition = 'standard' | 'recovery';
+export type FeedbackCondition = 'sparse' | 'diagnostic';
 export interface BenchmarkTask {
   id: string; difficulty: 'small' | 'small-intermediate'; category: string;
   objective: string; source: string; cases: AcceptanceCase[];
@@ -38,14 +40,19 @@ export function getTask(id: string): BenchmarkTask {
   if (!task) throw Error('Unknown benchmark task');
   return structuredClone(task);
 }
-export async function benchmarkFixture(task: BenchmarkTask, condition: Condition) {
+export async function benchmarkFixture(task: BenchmarkTask, condition: Condition, feedbackCondition: FeedbackCondition = 'sparse') {
   if (condition === 'recovery' && task.id !== 'bounded-integer') throw Error('Recovery condition is defined only for bounded-integer');
+  if (!['sparse', 'diagnostic'].includes(feedbackCondition)) throw Error('Invalid feedback condition');
   const repository = await mkdtemp(join(tmpdir(), 'veil-benchmark-'));
   try {
     await mkdir(join(repository, 'src'));
     const source = condition === 'standard' ? task.source : 'export function parseBounded(text: string, min: number, max: number): number | null { const s=text.trim(); const n=Number(s); return /^[+-]?\\d+$/.test(s) && Number.isSafeInteger(n) && Number.isSafeInteger(min) && Number.isSafeInteger(max) && n>=min && n<max ? n : null; }\n';
     await writeFile(join(repository, file), source);
-    const profile: RepositoryProfile = { repository, readable: [file], writable: [file], acceptance: task.cases, acceptanceFeedback: 'summary',
+    const categories = benchmarkDiagnostics[task.id];
+    if (feedbackCondition === 'diagnostic' && (!categories || categories.length !== task.cases.length)) throw Error('Invalid benchmark diagnostic mapping');
+    const profile: RepositoryProfile = { repository, readable: [file], writable: [file], acceptance: task.cases,
+      acceptanceFeedback: feedbackCondition === 'diagnostic' ? 'diagnostic' : 'summary',
+      ...(feedbackCondition === 'diagnostic' ? { diagnosticCategories: categories } : {}),
       maxTurns: 12, maxVerifications: 3, reasonerTimeoutMs: 20000, maxDurationMs: 120000,
       limits: { runtimeMounts: ['/usr/lib', '/lib', '/lib64'].map(source => ({ source, target: source })), wallMs: 2000, cpuSeconds: 2,
         addressSpaceBytes: 1024 ** 3, outputBytes: 8192, snapshotBytes: 8192, snapshotFiles: 10 } };
