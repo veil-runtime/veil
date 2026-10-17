@@ -1,0 +1,5 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": { "rootDir": "../..", "outDir": "../../.tmp/task-build", "declaration": false },
+  "include": ["*.ts"]
+}
