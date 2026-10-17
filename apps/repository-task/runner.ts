@@ -13,6 +13,7 @@ export interface RepositoryProfile {
   readable: string[];
   writable: string[];
   acceptance: AcceptanceCase[];
+  acceptanceFeedback?: 'summary';
   limits: Omit<VerificationProfile, 'workspace' | 'executable' | 'args'>;
   maxDurationMs?: number;
   maxTurns: number;
@@ -70,7 +71,7 @@ export async function runRepositoryTask(objective: string, approved: RepositoryP
     report.initialRevision = digest(initial);
     temporary = await mkdtemp(join(tmpdir(), 'veil-task-'));
     await materialize(temporary, initial);
-    const capabilities = [...workspaceCapabilities(temporary, p.readable, p.limits.snapshotBytes), acceptanceCapability(temporary, p.acceptance, p.limits)];
+    const capabilities = [...workspaceCapabilities(temporary, p.readable, p.limits.snapshotBytes), acceptanceCapability(temporary, p.acceptance, p.limits, p.acceptanceFeedback)];
     const namespace = `task.${randomUUID()}.`;
     const caller = randomUUID();
     let authorized = false;

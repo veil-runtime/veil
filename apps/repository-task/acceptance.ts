@@ -8,13 +8,13 @@ import { createLinuxVerificationSandbox, type VerificationProfile, type Verifica
 import { createSandboxVerificationCapability } from '../../src/capabilities/verification/sandbox-verify.js';
 import type { Capability } from '../../src/index.js';
 
-export interface AcceptanceCase { file: string; export: string; args: unknown[]; expected: unknown }
+export interface AcceptanceCase { file: string; export: string; args: unknown[]; expected: unknown; unchangedArgs?: boolean }
 export interface AcceptanceResult extends VerificationResult { accepted: boolean }
 
 /** Fixed single-process oracle: generated modules receive no imports or host objects.
  * VM limits the supported language surface; Linux remains the security boundary.
  */
-export function acceptanceCapability(workspace: string, cases: readonly AcceptanceCase[], limits: Omit<VerificationProfile, 'workspace' | 'executable' | 'args'>): Capability<Record<string, never>, AcceptanceResult> {
+export function acceptanceCapability(workspace: string, cases: readonly AcceptanceCase[], limits: Omit<VerificationProfile, 'workspace' | 'executable' | 'args'>, feedback?: 'summary'): Capability<Record<string, never>, AcceptanceResult> {
   const marker = randomBytes(32).toString('hex');
   const script = `
     const fs = require('node:fs');
@@ -30,8 +30,11 @@ export function acceptanceCapability(workspace: string, cases: readonly Acceptan
         await module.evaluate();
         // Arguments enter as JSON literals; results are cloned by the trusted realm.
         context.fn = module.namespace[c.export];
-        const actual = vm.runInContext('fn(...' + JSON.stringify(c.args) + ')', context);
+        const args = vm.runInContext('(' + JSON.stringify(c.args) + ')', context);
+        context.args = args;
+        const actual = vm.runInContext('fn(...args)', context);
         assert.deepStrictEqual(structuredClone(actual), c.expected);
+        if (c.unchangedArgs) assert.deepStrictEqual(structuredClone(args), c.args);
       }
       process.stdout.write(${JSON.stringify(marker)});
     })().catch(error => { console.error(String(error)); process.exitCode = 1; });
@@ -47,11 +50,12 @@ export function acceptanceCapability(workspace: string, cases: readonly Acceptan
       // Node's native stripper requires WASM, unavailable under --jitless. Parse data
       // in the host; never import/evaluate source or resolve project configuration.
       try { for (const file of Object.keys(tree)) tree[file] = stripTypeScriptTypes(tree[file]); }
-      catch (error) { return { status: 'failed', exitCode: null, signal: null, stdout: '', stderr: String(error), elapsedMs: 0, accepted: false }; }
+      catch (error) { return { status: 'failed', exitCode: null, signal: null, stdout: '', stderr: feedback === 'summary' ? 'TypeScript parsing failed' : String(error), elapsedMs: 0, accepted: false }; }
       await materialize(prepared, tree);
       const result = await createLinuxVerificationSandbox({ ...profile, workspace: prepared })();
       const accepted = result.status === 'passed' && result.stdout === marker;
-      return { ...result, stdout: result.stdout === marker ? 'All host acceptance cases passed' : result.stdout, accepted };
+      return { ...result, stdout: feedback === 'summary' ? (accepted ? 'All host acceptance cases passed' : 'Host acceptance did not pass') : result.stdout === marker ? 'All host acceptance cases passed' : result.stdout,
+        stderr: feedback === 'summary' ? '' : result.stderr, accepted };
     } finally { await rm(prepared, { recursive: true, force: true }); }
   } };
 }
