@@ -14,6 +14,7 @@ export interface RepositoryProfile {
   writable: string[];
   acceptance: AcceptanceCase[];
   limits: Omit<VerificationProfile, 'workspace' | 'executable' | 'args'>;
+  maxDurationMs?: number;
   maxTurns: number;
   maxVerifications: number;
   reasonerTimeoutMs: number;
@@ -57,12 +58,14 @@ function validate(p: RepositoryProfile): void {
 export async function runRepositoryTask(objective: string, approved: RepositoryProfile, reasoner: Reasoner): Promise<TaskReport> {
   const p = structuredClone(approved);
   const report: TaskReport = { classification: 'blocked', objective, reason: '', originalUnchanged: false, patch: '', feedback: [], profile: p };
+  const deadline = performance.now() + (p.maxDurationMs ?? 2_147_483_647);
   let temporary: string | undefined;
   let initial: Tree | undefined;
   let verifiedRevision: string | undefined;
   let verificationCount = 0;
   try {
     validate(p);
+    if (p.maxDurationMs !== undefined && (!Number.isSafeInteger(p.maxDurationMs) || p.maxDurationMs <= 0 || p.maxDurationMs > 2_147_483_647)) throw new Error("Invalid task duration");
     initial = await readApproved(p.repository, p.readable, p.limits.snapshotBytes);
     report.initialRevision = digest(initial);
     temporary = await mkdtemp(join(tmpdir(), 'veil-task-'));
@@ -89,6 +92,7 @@ export async function runRepositoryTask(objective: string, approved: RepositoryP
     report.classification = 'exhausted';
     report.reason = 'Turn budget exhausted';
     for (let turn = 1; turn <= p.maxTurns; turn++) {
+      if (performance.now() >= deadline) { report.reason = 'Task duration exhausted'; break; }
       const controller = new AbortController();
       let timer: ReturnType<typeof setTimeout> | undefined;
       let response: string;
@@ -96,13 +100,15 @@ export async function runRepositoryTask(objective: string, approved: RepositoryP
         response = await Promise.race([
           reasoner(structuredClone({ objective, capabilities: capabilities.map(({ name, description, inputSchema }) => ({ name, description, inputSchema })),
             feedback: report.feedback, remainingTurns: p.maxTurns - turn + 1 }), controller.signal),
-          new Promise<never>((_, reject) => { timer = setTimeout(() => { controller.abort(); reject(new Error('Reasoner deadline exceeded')); }, p.reasonerTimeoutMs); }),
+          new Promise<never>((_, reject) => { timer = setTimeout(() => { controller.abort(); reject(new Error('Reasoner deadline exceeded')); }, Math.min(p.reasonerTimeoutMs, Math.max(1, deadline - performance.now()))); }),
         ]);
       } finally { clearTimeout(timer); controller.abort(); }
+      if (performance.now() >= deadline) { report.reason = 'Task duration exhausted'; break; }
       if (typeof response !== 'string' || Buffer.byteLength(response) > p.limits.snapshotBytes * 2 + 4096) throw new Error('Reasoner response exceeds protocol budget');
       const action = JSON.parse(response);
       if (!action || typeof action !== 'object') throw new Error('Invalid action');
       const revision = digest(await readApproved(temporary, p.readable, p.limits.snapshotBytes));
+      if (performance.now() >= deadline) { report.reason = 'Task duration exhausted'; break; }
       if (action.type === 'finish') {
         report.classification = verifiedRevision === revision ? 'verified' : 'failed';
         report.reason = verifiedRevision === revision ? 'Host acceptance passed on final revision' : 'No passing acceptance on final revision';
@@ -113,6 +119,7 @@ export async function runRepositoryTask(objective: string, approved: RepositoryP
       if (action.capability === 'verification.sandbox.run' && verificationCount >= p.maxVerifications) {
         report.reason = 'Verification budget exhausted'; break;
       }
+      if (action.capability === 'verification.sandbox.run' && deadline - performance.now() < p.limits.wallMs + 1000) { report.reason = 'Insufficient task duration for verification'; break; }
       if (action.capability === 'verification.sandbox.run') verifiedRevision = undefined;
       authorized = false;
       const entry: Feedback = { turn, capability: action.capability, authorized: false, revision, status: 'rejected', input: structuredClone(action.input) };
@@ -134,12 +141,13 @@ export async function runRepositoryTask(objective: string, approved: RepositoryP
       entry.revision = digest(await readApproved(temporary, p.readable, p.limits.snapshotBytes));
       if (entry.revision !== revision) verifiedRevision = undefined;
       report.feedback.push(entry);
+      if (performance.now() >= deadline) { report.classification = 'exhausted'; report.reason = 'Task duration exhausted'; break; }
       if (report.classification === 'blocked') break;
     }
     report.verifiedRevision = verifiedRevision;
   } catch (error) {
-    report.classification = initial && temporary ? 'uncertain' : 'blocked';
-    report.reason = String(error);
+    report.classification = performance.now() >= deadline ? 'exhausted' : initial && temporary ? 'uncertain' : 'blocked';
+    report.reason = performance.now() >= deadline ? 'Task duration exhausted' : String(error);
   } finally {
     try {
       if (initial) {
