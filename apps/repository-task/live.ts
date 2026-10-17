@@ -12,6 +12,7 @@ export interface Transport {
   count(request: Request, signal: AbortSignal): Promise<number>;
   generate(request: Request, signal: AbortSignal): Promise<unknown>;
 }
+// countedInput is preflight admission data; response.usage is provider-reported consumption.
 export interface Exchange { request: Request; countedInput?: number; response?: unknown; action?: string; error?: string; reservedUSD?: number }
 export interface LiveRecord {
   mode: 'live' | 'simulated' | 'replay'; requestedModel: string; limits: InferenceLimits;
@@ -90,7 +91,11 @@ export async function runLiveTask(objective: string, profile: RepositoryProfile,
       entry.response = redact(raw, secrets);
       const r = raw as any;
       const input = r?.usage?.input_tokens, out = r?.usage?.output_tokens;
-      if (!integer(input) || !integer(out) || input !== count || out > output || r.model !== model) {
+      // Preflight can differ from actual usage. Reconcile against hard token limits
+      // and this exchange's existing monetary reservation before accepting any action.
+      if (!integer(input) || !integer(out) || r.model !== model || out > output
+        || input > limits.inputTokens - usage.input || out > limits.outputTokens - usage.output
+        || (input * pricing.input + out * pricing.output) / 1e6 > reservation) {
         usage.reliable = false; throw Error('Unreliable usage or model identity; monetary enforcement stopped');
       }
       usage.input += input; usage.output += out;

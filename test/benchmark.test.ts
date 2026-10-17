@@ -134,3 +134,26 @@ test('benchmark unexpected host failure is retained and stops the session', asyn
   assert.equal(r.results[0].metrics.tokens.reliable,false); assert.doesNotMatch(JSON.stringify(r),/private host details/);
   assert.equal(JSON.parse(await readFile(join(r.directory,'manifest.json'),'utf8')).tasks.length,5);
 });
+
+test('benchmark session: reconciled provider actuals govern subsequent task admission and metrics', async () => {
+  const report = await runBenchmark(options({
+    tasks: ['bounded-integer', 'group-totals'],
+    sessionLimits: { ...sessionDefaults, inputTokens: trialLimits.inputTokens + 100 },
+    transport: () => {
+      const t = simulated([finish]);
+      return { count: t.count, generate: async (...args) => {
+        const response = await t.generate(...args) as any;
+        response.usage.input_tokens = 123;
+        return response;
+      } };
+    },
+  }));
+  assert.equal(report.stopReason, 'session-budget-exhaustion');
+  assert.equal(report.denominators.attempted, 1);
+  assert.deepEqual(report.notRun, ['group-totals']);
+  assert.deepEqual(report.results[0].metrics.tokens, { input: 123, output: 100, reliable: true });
+  assert.equal(report.totals.inputTokens, 123);
+  assert.equal(report.totals.outputTokens, 100);
+  assert.equal(report.totals.estimatedUSD, (123 * 0.4 + 100 * 1.6) / 1e6);
+  assert.equal(report.totals.reservedUSD, (100 * 0.4 + 1500 * 1.6) / 1e6);
+});

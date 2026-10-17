@@ -231,3 +231,118 @@ test('live adapter: count failure, identity mismatch, oversized response and exc
     assert.notEqual(r.report.classification, 'verified'); assert.equal(r.report.feedback.length, 0);
   }
 }));
+
+// Deterministic provider responses; these tests never use the network.
+function accountingTransport(rows: { count: number; input: unknown; output: unknown; model?: unknown; missingUsage?: boolean }[], text = finish): Transport {
+  let index = 0;
+  return {
+    count: async () => { assert.ok(index < rows.length, 'Unexpected extra exchange'); return rows[index].count; },
+    generate: async () => {
+      const row = rows[index++];
+      return { model: Object.hasOwn(row, 'model') ? row.model : trialModel, status: 'completed',
+        usage: row.missingUsage ? undefined : { input_tokens: row.input, output_tokens: row.output },
+        output: [{ type: 'message', role: 'assistant', content: [{ type: 'output_text', text }] }] };
+    },
+  };
+}
+
+test('live accounting: exact agreement and discrepancies use actual usage within the original reservation', async () => fixture(async ({ profile }) => {
+  for (const input of [638, 661, 615]) {
+    const r = await runLiveTask('Fix', profile, trialModel, trialLimits,
+      accountingTransport([{ count: 638, input, output: 24 }]), 'simulated');
+    assert.equal(r.exchanges[0].action, finish);
+    assert.equal(r.exchanges[0].countedInput, 638);
+    assert.equal((r.exchanges[0].response as any).usage.input_tokens, input);
+    assert.deepEqual(r.usage, { input, output: 24, reliable: true,
+      estimatedUSD: (input * 0.4 + 24 * 1.6) / 1e6, reservedUSD: 0.0026552 });
+  }
+}));
+
+test('live accounting: hard token limits and exchange reservation reject actual overages before effects', async () => fixture(async ({ profile }) => {
+  for (const [limits, input, output] of [
+    [{ inputTokens: 650 }, 661, 24],
+    [{ outputTokens: 23 }, 638, 24],
+    [{ outputPerCall: 23 }, 638, 24],
+    // Output at its cap leaves no money for even one extra input token.
+    [{}, 639, 1500],
+  ] as const) {
+    const r = await runLiveTask('Fix', profile, trialModel, { ...trialLimits, ...limits },
+      accountingTransport([{ count: 638, input, output }], write), 'simulated');
+    assert.equal(r.usage.reliable, false);
+    assert.match(r.report.reason, /Unreliable usage/);
+    assert.equal(r.exchanges.length, 1);
+    assert.equal(r.exchanges[0].action, undefined);
+    assert.deepEqual(r.report.feedback, []);
+    assert.equal(r.report.patch, '');
+    assert.equal(r.report.originalUnchanged, true);
+    assert.equal((r.exchanges[0].response as any).usage.input_tokens, input);
+    assert.equal(r.usage.input, 0); // Rejected consumption remains raw evidence, not reconciled totals.
+    assert.equal(r.usage.estimatedUSD, 0);
+    assert.equal(r.usage.reservedUSD, r.exchanges[0].reservedUSD);
+  }
+}));
+
+test('live accounting: missing or malformed usage and missing or incorrect identity fail closed', async () => fixture(async ({ profile }) => {
+  const valid = { count: 638, input: 661, output: 24 };
+  const invalid = [
+    { ...valid, missingUsage: true },
+    ...[undefined, null, '24', -1, 1.5, NaN, Infinity, Number.MAX_SAFE_INTEGER + 1].flatMap(value => [
+      { ...valid, input: value }, { ...valid, output: value },
+    ]),
+    ...[undefined, null, '', 'gpt-4.1-mini', 'wrong', 42, {}].map(model => ({ ...valid, model })),
+  ];
+  for (const row of invalid) {
+    const r = await runLiveTask('Fix', profile, trialModel, trialLimits, accountingTransport([row], write), 'simulated');
+    assert.equal(r.usage.reliable, false);
+    assert.match(r.report.reason, /Unreliable usage/);
+    assert.equal(r.exchanges[0].action, undefined);
+    assert.deepEqual(r.report.feedback, []);
+    assert.equal(r.report.patch, '');
+    assert.equal(r.report.originalUnchanged, true);
+    assert.ok(r.usage.reservedUSD > 0);
+  }
+}));
+
+test('live accounting: multiple exchanges accumulate actuals and retain every reservation', async () => fixture(async ({ profile }) => {
+  profile.maxTurns = 2;
+  const r = await runLiveTask('Fix', profile, trialModel, trialLimits, accountingTransport([
+    { count: 539, input: 539, output: 19 }, { count: 638, input: 661, output: 24 },
+  ], a('workspace.list', { path: '.' })), 'simulated');
+  assert.equal(r.report.feedback.length, 2);
+  assert.ok(Math.abs(r.usage.estimatedUSD - 0.0005488) < 1e-15);
+  assert.deepEqual(r.usage, { input: 1200, output: 43, reliable: true,
+    estimatedUSD: r.usage.estimatedUSD, reservedUSD: 0.0026156 + 0.0026552 });
+}));
+
+test('live accounting: cumulative actuals govern later token admission, reconciliation and output reservations', async () => fixture(async ({ profile }) => {
+  for (const [limits, reason, responses] of [
+    [{ inputTokens: 200 }, 'Input token limit exhausted', 1],
+    [{ inputTokens: 240 }, 'Unreliable usage', 2],
+    [{ outputTokens: 150 }, 'Unreliable usage', 2],
+    [{ costUSD: 0.004 }, 'Cost limit exhausted', 1],
+  ] as const) {
+    const r = await runLiveTask('Fix', profile, trialModel, { ...trialLimits, ...limits }, accountingTransport([
+      { count: 100, input: 123, output: 100 }, { count: 100, input: 123, output: 100 },
+    ], a('workspace.list', { path: '.' })), 'simulated');
+    assert.match(r.report.reason, new RegExp(reason));
+    assert.equal(r.report.feedback.length, 1);
+    assert.equal(r.exchanges.filter(e => e.response).length, responses);
+    assert.equal(r.usage.input, 123);
+    assert.equal(r.usage.output, 100);
+    assert.equal(r.usage.reliable, responses === 1);
+    if ('outputTokens' in limits) assert.equal(r.exchanges[1].request.max_output_tokens, 50);
+  }
+}));
+
+test('live accounting: unused earlier reservations cannot cover a later exchange overrun', async () => fixture(async ({ profile }) => {
+  const r = await runLiveTask('Fix', profile, trialModel, trialLimits, accountingTransport([
+    { count: 100, input: 100, output: 1 }, { count: 100, input: 101, output: 1500 },
+  ], a('workspace.list', { path: '.' })), 'simulated');
+  assert.equal(r.report.feedback.length, 1);
+  assert.equal(r.exchanges[1].action, undefined);
+  assert.equal(r.usage.reliable, false);
+  assert.match(r.report.reason, /Unreliable usage/);
+  assert.equal(r.usage.input, 100);
+  assert.equal(r.usage.output, 1);
+  assert.equal(r.usage.reservedUSD, 2 * (100 * 0.4 + 1500 * 1.6) / 1e6);
+}));
