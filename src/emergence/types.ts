@@ -1,3 +1,4 @@
+import type { Proposal } from './proposal.js';
 import type { CapabilityDescriptor } from '../runtime/registry/capability.js';
 import type { ExecutionCaller } from '../runtime/execution/execution-context.js';
 import type { Job } from '../runtime/jobs/job.js';
@@ -21,10 +22,7 @@ export interface Budget {
   maxExecutionMs?: number;
 }
 
-export type Proposal =
-  | { kind: 'execute'; capability: string; input?: unknown; reason: string }
-  | { kind: 'delegate'; peer: string; task: string; evidence: string; reason: string }
-  | { kind: 'finish'; reason: string };
+export type { Proposal } from './proposal.js';
 
 export interface PeerDescriptor {
   id: string;
@@ -49,7 +47,7 @@ export interface ReasoningProvider {
 }
 
 export interface ReasoningResponse {
-  proposal: Proposal;
+  proposal: unknown;
   usage: { inputTokens: number; outputTokens: number; costMicros: number };
 }
 

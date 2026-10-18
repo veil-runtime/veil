@@ -1,0 +1,185 @@
+{
+  "id": "85b25b97-511f-4a84-b62f-a70d4d19fa71",
+  "goal": "Repair the slug function so it converts titles into lowercase URL slugs: trim surrounding whitespace, turn each run of spaces or hyphens into one hyphen, and remove leading or trailing hyphens.",
+  "status": "failed",
+  "startedAt": "2026-10-18T15:50:39.082Z",
+  "budget": {
+    "maxDecisions": 12,
+    "maxJobs": 8,
+    "maxDelegations": 2,
+    "maxElapsedMs": 120000,
+    "maxProposalBytes": 4096,
+    "maxModelCalls": 12,
+    "maxInputTokens": 60000,
+    "maxOutputTokens": 8000,
+    "maxCostMicros": 1500000,
+    "maxExecutionMs": 20000
+  },
+  "decisions": 1,
+  "jobs": 0,
+  "delegations": 0,
+  "modelCalls": 1,
+  "inputTokens": 1951,
+  "outputTokens": 13,
+  "costMicros": 802,
+  "executionMs": 0,
+  "queue": [],
+  "approvals": [],
+  "events": [
+    {
+      "sequence": 1,
+      "at": "2026-10-18T15:50:39.084Z",
+      "type": "goal.started",
+      "worker": "coordinator",
+      "data": {
+        "goal": "Repair the slug function so it converts titles into lowercase URL slugs: trim surrounding whitespace, turn each run of spaces or hyphens into one hyphen, and remove leading or trailing hyphens.",
+        "budget": {
+          "maxDecisions": 12,
+          "maxJobs": 8,
+          "maxDelegations": 2,
+          "maxElapsedMs": 120000,
+          "maxProposalBytes": 4096,
+          "maxModelCalls": 12,
+          "maxInputTokens": 60000,
+          "maxOutputTokens": 8000,
+          "maxCostMicros": 1500000,
+          "maxExecutionMs": 20000
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "at": "2026-10-18T15:50:39.086Z",
+      "type": "capabilities.discovered",
+      "worker": "coordinator",
+      "data": {
+        "capabilities": [
+          "trial.list.ec00fa46-9c23-40ef-a15e-495ad85deebd",
+          "trial.read.ec00fa46-9c23-40ef-a15e-495ad85deebd",
+          "trial.replace.ec00fa46-9c23-40ef-a15e-495ad85deebd",
+          "trial.check.ec00fa46-9c23-40ef-a15e-495ad85deebd"
+        ],
+        "peers": [
+          {
+            "id": "diagnostic",
+            "capabilities": [
+              "trial.list.ec00fa46-9c23-40ef-a15e-495ad85deebd",
+              "trial.read.ec00fa46-9c23-40ef-a15e-495ad85deebd",
+              "trial.check.ec00fa46-9c23-40ef-a15e-495ad85deebd"
+            ]
+          },
+          {
+            "id": "repair",
+            "capabilities": [
+              "trial.read.ec00fa46-9c23-40ef-a15e-495ad85deebd",
+              "trial.replace.ec00fa46-9c23-40ef-a15e-495ad85deebd",
+              "trial.check.ec00fa46-9c23-40ef-a15e-495ad85deebd"
+            ]
+          },
+          {
+            "id": "verifier",
+            "capabilities": [
+              "trial.check.ec00fa46-9c23-40ef-a15e-495ad85deebd"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "sequence": 3,
+      "at": "2026-10-18T15:50:41.355Z",
+      "type": "reasoning.decision",
+      "worker": "coordinator",
+      "data": {
+        "task": "Repair the slug function so it converts titles into lowercase URL slugs: trim surrounding whitespace, turn each run of spaces or hyphens into one hyphen, and remove leading or trailing hyphens.",
+        "proposal": {
+          "kind": "delegate",
+          "worker": "repair",
+          "input": {}
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "at": "2026-10-18T15:50:41.355Z",
+      "type": "goal.failed",
+      "data": {
+        "reason": "Invalid or over-budget delegation"
+      }
+    }
+  ],
+  "memory": [
+    {
+      "sequence": 2,
+      "worker": "coordinator",
+      "kind": "capability",
+      "source": "host",
+      "data": {
+        "capabilities": [
+          "trial.list.ec00fa46-9c23-40ef-a15e-495ad85deebd",
+          "trial.read.ec00fa46-9c23-40ef-a15e-495ad85deebd",
+          "trial.replace.ec00fa46-9c23-40ef-a15e-495ad85deebd",
+          "trial.check.ec00fa46-9c23-40ef-a15e-495ad85deebd"
+        ],
+        "peers": [
+          {
+            "id": "diagnostic",
+            "capabilities": [
+              "trial.list.ec00fa46-9c23-40ef-a15e-495ad85deebd",
+              "trial.read.ec00fa46-9c23-40ef-a15e-495ad85deebd",
+              "trial.check.ec00fa46-9c23-40ef-a15e-495ad85deebd"
+            ]
+          },
+          {
+            "id": "repair",
+            "capabilities": [
+              "trial.read.ec00fa46-9c23-40ef-a15e-495ad85deebd",
+              "trial.replace.ec00fa46-9c23-40ef-a15e-495ad85deebd",
+              "trial.check.ec00fa46-9c23-40ef-a15e-495ad85deebd"
+            ]
+          },
+          {
+            "id": "verifier",
+            "capabilities": [
+              "trial.check.ec00fa46-9c23-40ef-a15e-495ad85deebd"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "sequence": 3,
+      "worker": "coordinator",
+      "kind": "interpretation",
+      "source": "model",
+      "data": {
+        "task": "Repair the slug function so it converts titles into lowercase URL slugs: trim surrounding whitespace, turn each run of spaces or hyphens into one hyphen, and remove leading or trailing hyphens.",
+        "proposal": {
+          "kind": "delegate",
+          "worker": "repair",
+          "input": {}
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "failure",
+      "source": "veil",
+      "data": {
+        "reason": "Invalid or over-budget delegation"
+      }
+    }
+  ],
+  "verification": {
+    "worker": "verifier",
+    "capability": "trial.check.ec00fa46-9c23-40ef-a15e-495ad85deebd",
+    "expected": {
+      "passed": true
+    }
+  },
+  "active": {
+    "worker": "coordinator",
+    "task": "Repair the slug function so it converts titles into lowercase URL slugs: trim surrounding whitespace, turn each run of spaces or hyphens into one hyphen, and remove leading or trailing hyphens.",
+    "evidence": ""
+  }
+}

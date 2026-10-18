@@ -118,3 +118,35 @@ test('restart after a recorded approved write does not repeat the side effect', 
   assert.equal(resumed.events.filter((event) => event.type === 'execution.completed' &&
     event.data.capability === names.patch).length, 1);
 });
+
+test('Veil denial after exact write approval is terminal and never retried', async () => {
+  const prefix = `emergence.denial.${Date.now()}.${Math.random()}`;
+  let writes = 0;
+  let decisions = 0;
+  new OperatorRuntime().use({ manifest: { name: prefix, version: '1', capabilities: [prefix, `${prefix}.read`] },
+    capabilities: [
+      { name: prefix, version: '1', risk: 'write', description: 'Write sentinel',
+        async execute() { writes += 1; return true; } },
+      { name: `${prefix}.read`, version: '1', risk: 'read', description: 'Read sentinel',
+        async execute() { return true; } },
+    ],
+  });
+  const kernel = new EmergenceKernel({
+    journal: new FileJournal(await mkdtemp(join(tmpdir(), 'veil-denial-'))),
+    provider: { async decide() { decisions += 1; return { kind: 'execute', capability: prefix, reason: 'Write' }; } },
+    workers: [{ id: 'repair', responsibility: 'Repair', capabilities: [prefix, `${prefix}.read`] }],
+    budget: { maxDecisions: 5, maxJobs: 5, maxDelegations: 1, maxElapsedMs: 10_000, maxProposalBytes: 1024 },
+    approvalGate: async () => true,
+    policy: { authorize: async () => ({ decision: 'deny', reason: 'Host policy' }) },
+  });
+  const pending = await kernel.start('Repair', 'repair',
+    { worker: 'repair', capability: `${prefix}.read`, expected: true });
+  assert.equal(pending.status, 'awaiting-approval');
+  const state = await kernel.grantApproval(pending.id, pending.approvals[0].id, 'operator');
+  assert.equal(state.status, 'failed');
+  assert.equal(writes, 0);
+  assert.equal(decisions, 1);
+  assert.equal(state.jobs, 1);
+  assert.equal(state.events.find((event) => event.type === 'execution.failed')?.data.category, 'authorization');
+  assert.equal((await kernel.run(state.id)).modelCalls, 1);
+});

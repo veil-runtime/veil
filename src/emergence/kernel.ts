@@ -1,3 +1,4 @@
+import { proposalSchema } from './proposal.js';
 import { randomUUID } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { OperatorRuntime } from '../runtime/operator-runtime.js';
@@ -123,10 +124,12 @@ export class EmergenceKernel {
       state.decisions += 1;
       state.modelCalls += 1;
       await this.options.journal.save(state);
+      let candidate: unknown;
       let proposal: Proposal;
       try {
         const response = await this.options.provider.decide({
-          goal: state.goal, task: item.task, worker, capabilities, peers,
+          goal: state.goal, task: item.task,
+          worker: { ...worker, capabilities: capabilities.map((entry) => entry.name) }, capabilities, peers,
           history: structuredClone(state.events),
           memory: structuredClone(state.memory),
           remaining: {
@@ -142,8 +145,8 @@ export class EmergenceKernel {
             maxExecutionMs: state.budget.maxExecutionMs === undefined ? undefined : state.budget.maxExecutionMs - state.executionMs,
           },
         });
-        proposal = 'proposal' in response ? response.proposal : response;
-        if ('usage' in response) {
+        candidate = response && typeof response === 'object' && 'proposal' in response ? response.proposal : response;
+        if (response && typeof response === 'object' && 'usage' in response) {
           const { inputTokens, outputTokens, costMicros } = response.usage;
           if (![inputTokens, outputTokens, costMicros].every((value) => Number.isSafeInteger(value) && value >= 0)) {
             throw new Error('Invalid provider usage');
@@ -163,33 +166,37 @@ export class EmergenceKernel {
         await this.fail(state, `Reasoning provider failed: ${String(error)}`);
         break;
       }
-      try {
-        const encoded = JSON.stringify(proposal);
-        if (!encoded || Buffer.byteLength(encoded) > state.budget.maxProposalBytes) {
-          await this.record(state, 'reasoning.rejected', worker.id,
-            { reason: 'Proposal byte budget exceeded', bytes: encoded ? Buffer.byteLength(encoded) : 0 });
-          await this.fail(state, 'Reasoning proposal exceeded byte budget');
-          break;
-        }
-        proposal = JSON.parse(encoded) as Proposal;
-        if (!proposal || typeof proposal !== 'object' || Array.isArray(proposal) ||
-          !['execute', 'delegate', 'finish'].includes(proposal.kind)) {
-          await this.record(state, 'reasoning.rejected', worker.id, { reason: 'Invalid proposal shape', proposal });
-          await this.fail(state, 'Invalid reasoning proposal');
-          break;
-        }
-      } catch {
-        await this.record(state, 'reasoning.rejected', worker.id, { reason: 'Nonserializable proposal' });
-        await this.fail(state, 'Reasoning proposal is not serializable');
+      if (Date.now() - Date.parse(state.startedAt) >= state.budget.maxElapsedMs) {
+        await this.fail(state, 'Elapsed-time budget exhausted');
         break;
+      }
+      try {
+        const encoded = JSON.stringify(candidate);
+        if (!encoded || Buffer.byteLength(encoded) > state.budget.maxProposalBytes) {
+          await this.reject(state, worker.id, 'malformed_proposal', 'Missing or oversized proposal');
+          continue;
+        }
+        const parsed = proposalSchema.safeParse(JSON.parse(encoded));
+        if (!parsed.success) {
+          await this.reject(state, worker.id, 'malformed_proposal', 'Proposal does not match contract',
+            parsed.error.issues);
+          continue;
+        }
+        proposal = parsed.data;
+      } catch {
+        await this.reject(state, worker.id, 'malformed_proposal', 'Nonserializable proposal');
+        continue;
       }
       await this.record(state, 'reasoning.decision', worker.id, { task: item.task, proposal });
       if (proposal.kind === 'delegate') {
         const peer = peers.find((entry) => entry.id === proposal.peer);
-        if (!peer || typeof proposal.task !== 'string' || !proposal.task.trim() ||
-          typeof proposal.reason !== 'string' || !proposal.reason.trim() ||
-          typeof proposal.evidence !== 'string' || state.delegations >= state.budget.maxDelegations) {
-          await this.fail(state, 'Invalid or over-budget delegation');
+        if (!peer) {
+          await this.reject(state, worker.id, 'authorization', 'Delegation peer outside available workers');
+          await this.fail(state, 'Invalid delegation peer');
+          break;
+        }
+        if (state.delegations >= state.budget.maxDelegations) {
+          await this.fail(state, 'Delegation budget exhausted');
           break;
         }
         state.delegations += 1;
@@ -202,6 +209,7 @@ export class EmergenceKernel {
       } else if (proposal.kind === 'execute') {
         const descriptor = capabilities.find((entry) => entry.name === proposal.capability);
         if (!descriptor || typeof proposal.reason !== 'string' || !proposal.reason.trim()) {
+          await this.reject(state, worker.id, 'authorization', 'Capability outside worker scope');
           await this.fail(state, 'Proposal selected a capability outside worker scope');
           break;
         }
@@ -217,8 +225,9 @@ export class EmergenceKernel {
             ['string', 'boolean'].includes(rule.type) && typeof value === rule.type;
         });
         if (!valid) {
-          await this.fail(state, 'Proposal input violates capability schema');
-          break;
+          await this.reject(state, worker.id, 'invalid_input', 'Proposal input violates capability schema',
+            { capability: descriptor.name, inputSchema: descriptor.inputSchema });
+          continue;
         }
         if (descriptor.risk !== 'read') {
           const request: ApprovalRequest = {
@@ -292,10 +301,13 @@ export class EmergenceKernel {
         version: '2.0', goal: state.goal,
         steps: [{ id: randomUUID(), capability, capabilityVersion: descriptor.version, input, reason }],
       }, { caller: { subject: workerId, scopes: [capability], metadata: { goalId: state.id } } });
+      const denied = job.events.some((event) => event.type === 'capability.denied');
       await this.record(state, job.status === 'completed' ? 'execution.completed' : 'execution.failed', workerId, {
         jobId: job.id, capability, status: job.status, outcome: job.outcome, approvalId: approval?.id,
         result: job.result, error: job.error, events: job.events,
+        category: denied ? 'authorization' : undefined,
       });
+      if (denied) await this.fail(state, 'Veil authorization denied execution');
     } catch (error) {
       await this.record(state, 'execution.failed', workerId, { capability, error: String(error), approvalId: approval?.id });
     } finally {
@@ -322,6 +334,14 @@ export class EmergenceKernel {
     }
   }
 
+  private async reject(state: EmergenceState, worker: string, category: string,
+    message: string, details?: unknown): Promise<void> {
+    await this.record(state, 'reasoning.rejected', worker, {
+      category, recoverable: category !== 'authorization',
+      error: { message, details }, executionAttempted: false,
+    });
+  }
+
   private async fail(state: EmergenceState, reason: string): Promise<void> {
     state.status = 'failed';
     await this.record(state, 'goal.failed', undefined, { reason });
@@ -334,11 +354,11 @@ export class EmergenceKernel {
     const kind = type === 'capabilities.discovered' ? 'capability' :
       type === 'reasoning.decision' ? 'interpretation' :
       type === 'execution.started' ? 'attempt' :
-      type === 'execution.failed' || type === 'goal.failed' ? 'failure' :
+      type === 'execution.failed' || type === 'goal.failed' || type === 'reasoning.rejected' ? 'failure' :
       type === 'verification.completed' ? 'verified-result' :
       type === 'execution.completed' ? 'observation' : undefined;
     if (kind) state.memory.push({ sequence: state.events.length, worker, kind,
-      source: kind === 'interpretation' ? 'model' : kind === 'capability' || kind === 'verified-result' ? 'host' : 'veil',
+      source: type === 'reasoning.rejected' ? 'host' : kind === 'interpretation' ? 'model' : kind === 'capability' || kind === 'verified-result' ? 'host' : 'veil',
       data: state.events.at(-1)!.data });
     await this.options.journal.save(state);
   }
