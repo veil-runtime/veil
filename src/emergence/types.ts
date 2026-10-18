@@ -72,7 +72,7 @@ export interface VerificationSpec {
 export interface EmergenceEvent {
   sequence: number;
   at: string;
-  type: 'goal.started' | 'capabilities.discovered' | 'reasoning.decision' |
+  type: 'goal.started' | 'capabilities.discovered' | 'reasoning.decision' | 'reasoning.rejected' |
     'work.delegated' | 'work.returned' | 'approval.requested' | 'approval.granted' |
     'execution.started' |
     'execution.completed' | 'execution.failed' | 'verification.completed' |

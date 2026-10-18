@@ -47,7 +47,8 @@ export class EmergenceKernel {
       queue: [{ worker: owner, task: goal, evidence: '' }], approvals: [], events: [], memory: [],
       verification: structuredClone(verification),
     };
-    await this.record(state, 'goal.started', owner, { goal, budget: state.budget, verification });
+    // The host-owned verification rule is journal state, never reasoning context.
+    await this.record(state, 'goal.started', owner, { goal, budget: state.budget });
     return this.run(state.id, decisionSlice);
   }
 
@@ -165,16 +166,20 @@ export class EmergenceKernel {
       try {
         const encoded = JSON.stringify(proposal);
         if (!encoded || Buffer.byteLength(encoded) > state.budget.maxProposalBytes) {
+          await this.record(state, 'reasoning.rejected', worker.id,
+            { reason: 'Proposal byte budget exceeded', bytes: encoded ? Buffer.byteLength(encoded) : 0 });
           await this.fail(state, 'Reasoning proposal exceeded byte budget');
           break;
         }
         proposal = JSON.parse(encoded) as Proposal;
         if (!proposal || typeof proposal !== 'object' || Array.isArray(proposal) ||
           !['execute', 'delegate', 'finish'].includes(proposal.kind)) {
+          await this.record(state, 'reasoning.rejected', worker.id, { reason: 'Invalid proposal shape', proposal });
           await this.fail(state, 'Invalid reasoning proposal');
           break;
         }
       } catch {
+        await this.record(state, 'reasoning.rejected', worker.id, { reason: 'Nonserializable proposal' });
         await this.fail(state, 'Reasoning proposal is not serializable');
         break;
       }

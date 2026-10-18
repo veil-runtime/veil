@@ -36,6 +36,8 @@ export class OpenAICompatibleReasoningProvider implements ReasoningProvider {
 
   async decide(context: ReasoningContext): Promise<ReasoningResponse> {
     const prompt = JSON.stringify(context);
+    const timeoutMs = Math.min(this.options.timeoutMs, context.remaining.maxElapsedMs);
+    if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) throw new Error('Elapsed-time budget exhausted');
     // Conservative admission estimate; actual provider usage is recorded after the call.
     const reservedInput = Math.ceil(Buffer.byteLength(prompt) / 3);
     const reservedCost = Math.ceil((reservedInput * this.options.inputMicrosPerMillion +
@@ -46,7 +48,7 @@ export class OpenAICompatibleReasoningProvider implements ReasoningProvider {
       throw new Error('Model reservation exceeds remaining budget');
     }
     const response = await (this.options.transport ?? fetch)(this.options.endpoint, {
-      method: 'POST', signal: AbortSignal.timeout(this.options.timeoutMs),
+      method: 'POST', signal: AbortSignal.timeout(timeoutMs),
       headers: { authorization: `Bearer ${this.options.apiKey}`, 'content-type': 'application/json' },
       body: JSON.stringify({ model: this.options.model, max_tokens: this.options.maxOutputTokens,
         temperature: 0, response_format: { type: 'json_object' }, messages: [
