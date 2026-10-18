@@ -15,7 +15,8 @@ import { TOKENIZER_ENCODING, TOKENIZER_PACKAGE, TOKENIZER_VERSION } from './neut
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, '../../../..');
 const sha256 = value => createHash('sha256').update(value).digest('hex');
-export const PHASE4_VERSION = 'veil-005-mechanism-discrimination-v1.0.0-candidate-001';
+export const PHASE4_VERSION = 'veil-005-mechanism-discrimination-v1.0.0-candidate-002';
+export const FREEZE_MANIFEST = 'freeze-manifest-candidate-002.json';
 export const FROZEN_MODEL = 'gpt-4.1-mini';
 export const EXPECTED_REPORTED_MODEL = 'gpt-4.1-mini-2025-04-14';
 export const PER_TRIAL_CEILING = 700000;
@@ -129,13 +130,26 @@ export async function phase4SourceHashes() {
 }
 
 export async function verifyFrozenSources() {
-  const manifestBytes = await readFile(join(here, 'freeze-manifest.json'));
+  const manifestBytes = await readFile(join(here, FREEZE_MANIFEST));
   const manifest = JSON.parse(manifestBytes);
-  const sidecar = (await readFile(join(here, 'freeze-manifest.json.sha256'), 'utf8')).trim();
+  const sidecar = (await readFile(join(here, `${FREEZE_MANIFEST}.sha256`), 'utf8')).trim();
   if (sidecar !== sha256(manifestBytes)) throw new Error('Phase 4 freeze manifest checksum mismatch');
+  if (manifest.experimentVersion !== PHASE4_VERSION ||
+      manifest.matrixSha256 !== sha256(JSON.stringify(phase4Matrix))) {
+    throw new Error('Phase 4 freeze identity or matrix mismatch');
+  }
   const actual = await phase4SourceHashes();
   if (JSON.stringify(actual) !== JSON.stringify(manifest.sourceSha256)) {
     throw new Error('Phase 4 source hash mismatch');
+  }
+  const rankBytes = await readFile(join(here, 'node_modules/js-tiktoken/dist/ranks/o200k_base.js'));
+  if (manifest.tokenizer?.package !== TOKENIZER_PACKAGE ||
+      manifest.tokenizer.version !== TOKENIZER_VERSION ||
+      manifest.tokenizer.encoding !== TOKENIZER_ENCODING ||
+      manifest.tokenizer.encodingAssetSha256 !== sha256(rankBytes) ||
+      manifest.tokenizer.packageLockSha256 !==
+        actual['experiments/emergent-coordination/phase4/v1/package-lock.json']) {
+    throw new Error('Phase 4 tokenizer integrity mismatch');
   }
   const bankBytes = await readFile(join(here, 'neutral-bank.json'));
   if (sha256(bankBytes) !== manifest.neutralBankSha256) throw new Error('Neutral bank checksum mismatch');
@@ -197,7 +211,8 @@ async function writeExclusive(path, value) {
 
 function fatalStop(trial, scoped) {
   return scoped.aggregateBlocked || trial.interrupted || !trial.evaluation?.governanceContained ||
-    ['protocol-abort', 'protocol-validation', 'token-mismatch', 'model-mismatch',
+    ['protocol-abort', 'protocol-validation', 'token-mismatch', 'context-limit',
+      'model-driver-error', 'model-mismatch',
       'provider-error', 'provider-boundary-failure', 'budget-accounting-failure',
       'invalid-host-observation', 'worker-integrity-failure'].includes(trial.stop);
 }
@@ -230,7 +245,8 @@ export async function runPhase4Matrix({ out, adapter, model = 'offline-mock', mo
   const manifest = {
     schemaVersion: 1, experimentVersion: PHASE4_VERSION, status: 'STARTED', mode, gitHead,
     gitDirty: mode === 'live' ? 'false' : 'not-checked-offline',
-    sourceManifestSha256: sha256(await readFile(join(here, 'freeze-manifest.json'))),
+    sourceManifestPath: `experiments/emergent-coordination/phase4/v1/${FREEZE_MANIFEST}`,
+    sourceManifestSha256: sha256(await readFile(join(here, FREEZE_MANIFEST))),
     sourceSha256: freeze.sourceSha256,
     neutralBankSha256: freeze.neutralBankSha256,
     tokenizer: freeze.tokenizer,
@@ -347,8 +363,8 @@ export async function writeFreezeManifest() {
       proposals: 18, messageEnvelopes: 24, messageBodyCharacters: 256 },
     orderSeed: CONDITION_ORDER_SEED, sourceSha256: hashes };
   const bytes = `${JSON.stringify(manifest, null, 2)}\n`;
-  await writeFile(join(here, 'freeze-manifest.json'), bytes, { flag: 'wx' });
-  await writeFile(join(here, 'freeze-manifest.json.sha256'), `${sha256(bytes)}\n`, { flag: 'wx' });
+  await writeFile(join(here, FREEZE_MANIFEST), bytes, { flag: 'wx' });
+  await writeFile(join(here, `${FREEZE_MANIFEST}.sha256`), `${sha256(bytes)}\n`, { flag: 'wx' });
   return manifest;
 }
 

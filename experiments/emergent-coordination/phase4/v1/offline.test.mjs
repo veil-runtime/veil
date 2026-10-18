@@ -9,7 +9,7 @@ import { runModelTrial } from './host.mjs';
 import { derivePhase4Metrics } from './metrics.mjs';
 import { buildNeutralBank, generateNeutralNote, propertyTokenCount, validateNeutralText } from './neutral-content.mjs';
 import bank from './neutral-bank.json' with { type: 'json' };
-import { conditionOrders, phase4Matrix, runPhase4Matrix, verifyPhase4Matrix, verifyFrozenSources } from './run.mjs';
+import { conditionOrders, FREEZE_MANIFEST, PHASE4_VERSION, phase4Matrix, runPhase4Matrix, verifyPhase4Matrix, verifyFrozenSources } from './run.mjs';
 import { phase3Matrix } from '../../phase3/v1.2/run.mjs';
 import { runPhase3Trial } from '../../phase3/v1.2/driver.mjs';
 
@@ -254,10 +254,15 @@ test('exposure ceiling prevents dispatch when no reservation can be made', async
 
 test('frozen source and evidence-bank manifests verify reproducibly', async () => {
   const manifest = await verifyFrozenSources();
+  assert.equal(manifest.experimentVersion, PHASE4_VERSION);
+  assert.equal(FREEZE_MANIFEST, 'freeze-manifest-candidate-002.json');
   assert.equal(manifest.neutralBankSha256, sha(await readFile(new URL('./neutral-bank.json', import.meta.url))));
   assert.ok(Object.keys(manifest.sourceSha256).includes('experiments/emergent-coordination/phase4/v1/run.mjs'));
   assert.equal(manifest.limits.maxModelCalls, 1944);
   assert.equal(manifest.limits.maxReservedTokens, 47_651_328);
+  const original = await readFile(new URL('./freeze-manifest.json', import.meta.url));
+  assert.equal(sha(original), '22b0071f1965df4e1346399ab636db7d1bbcb224bb1b2c2e969cc88611df4d7d');
+  assert.equal(JSON.parse(original).experimentVersion, 'veil-005-mechanism-discrimination-v1.0.0-candidate-001');
 });
 
 test('aggregate exposure stops before dispatch and leaves checksummed exclusive evidence', async () => {
@@ -275,6 +280,15 @@ test('aggregate exposure stops before dispatch and leaves checksummed exclusive 
     assert.equal(dispatched, 0);
     const manifestBytes = await readFile(join(out, 'run-manifest.json'));
     assert.equal(sha(manifestBytes), (await readFile(join(out, 'run-manifest.json.sha256'), 'utf8')).trim());
+    const runManifest = JSON.parse(manifestBytes);
+    assert.equal(runManifest.experimentVersion, PHASE4_VERSION);
+    assert.equal(runManifest.sourceManifestPath, `experiments/emergent-coordination/phase4/v1/${FREEZE_MANIFEST}`);
+    assert.equal(runManifest.sourceManifestSha256,
+      sha(await readFile(new URL(`./${FREEZE_MANIFEST}`, import.meta.url))));
+    await assert.rejects(runPhase4Matrix({ out, model: 'offline-mock', mode: 'offline-test',
+      perTrialCeiling: 700000, aggregateCeiling: 100,
+      adapter: { async reason() { return reply({ type: 'wait' }); } },
+    }), /EEXIST/);
     const trialBytes = await readFile(join(out, 'trial-001.json'));
     assert.equal(sha(trialBytes), (await readFile(join(out, 'trial-001.json.sha256'), 'utf8')).trim());
     const trial = JSON.parse(trialBytes);
