@@ -25,6 +25,10 @@
       "import": "./dist/index.js",
       "require": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./emergence": {
+      "types": "./dist/emergence/index.d.ts",
+      "default": "./dist/emergence/index.js"
     }
   },
   "files": [

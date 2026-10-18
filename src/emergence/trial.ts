@@ -19,6 +19,8 @@ export interface LocalTrial {
   provider: ReasoningProvider | ((names: { list: string; read: string; replace: string; check: string }) => ReasoningProvider);
   journalDirectory: string;
   budget: Budget;
+  /** Stable host-owned identity supports reopening journaled runs. */
+  registrationId?: string;
   approve?: (request: Readonly<ApprovalRequest>) => Promise<string | undefined>;
 }
 
@@ -30,7 +32,7 @@ export interface TrialResult {
 }
 
 /** Host-owned capability configuration and verifier stay outside the reasoner context. */
-export async function runLocalTrial(config: LocalTrial): Promise<TrialResult> {
+export async function createLocalTrialSession(config: LocalTrial) {
   const workspace = await realpath(config.workspace);
   if (workspace !== resolve(config.workspace)) throw new Error('Workspace must be a real directory');
   const temporaryRoot = await realpath(tmpdir());
@@ -38,13 +40,13 @@ export async function runLocalTrial(config: LocalTrial): Promise<TrialResult> {
     throw new Error('Trial workspace and journal must stay under the temporary root');
   }
   if (!config.allowedFiles.length || config.allowedFiles.some((file) =>
-    !/^[a-zA-Z0-9_-]+(?:\/[a-zA-Z0-9_.-]+)*$/.test(file) ||
+    !/^[a-zA-Z0-9_.-]+(?:\/[a-zA-Z0-9_.-]+)*$/.test(file) ||
     file.split('/').some((part) => part === '.' || part === '..'))) {
     throw new Error('Invalid workspace file allowlist');
   }
   for (const file of config.allowedFiles) await checkedFile(workspace, file);
   await checkWorkspaceContents(workspace, config.allowedFiles);
-  const suffix = randomUUID();
+  const suffix = config.registrationId ?? randomUUID();
   const names = { list: `trial.list.${suffix}`, read: `trial.read.${suffix}`,
     replace: `trial.replace.${suffix}`, check: `trial.check.${suffix}` };
   new OperatorRuntime().use({
@@ -68,7 +70,7 @@ export async function runLocalTrial(config: LocalTrial): Promise<TrialResult> {
           if (!before || before.length > 8192 || after.length > 8192) throw new Error('Invalid replacement size');
           const current = await readAllowedFile(workspace, path);
           if (current.split(before).length !== 2) throw new Error('Replacement precondition failed');
-          const result = current.replace(before, after);
+          const result = current.replace(before, () => after);
           if (Buffer.byteLength(result) > 8192) throw new Error('Result exceeds file limit');
           const temporary = join(workspace, `${path}.${randomUUID()}.tmp`);
           try {
@@ -103,6 +105,11 @@ export async function runLocalTrial(config: LocalTrial): Promise<TrialResult> {
     approvalGate: async (request, approvedBy) => approvedBy === 'local-trial-operator' &&
       request.capability === names.replace,
   });
+  return { kernel, journal, names, workspace };
+}
+
+export async function runLocalTrial(config: LocalTrial): Promise<TrialResult> {
+  const { kernel, names, workspace } = await createLocalTrialSession(config);
   let state = await kernel.start(config.goal, 'coordinator',
     { worker: 'verifier', capability: names.check, expected: { passed: true } });
   while (state.status === 'awaiting-approval') {

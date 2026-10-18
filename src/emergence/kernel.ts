@@ -58,7 +58,7 @@ export class EmergenceKernel {
     const state = await this.options.journal.load(id);
     if (state.status !== 'awaiting-approval') throw new Error('Goal is not awaiting approval');
     const request = state.approvals.find((item) => item.id === requestId);
-    if (!request) throw new Error('Unknown approval request');
+    if (!request || request.granted) throw new Error('Unknown or stale approval request');
     if (!approvedBy.trim() || !this.options.approvalGate ||
       !await this.options.approvalGate(structuredClone(request), approvedBy)) {
       throw new Error('Approval gate denied request');
@@ -67,6 +67,19 @@ export class EmergenceKernel {
     state.status = 'running';
     await this.record(state, 'approval.granted', request.worker, { requestId, approvedBy });
     return this.run(id, undefined, pauseAfterExecution);
+  }
+
+  async rejectApproval(id: string, requestId: string, approvedBy: string): Promise<EmergenceState> {
+    const state = await this.options.journal.load(id);
+    const request = state.approvals.find(item => item.id === requestId && !item.granted);
+    if (state.status !== 'awaiting-approval' || !request) throw new Error('Unknown or stale approval request');
+    if (!approvedBy.trim() || !this.options.approvalGate ||
+      !await this.options.approvalGate(structuredClone(request), approvedBy)) {
+      throw new Error('Approval gate denied request');
+    }
+    await this.record(state, 'approval.rejected', request.worker, { requestId, approvedBy });
+    await this.fail(state, 'Human rejected proposed change');
+    return state;
   }
 
   async run(id: string, decisionSlice?: number, pauseAfterApprovedExecution = false): Promise<EmergenceState> {
@@ -277,7 +290,10 @@ export class EmergenceKernel {
 
   private async execute(state: EmergenceState, workerId: string, capability: string,
     input: unknown, reason: string, approval?: ApprovalRequest): Promise<void> {
-    if (state.jobs >= state.budget.maxJobs) { await this.fail(state, 'Job budget exhausted'); return; }
+    if (state.jobs >= state.budget.maxJobs || Date.now() - Date.parse(state.startedAt) >= state.budget.maxElapsedMs ||
+      (state.budget.maxExecutionMs !== undefined && state.executionMs >= state.budget.maxExecutionMs)) {
+      await this.fail(state, 'Execution budget exhausted'); return;
+    }
     const descriptor = this.discover(this.worker(workerId)).find((item) => item.name === capability);
     if (!descriptor) { await this.fail(state, 'Capability no longer available to worker'); return; }
     const policy: ExecutionAuthorizer = {

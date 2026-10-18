@@ -8,3 +8,8 @@ export type {
   Proposal, ReasoningContext, ReasoningProvider, VerificationSpec,
   WorkerDefinition, WorkItem, MemoryEntry, ReasoningResponse,
 } from './types.js';
+export { createLocalTrialSession, runLocalTrial } from './trial.js';
+export type { LocalTrial, TrialResult } from './trial.js';
+export { OfflineEditReasoner } from './offline.js';
+export { verifyAcceptance } from './acceptance.js';
+export type { AcceptanceContract } from './acceptance.js';
