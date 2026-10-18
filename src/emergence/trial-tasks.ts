@@ -14,6 +14,10 @@ export interface TrialTask {
 let liveSandboxReady = false;
 export function isLiveVerifierSandboxReady(): boolean { return liveSandboxReady; }
 
+export class VerifierInfrastructureError extends Error {
+  constructor(reason: string) { super(`Verifier infrastructure failure: ${reason}`); this.name = 'VerifierInfrastructureError'; }
+}
+
 // Seeds and acceptance cases are host-owned. Only goal and workspace files reach the reasoner.
 export const trialTasks: readonly TrialTask[] = [
   {
@@ -39,25 +43,42 @@ export const trialTasks: readonly TrialTask[] = [
   },
 ];
 
-async function sandboxCheck(root: string, file: string, expression: string): Promise<boolean> {
-  const strict = liveSandboxReady;
+async function sandboxCheck(root: string, file: string, expression: string, strict = liveSandboxReady): Promise<boolean> {
   const source = join(strict ? '/work' : root, file);
-  const functionName = file.includes('slug') ? 'slug' : file.includes('config') ? 'parseConfig' : 'invoiceTotalCents';
-  const code = `import { readFileSync } from 'node:fs'; import { runInNewContext } from 'node:vm';
+  const functionName = file.includes('preflight') ? 'preflight' : file.includes('slug') ? 'slug' :
+    file.includes('config') ? 'parseConfig' : 'invoiceTotalCents';
+  const code = `import { readFileSync } from 'node:fs'; import { createContext, Script } from 'node:vm';
     const source = readFileSync(${JSON.stringify(source)}, 'utf8');
     if (!source.startsWith(${JSON.stringify(`export function ${functionName}(`)})) process.exit(2);
-    try { const result = runInNewContext(source.replace(/^export\\s+/, '') + ${JSON.stringify(`\nBoolean(${expression})`)},
-      Object.create(null), { timeout: 1500, contextCodeGeneration: { strings: false, wasm: false } });
+    try { const context = createContext(Object.create(null), { codeGeneration: { strings: false, wasm: false } });
+      new Script(source.replace(/^export\\s+/, '')).runInContext(context, { timeout: 1500 });
+      const { slug, parseConfig, invoiceTotalCents, preflight } = context;
+      const result = (${expression});
       process.exit(result === true ? 0 : 2); } catch { process.exit(2); }`;
   const command = strict ? 'bwrap' : process.execPath;
   const args = strict ? [...bubblewrapArgs(root), '/node', '--permission', '--allow-fs-read=/work',
     '--input-type=module', '-e', code] :
     ['--permission', `--allow-fs-read=${root}`, '--input-type=module', '-e', code];
-  return new Promise((resolve) => {
-    const child = spawn(command, args, { cwd: root, env: {}, stdio: 'ignore' });
-    const timer = setTimeout(() => child.kill(), 2000);
-    child.on('error', () => { clearTimeout(timer); resolve(false); });
-    child.on('close', (code) => { clearTimeout(timer); resolve(code === 0); });
+  return new Promise((resolve, reject) => {
+    // A separate process group lets the timeout kill descendants as well as Node.
+    const child = spawn(command, args, { cwd: root, env: {}, stdio: 'ignore', detached: true });
+    let timedOut = false;
+    let spawnError: Error | undefined;
+    const timer = setTimeout(() => {
+      timedOut = true;
+      if (child.pid) {
+        try { process.kill(-child.pid, 'SIGKILL'); } catch { child.kill('SIGKILL'); }
+      }
+    }, 2000);
+    child.on('error', (error) => { spawnError = error; });
+    child.on('close', (code, signal) => {
+      clearTimeout(timer);
+      if (timedOut) reject(new VerifierInfrastructureError('timeout'));
+      else if (spawnError) reject(new VerifierInfrastructureError(`spawn: ${spawnError.message}`));
+      else if (signal) reject(new VerifierInfrastructureError(`terminated by ${signal}`));
+      else if (code === 0 || code === 2) resolve(code === 0);
+      else reject(new VerifierInfrastructureError(`exit status ${code}`));
+    });
   });
 }
 
@@ -70,14 +91,17 @@ function bubblewrapArgs(root: string): string[] {
 
 /** Fail closed before paid calls if a network-isolated verifier cannot start. */
 export async function checkLiveVerifierSandbox(workspace: string): Promise<void> {
-  const child = spawn('bwrap', [...bubblewrapArgs(workspace), '/node', '-e', 'process.exit(0)'],
-    { cwd: workspace, env: {}, stdio: 'ignore' });
-  const code = await new Promise<number | null>((resolve) => {
-    const timer = setTimeout(() => child.kill(), 2000);
-    child.on('error', () => { clearTimeout(timer); resolve(null); });
-    child.on('close', (status) => { clearTimeout(timer); resolve(status); });
-  });
-  if (code !== 0) throw new Error('Network-isolated verifier sandbox is unavailable');
+  liveSandboxReady = false;
+  const file = 'src/preflight.mjs';
+  await mkdir(join(workspace, 'src'), { recursive: true });
+  await writeFile(join(workspace, file), 'export function preflight() { return 42; }\n', { flag: 'wx' });
+  try {
+    if (!await sandboxCheck(workspace, file, 'preflight() === 42', true)) {
+      throw new VerifierInfrastructureError('representative check failed');
+    }
+  } catch (error) {
+    throw new VerifierInfrastructureError(`network-isolated sandbox unavailable: ${String(error)}`);
+  }
   liveSandboxReady = true;
 }
 
