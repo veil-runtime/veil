@@ -97,6 +97,7 @@ export async function tsxAcceptanceCapability(workspace: string, baseline: strin
   const marker = randomBytes(32).toString('hex');
   const script = `
     const fs = require('node:fs');
+    const __name = (target, name) => Object.defineProperty(target, 'name', { value: name, configurable: true });
     (async () => {
       const { parse } = await import('file:///opt/deps/parser.mjs');
       const options = { sourceType: 'module', plugins: ['typescript', 'jsx'], errorRecovery: false };
@@ -108,7 +109,7 @@ export async function tsxAcceptanceCapability(workspace: string, baseline: strin
     })().catch(() => { process.exitCode = 1; });
   `;
   const profile = { ...limits, workspace, executable: process.execPath,
-    args: ['--jitless', '--disable-wasm-trap-handler', '--max-old-space-size=64', '--no-warnings', '-e', script] };
+    args: ['--no-experimental-strip-types', '--jitless', '--disable-wasm-trap-handler', '--max-old-space-size=64', '--no-warnings', '-e', script] };
   return { ...createSandboxVerificationCapability(profile), async execute(input) {
     if (!input || typeof input !== 'object' || Array.isArray(input) || Reflect.ownKeys(input).length) throw Error('Verification accepts only {}');
     const dependencies = await mkdtemp(join(tmpdir(), 'veil-tsx-parser-'));

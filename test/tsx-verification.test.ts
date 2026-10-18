@@ -98,3 +98,77 @@ test('TSX: model observes bounded summary, never private baseline, rules, parser
   for (const secret of ['APPLICATION_MUST_NEVER_EXECUTE', p.tsxAcceptance!.baselineSHA256,
     'baselineSHA256', 'targetId', '/opt/deps', p.repository, 'SyntaxError', 'checkAst']) assert.ok(!observation.includes(secret), secret);
 }));
+
+test('TSX: large source verifies exact navigation correction under tsx runtime', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'veil-tsx-large-'));
+  const file = join(root, 'src/App.tsx');
+
+  const padding = Array.from(
+    { length: 350 },
+    (_, i) => `// Existing application comment ${i}: ${'preserve this source exactly '.repeat(3)}`
+  ).join('\n');
+
+  const baseline = original + '\n' + padding + '\n';
+  const accepted = baseline.replace('<nav ', '<nav id="main-navigation" ');
+  const rejected = accepted.replace('Links</nav>', 'Changed links</nav>');
+
+  await mkdir(join(root, 'src'));
+  await writeFile(file, baseline);
+
+  try {
+    const profile: RepositoryProfile = {
+      repository: root,
+      readable: ['src/App.tsx'],
+      writable: ['src/App.tsx'],
+      acceptance: [],
+      tsxAcceptance: {
+        file: 'src/App.tsx',
+        baselineSHA256: createHash('sha256').update(baseline).digest('hex'),
+        component: 'Header',
+        control: {
+          tag: 'button',
+          attribute: 'aria-controls',
+          value: 'main-navigation',
+        },
+        target: {
+          tag: 'nav',
+          attribute: 'aria-label',
+          value: 'Main navigation',
+        },
+        targetId: 'main-navigation',
+      },
+      maxTurns: 10,
+      maxVerifications: 2,
+      reasonerTimeoutMs: 2000,
+      maxDurationMs: 30000,
+      limits: {
+        runtimeMounts: ['/usr/lib', '/lib', '/lib64'].map(source => ({
+          source,
+          target: source,
+        })),
+        wallMs: 2000,
+        cpuSeconds: 2,
+        addressSpaceBytes: 1024 ** 3,
+        outputBytes: 8192,
+        snapshotBytes: 65536,
+        snapshotFiles: 4,
+      },
+    };
+
+    assert.ok(Buffer.byteLength(baseline) > 23000);
+
+    const success = await run(profile, [write(accepted), verify, finish]);
+    assert.equal(success.classification, 'verified', JSON.stringify(success));
+    assert.equal(success.finalRevision, success.verifiedRevision);
+    assert.equal(success.originalUnchanged, true);
+
+    const failure = await run(profile, [write(rejected), verify, finish]);
+    assert.equal(failure.classification, 'failed');
+    assert.equal((failure.feedback[1].result as any).accepted, false);
+    assert.equal(failure.verifiedRevision, undefined);
+
+    assert.equal(await readFile(file, 'utf8'), baseline);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
