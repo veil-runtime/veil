@@ -1,0 +1,5 @@
+Lifecycle mechanics for this trial:
+- `finish` permanently retires this participant from the trial.
+- A retired participant cannot send messages or execute further actions.
+- The trial terminates as quiescent when all remaining active participants are waiting and no messages or receipts are queued.
+- Completing one local action does not necessarily complete the shared objective.

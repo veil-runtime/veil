@@ -1,0 +1,223 @@
+{
+  "schemaVersion": 1,
+  "experimentVersion": "phase3-peer-capability-visibility-v1-amendment-002",
+  "freezeStatus": "ready-for-live-authorization-no-live-data-collected",
+  "revisionBasis": {
+    "preFreezeParent": "bbb432ce50115834e0970b87fc751ae7fbaa4221",
+    "frozenCommit": "the commit containing this freeze record; exact SHA is reported with the freeze and captured in every run manifest"
+  },
+  "model": {
+    "provider": "openai",
+    "apiVersion": "responses-v1",
+    "wireOutput": {
+      "mode": "json_object",
+      "schemaRevision": "experiment-protocol-v1-json-object"
+    },
+    "identifier": "gpt-4.1-mini",
+    "temperature": "omit",
+    "maxOutputTokens": 512,
+    "providerSeed": "unsupported; none claimed"
+  },
+  "treatment": {
+    "control": "Existing Phase 2 observation, byte-equivalent in structure and semantics; no peerCapabilities key.",
+    "directory": {
+      "field": "peerCapabilities",
+      "readOnly": true,
+      "availableFromInitialObservation": true,
+      "contents": "other participant IDs and static descriptors (name, version, description, risk, inputSchema)",
+      "excludes": [
+        "private receipts",
+        "execution status",
+        "intermediate or returned values",
+        "messages and histories",
+        "memory",
+        "provider state",
+        "scopes",
+        "evaluator and world state",
+        "hidden fault schedule"
+      ]
+    },
+    "onlyConditionDifference": "Treatment observation adds peerCapabilities; all other matched-seed setup and action semantics remain equivalent."
+  },
+  "seeds": [
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32
+  ],
+  "orderSeed": 20261015,
+  "trialOrder": [
+    {
+      "run": 1,
+      "seed": 25,
+      "condition": "treatment"
+    },
+    {
+      "run": 2,
+      "seed": 25,
+      "condition": "control"
+    },
+    {
+      "run": 3,
+      "seed": 32,
+      "condition": "control"
+    },
+    {
+      "run": 4,
+      "seed": 32,
+      "condition": "treatment"
+    },
+    {
+      "run": 5,
+      "seed": 28,
+      "condition": "treatment"
+    },
+    {
+      "run": 6,
+      "seed": 28,
+      "condition": "control"
+    },
+    {
+      "run": 7,
+      "seed": 30,
+      "condition": "control"
+    },
+    {
+      "run": 8,
+      "seed": 30,
+      "condition": "treatment"
+    },
+    {
+      "run": 9,
+      "seed": 27,
+      "condition": "treatment"
+    },
+    {
+      "run": 10,
+      "seed": 27,
+      "condition": "control"
+    },
+    {
+      "run": 11,
+      "seed": 24,
+      "condition": "control"
+    },
+    {
+      "run": 12,
+      "seed": 24,
+      "condition": "treatment"
+    },
+    {
+      "run": 13,
+      "seed": 31,
+      "condition": "treatment"
+    },
+    {
+      "run": 14,
+      "seed": 31,
+      "condition": "control"
+    },
+    {
+      "run": 15,
+      "seed": 29,
+      "condition": "control"
+    },
+    {
+      "run": 16,
+      "seed": 29,
+      "condition": "treatment"
+    },
+    {
+      "run": 17,
+      "seed": 23,
+      "condition": "treatment"
+    },
+    {
+      "run": 18,
+      "seed": 23,
+      "condition": "control"
+    },
+    {
+      "run": 19,
+      "seed": 21,
+      "condition": "control"
+    },
+    {
+      "run": 20,
+      "seed": 21,
+      "condition": "treatment"
+    },
+    {
+      "run": 21,
+      "seed": 26,
+      "condition": "treatment"
+    },
+    {
+      "run": 22,
+      "seed": 26,
+      "condition": "control"
+    },
+    {
+      "run": 23,
+      "seed": 22,
+      "condition": "control"
+    },
+    {
+      "run": 24,
+      "seed": 22,
+      "condition": "treatment"
+    }
+  ],
+  "evaluation": {
+    "version": "phase3-event-outcomes-v1",
+    "criteria": "Prospective Phase 3 event outcomes; existing Phase 2 success evaluator unchanged."
+  },
+  "budget": {
+    "trials": 24,
+    "callsPerTrial": 18,
+    "maxModelCalls": 432,
+    "perTrialChargedReservationTokens": 50000,
+    "aggregateChargedReservationTokens": 1200000,
+    "outputTokensPerCall": 512,
+    "automaticPaidRetries": 0,
+    "settlement": "fail closed; missing/uncertain provider usage retains full reservation"
+  },
+  "liveCommand": "node experiments/emergent-coordination/phase3/v1/run.mjs --live-phase3 --out .tmp/veil-005-phase3-peer-directory-v1",
+  "promptProtocolSha256": {
+    "participantPrompt": "77d5f1895950acff5dfad26be7e49c4911bee5acdb85e48216b6584d7c759916",
+    "centralPrompt": "9022134246dfcd66cfc9ea1c6434e161d54d1ff1eb939d5a27988984698ec4de",
+    "protocol": "c4071ec3add2e9d41f56fc1bfa8f1cdc2c4344d13e744eddb2b5b6552e2cc335"
+  },
+  "sourceSha256": {
+    "experiments/emergent-coordination/phase3/v1/README.md": "223a941235bb2c547929c2f701243c0e585f4cebfdb7f3f853f63bf16bc6a723",
+    "experiments/emergent-coordination/phase3/v1/amendment-001.md": "c736e7cf3935f29327c05b5ebdf2df9e6c84d716bdfb34695f307368db1bf21b",
+    "experiments/emergent-coordination/phase3/v1/amendment-002.md": "7d5b1259416ca5693543a281462ca42c3101d9614f01db791dbb9abd44fb19fc",
+    "experiments/emergent-coordination/phase3/v1/seed13-analysis.md": "d289bdcc95f44e5acececdc7b7a3a5d766bd78422d14d4d79da05406e941dbed",
+    "experiments/emergent-coordination/phase3/v1/preregistration.md": "59a6620a5818475037d9deb4e367a8afea0ac2c36c1a83e37829ba4411c843b5",
+    "experiments/emergent-coordination/phase3/v1/host.mjs": "5d593515133fd6e40fc01a427b0c5964165e830e86fd0932e7c8a9f69230e818",
+    "experiments/emergent-coordination/phase3/v1/host-worker.mjs": "e4c472985d835487bf24ae1850e1d70468921fc5bcca15c436e46a07ed9eb0d4",
+    "experiments/emergent-coordination/phase3/v1/driver.mjs": "c649beb4c2beb5674436d3c9d6a252d2290860a42daaa1879e476ec51737b1e3",
+    "experiments/emergent-coordination/phase3/v1/evaluate.mjs": "5656cfaa986137c378da2caba009c877014355d2a1d1913043cdd7e4d1d32027",
+    "experiments/emergent-coordination/phase3/v1/run.mjs": "30cd0983e412f970496ffd846720921873ab3a02863a6be8caae0e23dcc3c441",
+    "experiments/emergent-coordination/phase3/v1/offline.test.mjs": "3310b7b54e745a217226f9e0b6de524db26974424478c51d30ad3580f9191910",
+    "experiments/emergent-coordination/phase2/host.mjs": "0b8c5ab13cd3f08e9b1fb9a28aecd3de3c298bc06eac72dfa99d57272441f498",
+    "experiments/emergent-coordination/phase2/comparison/driver.mjs": "da4dbb94595b5fecd308fec023936d266014a5ac0d6eeb7e61652473b74dcdb2",
+    "experiments/emergent-coordination/phase2/comparison/outcomes.mjs": "6e911c1fe4310c90f6518598cdadd999cf6bedaa5a74e14fee1dd01242484641",
+    "experiments/emergent-coordination/phase2/evaluate.mjs": "aee3eee647c9f6752622cb0e98089d391ac0f23fa6e927686629d6ee16f77077",
+    "experiments/emergent-coordination/phase2/protocol.md": "c4071ec3add2e9d41f56fc1bfa8f1cdc2c4344d13e744eddb2b5b6552e2cc335",
+    "experiments/emergent-coordination/phase2/participant-prompt.txt": "77d5f1895950acff5dfad26be7e49c4911bee5acdb85e48216b6584d7c759916",
+    "experiments/emergent-coordination/phase2/central-prompt.txt": "9022134246dfcd66cfc9ea1c6434e161d54d1ff1eb939d5a27988984698ec4de",
+    "experiments/emergent-coordination/phase2/budget.mjs": "fcb6e222fc18f3301a4f4dff95fa6dc18e7ef201af7a9e759bcd3da5d466eda2",
+    "experiments/emergent-coordination/phase2/openai-http.mjs": "679dca0bd5a204acde71f1ad1b807c316a8bbdbe641355f0858361b8830db5bf",
+    "experiments/external-model-reasoner/model-adapter.mjs": "2f59182f276d44981eacfe80498e1dddd3f23475d3a68f161b870b9bfff7bd8e",
+    "experiments/external-model-reasoner/providers/openai.mjs": "ac546a086a62d14a90ec4a9aa7175d1a69dd81a9b9b4ecc1a5d76bd043275a13"
+  }
+}
