@@ -1,9 +1,12 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { cpSync, mkdirSync, rmSync } from 'node:fs';
+import { cpSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
+const manifest = JSON.parse(
+  readFileSync(join(root, 'package.json'), 'utf8'),
+);
 const temporary = join(root, '.tmp', `package-verification-${process.pid}`);
 const fixtureDirectory = join(temporary, 'consumer');
 const cacheDirectory = join(root, '.tmp', 'npm-cache');
@@ -25,7 +28,7 @@ try {
   const files = pack.files.map(({ path }) => path).sort();
 
   assert.equal(pack.name, '@veil-runtime/core');
-  assert.equal(pack.version, '0.3.0');
+  assert.equal(pack.version, manifest.version);
   assert.ok(files.includes('dist/index.js'));
   assert.ok(files.includes('dist/index.d.ts'));
   assert.ok(files.includes('README.md'));
