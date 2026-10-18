@@ -85,7 +85,7 @@ export async function runBenchmark(options: BenchmarkOptions) {
       record = { mode: options.mode, requestedModel: options.model, limits: trialLimits, exchanges: [],
         usage: { input: 0, output: 0, estimatedUSD: 0, reservedUSD: trialLimits.costUSD, reliable: false },
         report: { classification: 'uncertain', objective: fixture.objective, reason: 'Host infrastructure failure; accounting unknown',
-          originalUnchanged: false, patch: '', feedback: [], profile: fixture.profile } };
+          originalUnchanged: false, patch: '', filesChanged: [], feedback: [], profile: fixture.profile } };
     }
     try { await fixture.cleanup(); }
     catch { record.report.classification = 'uncertain'; record.report.reason = 'Cleanup failed'; }

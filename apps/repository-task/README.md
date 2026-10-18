@@ -5,6 +5,10 @@ one-action → V2 plan → governed execution → feedback → correction loop. 
 not change the locked runtime, npm exports, sandbox, or historical experiments.
 No model calls, deployments, commits, or network services are built in.
 
+For the developer-facing CLI, offline example, artifacts, and opt-in adapter, see
+[One bounded developer task](WORKFLOW.md). The JSON-lines interface below remains
+available for trusted transports.
+
 ## Run a task
 
 Requirements: Node 24, Linux x86_64, the working Bubblewrap/unshare setup described
@@ -140,5 +144,6 @@ metadata until process exit. Cleanup on normal/error/timeout paths is implemente
 host SIGKILL can leave temporary directories. Source inputs must remain quiescent.
 The existing sandbox's shared-kernel and RLIMIT_AS limitations still apply.
 
-The next smallest improvement is an opt-in adapter for the existing external
-reasoner, with explicit token/cost limits and a replayable live-task transcript.
+The developer workflow now wraps the existing opt-in reasoning adapter with
+explicit token/cost limits and review artifacts. See [the delivery report](WORKFLOW-REPORT.md)
+for the remaining boundary before a real application trial.

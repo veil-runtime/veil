@@ -51,18 +51,32 @@ test('live adapter: direct envelopes normalize with raw evidence preserved and c
 }));
 
 test('live adapter: rejects unknown, malformed, extra-field and ambiguous envelopes', async () => fixture(async ({ profile }) => {
-  const invalid = ['null', '[]', '{}', '{"type":"capability","input":{}}',
+  const invalid = [
+    'null', '[]', '{}', '{"type":"capability","input":{}}',
+
+    // Regression: exact malformed envelope from the Mizan FAQ live trial.
+    JSON.stringify({
+      type: 'workspace.patch',
+      path: 'src/App.tsx',
+      search: 'function Faqs() {',
+      replace: 'modified'
+    }),
+
     ...['catalogue name', 'shell.run', 'workspace.delete', 'constructor', '__proto__', 'toString', 'hasOwnProperty'].flatMap(name => [a(name), direct(a(name))]),
     ...[undefined, null, [], 'text', 1, true].flatMap(input => [
       JSON.stringify({ type: 'capability', capability: 'workspace.list', input }),
       JSON.stringify({ type: 'workspace.list', input }),
     ]),
-    ...[{ type: 'workspace.list', capability: 'workspace.list', input: { path: '.' } },
+    ...[
+      { type: 'workspace.list', capability: 'workspace.list', input: { path: '.' } },
       { type: 'workspace.write', capability: 'workspace.read', input: {} },
       { type: 'workspace.list', input: {}, summary: 'extra' },
       { type: 'capability', capability: 'workspace.list', input: {}, extra: true },
-      { type: 'finish', capability: 'workspace.list', input: {} }].map(value => JSON.stringify(value)),
-    '{"type":"workspace.list","input":{},"__proto__":{}}'];
+      { type: 'finish', capability: 'workspace.list', input: {} }
+    ].map(value => JSON.stringify(value)),
+    '{"type":"workspace.list","input":{},"__proto__":{}}'
+  ];
+
   for (const response of invalid) {
     const r = await runLiveTask('Fix', profile, trialModel, trialLimits, simulated([response]), 'simulated');
     assert.equal(r.report.classification, 'uncertain', response);
@@ -89,7 +103,10 @@ test('live adapter: normalized actions retain runner schema and authorization ch
 test('live adapter: prompt uses the current host catalogue and a valid optional example', async () => fixture(async ({ profile }) => {
   const list = a('workspace.list', { path: '.' });
   const r = await runLiveTask(trialObjective, profile, trialModel, trialLimits, simulated([list, finish]), 'simulated');
-  const expected = [...workspaceCapabilities(profile.repository, profile.readable, profile.limits.snapshotBytes),
+  const expected = [...workspaceCapabilities(profile.repository, profile.readable, profile.limits.snapshotBytes)
+    .filter(c =>
+      !(profile.patchOnly === true && c.name === 'workspace.write') &&
+      !(profile.allowAppend !== true && c.name === 'workspace.append')),
     acceptanceCapability(profile.repository, profile.acceptance, profile.limits)]
     .map(({ name, description, inputSchema }) => ({ name, description, inputSchema }));
   assert.equal(r.exchanges.length, 2);
@@ -97,6 +114,9 @@ test('live adapter: prompt uses the current host catalogue and a valid optional 
     const lines = exchange.request.input.split('\n');
     const context = JSON.parse(lines.pop()!);
     const protocol = lines.join('\n');
+    assert.match(protocol, /Every capability action MUST use exactly three top-level keys/);
+    assert.match(protocol, /Put all capability arguments inside "input"/);
+    assert.match(protocol, /Before modifying an existing file, inspect it using workspace\.read/);
     assert.deepEqual(context.capabilities, expected);
     assert.equal(context.objective, trialObjective);
     assert.equal(context.remainingTurns, profile.maxTurns - index);
@@ -346,3 +366,109 @@ test('live accounting: unused earlier reservations cannot cover a later exchange
   assert.equal(r.usage.output, 1);
   assert.equal(r.usage.reservedUSD, 2 * (100 * 0.4 + 1500 * 1.6) / 1e6);
 }));
+
+test('budget compaction preserves small contexts unchanged', async () => {
+  const { budgetReasonerContext } = await import('../apps/repository-task/live.js');
+  const context: any = {
+    objective: 'Test', capabilities: [], feedback: [
+      { turn: 1, capability: 'workspace.readRange', authorized: true,
+        revision: 'r1', status: 'completed', input: { path: 'src/a.ts' },
+        result: { lines: [{ number: 1, text: 'hello' }] } },
+    ],
+    remainingTurns: 2, remainingVerifications: 1,
+    workspace: { pathInstructions: '', readable: ['src/a.ts'], writable: [] },
+    revision: 'r1',
+    recovery: { currentRevisionFailed: false, guidance: 'Verify changes' },
+  };
+  const before = structuredClone(context);
+  const result = budgetReasonerContext(context, 8192);
+  assert.deepEqual(result, before);
+  assert.deepEqual(context, before);
+});
+
+test('budget compaction bounds observations without mutating audit input', async () => {
+  const { budgetReasonerContext } = await import('../apps/repository-task/live.js');
+  const context: any = {
+    objective: 'Test', capabilities: [], feedback: [
+      { turn: 1, capability: 'workspace.read', authorized: true,
+        revision: 'r1', status: 'completed', input: { path: 'src/a.ts' },
+        result: { content: 'x'.repeat(12000) } },
+      { turn: 2, capability: 'workspace.patch', authorized: false,
+        revision: 'r1', status: 'rejected',
+        input: { path: 'src/a.ts', search: 'y'.repeat(10000), replace: 'z' },
+        error: 'Patch failed', guidance: 'Read the current source' },
+    ],
+    remainingTurns: 2, remainingVerifications: 1,
+    workspace: { pathInstructions: '', readable: ['src/a.ts'], writable: ['src/a.ts'] },
+    revision: 'r1',
+    recovery: { currentRevisionFailed: true, guidance: 'Correct before verifying' },
+  };
+  const original = structuredClone(context);
+  const compact = budgetReasonerContext(context, 2048);
+
+  assert.ok(Buffer.byteLength(JSON.stringify(compact)) <= 2048);
+  assert.deepEqual(context, original);
+  assert.equal(compact.recovery.guidance, original.recovery.guidance);
+  assert.equal(compact.feedback.at(-1)?.error, 'Patch failed');
+  assert.ok(!JSON.stringify(compact).includes('x'.repeat(100)));
+});
+
+test('budget compaction preserves latest failure and recovery guidance', async () => {
+  const { budgetReasonerContext } = await import('../apps/repository-task/live.js');
+  const context: any = {
+    objective: 'Fix', capabilities: [],
+    feedback: [
+      { turn: 1, capability: 'workspace.readRange', authorized: true,
+        revision: 'r1', status: 'completed',
+        input: { path: 'src/a.ts', startLine: 1, lineCount: 80 },
+        result: { lines: [{ number: 1, text: 'x'.repeat(12000) }] } },
+      { turn: 2, capability: 'workspace.patch', authorized: false,
+        revision: 'r1', status: 'failed',
+        input: { path: 'src/a.ts', search: 'wrong', replace: 'right' },
+        error: 'Patch requires exactly one matching occurrence',
+        guidance: 'Read current source before retrying' },
+    ],
+    remainingTurns: 5, remainingVerifications: 2,
+    workspace: { pathInstructions: '', readable: ['src/a.ts'], writable: ['src/a.ts'] },
+    revision: 'r1',
+    recovery: { currentRevisionFailed: true, guidance: 'Correct before verifying' },
+  };
+  const original = structuredClone(context);
+  const compact = budgetReasonerContext(context, 2048);
+
+  assert.ok(Buffer.byteLength(JSON.stringify(compact)) <= 2048);
+  assert.deepEqual(context, original);
+  assert.equal(compact.feedback.at(-1)?.error, 'Patch requires exactly one matching occurrence');
+  assert.equal(compact.feedback.at(-1)?.guidance, 'Read current source before retrying');
+  assert.equal(compact.recovery.guidance, 'Correct before verifying');
+});
+
+test('budget compaction preserves latest failure and recovery guidance', async () => {
+  const { budgetReasonerContext } = await import('../apps/repository-task/live.js');
+  const context: any = {
+    objective: 'Fix', capabilities: [],
+    feedback: [
+      { turn: 1, capability: 'workspace.readRange', authorized: true,
+        revision: 'r1', status: 'completed',
+        input: { path: 'src/a.ts', startLine: 1, lineCount: 80 },
+        result: { lines: [{ number: 1, text: 'x'.repeat(12000) }] } },
+      { turn: 2, capability: 'workspace.patch', authorized: false,
+        revision: 'r1', status: 'failed',
+        input: { path: 'src/a.ts', search: 'wrong', replace: 'right' },
+        error: 'Patch requires exactly one matching occurrence',
+        guidance: 'Read current source before retrying' },
+    ],
+    remainingTurns: 5, remainingVerifications: 2,
+    workspace: { pathInstructions: '', readable: ['src/a.ts'], writable: ['src/a.ts'] },
+    revision: 'r1',
+    recovery: { currentRevisionFailed: true, guidance: 'Correct before verifying' },
+  };
+  const original = structuredClone(context);
+  const compact = budgetReasonerContext(context, 2048);
+
+  assert.ok(Buffer.byteLength(JSON.stringify(compact)) <= 2048);
+  assert.deepEqual(context, original);
+  assert.equal(compact.feedback.at(-1)?.error, 'Patch requires exactly one matching occurrence');
+  assert.equal(compact.feedback.at(-1)?.guidance, 'Read current source before retrying');
+  assert.equal(compact.recovery.guidance, 'Correct before verifying');
+});

@@ -2,10 +2,24 @@ import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, writeFile, readFile, readdir, rm, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import test from 'node:test';
+import test, { before, after } from 'node:test';
 import { createLinuxVerificationSandbox, type VerificationProfile } from '../src/providers/sandbox/linux-verification-sandbox.js';
 import { createSandboxVerificationCapability } from '../src/capabilities/verification/sandbox-verify.js';
 import { OperatorRuntime } from '../src/runtime/operator-runtime.js';
+
+// Keep the cleanup inventory private to this test process: other task suites also
+// create verification snapshots concurrently. Preserve the full before/after assertion.
+const previousTmpdir = process.env.TMPDIR;
+let suiteTemporary: string;
+before(async () => {
+  suiteTemporary = await mkdtemp(join(tmpdir(), 'veil-sandbox-suite-'));
+  process.env.TMPDIR = suiteTemporary;
+});
+after(async () => {
+  if (previousTmpdir === undefined) delete process.env.TMPDIR;
+  else process.env.TMPDIR = previousTmpdir;
+  await rm(suiteTemporary, { recursive: true, force: true });
+});
 
 // These are real Linux integration tests: unavailable isolation FAILS, never skips.
 const mounts = ['/usr/lib', '/lib', '/lib64'].map(path => ({ source: path, target: path }));

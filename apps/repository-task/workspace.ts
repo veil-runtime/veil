@@ -1,7 +1,9 @@
 import { constants } from 'node:fs';
-import { mkdir, open, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, open, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { createHash } from 'node:crypto';
+import { tmpdir } from 'node:os';
+import { spawn } from 'node:child_process';
 import type { Capability } from '../../src/index.js';
 
 export type Tree = Record<string, string>;
@@ -56,10 +58,16 @@ export async function materialize(root: string, tree: Tree): Promise<void> {
 
 /** 004G read/write and 004B exact-patch semantics, confined to a private, link-free copy. */
 export function workspaceCapabilities(root: string, paths: readonly string[], maxBytes: number): Capability<any, unknown>[] {
-  const field = (description: string) => ({ type: 'string', required: true, description });
+  const field = (key: string) => ({
+    type: ['startLine', 'lineCount'].includes(key) ? 'number' : 'string',
+    required: true,
+    description: key === 'path'
+      ? 'Canonical workspace-root-relative path; no leading slash, ./, or traversal. Use . only for root listing.'
+      : key,
+  });
   const make = (operation: string, fields: string[], execute: (input: any) => Promise<unknown>): Capability<any, unknown> => ({
     name: `workspace.${operation}`, version: '1.0.0', description: `Governed workspace ${operation}`,
-    risk: operation === 'read' || operation === 'list' ? 'read' : 'write',
+    risk: ['read', 'readRange', 'list'].includes(operation) ? 'read' : 'write',
     inputSchema: Object.fromEntries(fields.map(key => [key, field(key)])), execute,
   });
   const read = async (path: string) => (await readApproved(root, [path], maxBytes))[path];
@@ -75,7 +83,36 @@ export function workspaceCapabilities(root: string, paths: readonly string[], ma
     make('list', ['path'], async ({ path }) => ({ path, entries: [...new Set(paths.filter(p => path === '.' || p.startsWith(`${path}/`))
       .map(p => (path === '.' ? p : p.slice(path.length + 1)).split('/')[0]))].sort() })),
     make('read', ['path'], async ({ path }) => ({ path, content: await read(path) })),
+    make('readRange', ['path', 'startLine', 'lineCount'], async ({ path, startLine, lineCount }) => {
+      if (!Number.isSafeInteger(startLine) || startLine < 1 ||
+          !Number.isSafeInteger(lineCount) || lineCount < 1 || lineCount > 80) {
+        throw new Error('Invalid line range; startLine >= 1 and lineCount must be 1..80');
+      }
+      const content = await read(path);
+      const lines = content.split('\\n');
+      if (content.endsWith('\\n')) lines.pop();
+      const totalLines = lines.length;
+      const selected = lines.slice(startLine - 1, startLine - 1 + lineCount);
+      if (Buffer.byteLength(JSON.stringify(selected)) > 8192) {
+        throw new Error('Range observation exceeds 8192 bytes; request fewer lines');
+      }
+      return {
+        path,
+        startLine,
+        totalLines,
+        lines: selected.map((text, index) => ({
+          number: startLine + index,
+          text,
+        })),
+        hasMore: startLine - 1 + selected.length < totalLines,
+      };
+    }),
     make('write', ['path', 'content'], async ({ path, content }) => save(path, content)),
+    make('append', ['path', 'content'], async ({ path, content }) => {
+      if (typeof content !== 'string' || !content || content.includes('\\0')) throw new Error('Non-empty text content required');
+      const existing = await read(path);
+      return save(path, existing + content);
+    }),
     make('patch', ['path', 'search', 'replace'], async ({ path, search, replace }) => {
       const content = await read(path);
       if (typeof search !== 'string' || !search || typeof replace !== 'string' || content.split(search).length !== 2) throw new Error('Patch requires exactly one matching occurrence');
@@ -84,13 +121,32 @@ export function workspaceCapabilities(root: string, paths: readonly string[], ma
   ];
 }
 
-/** Full-file unified hunks keep the artifact dependency-free and git-apply compatible. */
-export function patch(before: Tree, after: Tree): string {
-  const lines = (text: string, prefix: string) => text === '' ? '' : text.split('\n').slice(0, text.endsWith('\n') ? -1 : undefined)
-    .map(line => `${prefix}${line}\n`).join('') + (text.endsWith('\n') ? '' : '\\ No newline at end of file\n');
-  const count = (text: string) => text === '' ? 0 : text.split('\n').length - Number(text.endsWith('\n'));
-  return Object.keys(before).sort().filter(p => before[p] !== after[p]).map(p => {
-    const a = count(before[p]), b = count(after[p]);
-    return `diff --git a/${p} b/${p}\n--- a/${p}\n+++ b/${p}\n@@ -${a ? 1 : 0},${a} +${b ? 1 : 0},${b} @@\n${lines(before[p], '-')}${lines(after[p], '+')}`;
-  }).join('');
+/** Reporting only: diff private copies, with no repository configuration or external drivers. */
+export async function patch(before: Tree, after: Tree, approved: readonly string[]): Promise<string> {
+  for (const path of new Set([...Object.keys(before), ...Object.keys(after)])) {
+    if (!safePath(path) || !approved.includes(path)) throw new Error(`Invalid patch path: ${path}`);
+  }
+  const root = await mkdtemp(join(tmpdir(), 'veil-patch-'));
+  try {
+    for (const [name, tree] of [['a', before], ['b', after]] as const) {
+      await mkdir(join(root, name));
+      await materialize(join(root, name), tree);
+    }
+    const output = await open(join(root, 'diff'), 'wx', 0o600);
+    const errors = await open(join(root, 'errors'), 'wx', 0o600);
+    try {
+      const code = await new Promise<number | null>((resolve, reject) => {
+        const child = spawn('/usr/bin/git', ['diff', '--no-index', '--no-prefix', '--no-color',
+          '--no-ext-diff', '--no-textconv', '--no-renames', '--text', '--minimal', '--unified=3', '--', 'a', 'b'], {
+          cwd: root, stdio: ['ignore', output.fd, errors.fd],
+          env: { PATH: '/usr/bin:/bin', HOME: root, GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: '/dev/null', LC_ALL: 'C' },
+        });
+        child.on('error', reject); child.on('close', resolve);
+      });
+      if (code !== 0 && code !== 1) throw new Error(`Patch diff failed (${code}): ${await readFile(join(root, 'errors'), 'utf8')}`);
+    } finally { await output.close(); await errors.close(); }
+    // No-index uses the existing side for both header paths on additions/deletions.
+    return (await readFile(join(root, 'diff'), 'utf8'))
+      .replace(/^diff --git [ab]\/(\S+) [ab]\/(\S+)$/gm, 'diff --git a/$1 b/$2');
+  } finally { await rm(root, { recursive: true, force: true }); }
 }

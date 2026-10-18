@@ -91,6 +91,39 @@ test('unauthorized write and traversal are denied before effects; safe recovery 
   assert.ok(report.feedback.slice(0, 2).every(f => f.revision === report.initialRevision));
 }));
 
+test('patch-only profile omits write while retaining read, list, patch, and verification', async () => fixture(async p => {
+  p.patchOnly = true;
+  const contexts: import('../apps/repository-task/runner.js').ReasonerContext[] = [];
+  const report = await runRepositoryTask('Clamp', p, async context => {
+    contexts.push(context);
+    if (contexts.length === 1) return action('workspace.patch', { path: 'src/calc.ts',
+      search: 'export function add(a: number,b: number) { return a+b; }\n', replace: correct });
+    if (contexts.length === 2) return verify;
+    return finish;
+  });
+  accepted(report);
+  assert.deepEqual(contexts[0].capabilities.map(c => c.name), [
+    'workspace.list', 'workspace.read', 'workspace.readRange', 'workspace.patch', 'verification.sandbox.run',
+  ]);
+  assert.equal(report.feedback[0].capability, 'workspace.patch');
+  assert.equal(report.feedback[0].authorized, true);
+}));
+
+test('patchOnly false preserves workspace.write and invalid option types fail before reasoner entry', async () => fixture(async p => {
+  p.patchOnly = false;
+  let exposed: string[] = [];
+  const report = await runRepositoryTask('Clamp', p, async context => {
+    exposed = context.capabilities.map(c => c.name);
+    return write(correct);
+  });
+  assert.ok(exposed.includes('workspace.write'));
+  assert.equal(report.feedback[0].authorized, true);
+  (p as any).patchOnly = 'true';
+  let calls = 0;
+  assert.equal((await runRepositoryTask('Invalid patch policy', p, async () => { calls++; return finish; })).classification, 'blocked');
+  assert.equal(calls, 0);
+}));
+
 test('symlink file and parent escape fail closed before reasoner entry', async () => fixture(async (p, root) => {
   await symlink('/etc/passwd', join(root, 'src/link.ts'));
   p.readable = ['src/link.ts']; p.writable = []; p.acceptance = [{ file: 'src/link.ts', export: 'x', args: [], expected: 1 }];
@@ -137,3 +170,273 @@ test('imports, process exit claims, malformed actions, and command injection can
   p.reasonerTimeoutMs = 10;
   assert.equal((await runRepositoryTask('Clamp', p, async () => new Promise(() => {}))).classification, 'uncertain');
 }));
+
+test('workflow context gives canonical permissions, bounded recovery and unchanged-write guidance', async () => fixture(async p => {
+  const contexts: import('../apps/repository-task/runner.js').ReasonerContext[] = [];
+  const actions = [action('workspace.read', { path: './src/calc.ts' }),
+    write('bad', 'contract.txt'), action('workspace.list', { path: '.' }), verify,
+    write('export function add(a: number,b: number) { return a+b; }\n'), verify,
+    action('workspace.patch', { path: 'src/calc.ts', search: 'return a+b;', replace: 'return a+b;' }),
+    write(correct), verify, finish];
+  const report = await runRepositoryTask('Clamp', p, async context => {
+    contexts.push(context);
+    return actions.shift()!;
+  });
+  accepted(report);
+  assert.deepEqual(report.filesChanged, ['src/calc.ts']);
+  assert.deepEqual(contexts[0].workspace.readable, p.readable);
+  assert.deepEqual(contexts[0].workspace.writable, p.writable);
+  assert.match(contexts[0].workspace.pathInstructions, /never \/src/);
+  assert.equal(report.feedback[0].authorized, false);
+  assert.equal(report.feedback[1].authorized, false);
+  assert.match(contexts[1].feedback[0].guidance!, /exact paths/);
+  assert.equal(contexts[4].recovery.currentRevisionFailed, true);
+  assert.equal(contexts[4].remainingVerifications, 2);
+  assert.equal(contexts[4].remainingTurns, p.maxTurns - 4);
+  assert.match(contexts[5].feedback.at(-1)!.guidance!, /Unchanged write/);
+  assert.equal(contexts[6].feedback.at(-1)!.repeatedFailedRevision, report.initialRevision);
+  assert.match(contexts[7].feedback.at(-1)!.guidance!, /Unchanged write/);
+  assert.equal(contexts[8].recovery.currentRevisionFailed, false);
+  assert.equal(contexts[9].remainingVerifications, 0);
+  assert.equal(contexts[9].verifiedRevision, contexts[9].revision);
+  const observations = JSON.stringify(contexts);
+  for (const hidden of [p.repository, 'SYNTHETIC_SECRET', 'AssertionError', 'deepStrictEqual', 'expected']) assert.ok(!observations.includes(hidden), hidden);
+}));
+
+test('default verification feedback never exposes private acceptance values or errors', async () => fixture(async p => {
+  p.acceptance = [{ file: 'src/calc.ts', export: 'add', args: ['HOST_PRIVATE_ARGUMENT'], expected: 'HOST_PRIVATE_EXPECTED' }];
+  let observed = '';
+  const actions = [verify, finish];
+  const report = await runRepositoryTask('Fix addition', p, async context => {
+    observed += JSON.stringify(context);
+    return actions.shift()!;
+  });
+  assert.equal(report.classification, 'failed');
+  for (const hidden of ['HOST_PRIVATE_ARGUMENT', 'HOST_PRIVATE_EXPECTED', 'AssertionError', 'deepStrictEqual']) assert.ok(!observed.includes(hidden), hidden);
+  assert.equal((report.feedback[0].result as any).stderr, '');
+  p.acceptanceFeedback = 'raw' as any;
+  let calls = 0;
+  assert.equal((await runRepositoryTask('Invalid feedback', p, async () => { calls++; return finish; })).classification, 'blocked');
+  assert.equal(calls, 0);
+}));
+
+test('premature finish recovery requires host verification of final revision', async () => fixture(async p => {
+  p.recoverPrematureFinish = true;
+
+  const report = await runRepositoryTask(
+    'Add clamp with verified finish',
+    p,
+    sequence(
+      write(correct),
+      finish,
+      verify,
+      finish,
+    ),
+  );
+
+  accepted(report);
+  assert.equal(report.feedback.length, 3);
+  assert.equal(report.feedback[0].capability, 'workspace.write');
+  assert.equal(report.feedback[1].capability, 'finish');
+  assert.equal(report.feedback[1].status, 'rejected');
+  assert.equal(report.feedback[1].authorized, false);
+  assert.match(report.feedback[1].guidance ?? '', /verification\.sandbox\.run/);
+  assert.equal(report.feedback[2].capability, 'verification.sandbox.run');
+  assert.equal((report.feedback[2].result as { accepted: boolean }).accepted, true);
+  assert.equal(report.finalRevision, report.verifiedRevision);
+}));
+
+test('premature finish recovery cannot mark an unverified revision successful', async () => fixture(async p => {
+  p.recoverPrematureFinish = true;
+  p.maxTurns = 3;
+
+  const report = await runRepositoryTask(
+    'Add clamp without verification',
+    p,
+    sequence(write(correct), finish, finish),
+  );
+
+  assert.notEqual(report.classification, 'verified');
+  assert.equal(report.verifiedRevision, undefined);
+  assert.equal(report.feedback.filter(f => f.capability === 'finish').length, 2);
+  assert.equal(report.originalUnchanged, true);
+}));
+
+test('repeated identical failed patches trigger circuit breaker', async () => fixture(async p => {
+  p.maxTurns = 12;
+
+  const badPatch = action('workspace.patch', {
+    path: 'src/calc.ts',
+    search: 'THIS_TEXT_DOES_NOT_EXIST',
+    replace: 'replacement',
+  });
+
+  const report = await runRepositoryTask(
+    'Test repeated patch failure protection',
+    p,
+    sequence(badPatch, badPatch, badPatch, badPatch, badPatch, badPatch),
+  );
+
+  assert.equal(report.classification, 'failed');
+  assert.equal(report.reason, 'Repeated identical patch attempts without progress');
+  assert.equal(report.feedback.length, 4);
+  assert.equal(report.feedback[0].status, 'failed');
+  assert.ok(report.feedback.slice(1).every(f => f.status === 'rejected'));
+  assert.equal(report.originalUnchanged, true);
+}));
+
+test('append is absent unless explicitly enabled', async () => fixture(async p => {
+  const reasoner: Reasoner = async ({ capabilities }) => {
+    assert.equal(capabilities.some(c => c.name === 'workspace.append'), false);
+    return finish;
+  };
+  await runRepositoryTask('Inspect capabilities', p, reasoner);
+}));
+
+test('patch-only permits explicitly enabled append but not write', async () => fixture(async p => {
+  p.patchOnly = true;
+  p.allowAppend = true;
+
+  const reasoner: Reasoner = async ({ capabilities }) => {
+    assert.equal(capabilities.some(c => c.name === 'workspace.append'), true);
+    assert.equal(capabilities.some(c => c.name === 'workspace.write'), false);
+    return finish;
+  };
+  await runRepositoryTask('Inspect capabilities', p, reasoner);
+}));
+
+test('append preserves original bytes and remains confined to disposable workspace', async () => fixture(async (p, root) => {
+  p.allowAppend = true;
+
+  const original = await readFile(join(root, 'src/calc.ts'), 'utf8');
+  const suffix = '\n// appended safely\n';
+
+  const report = await runRepositoryTask(
+    'Append text',
+    p,
+    sequence(action('workspace.append', { path: 'src/calc.ts', content: suffix }), finish),
+  );
+
+  assert.equal(report.feedback[0].status, 'completed');
+  assert.equal(report.originalUnchanged, true);
+  assert.equal(await readFile(join(root, 'src/calc.ts'), 'utf8'), original);
+  assert.equal(report.filesChanged.includes('src/calc.ts'), true);
+  assert.match(report.patch, /appended safely/);
+  assert.notEqual(report.classification, 'verified');
+}));
+
+test('append rejects unauthorized paths and oversized content', async () => fixture(async (p, root) => {
+  p.allowAppend = true;
+  p.limits.snapshotBytes = 4096;
+
+  const original = await readFile(join(root, 'src/calc.ts'), 'utf8');
+
+  const report = await runRepositoryTask(
+    'Test append restrictions',
+    p,
+    sequence(
+      action('workspace.append', { path: 'contract.txt', content: 'forbidden' }),
+      action('workspace.append', { path: 'src/calc.ts', content: 'x'.repeat(5000) }),
+      finish,
+    ),
+  );
+
+  assert.equal(report.feedback[0].authorized, false);
+  assert.notEqual(report.feedback[0].status, 'completed');
+  assert.notEqual(report.feedback[1].status, 'completed');
+  assert.deepEqual(report.filesChanged, []);
+  assert.equal(report.originalUnchanged, true);
+  assert.equal(await readFile(join(root, 'src/calc.ts'), 'utf8'), original);
+}));
+
+test('readRange returns numbered lines and enforces boundaries', async () => fixture(async p => {
+  const observed: any[] = [];
+  const requests = [
+    { path: 'src/calc.ts', startLine: 1, lineCount: 1 },
+    { path: 'src/calc.ts', startLine: 2, lineCount: 1 },
+    { path: 'src/calc.ts', startLine: 0, lineCount: 1 },
+    { path: 'src/calc.ts', startLine: 1, lineCount: 81 },
+    { path: 'src/calc.ts', startLine: 1, lineCount: '1' },
+    { path: 'contract.txt', startLine: 1, lineCount: 1 },
+    { path: '.env', startLine: 1, lineCount: 1 },
+  ];
+
+  let step = 0;
+  const report = await runRepositoryTask('Inspect approved source', p, async context => {
+    observed.push(context);
+    if (step < requests.length)
+      return action('workspace.readRange', requests[step++] as Record<string, unknown>);
+    return finish;
+  });
+
+  const entries = report.feedback.filter(f => f.capability === 'workspace.readRange');
+  assert.equal(entries.length, requests.length);
+  assert.equal((entries[0].result as any).lines[0].number, 1);
+  assert.match((entries[0].result as any).lines[0].text, /export function add/);
+  assert.equal((entries[0].result as any).hasMore, false);
+  assert.deepEqual((entries[1].result as any).lines, []);
+  assert.ok(entries.slice(2, 5).every(f => f.status !== 'completed'));
+  assert.equal(entries[5].status, 'completed');
+  assert.equal(entries[6].authorized, false);
+  assert.equal(report.originalUnchanged, true);
+}));
+
+test('readRange rejects oversized observations without changing source', async () => fixture(async (p, root) => {
+  await writeFile(join(root, 'contract.txt'), 'x'.repeat(10000));
+  const report = await runRepositoryTask('Inspect large source', p,
+    sequence(action('workspace.readRange', { path: 'contract.txt', startLine: 1, lineCount: 1 }), finish));
+
+  const entry = report.feedback[0];
+  assert.notEqual(entry.status, 'completed');
+  assert.match(JSON.stringify(entry), /8192 bytes/);
+  assert.equal(await readFile(join(root, 'contract.txt'), 'utf8'), 'x'.repeat(10000));
+  assert.equal(report.originalUnchanged, true);
+}));
+
+test('compaction retains distinct current-revision ranges and full audit', async () => {
+  const { compactFeedback } = await import('../apps/repository-task/runner.js');
+  const make = (turn: number, revision: string, startLine: number) => ({
+    turn, capability: 'workspace.readRange', authorized: true,
+    revision, status: 'completed',
+    input: { path: 'src/calc.ts', startLine, lineCount: 20 },
+    result: { lines: [{ number: startLine, text: 'source' }] },
+  });
+  const history = [
+    make(1, 'old', 1),
+    make(2, 'current', 1),
+    make(3, 'current', 21),
+    make(4, 'current', 1),
+  ];
+  const original = structuredClone(history);
+  const compact = compactFeedback(history, 'current');
+
+  assert.deepEqual(history, original);
+  assert.equal(compact.filter(f => f.result !== undefined).length, 3);
+  assert.ok(compact.some(f => f.input.startLine === 21 && f.result));
+  assert.ok(compact.some(f => f.input.startLine === 1 && f.result));
+  assert.equal(compact[0].result, undefined);
+});
+
+test('compaction retains distinct current-revision ranges and full audit', async () => {
+  const { compactFeedback } = await import('../apps/repository-task/runner.js');
+  const make = (turn: number, revision: string, startLine: number) => ({
+    turn, capability: 'workspace.readRange', authorized: true,
+    revision, status: 'completed',
+    input: { path: 'src/calc.ts', startLine, lineCount: 20 },
+    result: { lines: [{ number: startLine, text: 'source' }] },
+  });
+  const history = [
+    make(1, 'old', 1),
+    make(2, 'current', 1),
+    make(3, 'current', 21),
+    make(4, 'current', 1),
+  ];
+  const original = structuredClone(history);
+  const compact = compactFeedback(history, 'current');
+
+  assert.deepEqual(history, original);
+  assert.equal(compact.filter(f => f.result !== undefined).length, 3);
+  assert.ok(compact.some(f => f.input.startLine === 21 && f.result));
+  assert.ok(compact.some(f => f.input.startLine === 1 && f.result));
+  assert.equal(compact[0].result, undefined);
+});

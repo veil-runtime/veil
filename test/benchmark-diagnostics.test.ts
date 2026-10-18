@@ -95,7 +95,7 @@ test('repeat failed revision is recorded without changing verification count or 
   assert.equal(first.repeatedFailedRevision, undefined);
   assert.equal(second.repeatedFailedRevision, first.revision);
   assert.equal((second.result as any).accepted, false);
-  assert.ok(!record.exchanges[4].request.input.includes('repeatedFailedRevision'));
+  assert.ok(record.exchanges[4].request.input.includes('repeatedFailedRevision'));
   assert.equal(record.report.classification, 'failed');
   assert.equal(record.report.verifiedRevision, undefined);
   assert.equal(record.report.feedback.filter(f => f.capability === 'verification.sandbox.run' && f.authorized).length, 2);
