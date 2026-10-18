@@ -141,3 +141,95 @@ strict schema parsing and budget accounting; evaluate varied tasks and worker
 rosters. Only after these gates should coordination quality be studied against
 baselines. This demonstration is an engineering observation of one useful
 bounded workflow, not evidence of scientific emergence or open-ended autonomy.
+
+## v0.2: unscripted provider interface and recovery
+
+The kernel now persists the active work item before asking a reasoner for its
+next action. `run(id, decisionSlice)` can yield a still-running goal at a
+specified decision boundary; another kernel instance can load the journal and
+continue. A recorded successful or failed Veil job remains evidence for the
+next decision. A started job with no outcome still fails closed as uncertain:
+replaying a possibly completed external effect would be unsafe. A granted
+approval with an already recorded outcome is not executed again.
+
+`ReasoningProvider` accepts a detached goal, worker, scoped capability
+catalogue, peer catalogue, ordered events, structured memory and remaining
+budget. It returns one action; the kernel checks size, shape, worker scope and
+input fields before creating a one-step ExecutionPlan. Delegation only changes
+which preconfigured worker receives the task. Its authority stays fixed in the
+worker roster and Veil's caller/authorizer checks. Read capabilities are the
+only actions that can run without human approval in this version. The
+independent host-owned verification specification runs through Veil even when
+the provider proposes `finish`.
+
+`FileJournal` stores observations, attempts, failures, capability information,
+provider interpretations and verification evidence with provenance. Veil job
+results are marked `veil`; the discovered catalogue and verification verdict
+are `host`; decisions are `model` (this label also covers deterministic test
+providers). Raw events remain available so interpretations can be checked
+against the evidence they cite. The journal has one-writer atomic snapshots,
+not concurrent leases or a transaction shared with a capability's external
+side effect.
+
+The new OpenAI-compatible chat adapter follows the repository's existing
+chat-completions integration pattern. Construction requires an explicit
+`authorized: true`, endpoint, model, API key, token ceiling, timeout and price
+rates; no live call is made by the demo or tests. It reserves conservative
+input/output token and cost room before transport, requests one JSON proposal,
+records reported usage, and leaves execution to the kernel. The kernel also
+caps model calls, decisions, jobs, delegations, elapsed time, cumulative job
+execution time, proposal bytes, reported tokens and reported cost. A capability
+that never returns can exceed the cumulative time cap; cancellation must be
+implemented inside that capability or its host. Token reservations are an
+estimate and provider billing metadata must be checked independently for
+production accounting.
+
+### Decision audit
+
+| Decision source | Actual selection | Interpretation |
+| --- | --- | --- |
+| Original `RepairReasoner` | Hardcoded coordinator → diagnostic → repair order; hardcoded test/read/patch names, exact addition expressions and retry expression | Scripted fixture policy. Its nine decisions do not establish generalization. |
+| Kernel | Filters capabilities, enforces budgets and approvals, delegates to fixed scopes, verifies with host expected value | Host governance, not reasoning. |
+| New deterministic test provider | Generic option-discovery, attempt, retry and peer-scope policy; task candidate values arrive only from Veil observations | Provider-selected paths across three independent fixtures, but still a coded policy. |
+| OpenAI-compatible adapter | Would select one action from contextual evidence when explicitly enabled | Protocol and budget path tested with a fake transport; no real model-selected result claimed. |
+
+### Offline evaluation
+
+Reproduce with:
+
+```sh
+npx tsc --project tsconfig.test.json
+node --test --test-isolation=none .tmp/test-build/test/emergence-kernel.test.js .tmp/test-build/test/emergence-generalization.test.js .tmp/test-build/test/emergence-provider.test.js
+```
+
+The three new task fixtures have separate data and failure modes: an expired
+candidate requiring another option, a transient capability failure requiring a
+retry, and an option that only a differently scoped peer can try. The generic
+test provider has no task-specific candidate values or outcome expectations.
+All three reached `verified` through a separate read capability; the first two
+made two attempts, and the third made one attempt and one delegation. A fourth
+test stopped after two decisions, reloaded the journal through a new kernel,
+and completed with exactly two total attempts: the recorded failed attempt was
+not repeated. A separate approved-write test paused immediately after a
+successful source patch, reloaded the journal, and verified that the patch
+capability completed exactly once after resume. The malformed-input test proves rejection before any Veil job.
+The adapter test proves opt-in validation, pre-call budget admission, response
+parsing and usage accounting without network access.
+
+These fixtures measure reusable control flow and recovery; they do not prove
+that an LLM can solve arbitrary new goals. A live model study remains
+explicitly opt-in and needs authorized credentials, task sampling and an
+independent success audit. The original demo remains a scripted baseline.
+
+### Verification record (2026-10-18)
+
+Focused emergence tests passed (11 tests). `npm run check` passed type checking and 29 of
+31 test files, then stopped at the two external-reasoner test files in this
+sandbox. The same two files failed before this change, as recorded above; their
+nested-process behavior is incompatible with this sandbox. `npm run
+verify:package` compiled the package but its consumer subprocess returned
+empty output and `tools/verify-package.mjs` failed to parse it. `npm run quality
+-- --base 0ae46ff` reported review required for the changed test files and the
+existing governance scanner findings in the demo and kernel. No frozen
+research artifact, Veil runtime contract, package root export, or
+verification control was changed.

@@ -14,6 +14,11 @@ export interface Budget {
   maxDelegations: number;
   maxElapsedMs: number;
   maxProposalBytes: number;
+  maxModelCalls?: number;
+  maxInputTokens?: number;
+  maxOutputTokens?: number;
+  maxCostMicros?: number;
+  maxExecutionMs?: number;
 }
 
 export type Proposal =
@@ -35,11 +40,25 @@ export interface ReasoningContext {
   peers: PeerDescriptor[];
   history: EmergenceEvent[];
   remaining: Budget;
+  memory: MemoryEntry[];
 }
 
 /** A provider proposes only. It never receives a runtime or caller credentials. */
 export interface ReasoningProvider {
-  decide(context: ReasoningContext): Promise<Proposal>;
+  decide(context: ReasoningContext): Promise<Proposal | ReasoningResponse>;
+}
+
+export interface ReasoningResponse {
+  proposal: Proposal;
+  usage: { inputTokens: number; outputTokens: number; costMicros: number };
+}
+
+export interface MemoryEntry {
+  sequence: number;
+  worker?: string;
+  kind: 'observation' | 'attempt' | 'failure' | 'verified-result' | 'capability' | 'interpretation';
+  source: 'veil' | 'host' | 'model';
+  data: Record<string, unknown>;
 }
 
 export interface VerificationSpec {
@@ -81,9 +100,16 @@ export interface EmergenceState {
   decisions: number;
   jobs: number;
   delegations: number;
+  modelCalls: number;
+  inputTokens: number;
+  outputTokens: number;
+  costMicros: number;
+  executionMs: number;
   queue: WorkItem[];
+  active?: WorkItem;
   approvals: ApprovalRequest[];
   events: EmergenceEvent[];
+  memory: MemoryEntry[];
   verification: VerificationSpec;
   verified?: boolean;
 }

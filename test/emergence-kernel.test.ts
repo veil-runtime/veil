@@ -98,3 +98,23 @@ test('restart after an unrecorded action outcome stops without replaying the wri
   assert.match(String(resumed.events.at(-1)?.data.reason), /Uncertain execution/);
   assert.match(await (await import('node:fs/promises')).readFile(source, 'utf8'), /a-b/);
 });
+
+test('restart after a recorded approved write does not repeat the side effect', async () => {
+  const { kernel, makeKernel, journal, names, source } = await createRepairDemo();
+  let state = await kernel.start('Fix addition', 'coordinator',
+    { worker: 'verifier', capability: names.test, expected: { passed: true } });
+  state = await makeKernel().grantApproval(state.id, state.approvals[0].id, 'local-operator');
+  const second = state.approvals.find((approval) => !approval.granted)!;
+  state = await makeKernel().grantApproval(state.id, second.id, 'local-operator', true);
+  assert.equal(state.status, 'running');
+  assert.equal(state.jobs, 4);
+  assert.match(await (await import('node:fs/promises')).readFile(source, 'utf8'), /a\+b/);
+  const completedWrites = state.events.filter((event) => event.type === 'execution.completed' &&
+    event.data.capability === names.patch).length;
+  assert.equal(completedWrites, 1);
+  const resumed = await makeKernel().run((await journal.load(state.id)).id);
+  assert.equal(resumed.status, 'verified');
+  assert.equal(resumed.jobs, 5);
+  assert.equal(resumed.events.filter((event) => event.type === 'execution.completed' &&
+    event.data.capability === names.patch).length, 1);
+});
