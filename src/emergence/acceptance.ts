@@ -1,4 +1,6 @@
 import { spawn } from 'node:child_process';
+import { tmpdir } from 'node:os';
+import { mkdtemp, writeFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { lstat, realpath } from 'node:fs/promises';
 
@@ -10,7 +12,7 @@ export interface AcceptanceContract {
 
 /** Host data, never model-generated test code. Each check gets a fresh restricted
  * process and VM. No host objects/functions are passed into the VM. */
-export async function verifyAcceptance(workspace: string, contract: AcceptanceContract): Promise<boolean> {
+export async function verifyAcceptance(workspace: string, contract: AcceptanceContract, isolated = false): Promise<boolean> {
   if (!/^[\w.-]+(?:\/[\w.-]+)*$/.test(contract.file) || contract.file.split('/').includes('..') ||
     !/^[a-zA-Z_$][\w$]*$/.test(contract.exportName) || !contract.cases.length || contract.cases.length > 100) {
     throw new Error('Invalid host acceptance contract');
@@ -37,7 +39,8 @@ export async function verifyAcceptance(workspace: string, contract: AcceptanceCo
       process.exit(0);
     } catch {process.exit(2);}`;
   return new Promise((resolve, reject) => {
-    const child = spawn(process.execPath, ['--permission', `--allow-fs-read=${file}`, '--max-old-space-size=32', '-e', code],
+    const args = ['--permission', `--allow-fs-read=${file}`, '--max-old-space-size=32', '-e', code];
+    const child = spawn(isolated ? 'bwrap' : process.execPath, isolated ? ['--unshare-all', '--die-with-parent', '--ro-bind', '/usr', '/usr', '--ro-bind', '/lib', '/lib', '--ro-bind', '/lib64', '/lib64', '--ro-bind', process.execPath, '/node', '--proc', '/proc', '--dev', '/dev', '--tmpfs', '/tmp', '--ro-bind', workspace, workspace, '/node', ...args] : args,
       { cwd: workspace, env: {}, stdio: ['pipe', 'ignore', 'ignore'] });
     const timer = setTimeout(() => child.kill('SIGKILL'), 2000);
     child.stdin.on('error', () => { /* Process may fail closed before consuming input. */ });
@@ -49,4 +52,14 @@ export async function verifyAcceptance(workspace: string, contract: AcceptanceCo
     });
     child.stdin.end(JSON.stringify({ file, contract }));
   });
+}
+
+/** Probe the same restricted verifier with a known successful program before paid calls. */
+export async function checkAcceptanceSandbox(): Promise<void> {
+  const root = await mkdtemp(join(tmpdir(), 'veil-verifier-preflight-'));
+  try {
+    await writeFile(join(root, 'probe.mjs'), 'export function probe() { return 42; }');
+    if (!await verifyAcceptance(root, { file: 'probe.mjs', exportName: 'probe', cases: [{ args: [], expected: 42 }] }, true)) throw new Error('Verifier preflight failed');
+  } catch { throw new Error('Network-isolated verifier preflight failed; Bubblewrap and user/network namespaces must be available. No paid call was made.'); }
+  finally { await rm(root, { recursive: true, force: true }); }
 }

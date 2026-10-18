@@ -17,7 +17,7 @@ const context: ReasoningContext = {
   peers: [], history: [], memory: [],
   remaining: { maxDecisions: 3, maxJobs: 3, maxDelegations: 1, maxElapsedMs: 10_000,
     maxProposalBytes: 1024, maxInputTokens: 5000, maxOutputTokens: 100,
-    maxCostMicros: 1000 },
+    maxCostMicros: 10000 },
 };
 
 test('model adapter requires opt-in and reserves budget before any transport call', async () => {
@@ -195,4 +195,27 @@ test('malformed proposal recovery cannot exceed decision, token, or cost budgets
     assert.equal(state.jobs, 0);
     assert.equal(state.costMicros, 2);
   }
+});
+
+
+test('endpoint credentials and non-HTTP loopback protocols are rejected', () => {
+  for (const endpoint of ['https://secret@example.com/api', 'ftp://localhost/api']) {
+    assert.throws(() => new OpenAICompatibleReasoningProvider({ authorized: true, endpoint,
+      model: 'mock', apiKey: 'secret', maxOutputTokens: 10, timeoutMs: 100,
+      inputMicrosPerMillion: 0, outputMicrosPerMillion: 0 }));
+  }
+});
+
+test('host can durably bind a run before the first model call and cancel without calls', async () => {
+  let calls = 0;
+  const name = `deferred.check.${Date.now()}`;
+  new OperatorRuntime().use({manifest: {name, version:'1', capabilities:[name]}, capabilities: [{name, version:'1', risk:'read', description:'Check', async execute(){return {passed:true};}}]});
+  const kernel = new EmergenceKernel({journal: new FileJournal(await mkdtemp(join(tmpdir(),'veil-deferred-'))),
+    provider: {async decide(){calls++; return {kind:'finish', reason:'Done'};}},
+    workers:[{id:'worker', responsibility:'Inspect', capabilities:[name]}],
+    budget:{maxDecisions:2,maxJobs:2,maxDelegations:1,maxElapsedMs:10000,maxProposalBytes:1000}});
+  const state = await kernel.start('Inspect', 'worker', {worker:'worker',capability:name,expected:{passed:true}}, 0);
+  assert.equal(state.status,'running'); assert.equal(calls,0);
+  assert.equal((await kernel.cancel(state.id)).status,'failed');
+  assert.equal((await kernel.run(state.id)).status,'failed'); assert.equal(calls,0);
 });

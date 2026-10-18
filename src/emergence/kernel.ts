@@ -50,7 +50,8 @@ export class EmergenceKernel {
     };
     // The host-owned verification rule is journal state, never reasoning context.
     await this.record(state, 'goal.started', owner, { goal, budget: state.budget });
-    return this.run(state.id, decisionSlice);
+    // A host may persist its run binding before allowing the first reasoning call.
+    return decisionSlice === 0 ? state : this.run(state.id, decisionSlice);
   }
 
   async grantApproval(id: string, requestId: string, approvedBy: string,
@@ -67,6 +68,12 @@ export class EmergenceKernel {
     state.status = 'running';
     await this.record(state, 'approval.granted', request.worker, { requestId, approvedBy });
     return this.run(id, undefined, pauseAfterExecution);
+  }
+
+  async cancel(id: string): Promise<EmergenceState> {
+    const state = await this.options.journal.load(id);
+    if (state.status !== 'verified' && state.status !== 'failed') await this.fail(state, 'Cancelled by host operator');
+    return state;
   }
 
   async rejectApproval(id: string, requestId: string, approvedBy: string): Promise<EmergenceState> {

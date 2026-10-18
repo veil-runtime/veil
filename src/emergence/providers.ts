@@ -30,7 +30,7 @@ export class OpenAICompatibleReasoningProvider implements ReasoningProvider {
       ![options.inputMicrosPerMillion, options.outputMicrosPerMillion].every(
         (value) => Number.isSafeInteger(value) && value >= 0)) throw new Error('Invalid model configuration');
     const endpoint = new URL(options.endpoint);
-    if (endpoint.protocol !== 'https:' && endpoint.hostname !== 'localhost' && endpoint.hostname !== '127.0.0.1') {
+    if (endpoint.username || endpoint.password || (endpoint.protocol !== 'https:' && !(endpoint.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(endpoint.hostname)))) {
       throw new Error('Model endpoint must use HTTPS or loopback');
     }
   }
@@ -41,7 +41,7 @@ export class OpenAICompatibleReasoningProvider implements ReasoningProvider {
     const timeoutMs = Math.min(this.options.timeoutMs, context.remaining.maxElapsedMs);
     if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) throw new Error('Elapsed-time budget exhausted');
     // Conservative admission estimate; actual provider usage is recorded after the call.
-    const reservedInput = Math.ceil(Buffer.byteLength(system + prompt) / 3);
+    const reservedInput = Buffer.byteLength(system + prompt);
     const reservedCost = Math.ceil((reservedInput * this.options.inputMicrosPerMillion +
       this.options.maxOutputTokens * this.options.outputMicrosPerMillion) / 1_000_000);
     if ((context.remaining.maxInputTokens !== undefined && reservedInput > context.remaining.maxInputTokens) ||
@@ -50,7 +50,7 @@ export class OpenAICompatibleReasoningProvider implements ReasoningProvider {
       throw new Error('Model reservation exceeds remaining budget');
     }
     const response = await (this.options.transport ?? fetch)(this.options.endpoint, {
-      method: 'POST', signal: AbortSignal.timeout(timeoutMs),
+      method: 'POST', redirect: 'error', signal: AbortSignal.timeout(timeoutMs),
       headers: { authorization: `Bearer ${this.options.apiKey}`, 'content-type': 'application/json' },
       body: JSON.stringify({ model: this.options.model, max_tokens: this.options.maxOutputTokens,
         temperature: 0, response_format: { type: 'json_object' }, messages: [
