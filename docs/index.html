@@ -1633,7 +1633,7 @@ description: Veil is a capability-driven runtime between reasoning and infrastru
           <p>
             Install <code>@veil-runtime/core</code> on Node.js 24 or newer to define
             capabilities and execute explicit plans. The latest published version
-            is <strong>v0.2.0</strong>. These docs target the <strong>v0.3.0 release candidate</strong>.
+            is <strong>v0.3.1</strong>. These docs target the <strong>v0.4.0 release candidate</strong>.
           </p>
         </div>
 
@@ -1995,7 +1995,7 @@ description: Veil is a capability-driven runtime between reasoning and infrastru
 
             <div class="code-bar">
               capability.ts
-              <span>public API · v0.3.0 candidate</span>
+              <span>public API · v0.4.0 candidate</span>
             </div>
 
             <pre><code>import { createCapability } from "@veil-runtime/core";
@@ -2023,7 +2023,7 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
           capability through <code>runtime.use(module)</code>, as shown below.
           Writes require an application-configured
           <a href="{{ '/guides/protect-write-actions.html' | relative_url }}">authorizer</a>;
-          the default policy denies them. The quickstart uses the public API shared by v0.2.0 and the v0.3.0 candidate.
+          the default policy denies them. The quickstart uses the public API shared by v0.3.1 and the v0.4.0 candidate.
         </p>
 
       </div>
@@ -2254,7 +2254,7 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
             MCP is an interoperability layer around Veil, not a second
             execution path. Adapters can translate MCP invocations into
             <code>ExecutionPlan</code> instances, and MCP-backed capabilities
-            can sit behind the same runtime boundary. The v0.3.0 candidate continues
+            can sit behind the same runtime boundary. The v0.4.0 candidate continues
             to export the inbound <code>McpAdapter</code>, which requires an
             <code>OperatorRuntime</code> and creates no alternate execution path.
           </p>
@@ -2275,7 +2275,7 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
           </div>
 
           <p>
-            <code>@veil-runtime/core</code> v0.3.0 candidate provides the public
+            <code>@veil-runtime/core</code> v0.4.0 candidate provides the public
             execution boundary, contextual authorization, structured admission
             diagnostics, and inbound MCP adapter.
             Providers and integrations can be composed around that boundary
@@ -2340,11 +2340,11 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
       <div class="wrap">
         <div class="section-head reveal">
           <div>
-            <div class="kicker">v0.3.0 · release candidate</div>
+            <div class="kicker">v0.4.0 · release candidate</div>
             <h2>Choose value semantics. Keep authority with the host.</h2>
           </div>
           <p>
-            ExecutionPlan 2.0 adds governed receiving-value ownership behind an
+            The existing ExecutionPlan 2.0 retains governed receiving-value ownership behind an
             explicit trusted-host <code>planVersions</code> opt-in. V1 remains the
             default and can coexist with V2. Structured version admission and exact
             result-reference recognition apply before governed capability work.
@@ -2372,10 +2372,10 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
           </article>
         </div>
         <p class="api-note reveal">
-          v0.3.0 also tightens result-reference shape, route entry, HTTP risk and
+          v0.4.0 also preserves result-reference shape, route entry, HTTP risk and
           shell tuple policy. It does not provide hostile-code isolation, passive
           Proxy/getter traversal, rollback, exactly-once effects or persistence parity.
-          <a href="{{ '/getting-started/v0.3.0.html' | relative_url }}">Read the scope, migration notes and limits</a>.
+          <a href="{{ '/getting-started/v0.4.0.html' | relative_url }}">Read the scope, migration notes and limits</a>.
         </p>
       </div>
     </section>
@@ -2392,9 +2392,9 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
           </div>
 
           <p>
-            The v0.3.0 candidate adds opt-in governed receiving values, structured
+            The v0.4.0 candidate preserves opt-in governed receiving values, structured
             admission and execution-entry hardening while preserving V1 by default.
-            <a href="{{ '/getting-started/v0.3.0.html' | relative_url }}">See the v0.3.0 scope and limits</a>.
+            <a href="{{ '/getting-started/v0.4.0.html' | relative_url }}">See the v0.4.0 scope and limits</a>.
           </p>
         </div>
 
@@ -2402,12 +2402,12 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
 
           <div class="phase current">
             <small>PUBLISHED</small>
-            <b>Public Core v0.2.0</b>
+            <b>Public Core v0.3.1</b>
           </div>
 
           <div class="phase">
             <small>CANDIDATE</small>
-            <b>v0.3.0 · governed values + admission</b>
+            <b>v0.4.0 · security + optional local planning</b>
           </div>
 
           <div class="phase">
@@ -2469,7 +2469,7 @@ const restart = createCapability&lt;{ service: string }, void&gt;({
 
   <footer class="footer wrap">
     <span>
-      Veil Core v0.3.0 candidate — Apache-2.0 · Copyright 2026 Mustapha Keraan.
+      Veil Core v0.4.0 candidate — Apache-2.0 · Copyright 2026 Mustapha Keraan.
     </span>
 
     <span>

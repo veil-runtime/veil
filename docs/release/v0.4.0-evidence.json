@@ -1,0 +1,223 @@
+{
+  "date": "2026-10-23",
+  "branch": "release/core-v0.4.0",
+  "base": "ec764125a723e555a54b8f8fb63ed2901a813fc6",
+  "node": "v24.18.1",
+  "npm": "11.16.0",
+  "platform": "linux-x64",
+  "publicContractsAndGovernanceControlsUnchanged": true,
+  "package": {
+    "name": "@veil-runtime/core",
+    "version": "0.4.0",
+    "files": 106,
+    "filename": "/tmp/veil-core-v040-artifacts/veil-runtime-core-0.4.0.tgz",
+    "sha256": "ab491597db365a9fb47aece2d6677fafd535c194e0c30789a632367e5c58cbaa",
+    "integrity": "sha512-xfTZsLGGwbsgiCfYyeDpQwUGonZ5K6BkyE23JAb4P5bZrPQGAe3ffuApon3ZK4qDMPDkPDoJLIKVfDYfLVjNCw=="
+  },
+  "results": {
+    "corePassed": 328,
+    "coreFailed": 0,
+    "coreSkipped": 0,
+    "qualityTestsPassed": 216,
+    "qualityReviewExit": 1,
+    "unapprovedExecutionReferences": 0,
+    "verificationControlsRequiringReview": 4,
+    "starterPassed": 14,
+    "rootAuditVulnerabilities": 0,
+    "productionAuditVulnerabilities": 0,
+    "starterServerAuditVulnerabilities": 0,
+    "separateClientHighAdvisoryEntries": 2,
+    "sourceDocumentationChecks": 129,
+    "renderedDocumentationVerified": false,
+    "macOSVerified": false,
+    "windowsVerified": false,
+    "liveCombinedSmokePassed": false,
+    "retainedArtifactConsumerVerified": true
+  },
+  "commands": [
+    {
+      "name": "baseline-install",
+      "command": "npm ci --cache /tmp/veil-core-v040-npm-cache --fetch-retries=0 --fetch-timeout=30000",
+      "cwd": "/tmp/veil-core-v040",
+      "exitCode": 0,
+      "log": "/tmp/veil-core-v040-install.log",
+      "sha256": "927fbc3a4da1bf49705ee1759b8bead97cf47200df330f39597a7585d33d23ac"
+    },
+    {
+      "name": "baseline-core",
+      "command": "npm run check",
+      "cwd": "/tmp/veil-core-v040",
+      "exitCode": 0,
+      "log": "/tmp/veil-core-v040-baseline-check.log",
+      "sha256": "5a56e005fec0740dd753117589968d9eea692b604c7795085f824e1484698623"
+    },
+    {
+      "name": "baseline-quality-tests",
+      "command": "npm run test:quality",
+      "cwd": "/tmp/veil-core-v040",
+      "exitCode": 0,
+      "log": "/tmp/veil-core-v040-baseline-quality-tests.log",
+      "sha256": "59eb54438195c27c6b5a982a06fd6444e9aa043aa5dce239003c26a16c405004"
+    },
+    {
+      "name": "baseline-audit",
+      "command": "npm audit --json",
+      "cwd": "/tmp/veil-core-v040",
+      "exitCode": 1,
+      "log": "/tmp/veil-core-v040-baseline-audit.json",
+      "sha256": "684cd25050c86d0b2a15e19c3f8762379c604270705526c8d5ab909297c9ab14"
+    },
+    {
+      "name": "final-install",
+      "command": "npm ci --cache /tmp/veil-core-v040-npm-cache --fetch-retries=0 --fetch-timeout=30000",
+      "cwd": "/tmp/veil-core-v040",
+      "exitCode": 0,
+      "log": "/tmp/veil-core-v040-final-install.log",
+      "sha256": "85f4b8bcbf40fc7da753228cae4601c0cfd300382b46d33f35ea4e6b751d26b9"
+    },
+    {
+      "name": "core",
+      "command": "npm run check",
+      "cwd": "/tmp/veil-core-v040",
+      "exitCode": 0,
+      "log": "/tmp/veil-core-v040-final-check.log",
+      "sha256": "6d6138640502520f98abb207425d8b9592325ca1cf039549f6266f0473a1253d"
+    },
+    {
+      "name": "quality-tests",
+      "command": "npm run test:quality",
+      "cwd": "/tmp/veil-core-v040",
+      "exitCode": 0,
+      "log": "/tmp/veil-core-v040-final-quality-tests.log",
+      "sha256": "06a31a8fd6f0bc3e584b0867137c857f98e1054c8ac44bee05c3c8ad365958f7"
+    },
+    {
+      "name": "quality",
+      "command": "npm run quality -- --base v0.3.1",
+      "cwd": "/tmp/veil-core-v040",
+      "exitCode": 1,
+      "log": "/tmp/veil-core-v040-final-quality.log",
+      "sha256": "9448cba4563ef09432f9db1331d26c98ff2cb8fc034a8ed05ddc393a2502b2b9"
+    },
+    {
+      "name": "audit",
+      "command": "npm audit --json",
+      "cwd": "/tmp/veil-core-v040",
+      "exitCode": 0,
+      "log": "/tmp/veil-core-v040-final-audit.json",
+      "sha256": "df9a032c22cc2137fbe20e631aac16d50789fb26fc7ce816fa7aaa1437b43de9"
+    },
+    {
+      "name": "production-audit",
+      "command": "npm audit --omit=dev --json",
+      "cwd": "/tmp/veil-core-v040",
+      "exitCode": 0,
+      "log": "/tmp/veil-core-v040-production-audit.json",
+      "sha256": "df9a032c22cc2137fbe20e631aac16d50789fb26fc7ce816fa7aaa1437b43de9"
+    },
+    {
+      "name": "starter-install",
+      "command": "npm ci --cache /tmp/veil-core-v040-npm-cache --fetch-retries=0 --fetch-timeout=30000",
+      "cwd": "/tmp/veil-core-v040/examples/veil-starter",
+      "exitCode": 0,
+      "log": "/tmp/veil-core-v040-starter-final-install.log",
+      "sha256": "cc11b502cb35600d796e801879be7e1e0a546c7a7084efa2421e69856aa5c40a"
+    },
+    {
+      "name": "starter",
+      "command": "npm run check",
+      "cwd": "/tmp/veil-core-v040/examples/veil-starter",
+      "exitCode": 0,
+      "log": "/tmp/veil-core-v040-starter-check.log",
+      "sha256": "af188dbae9ebd4490604749cb6451adcadc71038eef7d575428d79a510b93ae7"
+    },
+    {
+      "name": "starter-audit",
+      "command": "npm audit --json",
+      "cwd": "/tmp/veil-core-v040/examples/veil-starter",
+      "exitCode": 0,
+      "log": "/tmp/veil-core-v040-starter-audit.json",
+      "sha256": "6d9fd4c1f17e10a972b031f40fe312e0804d4f8ba6377fc77c968cf202d640c1"
+    },
+    {
+      "name": "client-install",
+      "command": "npm ci --cache /tmp/veil-core-v040-npm-cache --fetch-retries=0 --fetch-timeout=30000",
+      "cwd": "/tmp/veil-core-v040/examples/veil-starter/client",
+      "exitCode": 0,
+      "log": "/tmp/veil-core-v040-client-install.log",
+      "sha256": "a45fb47b5d1ccd8622fef2e5dfd071a63ac44266a6f48544f9976604cf117673"
+    },
+    {
+      "name": "client",
+      "command": "npm run build",
+      "cwd": "/tmp/veil-core-v040/examples/veil-starter/client",
+      "exitCode": 0,
+      "log": "/tmp/veil-core-v040-client-build.log",
+      "sha256": "95fad360fd0733145302eda26976492386690dfa077094bc0b184040c07cc0da"
+    },
+    {
+      "name": "client-audit",
+      "command": "npm audit --json",
+      "cwd": "/tmp/veil-core-v040/examples/veil-starter/client",
+      "exitCode": 1,
+      "log": "/tmp/veil-core-v040-client-audit.json",
+      "sha256": "f46095f938c95339760e039ed51783f05c001c43899d2d54eca2caeae3a46432"
+    },
+    {
+      "name": "docs",
+      "command": "python3 /tmp/veil-core-v040-verify-docs.py",
+      "cwd": "/tmp/veil-core-v040",
+      "exitCode": 0,
+      "log": "/tmp/veil-core-v040-docs-check.log",
+      "sha256": "74bfa6a0e24498d1288241298404e44a4e9d5f2b2d9fbea9837656000de4d3fb"
+    },
+    {
+      "name": "local-smoke-initial",
+      "command": "node /tmp/veil-core-v040-local-smoke.cjs (initial prompt)",
+      "cwd": "/tmp/veil-core-v040",
+      "exitCode": 1,
+      "log": "/tmp/veil-core-v040-local-smoke-first.log",
+      "sha256": "18ce3259f3196085be90a594be7a9f594e1c479b410452038376e7c1f6f6e956"
+    },
+    {
+      "name": "local-smoke-intermediate",
+      "command": "node /tmp/veil-core-v040-local-smoke.cjs (field-map prompt)",
+      "cwd": "/tmp/veil-core-v040",
+      "exitCode": 1,
+      "log": "/tmp/veil-core-v040-local-smoke-second.log",
+      "sha256": "044d40e2db8c65bfd1654d5be1908dbdc23d1b11bb700a60bb77646bf391fd01"
+    },
+    {
+      "name": "local-smoke-final",
+      "command": "node /tmp/veil-core-v040-local-smoke.cjs (exact-value assertion)",
+      "cwd": "/tmp/veil-core-v040",
+      "exitCode": 1,
+      "log": "/tmp/veil-core-v040-local-smoke.log",
+      "sha256": "470ea68cfcc7bf7088f292863731009c4b94c19d33188098c98a886cf15264a3"
+    },
+    {
+      "name": "pack",
+      "command": "npm pack --json --pack-destination /tmp/veil-core-v040-artifacts --cache /tmp/veil-core-v040-npm-cache",
+      "cwd": "/tmp/veil-core-v040",
+      "exitCode": 0,
+      "log": "/tmp/veil-core-v040-pack.json",
+      "sha256": "0348c9d1db34c890adb80ccf41865332dc09d27f6522fa2c09f9b5a3a8762316"
+    },
+    {
+      "name": "artifact-consumer-install",
+      "command": "npm install /tmp/veil-core-v040-artifacts/veil-runtime-core-0.4.0.tgz --no-package-lock --cache /tmp/veil-core-v040-npm-cache --prefer-offline",
+      "cwd": "/tmp/veil-v040-consumer-ri17zibe",
+      "exitCode": 0,
+      "log": "/tmp/veil-core-v040-artifact-consumer-install.log",
+      "sha256": "ee87d8a903e6630465f1e1b2127ace2a1b2a4b5a567f9a66adcf7c338d88a376"
+    },
+    {
+      "name": "artifact-consumer",
+      "command": "/tmp/veil-core-v040/node_modules/.bin/tsc --project tsconfig.json && node verify.mjs",
+      "cwd": "/tmp/veil-v040-consumer-ri17zibe",
+      "exitCode": 0,
+      "log": "/tmp/veil-core-v040-artifact-consumer.log",
+      "sha256": "ef3b91e49491032f5f766e05e035ee95cc34eac0b7bf7ad68d95d414ff518c43"
+    }
+  ]
+}

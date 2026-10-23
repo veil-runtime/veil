@@ -3,6 +3,23 @@ title: Releases
 ---
 # Releases
 
+The current preparation is **Veil Core v0.4.0**, unpublished, based on the published
+v0.3.1 tag `ec764125a723e555a54b8f8fb63ed2901a813fc6`. The sole package root
+and public contracts remain unchanged. UI, Emergence and repository-task apps
+are excluded. See [candidate notes](../getting-started/v0.4.0.html).
+
+The fixed comparison for this candidate is `npm run quality -- --base v0.3.1`.
+Do not replace it with a later acceptance checkpoint. Verification-control
+findings require explicit review; functional/package success is not automatic
+acceptance of those controls. The candidate report is preserved in
+`docs/release/v0.4.0-readiness.md` in the repository (not a Pages route).
+No publication, tag or public release is implied.
+
+## Historical v0.3 preparation record
+
+The following original preparation/adoption records are retained as history;
+their candidate/publication statements are not the current release status.
+
 The current release candidate is **v0.3.0**. Package metadata and package verification
 both target `@veil-runtime/core@0.3.0`. v0.2.0 remains the latest published package
 until publication; local source and a packed tarball do not establish npm availability.

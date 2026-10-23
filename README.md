@@ -1,6 +1,6 @@
 # Veil
 
-Veil is a governed, capability-driven execution runtime for AI and software systems.
+Veil is a governed, capability-driven execution runtime for software systems. Core runs without an AI model or UI.
 
 **Developer documentation:** [GitHub Pages portal](https://veil-runtime.github.io/veil/developer.html) | [repository docs](docs/developer.md)
 
@@ -21,7 +21,7 @@ Requires Node.js 24+.
 
     npm install @veil-runtime/core
 
-This installs the published package. To verify the v0.3.0 candidate before publication, see [candidate installation](docs/getting-started/installation.md).
+This installs the published package. To verify the v0.4.0 candidate before publication, see [candidate installation](docs/getting-started/installation.md).
 
 ## Smallest working example
 
@@ -47,7 +47,9 @@ The default authorizer permits reads and denies write/destructive capabilities. 
 
 ## Status and roadmap
 
-Release candidate: **v0.3.0**. See the [v0.3.0 release notes](docs/getting-started/v0.3.0.md). The latest published package remains **v0.2.0** until publication. ExecutionPlan V1 remains the default; opt-in [ExecutionPlan V2](docs/reference/execution-plan-v2.md) adds governed receiving-value ownership. Both are linear. DAGs, parallel execution, conditionals, cancellation, and retry policies are roadmap work, not current behavior.
+Release candidate: **v0.4.0**, not published. The latest published package is **v0.3.1**. See the [candidate notes](docs/getting-started/v0.4.0.md) for security fixes, compatibility and verification limits. The public API is unchanged. ExecutionPlan V1 remains the default; [V2](docs/reference/execution-plan-v2.md) requires host opt-in. Core contains no UI, Emergence, Caretaker or autonomous repository-task runner.
+
+The source-tree development server supports an [optional bounded local planner](docs/guides/local-planning.md). It proposes plans through existing admission and authorization. Its implementation and built-in capabilities are internal source-server infrastructure, not additional npm exports. Models never grant authority. General cancellation, isolation, budgets, retries and idempotency enforcement are not Core guarantees.
 
 ## Contributing
 
