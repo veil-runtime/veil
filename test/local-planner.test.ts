@@ -51,8 +51,11 @@ test('local planner: model writes remain default-denied and input validation pre
   let authorized = 0;
   const policyRuntime = new OperatorRuntime({ authorizer: { async authorize() { authorized++; return { decision: 'allow' }; } } });
   t.mock.restoreAll();
-  t.mock.method(globalThis, 'fetch', async () => response({ steps: [{ capability: read, input: { value: 12 } }] }));
-  await assert.rejects(policyRuntime.executePlan(await planner().plan('Invalid input')), /validation/);
+  for (const input of [{}, { value: 12 }]) {
+    const mock = t.mock.method(globalThis, 'fetch', async () => response({ steps: [{ capability: read, input }] }));
+    await assert.rejects(policyRuntime.executePlan(await planner().plan('Invalid input')), /validation/);
+    mock.mock.restore();
+  }
   assert.equal(authorized, 0); assert.equal(starts, before);
 });
 
@@ -73,6 +76,11 @@ test('local planner: malformed envelopes, authority fields and unsupported steps
     await assert.rejects(planner().plan('Inspect'), error => error instanceof Error && !error.message.includes('secret'));
     mock.mock.restore();
   }
+  const truncated = t.mock.method(globalThis, 'fetch', async () => new Response(JSON.stringify({
+    choices: [{ finish_reason: 'length', message: { content: JSON.stringify(valid()) } }],
+  })));
+  await assert.rejects(planner().plan('Inspect'), /generation did not complete/);
+  truncated.mock.restore();
   assert.equal(starts, before);
 });
 
