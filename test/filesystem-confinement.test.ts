@@ -78,6 +78,22 @@ test('filesystem confinement: governed symlink exploit is blocked and policy den
 });
 
 if (process.platform === 'linux') {
+  test('filesystem confinement: portable identity checks detect parent replacement before returning bytes', async t => fixture(async (root, outside) => {
+    // Exercise the portable algorithm on Linux; this is not a macOS host result.
+    t.mock.property(process, 'platform', 'darwin');
+    await fs.mkdir(join(root, 'parent'));
+    await fs.writeFile(join(root, 'parent', 'secret.txt'), 'inside');
+    const open = fs.open;
+    t.mock.method(fs, 'open', async (...args: Parameters<typeof fs.open>) => {
+      if (String(args[0]).endsWith('/parent/secret.txt')) {
+        await fs.rename(join(root, 'parent'), join(root, 'moved'));
+        await fs.symlink(outside, join(root, 'parent'), 'dir');
+      }
+      return open(...args);
+    });
+    await assert.rejects(readConfinedFile(root, 'parent/secret.txt'));
+  }));
+
   test('filesystem confinement: FIFO and socket inputs never reach open', async t => fixture(async root => {
     execFileSync('mkfifo', [join(root, 'pipe')]);
     const server = createServer();
