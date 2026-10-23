@@ -1,10 +1,5 @@
-import { readFile } from 'node:fs/promises';
-import {
-  isAbsolute,
-  relative,
-  resolve,
-} from 'node:path';
-
+import { resolve } from 'node:path';
+import { readConfinedFile } from '../../providers/filesystem/confined-file-reader.js';
 import {
   createCapability,
 } from '../../sdk/index.js';
@@ -22,33 +17,6 @@ const ALLOWED_ROOT = resolve(
   process.env.OPERATOR_FILES_ROOT ??
     process.cwd()
 );
-
-function resolveSafePath(
-  inputPath: string
-): string {
-  const candidate = isAbsolute(inputPath)
-    ? resolve(inputPath)
-    : resolve(
-        ALLOWED_ROOT,
-        inputPath
-      );
-
-  const rel = relative(
-    ALLOWED_ROOT,
-    candidate
-  );
-
-  if (
-    rel.startsWith('..') ||
-    isAbsolute(rel)
-  ) {
-    throw new Error(
-      `Path is outside allowed root: ${ALLOWED_ROOT}`
-    );
-  }
-
-  return candidate;
-}
 
 export const filesystemFileReadCapability =
   createCapability<
@@ -85,23 +53,7 @@ export const filesystemFileReadCapability =
         );
       }
 
-      const path =
-        resolveSafePath(
-          input.path
-        );
-
-      context?.logger.info(
-        'Reading filesystem file',
-        {
-          path,
-        }
-      );
-
-      const content =
-        await readFile(
-          path,
-          'utf8'
-        );
+      const { path, content } = await readConfinedFile(ALLOWED_ROOT, input.path);
 
       context?.logger.info(
         'Filesystem file read completed',
