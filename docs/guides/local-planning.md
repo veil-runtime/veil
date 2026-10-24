@@ -57,6 +57,13 @@ These are local inference transport bounds, not runtime-wide budgets, cancellati
 of capability work, exact token metering or monetary guarantees. Request
 serialization and the host's capability catalogue remain trusted host memory.
 The host must limit concurrent requests and control the model process itself.
+In the release-host smoke, `qwen3:0.6b` sometimes selected the wrong capability or
+extra steps and an explicit write-planning request exceeded 30 seconds. Prompt
+phrases such as "Do not think" did not reliably disable thinking. A healthy model
+endpoint does not establish correct planning or completion within the default
+deadline. `node tools/diagnose-local-planner.cjs` (after `npm test`) reproduces
+synthetic-only observations against an already running local Ollama service;
+it does not install/start a model and exits nonzero for failed planning expectations.
 Never send tenant/private goals to an endpoint without the appropriate host policy;
 the global catalogue and historical job hints are not tenant-filtered.
 

@@ -50,3 +50,11 @@ no capability-start event. Linux tests additionally cover FIFO/socket rejection,
 parent replacement, final-symlink replacement between inspection/open, and growth
 after stat. The Linux tests pass locally; macOS/Windows execution requires those
 hosts and must be recorded separately. CI has a dedicated platform matrix.
+
+The 2026-10-24 release-hardening rerun passed all nine tests on Linux x86_64/WSL2
+with Node v24.18.1 after a clean lockfile install (zero failures/skips). This includes
+the Linux simulation of portable identity checks; no native macOS or Windows run
+was available. The four common platform tests remain unconditional in the matrix.
+Native host results are still required before release, including platform-specific
+symlink privileges and Windows path/identity behavior. Linux success does not
+establish those semantics or relax the quiescent-directory requirement.
