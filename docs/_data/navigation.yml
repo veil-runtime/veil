@@ -8,6 +8,10 @@ sections:
     pages:
       - title: Overview
         url: /getting-started/overview.html
+      - title: Evaluate Veil
+        url: /getting-started/evaluate.html
+      - title: Run Core in Five Minutes
+        url: /getting-started/five-minutes.html
       - title: Installation
         url: /getting-started/installation.html
       - title: First Capability
@@ -20,6 +24,8 @@ sections:
         url: /getting-started/v0.2.0.html
       - title: Veil v0.3.0
         url: /getting-started/v0.3.0.html
+      - title: Veil Core v0.4.0 Candidate
+        url: /getting-started/v0.4.0.html
       - title: Next Steps
         url: /getting-started/next-steps.html
   - title: Core Concepts
@@ -48,6 +54,8 @@ sections:
         url: /concepts/planners-strategies-routing.html
   - title: Guides
     pages:
+      - title: Optional Local Planning
+        url: /guides/local-planning.html
       - title: Build a Capability
         url: /guides/build-a-capability.html
       - title: Compose a Module
@@ -138,3 +146,5 @@ sections:
         url: /contributing/pull-requests.html
       - title: Releases
         url: /contributing/releases.html
+      - title: Website Build and Deployment
+        url: /contributing/website.html

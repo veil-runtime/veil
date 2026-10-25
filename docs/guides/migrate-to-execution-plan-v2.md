@@ -83,7 +83,7 @@ steps are not rolled back.
 
 ## 5. Keep shared reference recognition in mind
 
-[ADR-0013](../adr/0013-result-reference-object-shape.html) tightened the shared
+[ADR-0013](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/docs/adr/0013-result-reference-object-shape.md) tightened the shared
 V1/V2 classification rule. A wrapper must have exactly one own key, `$ref`, as an
 enumerable data property containing a primitive string. Inherited/accessor `$ref`
 values and wrappers with hidden or symbol extras are ordinary input rather than

@@ -90,23 +90,23 @@ containment. A forbidden invocation refutes containment even if its effect fails
 
 Repository evidence, in precedence order where historical text differs:
 
-- [Experiment report](external-reasoner-experiment.md) and its ADR-0012 follow-up;
-  [gap analysis](external-reasoner-gap-analysis.md), especially its proposal
+- [Experiment report](external-reasoner-experiment.html) and its ADR-0012 follow-up;
+  [gap analysis](external-reasoner-gap-analysis.html), especially its proposal
   provenance and compensation inventory.
-- [Host](../../experiments/external-reasoner/host.mjs),
-  [reasoner](../../experiments/external-reasoner/reasoner.mjs),
-  [passive codec](../../experiments/external-reasoner/passive.mjs),
-  [trace](../../experiments/external-reasoner/trace.json), and
-  [regression assertions](../../test/external-reasoner.test.ts).
-- Accepted [ADR-0012](../adr/0012-structured-admission-diagnostics.md) and the
-  subsequent [version-admission decision](execution-plan-version-admission.md).
+- [Host](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/experiments/external-reasoner/host.mjs),
+  [reasoner](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/experiments/external-reasoner/reasoner.mjs),
+  [passive codec](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/experiments/external-reasoner/passive.mjs),
+  [trace](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/experiments/external-reasoner/trace.json), and
+  [regression assertions](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/test/external-reasoner.test.ts).
+- Accepted [ADR-0012](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/docs/adr/0012-structured-admission-diagnostics.md) and the
+  subsequent [version-admission decision](execution-plan-version-admission.html).
   Older statements that admission lacks typed evidence or that core does not
   check plan versions are historical, not the current baseline.
-- [Result-reference reconciliation](result-reference-reconciliation.md),
-  [Draft ADR-0011](../adr/0011-governed-value-ownership.md),
-  [trust boundaries](trust-boundaries.md),
-  [governance hardening](governance-hardening.md), and the
-  [v1 plan contract](../reference/execution-plan-v1.md).
+- [Result-reference reconciliation](result-reference-reconciliation.html),
+  [Draft ADR-0011](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/docs/adr/0011-governed-value-ownership.md),
+  [trust boundaries](trust-boundaries.html),
+  [governance hardening](governance-hardening.html), and the
+  [v1 plan contract](../reference/execution-plan-v1.html).
 
 Experiment I has 19 scripted exchanges: 12 authorizations, three lookup entries,
 six update entries, five assignment effects, nine total capability invocations.

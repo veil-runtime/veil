@@ -1,0 +1,342 @@
+{
+  "date": "2026-10-25",
+  "remote": "https://github.com/veil-runtime/veil",
+  "visibility": "public",
+  "viewerPermission": "ADMIN",
+  "initialWorktrees": [
+    {
+      "path": "/home/mustapha/dev/ai/playwright-lab",
+      "branch": "feature/veil-emergence-v0.3-trial",
+      "commit": "f46dc686544b34e2ba1c7fc38b5b9bfee573c5ba",
+      "uncommitted": []
+    },
+    {
+      "path": "/tmp/veil-core-v040",
+      "branch": "release/core-v0.4.0",
+      "commit": "a693b5238d26a10d763dc9c555225b448d0c9e5d",
+      "uncommitted": []
+    }
+  ],
+  "branches": [
+    {
+      "branch": "backup/experiment-005-phase4-checkpoint",
+      "commit": "76e6e4858362c2062dfc4f4f30dae82af2088abc",
+      "remoteBefore": null,
+      "remoteAfter": "76e6e4858362c2062dfc4f4f30dae82af2088abc",
+      "preserved": true
+    },
+    {
+      "branch": "chore/security-dependency-fixes",
+      "commit": "eb863c8337a83ac09d4d59ad5fe0b32b765f76a8",
+      "remoteBefore": "eb863c8337a83ac09d4d59ad5fe0b32b765f76a8",
+      "remoteAfter": "eb863c8337a83ac09d4d59ad5fe0b32b765f76a8",
+      "preserved": true
+    },
+    {
+      "branch": "develop",
+      "commit": "5f5bbf6e203f3ed4afd9c3ec7c823d412c6781ea",
+      "remoteBefore": "7390fea150c19e3f8d55bfd06d4918dd3e21f5f8",
+      "remoteAfter": "7390fea150c19e3f8d55bfd06d4918dd3e21f5f8",
+      "preserved": true,
+      "note": "Local develop is an ancestor of remote develop; no push or reset."
+    },
+    {
+      "branch": "docs/developer-documentation",
+      "commit": "326f8404dc7becd277fc4b7e3a98f642c28fef6b",
+      "remoteBefore": "326f8404dc7becd277fc4b7e3a98f642c28fef6b",
+      "remoteAfter": "326f8404dc7becd277fc4b7e3a98f642c28fef6b",
+      "preserved": true
+    },
+    {
+      "branch": "docs/governed-execution-boundaries",
+      "commit": "d5bc44bde604910c07d289369b9dfddf687e715b",
+      "remoteBefore": "d5bc44bde604910c07d289369b9dfddf687e715b",
+      "remoteAfter": "d5bc44bde604910c07d289369b9dfddf687e715b",
+      "preserved": true
+    },
+    {
+      "branch": "feat/autonomous-engineering-benchmark",
+      "commit": "35f4051f6b2a5fbb1129157bf0a42e8fd44a96c8",
+      "remoteBefore": "35f4051f6b2a5fbb1129157bf0a42e8fd44a96c8",
+      "remoteAfter": "35f4051f6b2a5fbb1129157bf0a42e8fd44a96c8",
+      "preserved": true
+    },
+    {
+      "branch": "feat/capability-introspection",
+      "commit": "d0dccf9b8990a7c678156459d0ad79e25a2f949a",
+      "remoteBefore": "d0dccf9b8990a7c678156459d0ad79e25a2f949a",
+      "remoteAfter": "d0dccf9b8990a7c678156459d0ad79e25a2f949a",
+      "preserved": true
+    },
+    {
+      "branch": "feat/live-autonomous-repository-tasks",
+      "commit": "8dbd44a1369a4e56303f625bcae2cc0c15f5a990",
+      "remoteBefore": null,
+      "remoteAfter": "8dbd44a1369a4e56303f625bcae2cc0c15f5a990",
+      "preserved": true
+    },
+    {
+      "branch": "feat/secure-verification-sandbox",
+      "commit": "062411c8b7f4f7da6f9b45cc3886d4889868a541",
+      "remoteBefore": null,
+      "remoteAfter": "062411c8b7f4f7da6f9b45cc3886d4889868a541",
+      "preserved": true
+    },
+    {
+      "branch": "feature/codex-quality-harness",
+      "commit": "34d760f61ef8483822da836d5e2a4273ca114c47",
+      "remoteBefore": "34d760f61ef8483822da836d5e2a4273ca114c47",
+      "remoteAfter": "34d760f61ef8483822da836d5e2a4273ca114c47",
+      "preserved": true
+    },
+    {
+      "branch": "feature/emergence-kernel",
+      "commit": "0ae46ff0ac1c34c8c2ef52b8656ccdbe2c5b36f8",
+      "remoteBefore": null,
+      "remoteAfter": "0ae46ff0ac1c34c8c2ef52b8656ccdbe2c5b36f8",
+      "preserved": true
+    },
+    {
+      "branch": "feature/emergence-kernel-v0.2",
+      "commit": "dce45bee2c7b6cd6f084d716a45eaccbbc23c7df",
+      "remoteBefore": null,
+      "remoteAfter": "dce45bee2c7b6cd6f084d716a45eaccbbc23c7df",
+      "preserved": true
+    },
+    {
+      "branch": "feature/veil-emergence-v0.3-trial",
+      "commit": "f46dc686544b34e2ba1c7fc38b5b9bfee573c5ba",
+      "remoteBefore": null,
+      "remoteAfter": "f46dc686544b34e2ba1c7fc38b5b9bfee573c5ba",
+      "preserved": true
+    },
+    {
+      "branch": "fix/capability-version-validation",
+      "commit": "25dde8bff9f74352f1c37ecf796cab580218b702",
+      "remoteBefore": "25dde8bff9f74352f1c37ecf796cab580218b702",
+      "remoteAfter": "25dde8bff9f74352f1c37ecf796cab580218b702",
+      "preserved": true
+    },
+    {
+      "branch": "fix/event-subscriber-failure-isolation",
+      "commit": "536c7b9dbdf8bec9e176c586e501f0c9baa96612",
+      "remoteBefore": "536c7b9dbdf8bec9e176c586e501f0c9baa96612",
+      "remoteAfter": "536c7b9dbdf8bec9e176c586e501f0c9baa96612",
+      "preserved": true
+    },
+    {
+      "branch": "fix/fail-closed-authorization",
+      "commit": "b7a538d9898bbf38334acef72c2f6cf3cd51b023",
+      "remoteBefore": "b7a538d9898bbf38334acef72c2f6cf3cd51b023",
+      "remoteAfter": "b7a538d9898bbf38334acef72c2f6cf3cd51b023",
+      "preserved": true
+    },
+    {
+      "branch": "fix/govern-http-execution",
+      "commit": "d45b5d2a65e12f92a54bafe4f4693417bdaae087",
+      "remoteBefore": "d45b5d2a65e12f92a54bafe4f4693417bdaae087",
+      "remoteAfter": "d45b5d2a65e12f92a54bafe4f4693417bdaae087",
+      "preserved": true
+    },
+    {
+      "branch": "fix/outbound-mcp-risk",
+      "commit": "6d42a83e99c6778e3e7a0f0d65077a9b7de33edc",
+      "remoteBefore": "6d42a83e99c6778e3e7a0f0d65077a9b7de33edc",
+      "remoteAfter": "6d42a83e99c6778e3e7a0f0d65077a9b7de33edc",
+      "preserved": true
+    },
+    {
+      "branch": "fix/result-reference-own-properties",
+      "commit": "6680e85ae63fa1144f22d6db8ae0d697828e7f85",
+      "remoteBefore": "6680e85ae63fa1144f22d6db8ae0d697828e7f85",
+      "remoteAfter": "6680e85ae63fa1144f22d6db8ae0d697828e7f85",
+      "preserved": true
+    },
+    {
+      "branch": "fix/security-release-2026-10",
+      "commit": "ea55cc74cb5581ea3ec07fb7ec470b6375df89a2",
+      "remoteBefore": "ea55cc74cb5581ea3ec07fb7ec470b6375df89a2",
+      "remoteAfter": "ea55cc74cb5581ea3ec07fb7ec470b6375df89a2",
+      "preserved": true
+    },
+    {
+      "branch": "fix/structural-execution-ownership",
+      "commit": "f6c263144b96683e9d9f838b77bac18ff94614e5",
+      "remoteBefore": "f6c263144b96683e9d9f838b77bac18ff94614e5",
+      "remoteAfter": "f6c263144b96683e9d9f838b77bac18ff94614e5",
+      "preserved": true
+    },
+    {
+      "branch": "fix/unique-plan-step-ids",
+      "commit": "a1b4e32bba5307b0c8d38ef67ad34966d6b2eafd",
+      "remoteBefore": "a1b4e32bba5307b0c8d38ef67ad34966d6b2eafd",
+      "remoteAfter": "a1b4e32bba5307b0c8d38ef67ad34966d6b2eafd",
+      "preserved": true
+    },
+    {
+      "branch": "main",
+      "commit": "ec764125a723e555a54b8f8fb63ed2901a813fc6",
+      "remoteBefore": "ec764125a723e555a54b8f8fb63ed2901a813fc6",
+      "remoteAfter": "ec764125a723e555a54b8f8fb63ed2901a813fc6",
+      "preserved": true
+    },
+    {
+      "branch": "release/core-v0.4.0",
+      "commit": "a693b5238d26a10d763dc9c555225b448d0c9e5d",
+      "remoteBefore": null,
+      "remoteAfter": "a693b5238d26a10d763dc9c555225b448d0c9e5d",
+      "preserved": true
+    },
+    {
+      "branch": "release/v0.2.0",
+      "commit": "6b7415d293eaaa308f3a8cc70e735b1cb16ea6bb",
+      "remoteBefore": "6b7415d293eaaa308f3a8cc70e735b1cb16ea6bb",
+      "remoteAfter": "6b7415d293eaaa308f3a8cc70e735b1cb16ea6bb",
+      "preserved": true
+    },
+    {
+      "branch": "release/v0.3.1",
+      "commit": "8383638f24125249fc8a9a86769376964d1fb700",
+      "remoteBefore": "8383638f24125249fc8a9a86769376964d1fb700",
+      "remoteAfter": "8383638f24125249fc8a9a86769376964d1fb700",
+      "preserved": true
+    },
+    {
+      "branch": "research/005-emergent-coordination",
+      "commit": "529cf503998285a3a95a3a5b1bf49f026356afad",
+      "remoteBefore": null,
+      "remoteAfter": "529cf503998285a3a95a3a5b1bf49f026356afad",
+      "preserved": true
+    },
+    {
+      "branch": "research/005-phase4-continuation",
+      "commit": "38b9363a039e5de0907053e6d0ddd95f0faae368",
+      "remoteBefore": null,
+      "remoteAfter": "38b9363a039e5de0907053e6d0ddd95f0faae368",
+      "preserved": true
+    },
+    {
+      "branch": "research/reasoning-boundary",
+      "commit": "991c73fef8fbaedee1c71aa3ee003f8a51f4b1d1",
+      "remoteBefore": "991c73fef8fbaedee1c71aa3ee003f8a51f4b1d1",
+      "remoteAfter": "991c73fef8fbaedee1c71aa3ee003f8a51f4b1d1",
+      "preserved": true
+    },
+    {
+      "branch": "test/governance-adversarial",
+      "commit": "0bb64a4f2e219bec0a398e75a26f0d58a329e80a",
+      "remoteBefore": null,
+      "remoteAfter": "0bb64a4f2e219bec0a398e75a26f0d58a329e80a",
+      "preserved": true
+    }
+  ],
+  "tags": [
+    {
+      "tag": "architecture-execution-authorizer",
+      "object": "3b60475681b57a3349c4bc30bc00ba6390af655b"
+    },
+    {
+      "tag": "architecture-public-mcp-adapter",
+      "object": "286494536362eaf70f03ebaccb4b8e1e88cdbe36"
+    },
+    {
+      "tag": "research/005-phase4-candidate-001",
+      "object": "76e6e4858362c2062dfc4f4f30dae82af2088abc"
+    },
+    {
+      "tag": "starter-lesson-01",
+      "object": "899a0270e114abf2fb288e00421af86babba2e59"
+    },
+    {
+      "tag": "starter-lesson-02",
+      "object": "61a979edbef4e49e9e6f2941bad05de48b286421"
+    },
+    {
+      "tag": "starter-lesson-03",
+      "object": "4e5ee7f030331e0010221a32248c5297e154341f"
+    },
+    {
+      "tag": "starter-lesson-04",
+      "object": "54e74171a4a2c3f34c441b01e14f2d95307af37c"
+    },
+    {
+      "tag": "starter-lesson-05",
+      "object": "1328ab7799f867f0b82a8b4a07a626a011b5be1b"
+    },
+    {
+      "tag": "starter-lesson-06",
+      "object": "92598ee28e29fdd565a2f0797218bf9e29764610"
+    },
+    {
+      "tag": "starter-lesson-07",
+      "object": "949fb63f3b63005e7d179e807561f447a53f2cae"
+    },
+    {
+      "tag": "starter-lesson-08",
+      "object": "cf1527c6bb9519ef2bc7665579d2a9a88ff3dcef"
+    },
+    {
+      "tag": "v0.0.1",
+      "object": "a1c625b4edb1d5aba3457b2cf4a8f41a4f7622ca"
+    },
+    {
+      "tag": "v0.1.0",
+      "object": "7fab0ed005037cd1c5365814181fdbe964f25749"
+    },
+    {
+      "tag": "v0.1.0-arch-lock",
+      "object": "cd3f309b8946064e8a42addec8f4a9fd85f8fe36"
+    },
+    {
+      "tag": "v0.1.1",
+      "object": "0c059b5345e55d3ae5a50fbadc711032cb0509c2"
+    },
+    {
+      "tag": "v0.1.2",
+      "object": "8bdb18ebaf68227cdc7b67457bd13ef6e507c90c"
+    },
+    {
+      "tag": "v0.1.3",
+      "object": "aae8536a65956a58741b0b5a47f02c23fa0b84d6"
+    },
+    {
+      "tag": "v0.2.0",
+      "object": "24dacddc7fa832552dc95408ceff377267359bf3"
+    },
+    {
+      "tag": "v0.3.0",
+      "object": "e8a89229bfce0c9010066c8d7d8983558d814237"
+    },
+    {
+      "tag": "v0.3.1",
+      "object": "97a4668e2bb70593338f498626d845dd4b6b2c9c"
+    }
+  ],
+  "newRemoteBranches": [
+    "backup/experiment-005-phase4-checkpoint",
+    "feat/live-autonomous-repository-tasks",
+    "feat/secure-verification-sandbox",
+    "feature/emergence-kernel",
+    "feature/emergence-kernel-v0.2",
+    "feature/veil-emergence-v0.3-trial",
+    "release/core-v0.4.0",
+    "research/005-emergent-coordination",
+    "research/005-phase4-continuation",
+    "test/governance-adversarial"
+  ],
+  "newRemoteTags": [
+    "research/005-phase4-candidate-001"
+  ],
+  "bundle": "/tmp/veil-preserved-2026-10-25.bundle",
+  "secretReview": {
+    "scanner": "gitleaks git --log-opts=--all --full-history --redact --ignore-gitleaks-allow",
+    "commitsScanned": 185,
+    "matches": 3,
+    "disposition": "Two freeze-manifest SHA-256 hashes and one synthetic-key-123456 redaction-test fixture; no live credentials found. No suppressions added.",
+    "unpublishedUniqueBlobsReviewed": 915,
+    "evidenceBlobsScreened": 420,
+    "sensitiveFilenameCandidates": 0,
+    "limits": "Pattern scanning and evidence review cannot prove absence of all private data. Preserved evidence describes synthetic fixtures and research; no private evidence identified."
+  },
+  "destructiveActions": false
+}

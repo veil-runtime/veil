@@ -115,7 +115,7 @@ mode, alternate execution entrance or provider handle is sent to the reasoner.
 
 ## Scenario results
 
-The checked-in [complete trace](../../experiments/external-reasoner/trace.json)
+The checked-in [complete trace](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/experiments/external-reasoner/trace.json)
 records each reasoner request, trusted host decision, Veil authorization and
 capability entry, fake effects, structured feedback and before/after counters.
 The full trace is also reproducible on stdout. Rows below show invocation deltas;

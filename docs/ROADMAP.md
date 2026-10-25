@@ -144,6 +144,19 @@ The planner must never directly control providers.
 
 ## Version 0.4 — Local AI Planner
 
+Candidate implementation: the existing internal OpenAI-compatible provider now
+has request/response byte bounds, per-call deadlines, an output-token request cap,
+and bounded plan shape. The source-server default is deterministic. Set
+`OPERATOR_LOCAL_PLANNERS=1` and explicitly select `qwen-local` to use a host-run
+Ollama-compatible endpoint. See `docs/guides/local-planning.md`.
+
+This milestone remains optional reasoning around deterministic Core execution.
+It adds no provider/registry exports, authority fields, autonomous repository
+execution, UI or Emergence package integration. Actual model quality and endpoint
+compatibility require an independently recorded live smoke test; offline tests
+verify protocol and governance, not model reliability. The sections below retain
+the original roadmap intent; accepted contracts/ADRs control shipped behavior.
+
 Goal: connect Operator Runtime to a local Ollama model.
 
 Initial target:

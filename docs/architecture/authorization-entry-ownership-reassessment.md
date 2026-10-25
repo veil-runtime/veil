@@ -32,15 +32,15 @@ tests, public contract, version, release, or Experiment II artifact.
 
 ## Evidence reviewed and what has changed
 
-The review covers [ADR-0011](../adr/0011-governed-value-ownership.md),
-[ADR-0010](../adr/0010-capability-risk-and-invocation-effect.md),
-[accepted ADR-0008](../adr/0008-structural-execution-ownership.md), the
-[ownership investigation](value-ownership-investigation.md),
-[compatibility assessment](value-model-compatibility.md),
-[result-reference reconciliation](result-reference-reconciliation.md),
-[trust boundaries](trust-boundaries.md), and Experiment II's
-[design](external-model-reasoner-experiment-design.md) and
-[primary results](external-model-reasoner-primary-results.md).
+The review covers [ADR-0011](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/docs/adr/0011-governed-value-ownership.md),
+[ADR-0010](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/docs/adr/0010-capability-risk-and-invocation-effect.md),
+[accepted ADR-0008](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/docs/adr/0008-structural-execution-ownership.md), the
+[ownership investigation](value-ownership-investigation.html),
+[compatibility assessment](value-model-compatibility.html),
+[result-reference reconciliation](result-reference-reconciliation.html),
+[trust boundaries](trust-boundaries.html), and Experiment II's
+[design](external-model-reasoner-experiment-design.html) and
+[primary results](external-model-reasoner-primary-results.html).
 Historical statements in those documents are evidence of their respective
 checkpoints, not automatically descriptions of this branch today.
 
@@ -51,7 +51,7 @@ Two historical statements need qualification here, without editing their sources
 - The reconciliation memo's section 10 says plan versions are unchecked.
   Current `src/runtime/jobs/job-manager.ts:33–39` reads version once and rejects
   anything other than `'1.0'` before structural capture and job creation.
-  [The current v1 reference](../reference/execution-plan-v1.md) documents this.
+  [The current v1 reference](../reference/execution-plan-v1.html) documents this.
   Version admission now exists; it does not implement another value semantic
   version or make persisted Jobs suitable for replay.
 
@@ -125,7 +125,7 @@ The decisive paths are:
 
 Public `ExecutionStep.input?: unknown` and generic `Capability<TInput,TResult>`
 do not define a universal passive domain. More decisively,
-[the result-reference documentation](../concepts/result-references.md) explicitly
+[the result-reference documentation](../concepts/result-references.html) explicitly
 preserves identity/mutability and getter/Proxy execution. ADR-0008 preserves
 nested sharing and result identity. `test/result-reference.test.ts:17,64,75,87`
 asserts identity, rich primitive terminals, getters and Proxy traps;

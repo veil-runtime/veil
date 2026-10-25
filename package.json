@@ -1,6 +1,6 @@
 {
   "name": "@veil-runtime/core",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "A governed, capability-driven execution runtime",
   "license": "Apache-2.0",
   "repository": {
@@ -40,7 +40,7 @@
     "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
     "build": "npm run clean && tsc --project tsconfig.build.json",
     "typecheck": "tsc --noEmit",
-    "test": "tsc --project tsconfig.test.json && node --test .tmp/test-build/test/*.test.js",
+    "test": "node -e \"require('node:fs').rmSync('.tmp/test-build',{recursive:true,force:true})\" && tsc --project tsconfig.test.json && node --test .tmp/test-build/test/*.test.js",
     "verify:package": "npm run build && node tools/verify-package.mjs",
     "check": "npm run typecheck && npm test && npm run verify:package",
     "quality": "node tools/quality.mjs",
@@ -60,13 +60,13 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.1",
     "better-sqlite3": "^13.0.3",
-    "zod": "^4.4.3"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@babel/parser": "8.0.6",
     "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^26.2.0",
-    "fastify": "^5.11.3",
+    "fastify": "^5.12.7",
     "playwright": "^1.62.1",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2"

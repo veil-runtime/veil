@@ -170,4 +170,4 @@ const job = await runtime.executePlan({
 See [migrating from V1 to V2](../guides/migrate-to-execution-plan-v2.html),
 [authorization](../concepts/authorization.html), [execution
 lifecycle](../architecture/execution-lifecycle.html), and
-[ADR-0011](../adr/0011-governed-value-ownership.html).
+[ADR-0011](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/docs/adr/0011-governed-value-ownership.md).
