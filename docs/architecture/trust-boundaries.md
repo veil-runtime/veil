@@ -119,7 +119,7 @@ stored-job execution; it does not expand the value-ownership guarantees.
 ## Invocation-value ownership: accepted v2 boundary
 
 On 2026-09-24 the maintainer accepted
-[ADR-0011](../adr/0011-governed-value-ownership.html). For a new explicit plan
+[ADR-0011](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/docs/adr/0011-governed-value-ownership.md). For a new explicit plan
 semantic version, it requires capture after resolution and before validation,
 an immutable authorization input, and a detached structurally equivalent value
 at outer capability entry after explicit allow. Unsupported resolved values

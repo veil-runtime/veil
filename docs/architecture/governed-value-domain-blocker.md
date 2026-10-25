@@ -14,7 +14,7 @@ was introduced by the earlier blocker investigation.
 
 ## Clarification that resolves the blocker
 
-The [accepted ADR](../adr/0011-governed-value-ownership.html) admits ordinary/
+The [accepted ADR](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/docs/adr/0011-governed-value-ownership.md) admits ordinary/
 null-prototype passive records, requires rejection of unsupported resolved
 values, and requires capture without evaluating user code. The readiness report
 now defines passive classification and excluded native brands while explicitly

@@ -15,6 +15,7 @@ import {
 } from './planner-strategy-registry.js';
 
 export function registerPlannerStrategies(): void {
+  plannerStrategyRegistry.register(new DirectStrategy('deterministic-direct', 'deterministic'));
   plannerStrategyRegistry.register(
     new DirectStrategy(
       'local-direct',

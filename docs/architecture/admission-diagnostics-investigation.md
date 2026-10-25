@@ -20,7 +20,7 @@ not the current implementation status.
 
 
 Recommendation: **IMPLEMENT AFTER ADR APPROVAL**, limited to the explicit
-pre-job rejection branches described in [draft ADR-0012](../adr/0012-structured-admission-diagnostics.html).
+pre-job rejection branches described in [draft ADR-0012](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/docs/adr/0012-structured-admission-diagnostics.md).
 No behavior, contracts, experiment or ADR status is changed by this investigation.
 
 ## Current public path

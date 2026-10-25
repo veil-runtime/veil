@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-Veil v0.2.0 is the latest published release; v0.3.0 is the current release candidate.
+Veil v0.3.1 is the latest verified published release; v0.4.0 is an unpublished Core candidate.
 
 Security fixes are applied to the latest development version only.
 

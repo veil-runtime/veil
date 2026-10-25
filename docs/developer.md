@@ -1,16 +1,33 @@
 ---
 title: Veil developer documentation
+description: Understand Veil, run the Linux-qualified Core candidate, then build capabilities and review authorization, architecture and the public API.
 ---
 # Veil developer documentation
 
 Veil is a governed, capability-driven execution runtime. It separates deciding what should happen from performing it. A human, application, deterministic program, or planner can produce an ExecutionPlan; Veil validates and executes that plan through registered capabilities.
 
-## v0.3.0 release candidate
+## v0.4.0 Core candidate
 
-These docs describe the **v0.3.0 release candidate**. v0.2.0 remains the latest
-published package until publication. Read [v0.3.0](getting-started/v0.3.0.html)
-for opt-in ExecutionPlan V2, admission and route hardening, compatibility notes,
-research boundaries, and their limits.
+These docs target the **unpublished v0.4.0 Core candidate**. The latest verified
+published package is **v0.3.1**. Read [v0.4.0](getting-started/v0.4.0.html)
+for scope, compatibility and security limits. Core needs no model or UI;
+[local planning](guides/local-planning.html) is optional source-server infrastructure.
+UI, Emergence and autonomous repository-task applications are separate components.
+Linux is the qualified execution platform; Windows and macOS are unqualified.
+Local Ollama/Qwen planning is experimental and opt-in.
+
+## Your learning path
+
+1. **What is Veil?** Read the [overview](getting-started/overview.html), or start
+   with the [business evaluation guide](getting-started/evaluate.html).
+2. **Mental model.** Understand [the boundary between a request and permission](#the-mental-model).
+3. **Run in five minutes.** Install a reviewed candidate tarball and run
+   [one complete example](getting-started/five-minutes.html), without a model.
+4. **Core concepts.** Learn [plans, capabilities and authorization](concepts/reasoning-and-execution.html).
+5. **Build.** [Create a capability](guides/build-a-capability.html), compose a module
+   and protect write operations.
+6. **Architecture.** Review [the execution lifecycle and boundaries](architecture/overview.html).
+7. **API reference.** Use [the supported public exports](reference/public-exports.html).
 
 ## The mental model
 
@@ -33,7 +50,10 @@ The boundary matters. A plan requests work; it is not permission. A registered c
 
 ## New to Veil
 
-Start with [overview](getting-started/overview.html), [installation](getting-started/installation.html), then build a [first capability](getting-started/first-capability.html), [plan](getting-started/first-plan.html), and [runtime](getting-started/first-runtime.html).
+Start with [overview](getting-started/overview.html) and
+[run Core in five minutes](getting-started/five-minutes.html). For the same example
+split into TypeScript files, build a [first capability](getting-started/first-capability.html),
+[plan](getting-started/first-plan.html), and [runtime](getting-started/first-runtime.html).
 
 ## Using Veil
 
@@ -45,7 +65,7 @@ Read [reasoning and execution](concepts/reasoning-and-execution.html), the canon
 
 ## Extending Veil
 
-The supported consumer surface is documented in [public exports](reference/public-exports.html). Build capabilities and modules; use an authorizer; create plans directly. [MCP inbound](guides/inbound-mcp.html) exposes registered work through the same governed path. Planner implementation and outbound MCP integration APIs remain internal in v0.3.0.
+The supported consumer surface is documented in [public exports](reference/public-exports.html). Build capabilities and modules; use an authorizer; create plans directly. [MCP inbound](guides/inbound-mcp.html) exposes registered work through the same governed path. Planner implementation and outbound MCP integration APIs remain internal in v0.4.0.
 
 ## Reference and contributing
 
@@ -53,4 +73,4 @@ Use [ExecutionPlan V1](reference/execution-plan-v1.html), [ExecutionPlan V2](ref
 
 ## Current limits
 
-v0.3.0 runs a plan's steps sequentially. It has no ExecutionPlan syntax or runtime implementation for DAGs, parallel work, conditionals, retries, cancellation, or idempotency enforcement. Plan and step idempotency keys are recorded, not enforced.
+v0.4.0 runs a plan's steps sequentially. It has no ExecutionPlan syntax or runtime implementation for DAGs, parallel work, conditionals, retries, cancellation, or idempotency enforcement. Plan and step idempotency keys are recorded, not enforced.

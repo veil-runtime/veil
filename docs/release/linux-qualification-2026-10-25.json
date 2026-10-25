@@ -1,0 +1,244 @@
+{
+  "date": "2026-10-25",
+  "branch": "release/core-v0.4.0",
+  "startingCommit": "a693b5238d26a10d763dc9c555225b448d0c9e5d",
+  "comparisonBase": "ec764125a723e555a54b8f8fb63ed2901a813fc6",
+  "platform": "Linux x86_64/WSL2, 6.18.54.1-microsoft-standard-WSL2",
+  "node": "v24.18.1",
+  "npm": "11.16.0",
+  "qualifiedPlatforms": [
+    "linux"
+  ],
+  "unqualifiedPlatforms": [
+    "darwin",
+    "win32"
+  ],
+  "localPlanning": "experimental and opt-in; failed optional live-write probes preserved, not a Core acceptance criterion",
+  "lockedContractsChanged": false,
+  "coreTests": {
+    "passed": 328,
+    "failed": 0,
+    "skipped": 0
+  },
+  "qualityTests": {
+    "passed": 216,
+    "failed": 0,
+    "skipped": 0
+  },
+  "quality": {
+    "exitCode": 1,
+    "reviewedControls": [
+      "test/filesystem-confinement.test.ts",
+      "test/local-planner.test.ts",
+      "tools/verify-package.mjs",
+      "package.json scripts"
+    ],
+    "unapprovedExecutionReferences": 0,
+    "unsupportedAccesses": 0,
+    "sourceDelta": {
+      "added": 259,
+      "removed": 385,
+      "net": -126
+    },
+    "testDelta": {
+      "added": 322,
+      "removed": 0,
+      "net": 322
+    },
+    "harnessDelta": 0
+  },
+  "coreAuditVulnerabilities": 0,
+  "renderedDocumentation": {
+    "ruby": "3.3.8",
+    "jekyll": "4.4.1",
+    "baseurl": "/veil",
+    "pages": 84,
+    "localReferences": 11256,
+    "initialBrokenLinks": 43,
+    "externalLinksFetched": false,
+    "visualBrowserReview": false,
+    "temporaryToolchain": "Ubuntu distribution packages extracted into /tmp/veil-jekyll-runtime; SassC absolute library path relocated only in temporary extracted dependency",
+    "environment": {
+      "LD_LIBRARY_PATH": "/tmp/veil-jekyll-runtime/usr/lib/x86_64-linux-gnu",
+      "RUBYLIB": "/tmp/veil-jekyll-runtime/usr/lib/ruby/3.3.0:/tmp/veil-jekyll-runtime/usr/lib/x86_64-linux-gnu/ruby/3.3.0:/tmp/veil-jekyll-runtime/usr/lib/ruby/vendor_ruby:/tmp/veil-jekyll-runtime/usr/lib/x86_64-linux-gnu/ruby/vendor_ruby/3.3.0",
+      "GEM_PATH": "/tmp/veil-jekyll-runtime/usr/share/rubygems-integration/all:/tmp/veil-jekyll-runtime/usr/lib/x86_64-linux-gnu/rubygems-integration/3.3.0:/tmp/veil-jekyll-runtime/usr/lib/ruby/gems/3.3.0:/tmp/veil-jekyll-runtime/usr/share/rubygems-integration/3.3.0"
+    },
+    "executable": "/tmp/veil-jekyll-runtime/usr/bin/ruby3.3 /tmp/veil-jekyll-runtime/usr/bin/jekyll"
+  },
+  "artifact": {
+    "path": "/tmp/veil-v040-linux-artifacts/veil-runtime-core-0.4.0.tgz",
+    "sha256": "d20146d4a195678391882949055a4dc268b4835fa35920eb6f77f545897ac4ee",
+    "integrity": "sha512-OAkqlyh9RE6sIDdvnOyzqo2iKwYdvMLYQNexQxe2uN1sJJaLobjQVQFwUnzrDVU5nORybYSh11vgHITlE5AqCw==",
+    "files": 106,
+    "name": "@veil-runtime/core",
+    "version": "0.4.0",
+    "independentConsumerVerified": true,
+    "consumerPath": "/tmp/veil-v040-linux-consumer"
+  },
+  "bundle": {
+    "path": "/tmp/veil-preserved-2026-10-25.bundle",
+    "sha256": "616f56eeb552bdadb8fa8cca72ac51640043cb274f7b56b7a699ae6a96d2a376"
+  },
+  "commands": [
+    {
+      "name": "core",
+      "command": "npm run check",
+      "exitCode": 0,
+      "log": "/tmp/veil-release-final-check.log",
+      "sha256": "4b63e368db53ed2a1c80c99113efe21d47e5010011e73fe77bdb3cc99b867c5b"
+    },
+    {
+      "name": "quality",
+      "command": "npm run quality -- --base v0.3.1",
+      "exitCode": 1,
+      "log": "/tmp/veil-release-final-quality.log",
+      "sha256": "3e34db6e899f65bc38bba78ca08f7a01f20688f423ecd85d16b972cb672a7a56"
+    },
+    {
+      "name": "quality-tests",
+      "command": "npm run test:quality",
+      "exitCode": 0,
+      "log": "/tmp/veil-release-quality-tests-host.log",
+      "sha256": "32cc73df70887b9310bb1d59050d96a0e22ff9c150a17e004b16791efd3570fd"
+    },
+    {
+      "name": "audit",
+      "command": "npm audit --json --cache /tmp/veil-core-v040-npm-cache",
+      "exitCode": 0,
+      "log": "/tmp/veil-release-audit.json",
+      "sha256": "df9a032c22cc2137fbe20e631aac16d50789fb26fc7ce816fa7aaa1437b43de9"
+    },
+    {
+      "name": "jekyll",
+      "command": "jekyll build --source docs --destination /tmp/veil-core-rendered --baseurl /veil --strict_front_matter --trace",
+      "exitCode": 0,
+      "log": "/tmp/veil-jekyll-build-final.log",
+      "sha256": "1a3dd36162f9423277b43135011557aaf1b31d8f8e41f3ba4a9f460c1b6a43cf"
+    },
+    {
+      "name": "rendered-docs",
+      "command": "python3 tools/verify-rendered-documentation.py /tmp/veil-core-rendered /veil",
+      "exitCode": 0,
+      "log": "/tmp/veil-rendered-validation-final.log",
+      "sha256": "7acbb1a3f6f5021a9abb5b84c9d51aeb2958b02e68c2647a665bba7f5bcf1b42"
+    },
+    {
+      "name": "capability-check",
+      "command": "npm run check",
+      "exitCode": 0,
+      "log": "/tmp/veil-capability-check.log",
+      "sha256": "67249487ee04f6dc0e980c84368ab6da04dcda67d2f82404ace673672eaaca69"
+    },
+    {
+      "name": "capability-components",
+      "command": "VEIL_TEST_TYPESCRIPT=/tmp/veil-reviewed-typescript/node_modules/typescript/lib/typescript.js node --test .tmp/test-build/test/component-verification.test.js",
+      "exitCode": 0,
+      "log": "/tmp/veil-capability-component-tests.log",
+      "sha256": "6cd4f66e38c5e6c46903f8f336b1aabf9fe2926ef56f23280c6852a3e314efe4"
+    },
+    {
+      "name": "capability-app-build",
+      "command": "./node_modules/.bin/tsc --project apps/repository-task/tsconfig.json",
+      "exitCode": 0,
+      "log": "/tmp/veil-capability-app-build.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "capability-audit",
+      "command": "npm audit --json",
+      "exitCode": 1,
+      "log": "/tmp/veil-capability-audit.json",
+      "sha256": "6100b47af7df71a11e166cee1e5a8ae20f05a6ba011ee094f4c59a199fb72be3"
+    },
+    {
+      "name": "capability-quality",
+      "command": "npm run quality -- --base v0.3.1",
+      "exitCode": 1,
+      "log": "/tmp/veil-capability-quality.log",
+      "sha256": "d107a6d81c83ee43b46abfe19562a133c184227f4b9e0f8b5527e33fed6a21b7"
+    },
+    {
+      "name": "source-docs",
+      "command": "python3 tools/verify-documentation.py",
+      "exitCode": 0,
+      "log": "/tmp/veil-source-docs-final.log",
+      "sha256": "113d01c1e03b3d0bc8c45dd6a00ddcf76a6751acb83efb303d639ed945c70dbf"
+    },
+    {
+      "name": "retained-consumer-install",
+      "command": "npm install /tmp/veil-v040-linux-artifacts/veil-runtime-core-0.4.0.tgz --no-package-lock --cache /tmp/veil-core-v040-npm-cache --prefer-offline",
+      "exitCode": 0,
+      "log": "/tmp/veil-release-final-consumer-install.log",
+      "sha256": "0e9915a84e21adb679e2676ad1af9fb02d711b7e47f78b11bdc982fea94260ab"
+    },
+    {
+      "name": "retained-consumer",
+      "command": "/tmp/veil-core-v040/node_modules/.bin/tsc --project tsconfig.json && node verify.mjs",
+      "exitCode": 0,
+      "log": "/tmp/veil-release-final-consumer.log",
+      "sha256": "06efb8ca90f0ba64fae9ba21c47de9db3aca51cf9ad6e6faf3ec0697f984bcff"
+    }
+  ],
+  "failedAttempts": [
+    {
+      "command": "git ls-remote origin",
+      "result": "restricted SSH config permissions; host retry Permission denied (publickey). Authenticated HTTPS succeeded."
+    },
+    {
+      "command": "npm run check (restricted)",
+      "result": "17 file-level suites passed, 4 failed; host rerun passed 328 tests.",
+      "log": "/tmp/veil-release-check.log"
+    },
+    {
+      "command": "npm run test:quality (restricted)",
+      "result": "Both file-level suites failed; host rerun passed 216 tests.",
+      "log": "/tmp/veil-release-quality-tests.log"
+    },
+    {
+      "command": "sudo -n apt-get install -y --no-install-recommends jekyll",
+      "result": "interactive authentication is required; extracted downloaded packages instead."
+    },
+    {
+      "command": "initial Jekyll build from extracted toolchain",
+      "result": "SassC absolute system libsass path unavailable; relocated only temporary toolchain path and reran successfully."
+    },
+    {
+      "command": "initial rendered validator",
+      "result": "43 broken targets; repaired documentation links without changing renderer exclusions.",
+      "log": "/tmp/veil-rendered-validation.log"
+    },
+    {
+      "command": "npm pack (default cache)",
+      "result": "EROFS default cache; dedicated /tmp cache rerun succeeded."
+    }
+  ],
+  "recommendation": "GO for maintainer-approved Linux Core publication; no independent capability package ready",
+  "npmPublished": false,
+  "protectedBranchesMerged": false,
+  "publicReleaseCreated": false,
+  "changedFiles": [
+    "README.md",
+    "docs/architecture/admission-diagnostics-investigation.md",
+    "docs/architecture/authorization-entry-ownership-reassessment.md",
+    "docs/architecture/external-model-reasoner-experiment-design.md",
+    "docs/architecture/external-reasoner-experiment.md",
+    "docs/architecture/filesystem-confinement.md",
+    "docs/architecture/governed-value-domain-blocker.md",
+    "docs/architecture/governed-value-implementation-readiness.md",
+    "docs/architecture/reasoning-boundary-research-synthesis.md",
+    "docs/architecture/result-reference-reconciliation.md",
+    "docs/architecture/shell-invocation-hardening.md",
+    "docs/architecture/trust-boundaries.md",
+    "docs/architecture/value-ownership-investigation.md",
+    "docs/concepts/result-references.md",
+    "docs/getting-started/installation.md",
+    "docs/getting-started/v0.4.0.md",
+    "docs/guides/migrate-to-execution-plan-v2.md",
+    "docs/reference/execution-plan-v2.md",
+    "docs/release/independent-capabilities-2026-10-25.md",
+    "docs/release/linux-qualification-2026-10-25.json",
+    "docs/release/preservation-2026-10-25.json",
+    "docs/release/v0.4.0-readiness.md",
+    "tools/verify-rendered-documentation.py"
+  ]
+}

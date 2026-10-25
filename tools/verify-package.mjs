@@ -29,6 +29,7 @@ try {
 
   assert.equal(pack.name, '@veil-runtime/core');
   assert.equal(pack.version, manifest.version);
+  assert.deepEqual(Object.keys(manifest.exports), ['.'], 'Core must retain its sole public root entry');
   assert.ok(files.includes('dist/index.js'));
   assert.ok(files.includes('dist/index.d.ts'));
   assert.ok(files.includes('README.md'));
@@ -40,6 +41,9 @@ try {
   assert.ok(!files.some((path) => path.startsWith('tools/')));
   assert.ok(!files.some((path) => path.startsWith('.github/')));
   assert.ok(!files.some((path) => path.startsWith('docs/')));
+  for (const excluded of ['apps/', 'examples/', 'experiments/', 'dist/emergence/', 'dist/ui/', 'dist/caretaker/']) {
+    assert.ok(!files.some(path => path.startsWith(excluded)), `Core contains excluded component: ${excluded}`);
+  }
   assert.ok(!files.some((path) => path.startsWith('dist/api/')));
   const publicIntegrationFiles = new Set([
     'dist/integrations/mcp/inbound/capability-schema.d.ts',

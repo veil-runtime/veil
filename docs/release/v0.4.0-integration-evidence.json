@@ -1,0 +1,475 @@
+{
+  "date": "2026-10-25",
+  "branch": "integration/v0.4.0",
+  "inputs": {
+    "refs/heads/docs/core-v0.4.0-website": "aa5cef2aaacf04603964f2552eb1461751e73300",
+    "refs/heads/main": "ec764125a723e555a54b8f8fb63ed2901a813fc6",
+    "refs/heads/release/core-v0.4.0": "903efad9c7212f1f1137407cf2401973577a5287"
+  },
+  "mergeConflicts": [],
+  "historyRewritten": false,
+  "platform": "Linux x86_64/WSL2, Node v24.18.1, npm 11.16.0",
+  "qualifiedPlatforms": [
+    "linux"
+  ],
+  "unqualifiedPlatforms": [
+    "darwin",
+    "win32"
+  ],
+  "localPlanning": "experimental and opt-in; no live reliability claim",
+  "ownedChanges": [
+    "src/runtime/logging/execution-log-store.ts",
+    "docs/release/v0.4.0-integration.md",
+    "docs/release/v0.4.0-integration-evidence.json"
+  ],
+  "sourceRepair": {
+    "reason": "Source-server log reader import failed when data directory did not yet exist",
+    "addedLines": 4,
+    "newAbstractions": false,
+    "publicContractsChanged": false,
+    "inNpmArtifact": false,
+    "beforeExitCode": 1,
+    "beforeLog": "/tmp/veil-integration-startup-before.log",
+    "afterExitCode": 0,
+    "afterLog": "/tmp/veil-integration-startup-after.log",
+    "retainedFirstRunData": "/tmp/veil-integration-first-run-data",
+    "beforeLogSHA256": "342945dfbb4d0eac1480e74234ac2e94258587f4699287f2189d4ebee885028d",
+    "afterLogSHA256": "918cf3cfe79e4b4dc79926ccea360196a8ea59f152fced36b2299e8c84e86ade"
+  },
+  "coreTests": {
+    "passed": 328,
+    "failed": 0,
+    "skipped": 0
+  },
+  "qualityTests": {
+    "passed": 216,
+    "failed": 0,
+    "skipped": 0
+  },
+  "filesystemTests": {
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0
+  },
+  "starterTests": {
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0
+  },
+  "clientBuildModules": 20,
+  "audits": {
+    "core": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "production": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "starter": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "client": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    }
+  },
+  "quality": {
+    "base": "ec764125a723e555a54b8f8fb63ed2901a813fc6",
+    "exitCode": 1,
+    "acceptedControls": [
+      {
+        "path": "test/filesystem-confinement.test.ts",
+        "sha256": "8668d9f12a3ac003630dc7f9ac9f507fa51e18d8a3d8a40bdf0e0421326ec581",
+        "identicalToQualifiedCore": true
+      },
+      {
+        "path": "test/local-planner.test.ts",
+        "sha256": "a324a8eb7e88dbe411fa8a69d271734809765f301741d19d90fa4d2af5180a0d",
+        "identicalToQualifiedCore": true
+      },
+      {
+        "path": "tools/verify-package.mjs",
+        "sha256": "5469895ebf5271e1e6fb88c45dcc97e3e6fd58ec4eb816376a81ca61c2f047be",
+        "identicalToQualifiedCore": true
+      },
+      {
+        "path": "package.json",
+        "sha256": "4901293384aa744e26b4ab6a926910addc4502b851bea2863e31651c0d391751",
+        "identicalToQualifiedCore": true
+      }
+    ],
+    "unapprovedExecutionReferences": 0,
+    "unsupportedAccesses": 0,
+    "sourceDelta": {
+      "added": 263,
+      "removed": 385,
+      "net": -122
+    },
+    "testDelta": {
+      "added": 322,
+      "removed": 0,
+      "net": 322
+    },
+    "harnessDelta": 0,
+    "checkerAndBaselineUnchanged": true
+  },
+  "artifact": {
+    "path": "/tmp/veil-v040-integration-artifacts/veil-runtime-core-0.4.0.tgz",
+    "name": "@veil-runtime/core",
+    "version": "0.4.0",
+    "files": 106,
+    "sha256": "d20146d4a195678391882949055a4dc268b4835fa35920eb6f77f545897ac4ee",
+    "integrity": "sha512-OAkqlyh9RE6sIDdvnOyzqo2iKwYdvMLYQNexQxe2uN1sJJaLobjQVQFwUnzrDVU5nORybYSh11vgHITlE5AqCw==",
+    "qualifiedPath": "/tmp/veil-v040-linux-artifacts/veil-runtime-core-0.4.0.tgz",
+    "qualifiedSHA256": "d20146d4a195678391882949055a4dc268b4835fa35920eb6f77f545897ac4ee",
+    "byteForByteEqual": true,
+    "independentConsumerPassed": true,
+    "websiteExamplesPassed": true
+  },
+  "website": {
+    "pages": 87,
+    "localReferences": 12395,
+    "baseurl": "/veil",
+    "renderedPath": "/tmp/veil-integration-preview/veil",
+    "browserRoutes": 7,
+    "browserChecks": 28,
+    "widths": [
+      320,
+      390,
+      768,
+      1440
+    ],
+    "axeVersion": "4.14.0",
+    "axeScans": 14,
+    "axeViolations": 0,
+    "manualContrast": {
+      "method": "WCAG luminance; background-channel maximum across gradient stops plus .00625 white grid overlay",
+      "backgroundStops": [
+        "12141a",
+        "0c0d11",
+        "191426",
+        "0d0f14"
+      ],
+      "foregroundColors": [
+        "a78bfa",
+        "f5f2ec",
+        "b5b6bf"
+      ],
+      "ratios": {
+        "a78bfa": 6.51,
+        "f5f2ec": 15.85,
+        "b5b6bf": 8.78
+      }
+    },
+    "screenshots": [
+      {
+        "path": "/tmp/veil-integration-desktop.png",
+        "sha256": "b24080311924cd0206544ee63b8f9e5223b18ab12aaf288dd21f52d60f65069b"
+      },
+      {
+        "path": "/tmp/veil-integration-desktop-full.png",
+        "sha256": "e7c7a9ab505c64fa19b9d84aef5a26d9141e17bbb59695ac473a8b7ccec712a7"
+      },
+      {
+        "path": "/tmp/veil-integration-mobile.png",
+        "sha256": "8d86ae0ac2338537fe946ba03737b33a63c53885061220fc8fc77f9894ee5d03"
+      },
+      {
+        "path": "/tmp/veil-integration-developer.png",
+        "sha256": "be72e6f0b39c2b82bf68cdfcf083e44c2aa7eade993b1d6c2078b47388001905"
+      },
+      {
+        "path": "/tmp/veil-integration-process.png",
+        "sha256": "4be3120d67a789e6e5dae1f585d0302ea5f7fcc9b459fc856716f41890668636"
+      }
+    ]
+  },
+  "commands": [
+    {
+      "name": "core-install",
+      "command": "npm ci --cache /tmp/veil-core-v040-npm-cache --prefer-offline --fetch-retries=0 --fetch-timeout=30000",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-root-install.log",
+      "sha256": "85f4b8bcbf40fc7da753228cae4601c0cfd300382b46d33f35ea4e6b751d26b9",
+      "cwd": "/tmp/veil-v040-integration"
+    },
+    {
+      "name": "core-check",
+      "command": "npm run check",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-core-final-check.log",
+      "sha256": "20286f06cf59e04fdb32885c7fb666ff2322019a0904b33f385be74240c09ebc",
+      "cwd": "/tmp/veil-v040-integration"
+    },
+    {
+      "name": "quality-tests",
+      "command": "npm run test:quality",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-quality-tests-final.log",
+      "sha256": "68b29813345f4bd844c229bd34a1f5a551e8edac47f6910556c1a2feef499a4a",
+      "cwd": "/tmp/veil-v040-integration"
+    },
+    {
+      "name": "quality",
+      "command": "npm run quality -- --base v0.3.1",
+      "exitCode": 1,
+      "log": "/tmp/veil-integration-quality-final.log",
+      "sha256": "90123653ce01b596f93f303bd7c3188f3134b99fbc541eb37fc5b0fbd70f0039",
+      "cwd": "/tmp/veil-v040-integration"
+    },
+    {
+      "name": "filesystem",
+      "command": "node --test .tmp/test-build/test/filesystem-confinement.test.js",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-filesystem.log",
+      "sha256": "3b08ad942ce0f79912c91f79998ac33c5cb0d5d199b445106482f574ef339e40",
+      "cwd": "/tmp/veil-v040-integration"
+    },
+    {
+      "name": "startup-after",
+      "command": "node -e require(compiled source-server log store), from an empty temporary working directory; assert data/operator.db exists",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-startup-after.log",
+      "sha256": "918cf3cfe79e4b4dc79926ccea360196a8ea59f152fced36b2299e8c84e86ade",
+      "cwd": "new empty /tmp/veil-integration-startup-after-* directory"
+    },
+    {
+      "name": "starter-install",
+      "command": "npm ci --cache /tmp/veil-core-v040-npm-cache --prefer-offline --fetch-retries=0 --fetch-timeout=30000",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-starter-install.log",
+      "sha256": "cc11b502cb35600d796e801879be7e1e0a546c7a7084efa2421e69856aa5c40a",
+      "cwd": "/tmp/veil-v040-integration/examples/veil-starter"
+    },
+    {
+      "name": "starter-check",
+      "command": "npm run check",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-starter-final-check.log",
+      "sha256": "b1b4e7a99e02f8945c1cd2093775d4d624529b8a5fa5dd61d03a3d2d6637894b",
+      "cwd": "/tmp/veil-v040-integration/examples/veil-starter"
+    },
+    {
+      "name": "client-install",
+      "command": "npm ci --cache /tmp/veil-core-v040-npm-cache --prefer-offline --fetch-retries=0 --fetch-timeout=30000",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-client-install.log",
+      "sha256": "513e5d2dd3ec8315173a44345ea7a64d8165c9c3a4758fbc415146e0ae7ee7f1",
+      "cwd": "/tmp/veil-v040-integration/examples/veil-starter/client"
+    },
+    {
+      "name": "client-build",
+      "command": "npm run build",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-client-build.log",
+      "sha256": "993c61a62107e0243c4037540df865dc3512bf69383c90799bd2dccf8d08ff5a",
+      "cwd": "/tmp/veil-v040-integration/examples/veil-starter/client"
+    },
+    {
+      "name": "core-audit",
+      "command": "npm audit --json --cache /tmp/veil-core-v040-npm-cache",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-core-audit.json",
+      "sha256": "df9a032c22cc2137fbe20e631aac16d50789fb26fc7ce816fa7aaa1437b43de9",
+      "cwd": "/tmp/veil-v040-integration"
+    },
+    {
+      "name": "production-audit",
+      "command": "npm audit --omit=dev --json --cache /tmp/veil-core-v040-npm-cache",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-production-audit.json",
+      "sha256": "df9a032c22cc2137fbe20e631aac16d50789fb26fc7ce816fa7aaa1437b43de9",
+      "cwd": "/tmp/veil-v040-integration"
+    },
+    {
+      "name": "starter-audit",
+      "command": "npm audit --json --cache /tmp/veil-core-v040-npm-cache",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-starter-audit.json",
+      "sha256": "6d9fd4c1f17e10a972b031f40fe312e0804d4f8ba6377fc77c968cf202d640c1",
+      "cwd": "/tmp/veil-v040-integration/examples/veil-starter"
+    },
+    {
+      "name": "client-audit",
+      "command": "npm audit --json --cache /tmp/veil-core-v040-npm-cache",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-client-audit.json",
+      "sha256": "aead98ecbce96c648226427f34b547485f83980b1cf1ab4cf8a086a07197e58a",
+      "cwd": "/tmp/veil-v040-integration/examples/veil-starter/client"
+    },
+    {
+      "name": "pack",
+      "command": "npm pack --json --pack-destination /tmp/veil-v040-integration-artifacts --cache /tmp/veil-core-v040-npm-cache",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-pack.json",
+      "sha256": "2949a337d2606b9321d188cf857f865269ba3dc546f29e30bc0784c873691212",
+      "cwd": "/tmp/veil-v040-integration"
+    },
+    {
+      "name": "consumer-install",
+      "command": "npm install /tmp/veil-v040-integration-artifacts/veil-runtime-core-0.4.0.tgz --no-package-lock --cache /tmp/veil-core-v040-npm-cache --prefer-offline",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-consumer-install.log",
+      "sha256": "0e9915a84e21adb679e2676ad1af9fb02d711b7e47f78b11bdc982fea94260ab",
+      "cwd": "/tmp/veil-v040-integration-consumer"
+    },
+    {
+      "name": "consumer",
+      "command": "/tmp/veil-v040-integration/node_modules/.bin/tsc --project tsconfig.json && node verify.mjs",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-consumer.log",
+      "sha256": "b0fa062bf92d57671cbba07b700fb2ffe77ed9d88ec6e8dcab33d1b1cf1cf1c4",
+      "cwd": "/tmp/veil-v040-integration-consumer"
+    },
+    {
+      "name": "website-examples-install",
+      "command": "npm install /tmp/veil-v040-integration-artifacts/veil-runtime-core-0.4.0.tgz --no-package-lock --cache /tmp/veil-core-v040-npm-cache --prefer-offline",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-examples-install.log",
+      "sha256": "0e9915a84e21adb679e2676ad1af9fb02d711b7e47f78b11bdc982fea94260ab",
+      "cwd": "/tmp/veil-v040-integration-examples"
+    },
+    {
+      "name": "website-echo",
+      "command": "node demo.mjs",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-example-echo.log",
+      "sha256": "c291f91bc8c1575baa442698e3be5071545030ad5c0d8a419cef533c9af52453",
+      "cwd": "/tmp/veil-v040-integration-examples"
+    },
+    {
+      "name": "website-denial",
+      "command": "node deny-production.mjs",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-example-deny.log",
+      "sha256": "d1a3bce8968342a250f66150a364c46e78287c5fb887f7236ecac005167899c3",
+      "cwd": "/tmp/veil-v040-integration-examples"
+    },
+    {
+      "name": "website-typescript",
+      "command": "/tmp/veil-v040-integration/node_modules/.bin/tsc --project tsconfig.json && node dist/runtime.js",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-example-typescript.log",
+      "sha256": "b6af0a42755a3f0a1c4d5800558e92caaea06c4f0922a0340aba688bd7507926",
+      "cwd": "/tmp/veil-v040-integration-examples"
+    },
+    {
+      "name": "jekyll",
+      "command": "jekyll build --source docs --destination /tmp/veil-integration-preview/veil --baseurl /veil --strict_front_matter --trace",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-jekyll.log",
+      "sha256": "b6ffde13a6dd3826bff2b4475f167e0f8785a11061ecf9215bef2d4282983880",
+      "cwd": "/tmp/veil-v040-integration"
+    },
+    {
+      "name": "rendered-docs",
+      "command": "python3 tools/verify-rendered-documentation.py /tmp/veil-integration-preview/veil /veil",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-rendered-docs.log",
+      "sha256": "09a38ccc9aef1fcbeb384b0bab522f9575825a23f5fe2944610f279e89f89596",
+      "cwd": "/tmp/veil-v040-integration"
+    },
+    {
+      "name": "source-docs",
+      "command": "python3 tools/verify-documentation.py",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-source-docs.log",
+      "sha256": "70c283ca0daabeb2836469d8d0718cd9091559e911817aff8a6a5f761d90b113",
+      "cwd": "/tmp/veil-v040-integration"
+    },
+    {
+      "name": "browser",
+      "command": "node /tmp/veil-integration-browser.cjs",
+      "exitCode": 0,
+      "log": "/tmp/veil-integration-browser.log",
+      "sha256": "ceec4fefb84084f6d42858c5c74f59b514421ad0a09426f451f3868952d18daa",
+      "cwd": "/tmp/veil-v040-integration"
+    }
+  ],
+  "failedAttempts": [
+    {
+      "command": "npm run check (first fresh checkout)",
+      "exitCode": 1,
+      "error": "TypeError: Cannot open database because the directory does not exist",
+      "testFile": "governance-routes.test.js",
+      "passed": 318,
+      "failedFileSuites": 1,
+      "log": "/tmp/veil-integration-core-check.log",
+      "resolvedBy": "Create parent in unshipped source-server log reader; full fresh-data rerun passes 328 tests",
+      "sha256": "0a36d3ea6e06903ac0a52fa20ad69de471d5c9246c1a1f26d8178e7882943964"
+    },
+    {
+      "command": "npm run check (Starter before Core build)",
+      "exitCode": 1,
+      "error": "TS2307 Cannot find module @veil-runtime/core, followed by cascading TS7006/TS7031 implicit-any errors",
+      "log": "/tmp/veil-integration-starter-check.log",
+      "resolvedBy": "Build Core via successful root gate, then rerun Starter without source changes",
+      "sha256": "2737d73f88536a88d1dca54810100d3eb5547ad339459014b8b6bc5ba2a29beb"
+    },
+    {
+      "command": "git diff --check (new source lines)",
+      "error": "Trailing whitespace due to CR on four newly added lines",
+      "log": "/tmp/veil-integration-diff-before.log",
+      "resolvedBy": "Use LF on only the four newly added lines; preserve existing line endings and file mode",
+      "sha256": "15f68a96cb84996ba59030bdeff98b1bafa7454c45a5ce2f554f3a14ab8758d7"
+    }
+  ],
+  "secretScan": {
+    "commits": 189,
+    "matches": 3,
+    "disposition": "Same reviewed two freeze-manifest hashes and synthetic redaction-test key, no live credential detected",
+    "log": "/tmp/veil-integration-secrets.log"
+  },
+  "repository": {
+    "allow_merge_commit": true,
+    "allow_rebase_merge": true,
+    "allow_squash_merge": true,
+    "default_branch": "main",
+    "full_name": "veil-runtime/veil",
+    "permissions": {
+      "admin": true,
+      "maintain": true,
+      "pull": true,
+      "push": true,
+      "triage": true
+    }
+  },
+  "registry": {
+    "dist-tags": {
+      "latest": "0.3.1"
+    },
+    "versions": [
+      "0.1.0",
+      "0.1.1",
+      "0.1.2",
+      "0.1.3",
+      "0.2.0",
+      "0.3.0",
+      "0.3.1"
+    ]
+  },
+  "priorQualificationRecordsChanged": false,
+  "npmPublished": false,
+  "tagsCreated": false,
+  "mainMerged": false,
+  "pagesDeployed": false,
+  "mergeWillAutomaticallyDeployCandidateWebsite": true
+}

@@ -54,7 +54,7 @@ Test interpretation:
 - The SQLite structural test proves captured structure survives persistence;
   it does not prove all values or identities survive.
 
-Evidence: [ADR-0008](../adr/0008-structural-execution-ownership.html),
+Evidence: [ADR-0008](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/docs/adr/0008-structural-execution-ownership.md),
 [public v1 contract](../reference/execution-plan-v1.html), and
 [result-reference documentation](../concepts/result-references.html).
 External SDK users could reasonably rely on identity because of those docs,

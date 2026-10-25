@@ -185,7 +185,7 @@ of bounded cost is made: size/depth limits and allocation behavior need review.
 
 ## Recommendation and trust boundary
 
-Select **ADR FIRST**, with [draft ADR-0011](../adr/0011-governed-value-ownership.html)
+Select **ADR FIRST**, with [draft ADR-0011](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/docs/adr/0011-governed-value-ownership.md)
 as the independent decision for A/B. It proposes a limited passive data domain,
 explicit equivalence and failure behavior, and private runtime-owned snapshots.
 It does not declare the current contract JSON-only. Results, stores and D need

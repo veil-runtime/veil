@@ -6,7 +6,7 @@ title: Governed value ownership implementation readiness
 Date: 2026-09-24. Investigated source HEAD:
 `103521d0d92a14d030ad56bb89e7c0a5ea902d87`, with the preceding documentation-only
 reassessment/revision and the maintainer's acceptance of
-[ADR-0011](../adr/0011-governed-value-ownership.html).
+[ADR-0011](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/docs/adr/0011-governed-value-ownership.md).
 
 **Current-state note (2026-09-25):** the later implementation allocated
 ExecutionPlan `2.0` with explicit `planVersions` opt-in and completed the bounded

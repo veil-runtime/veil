@@ -1,0 +1,318 @@
+{
+  "date": "2026-10-25",
+  "branch": "docs/core-v0.4.0-website",
+  "base": "903efad9c7212f1f1137407cf2401973577a5287",
+  "site": "https://veil-runtime.github.io/veil/",
+  "canonicalSource": "docs/",
+  "pagesSettings": {
+    "build_type": "workflow",
+    "html_url": "https://veil-runtime.github.io/veil/",
+    "source": {
+      "branch": "main",
+      "path": "/"
+    },
+    "status": null
+  },
+  "registry": {
+    "dist-tags": {
+      "latest": "0.3.1"
+    },
+    "versions": [
+      "0.1.0",
+      "0.1.1",
+      "0.1.2",
+      "0.1.3",
+      "0.2.0",
+      "0.3.0",
+      "0.3.1"
+    ]
+  },
+  "rendered": {
+    "pages": 87,
+    "localReferences": 12395,
+    "path": "/tmp/veil-website-preview/veil",
+    "ruby": "3.3.8",
+    "jekyll": "4.4.1"
+  },
+  "coreTests": {
+    "passed": 328,
+    "failed": 0,
+    "skipped": 0
+  },
+  "browser": {
+    "routes": 7,
+    "widths": [
+      320,
+      390,
+      768,
+      1440
+    ],
+    "checks": 28,
+    "keyboard": [
+      "skip link",
+      "architecture disclosure",
+      "mobile documentation menu"
+    ],
+    "pageErrors": []
+  },
+  "accessibility": {
+    "engine": "axe-core 4.14.0",
+    "tags": [
+      "wcag2a",
+      "wcag2aa",
+      "wcag21aa"
+    ],
+    "scans": 14,
+    "violations": 0,
+    "initialFailure": "scrollable-region-focusable on documentation code blocks; fixed in shared layout and rerun without disabling rules",
+    "manualReview": {
+      "method": "WCAG luminance; each background channel bounded by maximum across all gradient stops, plus maximum grid overlay",
+      "backgroundStops": [
+        "12141a",
+        "0c0d11",
+        "191426",
+        "0d0f14"
+      ],
+      "foregroundColors": [
+        "a78bfa",
+        "f5f2ec",
+        "b5b6bf"
+      ],
+      "ratios": {
+        "a78bfa": 6.51,
+        "f5f2ec": 15.85,
+        "b5b6bf": 8.78
+      },
+      "requiredNormalText": 4.5
+    },
+    "scanSummary": [
+      {
+        "width": 390,
+        "route": "",
+        "violations": 0,
+        "incompleteRules": [
+          "color-contrast"
+        ]
+      },
+      {
+        "width": 390,
+        "route": "developer.html",
+        "violations": 0,
+        "incompleteRules": []
+      },
+      {
+        "width": 390,
+        "route": "getting-started/evaluate.html",
+        "violations": 0,
+        "incompleteRules": []
+      },
+      {
+        "width": 390,
+        "route": "getting-started/five-minutes.html",
+        "violations": 0,
+        "incompleteRules": []
+      },
+      {
+        "width": 390,
+        "route": "getting-started/v0.4.0.html",
+        "violations": 0,
+        "incompleteRules": []
+      },
+      {
+        "width": 390,
+        "route": "cookbook/deny-production-action.html",
+        "violations": 0,
+        "incompleteRules": []
+      },
+      {
+        "width": 390,
+        "route": "contributing/website.html",
+        "violations": 0,
+        "incompleteRules": []
+      },
+      {
+        "width": 1440,
+        "route": "",
+        "violations": 0,
+        "incompleteRules": [
+          "color-contrast"
+        ]
+      },
+      {
+        "width": 1440,
+        "route": "developer.html",
+        "violations": 0,
+        "incompleteRules": []
+      },
+      {
+        "width": 1440,
+        "route": "getting-started/evaluate.html",
+        "violations": 0,
+        "incompleteRules": []
+      },
+      {
+        "width": 1440,
+        "route": "getting-started/five-minutes.html",
+        "violations": 0,
+        "incompleteRules": []
+      },
+      {
+        "width": 1440,
+        "route": "getting-started/v0.4.0.html",
+        "violations": 0,
+        "incompleteRules": []
+      },
+      {
+        "width": 1440,
+        "route": "cookbook/deny-production-action.html",
+        "violations": 0,
+        "incompleteRules": [
+          "color-contrast"
+        ]
+      },
+      {
+        "width": 1440,
+        "route": "contributing/website.html",
+        "violations": 0,
+        "incompleteRules": []
+      }
+    ]
+  },
+  "package": {
+    "path": "/tmp/veil-website-artifacts/veil-runtime-core-0.4.0.tgz",
+    "sha256": "d20146d4a195678391882949055a4dc268b4835fa35920eb6f77f545897ac4ee",
+    "identicalToQualifiedArtifact": true,
+    "consumer": "/tmp/veil-website-consumer"
+  },
+  "commands": [
+    {
+      "name": "jekyll",
+      "command": "jekyll build --source docs --destination /tmp/veil-website-preview/veil --baseurl /veil --strict_front_matter --trace",
+      "exitCode": 0,
+      "log": "/tmp/veil-website-jekyll.log",
+      "sha256": "e9665b57335b5fd73e20a4bbd31c0b4f08f4bd70fa42abcf10a0b39c3b17667f"
+    },
+    {
+      "name": "rendered-docs",
+      "command": "python3 tools/verify-rendered-documentation.py /tmp/veil-website-preview/veil /veil",
+      "exitCode": 0,
+      "log": "/tmp/veil-website-links.log",
+      "sha256": "09a38ccc9aef1fcbeb384b0bab522f9575825a23f5fe2944610f279e89f89596"
+    },
+    {
+      "name": "source-docs",
+      "command": "python3 tools/verify-documentation.py",
+      "exitCode": 0,
+      "log": "/tmp/veil-website-source-links.log",
+      "sha256": "2345486bcfb570d134301b96de4bbc62c590c6ca20f6f134aff87776e82f26d4"
+    },
+    {
+      "name": "core",
+      "command": "npm run check",
+      "exitCode": 0,
+      "log": "/tmp/veil-website-core-check.log",
+      "sha256": "018f1137935c7fd071afd9e7f840e1da3447624d2d3ec6282f3b6096c52f594a"
+    },
+    {
+      "name": "quality-website",
+      "command": "npm run quality -- --base 903efad9c7212f1f1137407cf2401973577a5287",
+      "exitCode": 0,
+      "log": "/tmp/veil-website-quality.log",
+      "sha256": "a1570fe32194deeb6c9575e32d2acabe8bb27efab0ab60189470bd4cced36b24"
+    },
+    {
+      "name": "quality-release",
+      "command": "npm run quality -- --base v0.3.1",
+      "exitCode": 1,
+      "log": "/tmp/veil-website-release-quality.log",
+      "sha256": "3e34db6e899f65bc38bba78ca08f7a01f20688f423ecd85d16b972cb672a7a56"
+    },
+    {
+      "name": "consumer-install",
+      "command": "npm install /tmp/veil-v040-linux-artifacts/veil-runtime-core-0.4.0.tgz --cache /tmp/veil-core-v040-npm-cache --prefer-offline",
+      "exitCode": 0,
+      "log": "/tmp/veil-website-consumer-install.log",
+      "sha256": "0e9915a84e21adb679e2676ad1af9fb02d711b7e47f78b11bdc982fea94260ab"
+    },
+    {
+      "name": "javascript-example",
+      "command": "node demo.mjs",
+      "exitCode": 0,
+      "log": "/tmp/veil-website-demo.log",
+      "sha256": "8f310aa4c77c7325b2f104a846cf0cebb8b339b276ca245a9c2fad6cd199c669"
+    },
+    {
+      "name": "typescript-examples",
+      "command": "/tmp/veil-core-v040/node_modules/.bin/tsc --project tsconfig.json && node dist/runtime.js",
+      "exitCode": 0,
+      "log": "/tmp/veil-website-typescript.log",
+      "sha256": "d3ada3e82a01b34c0e27293bcad118a4c9f65533f6c4125c1c505b1c9065ea44"
+    },
+    {
+      "name": "denial-example",
+      "command": "node deny-production.mjs",
+      "exitCode": 0,
+      "log": "/tmp/veil-website-denial-example.log",
+      "sha256": "d1a3bce8968342a250f66150a364c46e78287c5fb887f7236ecac005167899c3"
+    },
+    {
+      "name": "browser",
+      "command": "node /tmp/veil-website-review.cjs",
+      "exitCode": 0,
+      "log": "/tmp/veil-website-browser-review.log",
+      "sha256": "ceec4fefb84084f6d42858c5c74f59b514421ad0a09426f451f3868952d18daa"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "/tmp/veil-website-desktop.png",
+      "sha256": "b24080311924cd0206544ee63b8f9e5223b18ab12aaf288dd21f52d60f65069b"
+    },
+    {
+      "path": "/tmp/veil-website-desktop-full.png",
+      "sha256": "e7c7a9ab505c64fa19b9d84aef5a26d9141e17bbb59695ac473a8b7ccec712a7"
+    },
+    {
+      "path": "/tmp/veil-website-mobile.png",
+      "sha256": "8d86ae0ac2338537fe946ba03737b33a63c53885061220fc8fc77f9894ee5d03"
+    },
+    {
+      "path": "/tmp/veil-website-process.png",
+      "sha256": "4be3120d67a789e6e5dae1f585d0302ea5f7fcc9b459fc856716f41890668636"
+    },
+    {
+      "path": "/tmp/veil-website-developer.png",
+      "sha256": "be72e6f0b39c2b82bf68cdfcf083e44c2aa7eade993b1d6c2078b47388001905"
+    }
+  ],
+  "protectedChanges": {
+    "runtimeContracts": false,
+    "publicExports": false,
+    "packageManifestOrLock": false,
+    "qualityControls": false,
+    "deploymentWorkflow": false,
+    "previousQualificationRecords": false
+  },
+  "changedFiles": [
+    "docs/_data/navigation.yml",
+    "docs/_layouts/docs.html",
+    "docs/assets/docs.css",
+    "docs/contributing/releases.md",
+    "docs/contributing/website.md",
+    "docs/cookbook/deny-production-action.md",
+    "docs/cookbook/deterministic-planning.md",
+    "docs/developer.md",
+    "docs/getting-started/evaluate.md",
+    "docs/getting-started/first-runtime.md",
+    "docs/getting-started/five-minutes.md",
+    "docs/getting-started/installation.md",
+    "docs/getting-started/v0.4.0.md",
+    "docs/index.html",
+    "docs/release/website-evidence-2026-10-25.json",
+    "docs/release/website-readiness-2026-10-25.md"
+  ],
+  "deployed": false,
+  "npmPublished": false,
+  "merged": false,
+  "tagged": false
+}
