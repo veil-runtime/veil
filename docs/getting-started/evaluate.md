@@ -56,8 +56,7 @@ do not assume savings, certification or enterprise readiness from the examples.
 
 ## Understand the current release boundary
 
-Core v0.4.0 is a **Linux-qualified, unpublished candidate**. The current published
-package is v0.3.1. Windows and macOS are unqualified for v0.4.0. Local Ollama/Qwen
+Core v0.4.0 is **published on npm**. Linux is the qualified security platform. Windows and macOS are unqualified for v0.4.0. Local Ollama/Qwen
 planning is experimental and opt-in, with failed write-planning probes documented.
 It is not a reliable autonomous agent.
 
@@ -69,7 +68,7 @@ features.
 
 Core does not provide identity management, compliance certification, tenant
 isolation, general cancellation, retries, parallel plans or exactly-once effects.
-Read the [candidate notes](v0.4.0.html) and
+Read the [release notes](v0.4.0.html) and
 [trust boundaries](../architecture/trust-boundaries.html) with your technical owner.
 
 ## Continue with a technical evaluation

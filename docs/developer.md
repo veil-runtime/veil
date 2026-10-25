@@ -1,15 +1,17 @@
 ---
 title: Veil developer documentation
-description: Understand Veil, run the Linux-qualified Core candidate, then build capabilities and review authorization, architecture and the public API.
+description: Understand Veil, run the published Linux-qualified Core v0.4.0 release, then build capabilities and review authorization, architecture and the public API.
 ---
 # Veil developer documentation
 
 Veil is a governed, capability-driven execution runtime. It separates deciding what should happen from performing it. A human, application, deterministic program, or planner can produce an ExecutionPlan; Veil validates and executes that plan through registered capabilities.
 
-## v0.4.0 Core candidate
+## v0.4.0 Core release
 
-These docs target the **unpublished v0.4.0 Core candidate**. The latest verified
-published package is **v0.3.1**. Read [v0.4.0](getting-started/v0.4.0.html)
+These docs target **published Core v0.4.0**, available on
+[npm](https://www.npmjs.com/package/@veil-runtime/core/v/0.4.0) with a
+[GitHub Release](https://github.com/veil-runtime/veil/releases/tag/v0.4.0).
+Read [v0.4.0](getting-started/v0.4.0.html)
 for scope, compatibility and security limits. Core needs no model or UI;
 [local planning](guides/local-planning.html) is optional source-server infrastructure.
 UI, Emergence and autonomous repository-task applications are separate components.
@@ -21,7 +23,7 @@ Local Ollama/Qwen planning is experimental and opt-in.
 1. **What is Veil?** Read the [overview](getting-started/overview.html), or start
    with the [business evaluation guide](getting-started/evaluate.html).
 2. **Mental model.** Understand [the boundary between a request and permission](#the-mental-model).
-3. **Run in five minutes.** Install a reviewed candidate tarball and run
+3. **Run in five minutes.** Install `@veil-runtime/core@0.4.0` from npm and run
    [one complete example](getting-started/five-minutes.html), without a model.
 4. **Core concepts.** Learn [plans, capabilities and authorization](concepts/reasoning-and-execution.html).
 5. **Build.** [Create a capability](guides/build-a-capability.html), compose a module

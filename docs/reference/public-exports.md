@@ -4,7 +4,7 @@ title: Public exports
 # Public exports
 
 This page summarizes the root `src/index.ts` and sole package-root export for the
-v0.4.0 Core candidate (unchanged from v0.3.1), including capability introspection and structured admission
+published v0.4.0 Core release (unchanged from v0.3.1), including capability introspection and structured admission
 diagnostics.
 
 ## Runtime values
