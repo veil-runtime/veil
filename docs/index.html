@@ -1,7 +1,7 @@
 ---
 layout: null
 title: Veil — Governed execution for software and AI
-description: A safer way for software and AI to act on your systems. Veil validates requests, applies your authorization policy and records execution outcomes. Explore the Linux-qualified Core v0.4.0 candidate.
+description: A safer way for software and AI to act on your systems. Veil validates requests, applies your authorization policy and records execution outcomes. Explore the published Core v0.4.0 release, qualified on Linux.
 ---
 <!doctype html>
 <html lang="en">
@@ -11,12 +11,12 @@ description: A safer way for software and AI to act on your systems. Veil valida
   <meta name="theme-color" content="#08090c">
   <meta
     name="description"
-    content="A safer way for software and AI to act on your systems. Veil validates requests, applies your authorization policy and records execution outcomes. Explore the Linux-qualified Core v0.4.0 candidate."
+    content="A safer way for software and AI to act on your systems. Veil validates requests, applies your authorization policy and records execution outcomes. Explore the published Core v0.4.0 release, qualified on Linux."
   >
   <meta property="og:title" content="Veil — Governed execution for software and AI">
   <meta
     property="og:description"
-    content="A safer way for software and AI to act on your systems. Veil validates requests, applies your authorization policy and records execution outcomes. Explore the Linux-qualified Core v0.4.0 candidate."
+    content="A safer way for software and AI to act on your systems. Veil validates requests, applies your authorization policy and records execution outcomes. Explore the published Core v0.4.0 release, qualified on Linux."
   >
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://veil-runtime.github.io/veil/">
@@ -1410,7 +1410,7 @@ description: A safer way for software and AI to act on your systems. Veil valida
           <a class="button primary" href="{{ '/getting-started/evaluate.html' | relative_url }}">Evaluate Veil for your organisation</a>
           <a class="button" href="{{ '/getting-started/five-minutes.html' | relative_url }}">Run Core in five minutes</a>
         </div>
-        <p class="status-note"><a href="{{ '/getting-started/v0.4.0.html' | relative_url }}">Core v0.4.0: Linux-qualified candidate</a>, not yet published. Latest published: v0.3.1.</p>
+        <p class="status-note"><a href="{{ '/getting-started/v0.4.0.html' | relative_url }}">Core v0.4.0: published, Linux-qualified</a>. Available on <a href="https://www.npmjs.com/package/@veil-runtime/core/v/0.4.0">npm</a>; read the <a href="https://github.com/veil-runtime/veil/releases/tag/v0.4.0">GitHub Release</a>.</p>
       </div>
       <aside class="story-copy hero-example" aria-labelledby="example-title">
         <p class="kicker">An example integration</p>
@@ -1512,14 +1512,14 @@ description: A safer way for software and AI to act on your systems. Veil valida
         </div>
         <div class="story">
           <article class="story-copy"><h3>Evaluate the fit</h3><p>Choose a process, name the system owner, identify the permissions and decide what successful execution should show. Begin with a read operation and a denied-action case.</p><a class="button" href="{{ '/getting-started/evaluate.html' | relative_url }}">Read the business evaluation guide</a></article>
-          <article class="story-copy" id="quickstart"><h3 id="build">Try Core without a model</h3><p>On qualified Linux with Node 24, install the verified candidate tarball and run a complete JavaScript example. No AI account, UI or remote system is needed for the example.</p><a class="button primary" href="{{ '/getting-started/five-minutes.html' | relative_url }}">Follow the five-minute Core guide</a></article>
+          <article class="story-copy" id="quickstart"><h3 id="build">Try Core without a model</h3><p>On qualified Linux with Node 24, install Core v0.4.0 from npm and run a complete JavaScript example. No AI account, UI or remote system is needed for the example.</p><a class="button primary" href="{{ '/getting-started/five-minutes.html' | relative_url }}">Follow the five-minute Core guide</a></article>
         </div>
         <div class="terminal install-preview" id="install">
-          <div class="terminal-bar">Published package — v0.3.1, not the v0.4.0 candidate</div>
-          <pre tabindex="0" role="region" aria-label="Install the published package"><code>npm install @veil-runtime/core@0.3.1</code></pre>
+          <div class="terminal-bar">Published package — Core v0.4.0</div>
+          <pre tabindex="0" role="region" aria-label="Install the published package"><code>npm install @veil-runtime/core@0.4.0</code></pre>
         </div>
-        <p class="section-note" id="starter">Prefer an application demo? The <a href="https://github.com/veil-runtime/veil/tree/903efad9c7212f1f1137407cf2401973577a5287/examples/veil-starter">Starter source application</a> is maintained separately from the Core npm artifact.</p>
-        <p class="section-note">v0.4.0 is not on npm. To evaluate its qualified behavior, use the <a href="{{ '/getting-started/installation.html' | relative_url }}">candidate build and tarball installation instructions</a>. Then follow <a href="{{ '/developer.html' | relative_url }}">the developer learning path</a>.</p>
+        <p class="section-note" id="starter">Prefer an application demo? The <a href="https://github.com/veil-runtime/veil/tree/v0.4.0/examples/veil-starter">Starter source application</a> is maintained separately from the Core npm artifact.</p>
+        <p class="section-note">Install the published release using the <a href="{{ '/getting-started/installation.html' | relative_url }}">installation instructions</a>. Then follow <a href="{{ '/developer.html' | relative_url }}">the developer learning path</a>.</p>
       </div>
     </section>
 
@@ -1543,17 +1543,17 @@ description: A safer way for software and AI to act on your systems. Veil valida
     <section id="today" aria-labelledby="status-title">
       <div class="wrap">
         <div class="section-head">
-          <div><p class="kicker">Current status and roadmap</p><h2 id="status-title">A published Core. A qualified candidate. An experimental ecosystem.</h2></div>
-          <p>Version and platform claims matter. v0.4.0 is prepared for Linux publication, with functional, package and filesystem security verification. Publication remains a separate action.</p>
+          <div><p class="kicker">Current status and roadmap</p><h2 id="status-title">A published Core. An experimental ecosystem.</h2></div>
+          <p>Version and platform claims matter. Core v0.4.0 is published on npm, with functional, package and filesystem security verification. Linux is the qualified security platform.</p>
         </div>
         <div class="roadmap">
-          <article class="phase"><small>Published</small><h3>Core v0.3.1</h3><p>The current npm release. Install it by its explicit version; it does not contain the v0.4.0 candidate changes.</p></article>
-          <article class="phase current"><small>Linux-qualified candidate</small><h3>Core v0.4.0</h3><p>328 Core tests pass. Linux filesystem regressions cover bounded reads, link rejection and controlled path races. Windows and macOS are unqualified.</p><a href="{{ '/getting-started/v0.4.0.html' | relative_url }}">Candidate notes and migration</a></article>
+          <article class="phase"><small>Previous release</small><h3>Core v0.3.1</h3><p>The previous Core release. For current installation and security qualification, use Core v0.4.0.</p></article>
+          <article class="phase current"><small>Published / Linux-qualified</small><h3>Core v0.4.0</h3><p>328 Core tests pass. Linux filesystem regressions cover bounded reads, link rejection and controlled path races. Windows and macOS are unqualified.</p><a href="{{ '/getting-started/v0.4.0.html' | relative_url }}">Release notes and migration</a></article>
           <article class="phase"><small>Experimental / not Core releases</small><h3>Local planning and tools</h3><p>Ollama/Qwen planning is opt-in and can select incorrect work or time out. Sandbox, repository-task and browser capabilities are not published Core features.</p><a href="{{ '/guides/local-planning.html' | relative_url }}">Read local-planning limits</a></article>
           <article class="phase"><small>Future qualification</small><h3>Independent releases</h3><p>Qualify separate capability packages and additional platforms. UI and Emergence continue independently. These directions are not delivery promises.</p></article>
         </div>
         <p class="section-note" id="v030">Existing V1/V2 execution contracts are unchanged. <a href="{{ '/guides/migrate-to-execution-plan-v2.html' | relative_url }}">Review the opt-in V2 migration guide</a>.</p>
-        <p class="section-note">The filesystem protections belong to the source-server reader, not an exported npm file capability or a general sandbox. Core does not provide general cancellation, retries, parallel plans, tenant isolation or exactly-once side effects. <a href="{{ '/getting-started/v0.4.0.html#limits-and-verification' | relative_url }}">Review the candidate's scope and limits</a>.</p>
+        <p class="section-note">The filesystem protections belong to the source-server reader, not an exported npm file capability or a general sandbox. Core does not provide general cancellation, retries, parallel plans, tenant isolation or exactly-once side effects. <a href="{{ '/getting-started/v0.4.0.html#limits-and-verification' | relative_url }}">Review the release's scope and limits</a>.</p>
       </div>
     </section>
   </main>

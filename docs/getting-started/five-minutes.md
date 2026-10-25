@@ -1,6 +1,6 @@
 ---
 title: Run Core in five minutes
-description: Install the Linux-qualified Core v0.4.0 candidate tarball and run a complete deterministic JavaScript example without an AI model.
+description: Install the Linux-qualified Core v0.4.0 release from npm and run a complete deterministic JavaScript example without an AI model.
 ---
 # Run Core in five minutes
 
@@ -9,31 +9,20 @@ It needs no AI account, model, UI or external service. Use **Linux and Node 24 o
 newer**; v0.4.0 was qualified on Linux x86_64/WSL2 with Node 24. Windows and macOS
 are unqualified.
 
-## 1. Obtain the candidate tarball
+## 1. Check the published release
 
-Core v0.4.0 is **not published on npm**. Obtain the verified
-`veil-runtime-core-0.4.0.tgz` from your release reviewer, or build it from the
-reviewed `integration/v0.4.0` candidate as described in
-[installation](installation.html#install-the-release-candidate-locally).
-That branch includes the fresh-checkout initialization repair. After confirmed
-publication and final release-tag creation, use the approved release tag instead.
-Check the tarball's SHA-256 against the evidence for that exact candidate.
-Building from source also requires the development/native build environment and
-can take longer than five minutes.
-
-The latest published package is v0.3.1. `npm install @veil-runtime/core@0.3.1`
-installs that release; it does not install v0.4.0. Do not request
-`@veil-runtime/core@0.4.0` from the registry until publication is confirmed.
+Use [Core v0.4.0 on npm](https://www.npmjs.com/package/@veil-runtime/core/v/0.4.0).
+The [GitHub Release](https://github.com/veil-runtime/veil/releases/tag/v0.4.0)
+records the published scope. See [installation](installation.html) for prerequisites
+and optional source builds from the permanent `v0.4.0` tag.
 
 ## 2. Install in a small consumer project
-
-Replace `/absolute/path/to/` with the location of the reviewed tarball:
 
 ```bash
 mkdir veil-core-demo
 cd veil-core-demo
 npm init -y
-npm install /absolute/path/to/veil-runtime-core-0.4.0.tgz
+npm install @veil-runtime/core@0.4.0
 npm ls @veil-runtime/core --depth=0
 ```
 

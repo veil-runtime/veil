@@ -3,26 +3,28 @@ title: Installation
 ---
 # Installation
 
-`@veil-runtime/core` requires Node.js **24 or newer**. **v0.3.1 is the latest
-verified published package.** These docs target the unpublished
-[v0.4.0 Core candidate](v0.4.0.html). A registry install does not install the candidate.
+`@veil-runtime/core` requires Node.js **24 or newer**. **v0.4.0 is published**
+and is the npm `latest` release. Install the explicit version:
 
 ```bash
-npm install @veil-runtime/core
+npm install @veil-runtime/core@0.4.0
+npm ls @veil-runtime/core --depth=0
 ```
+
+See the [npm package](https://www.npmjs.com/package/@veil-runtime/core/v/0.4.0),
+[GitHub Release](https://github.com/veil-runtime/veil/releases/tag/v0.4.0) and
+[release notes](v0.4.0.html).
 
 The v0.4.0 execution target is **Linux**, qualified on x86_64/WSL2 with Node 24.
 **Windows and macOS are unqualified**; this release makes no native execution or
 filesystem security qualification claim for those platforms.
 
-## Install the release candidate locally
+## Build the published source locally
 
-Use the reviewed **`integration/v0.4.0` candidate branch**. It includes the
-fresh-checkout source-server database initialization repair; the original
-`release/core-v0.4.0` branch does not. From a fresh Linux checkout:
+For source-server development or a local build, use the permanent **`v0.4.0` tag**:
 
 ```bash
-git clone --branch integration/v0.4.0 https://github.com/veil-runtime/veil.git veil-core
+git clone --branch v0.4.0 https://github.com/veil-runtime/veil.git veil-core
 cd veil-core
 git rev-parse HEAD
 npm ci
@@ -30,10 +32,8 @@ npm run check
 npm pack
 ```
 
-Match the printed checkout revision to the approved PR head and its verification
-record. After publication and creation of the final approved release tag, use
-that tag in the clone command in place of the candidate branch. Do not assume a
-release tag exists merely because a package has been published.
+The tag resolves to `8cfd8002cf9a7b3db1d615e6c322165aee46c83a`, the merged
+release source. Source builds require development/native build tools.
 
 In a consumer project, install the generated tarball by its actual path:
 
@@ -47,10 +47,9 @@ formats `version: '1.0'` and `version: '2.0'` are independent. V1 remains the
 default; V2 requires explicit trusted-host configuration. No npm publication is
 implied by a local pack.
 
-The candidate's verification record is available in the repository's
-[integration release evidence](https://github.com/veil-runtime/veil/blob/integration/v0.4.0/docs/release/v0.4.0-integration-evidence.json).
-Verify the SHA-256 for the exact reviewed tarball rather than assuming any file
-named `0.4.0.tgz` has the same contents.
+The historical qualification record is preserved in the tagged
+[integration release evidence](https://github.com/veil-runtime/veil/blob/v0.4.0/docs/release/v0.4.0-integration-evidence.json).
+A local pack is a source build; use npm for the published artifact.
 
 Continue with [run Core in five minutes](five-minutes.html) for a complete example.
 
