@@ -6,9 +6,11 @@
   <meta name="theme-color" content="#08090c">
   <title>{{ page.title | default: site.title }} | {{ site.title }}</title>
   <meta name="description" content="{{ page.description | default: site.description | default: 'Veil developer documentation' | escape }}">
+  <link rel="canonical" href="{{ page.url | absolute_url }}">
   <link rel="stylesheet" href="{{ '/assets/docs.css' | relative_url }}">
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
   {% assign current = nil %}
   {% assign current_section = nil %}
   {% assign previous = nil %}
@@ -29,10 +31,11 @@
     {% endfor %}
   {% endfor %}
   <header class="site-header">
-    <nav class="site-nav">
+    <nav class="site-nav" aria-label="Main navigation">
       <a class="brand" href="{{ '/' | relative_url }}"><span class="mark"></span>Veil</a>
       <div class="nav-links">
-        <a href="{{ '/developer.html' | relative_url }}">Developer Docs</a>
+        <a href="{{ '/getting-started/evaluate.html' | relative_url }}">Evaluate</a>
+        <a href="{{ '/developer.html' | relative_url }}">Developer docs</a>
         <a href="https://github.com/veil-runtime/veil">GitHub</a>
       </div>
     </nav>
@@ -49,7 +52,7 @@
         {% include docs-navigation.html %}
       </nav>
     </details>
-    <article class="docs-content">
+    <article class="docs-content" id="main-content" tabindex="-1">
       {% if current %}
         <nav class="breadcrumbs" aria-label="Breadcrumb">
           <a href="{{ '/developer.html' | relative_url }}">Docs</a>
@@ -60,10 +63,10 @@
         </nav>
       {% endif %}
       <p class="version-note">
-        Release candidate: <strong>v0.4.0</strong>. These docs cover
+        Linux-qualified, unpublished candidate: <strong>v0.4.0</strong>. These docs cover
         <a href="{{ '/getting-started/v0.4.0.html' | relative_url }}">v0.4.0 scope, compatibility and limits</a>.
       </p>
-      {{ content }}
+      {{ content | replace: '<pre', '<pre tabindex="0" role="region" aria-label="Code or text example"' }}
       {% if current %}
         <nav class="page-navigation" aria-label="Document pagination">
           {% if previous %}

@@ -1,7 +1,7 @@
 ---
 layout: null
-title: Veil — Governed execution runtime
-description: Veil is a capability-driven runtime between reasoning and infrastructure. Submit explicit plans, validate inputs, authorize operations, and observe results.
+title: Veil — Governed execution for software and AI
+description: A safer way for software and AI to act on your systems. Veil validates requests, applies your authorization policy and records execution outcomes. Explore the Linux-qualified Core v0.4.0 candidate.
 ---
 <!doctype html>
 <html lang="en">
@@ -11,17 +11,17 @@ description: Veil is a capability-driven runtime between reasoning and infrastru
   <meta name="theme-color" content="#08090c">
   <meta
     name="description"
-    content="Veil is a capability-driven runtime between reasoning and infrastructure. Submit explicit plans, validate inputs, authorize operations, and observe results."
+    content="A safer way for software and AI to act on your systems. Veil validates requests, applies your authorization policy and records execution outcomes. Explore the Linux-qualified Core v0.4.0 candidate."
   >
-  <meta property="og:title" content="Veil — Governed execution runtime">
+  <meta property="og:title" content="Veil — Governed execution for software and AI">
   <meta
     property="og:description"
-    content="Veil is a capability-driven runtime between reasoning and infrastructure. Submit explicit plans, validate inputs, authorize operations, and observe results."
+    content="A safer way for software and AI to act on your systems. Veil validates requests, applies your authorization policy and records execution outcomes. Explore the Linux-qualified Core v0.4.0 candidate."
   >
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://veil-runtime.github.io/veil/">
   <link rel="canonical" href="https://veil-runtime.github.io/veil/">
-  <title>Veil — Governed execution runtime</title>
+  <title>Veil — Governed execution for software and AI</title>
 
   <style>
     :root{
@@ -1337,1802 +1337,230 @@ description: Veil is a capability-driven runtime between reasoning and infrastru
         grid-template-columns:1fr;
       }
     }
+
+    /* Business-first content uses the existing palette, cards and typography. */
+    .skip-link{position:absolute;left:20px;top:-100px;background:var(--ink);color:var(--bg);padding:12px 18px;z-index:10}
+    .skip-link:focus{top:12px}
+    .business-page .nav{height:auto;min-height:72px;gap:20px;padding-block:16px;flex-wrap:wrap}
+    .business-page .navlinks{flex-wrap:wrap;gap:16px}
+    .business-page .navlinks a:not(.pill){display:inline}
+    .business-page .hero{grid-template-columns:1.2fr .8fr;gap:40px;min-height:0;padding:75px 0 85px;align-items:start}
+    .business-page .hero h1{font-size:clamp(44px,5.2vw,74px);line-height:1.03;letter-spacing:-.055em;margin:22px 0}
+    .hero-context{color:#c8c8cf;font-size:18px}
+    .hero-example{padding:30px;margin-top:24px}
+    .hero-example h2{font-size:28px;line-height:1.2;letter-spacing:-.03em;margin:20px 0}
+    .example-checks{padding-left:20px;color:#c8c8cf}
+    .example-checks li{margin:16px 0}
+    .status-note,.section-note{color:#b5b6bf;font-size:15px;line-height:1.7}
+    .status-note{margin-top:24px}
+    .section-note{margin-top:30px;max-width:950px}
+    .business-page section{padding:85px 0}
+    .business-page .section-head{margin-bottom:36px;grid-template-columns:1fr 1fr;gap:60px}
+    .business-page .section-head h2{font-size:clamp(32px,3.7vw,50px);line-height:1.12;letter-spacing:-.04em}
+    .business-page .section-head p{font-size:18px}
+    .business-page .card{min-height:0;padding:28px}
+    .business-page .card h3{font-size:23px;line-height:1.25;margin:20px 0 14px}
+    .business-page .card p{color:#b5b6bf}
+    .business-page .story-copy{padding:32px}
+    .business-page .story-copy h3{font-size:28px;line-height:1.2}
+    .business-page .story-copy .button{display:inline-block;margin-top:12px}
+    .value-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .execution-flow{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;list-style:none;padding:0;counter-reset:flow}
+    .execution-flow li{border-top:2px solid var(--violet);padding:18px 10px 0 0;counter-increment:flow}
+    .execution-flow li:before{content:"0" counter(flow);font:12px ui-monospace,monospace;color:var(--violet)}
+    .execution-flow h3{font-size:20px;margin:14px 0}
+    .execution-flow p{color:#b5b6bf;font-size:15px}
+    .technical-details{margin-top:30px}
+    .technical-copy{padding:0 24px 20px;color:#c8c8cf;overflow-wrap:anywhere}
+    .install-preview{margin-top:30px}
+    .install-preview pre{margin:0;padding:20px;overflow:auto}
+    .business-page .terminal-bar,.business-page .footer{color:#b5b6bf}
+    .business-page .phase h3{font-size:22px;line-height:1.25;margin:20px 0 14px}
+    .business-page .phase p{font-size:15px;color:#b5b6bf}
+    .business-page .phase a{font-size:14px}
+    .business-page main a:not(.button),.business-page footer a{text-underline-offset:4px}
+    .business-page main a:not(.button):hover,.business-page footer a:hover{color:var(--cyan)}
+    .business-page h2,.business-page section,[id]{scroll-margin-top:24px}
+    @media(max-width:980px){.business-page .hero{grid-template-columns:1fr}.hero-example{margin-top:0}.execution-flow{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:800px){.business-page .section-head{grid-template-columns:1fr;gap:10px}.value-grid{grid-template-columns:1fr 1fr}.business-page section{padding:60px 0}.business-page .hero{padding:45px 0 60px}.business-page .navlinks{gap:12px}}
+    @media(max-width:520px){.value-grid,.execution-flow{grid-template-columns:1fr}.business-page .story-copy{padding:24px}.business-page .navlinks a{font-size:13px}.business-page .actions .button{width:100%;text-align:center}.business-page .hero h1{font-size:44px}.business-page .hero{gap:20px}.business-page .navlinks{gap:14px}.business-page .card{padding:24px}}
   </style>
 </head>
 
-<body>
-  <nav class="nav wrap">
-    <a class="brand" href="#top">
-      <span class="mark"></span>
-      Veil
-    </a>
-
+<body class="business-page">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <nav class="nav wrap" aria-label="Main navigation">
+    <a class="brand" href="{{ '/' | relative_url }}" aria-label="Veil home"><span class="mark" aria-hidden="true"></span>Veil</a>
     <div class="navlinks">
-      <a class="pill" href="{{ '/developer.html' | relative_url }}">Developer Docs</a>
-      <a href="#why">Why Veil</a>
+      <a href="#use-cases">Applications</a>
       <a href="#architecture">Architecture</a>
-      <a href="#starter">Starter</a>
-      <a href="#install">Install</a>
-      <a
-        class="pill"
-        href="https://github.com/veil-runtime/veil"
-      >GitHub</a>
+      <a href="#today">Status</a>
+      <a class="pill" href="{{ '/developer.html' | relative_url }}">Developer docs</a>
     </div>
   </nav>
 
-  <main id="top">
-
-    <!-- HERO -->
-
-    <header class="hero wrap">
+  <main id="main-content" tabindex="-1">
+    <header class="hero wrap" id="top">
       <div>
-        <div class="eyebrow">A capability-driven execution runtime</div>
-
-        <h1>
-          Reasoning proposes.<br>
-          <span>Veil governs execution.</span>
-        </h1>
-
-        <p class="lede">
-          Veil sits between reasoning and infrastructure. Your software, planners,
-          or human workflows produce an ExecutionPlan. Veil validates the plan,
-          authorizes each operation, and executes registered capabilities.
-        </p>
-
-        <p class="api-note">
-          Reasoning / software / humans → ExecutionPlan → Veil → capabilities / providers
-        </p>
-
+        <p class="eyebrow">Governed execution, with or without AI</p>
+        <h1>A safer way for software and AI to act on your systems.</h1>
+        <p class="lede">Decide which operations your application makes available, check requests against your rules, and see what happened.</p>
+        <p class="hero-context">Veil is a reusable execution boundary for existing software, human workflows and AI-assisted tools. Your application supplies the operations and policy; Veil governs their execution.</p>
         <div class="actions">
-          <a class="button primary" href="#install">
-            Install Veil Core
-          </a>
-
-          <button class="button" id="heroRun">
-            Run the simulation
-          </button>
+          <a class="button primary" href="{{ '/getting-started/evaluate.html' | relative_url }}">Evaluate Veil for your organisation</a>
+          <a class="button" href="{{ '/getting-started/five-minutes.html' | relative_url }}">Run Core in five minutes</a>
         </div>
+        <p class="status-note"><a href="{{ '/getting-started/v0.4.0.html' | relative_url }}">Core v0.4.0: Linux-qualified candidate</a>, not yet published. Latest published: v0.3.1.</p>
       </div>
-
-      <div
-        class="sim-shell"
-        id="simulation"
-        aria-label="Interactive Veil execution simulation"
-      >
-        <div class="sim-grid">
-
-          <aside class="sim-controls">
-            <span class="control-label">Scenario</span>
-
-            <div class="scenario-list">
-              <button
-                class="scenario active"
-                data-scenario="summary"
-              >
-                Summarize a local document
-              </button>
-
-              <button
-                class="scenario"
-                data-scenario="github"
-              >
-                Create a GitHub issue
-              </button>
-
-              <button
-                class="scenario"
-                data-scenario="delete"
-              >
-                Delete after processing
-              </button>
-            </div>
-
-            <span class="control-label">Capabilities</span>
-
-            <div class="toggle-list">
-              <label class="toggle-row">
-                <span>File access</span>
-                <input
-                  type="checkbox"
-                  id="fileEnabled"
-                  checked
-                >
-              </label>
-
-              <label class="toggle-row">
-                <span>GitHub</span>
-                <input
-                  type="checkbox"
-                  id="githubEnabled"
-                  checked
-                >
-              </label>
-
-              <label class="toggle-row">
-                <span>Delete</span>
-                <input
-                  type="checkbox"
-                  id="deleteEnabled"
-                >
-              </label>
-            </div>
-
-            <span class="control-label">Execution control</span>
-
-            <div class="toggle-list">
-              <label class="toggle-row">
-                <span>Ask before writes / deletes</span>
-                <input
-                  type="checkbox"
-                  id="approvalRequired"
-                  checked
-                >
-              </label>
-            </div>
-
-            <p class="sim-note">
-              Illustrative browser simulation; no runtime or infrastructure calls.
-              Human approval represents an application-owned authorizer.
-              Veil’s default policy allows reads and denies writes and destructive work.
-            </p>
-          </aside>
-
-          <div class="sim-stage">
-
-            <div class="boundary-label">
-              Execution boundary
-            </div>
-
-            <div class="packet">
-
-              <div class="packet-head">
-                <span class="packet-state">
-                  <i class="dot ready" id="stateDot"></i>
-                  <span id="packetState">PLAN READY</span>
-                </span>
-
-                <span>EXECUTION 0142</span>
-              </div>
-
-              <div
-                class="request"
-                id="requestText"
-              >
-                Summarize the local document.
-              </div>
-
-              <div class="plan-preview">
-                <div class="plan-title">
-                  Proposed ExecutionPlan
-                </div>
-
-                <div id="planSteps"></div>
-              </div>
-
-              <div
-                class="execution-log"
-                id="executionLog"
-                aria-live="polite"
-              ></div>
-
-              <div
-                class="approval-panel"
-                id="approvalPanel"
-              >
-                <div class="approval-copy">
-                  <strong>Approval required</strong>
-                  <span id="approvalText">
-                    An external write is waiting for approval.
-                  </span>
-                </div>
-
-                <div class="approval-actions">
-                  <button
-                    class="approve"
-                    id="approveButton"
-                  >
-                    Approve
-                  </button>
-
-                  <button
-                    class="reject"
-                    id="rejectButton"
-                  >
-                    Reject
-                  </button>
-                </div>
-              </div>
-
-              <button
-                class="run"
-                id="run"
-              >
-                Execute governed plan
-              </button>
-
-              <div
-                class="receipt"
-                id="receipt"
-              ></div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <aside class="story-copy hero-example" aria-labelledby="example-title">
+        <p class="kicker">An example integration</p>
+        <h2 id="example-title">A request is a starting point. Permission comes next.</h2>
+        <p>A service assistant proposes updating a customer record. Your application decides which record, fields and caller are permitted before the operation runs.</p>
+        <ul class="example-checks">
+          <li><strong>Check the request.</strong> Is the operation registered, and is its declared input valid?</li>
+          <li><strong>Apply your policy.</strong> Does your application allow this caller to make this change?</li>
+          <li><strong>Inspect the outcome.</strong> See whether the operation completed, failed or was denied.</li>
+        </ul>
+        <p class="status-note">Illustrative application pattern, not a deployed customer service or a built-in customer-record integration.</p>
+      </aside>
     </header>
 
-    <!-- WHY -->
-
-    <section id="why">
+    <section id="why" aria-labelledby="problem-title">
       <div class="wrap">
-
-        <div class="section-head reveal">
-          <div>
-            <div class="kicker">The missing layer</div>
-            <h2>Reasoning is not execution.</h2>
-          </div>
-
-          <p>
-            Reading files. Calling APIs. Using browsers. Running commands.
-            Applying execution controls. Recording outcomes.
-            Every system that moves from deciding to doing eventually has
-            to solve the same engineering problem.
-          </p>
-        </div>
-
-        <div class="triad">
-
-          <article class="card reveal">
-            <span class="number">01 / RESOLVE</span>
-
-            <h3>Can this be done?</h3>
-
-            <p>
-              Veil receives the plan, resolves the requested capabilities,
-              and makes unavailable operations explicit.
-            </p>
-          </article>
-
-          <article class="card reveal">
-            <span class="number">02 / GOVERN</span>
-
-            <h3>May it proceed?</h3>
-
-            <p>
-              The configured authorizer allows or denies each operation using
-              resolved input and caller context. Human review, when needed,
-              belongs to the application.
-            </p>
-          </article>
-
-          <article class="card reveal">
-            <span class="number">03 / EXECUTE</span>
-
-            <h3>Make it real.</h3>
-
-            <p>
-              Resolved capabilities perform the work once execution
-              requirements are satisfied, while Veil records the lifecycle
-              and result.
-            </p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- INSTALL -->
-
-    <section id="install">
-      <div class="wrap">
-
-        <div class="section-head reveal">
-          <div>
-            <div class="kicker">Public package</div>
-            <h2>Veil Core is available today.</h2>
-          </div>
-
-          <p>
-            Install <code>@veil-runtime/core</code> on Node.js 24 or newer to define
-            capabilities and execute explicit plans. The latest published version
-            is <strong>v0.3.1</strong>. These docs target the <strong>v0.4.0 release candidate</strong>.
-          </p>
-        </div>
-
-        <div class="terminal reveal">
-          <div class="terminal-bar">npm</div>
-          <div class="terminal-body">
-            <div class="log">
-              <span class="dim">$</span>
-              <span>npm install @veil-runtime/core</span>
-            </div>
-            <div class="result">
-              The published package includes contextual execution authorization and the
-              public inbound MCP adapter while preserving the same governed
-              ExecutionPlan → OperatorRuntime → Capability path.
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- CONSTANT -->
-
-    <section class="constant">
-      <div class="wrap">
-
-        <div class="kicker reveal">
-          Everything around it can change
-        </div>
-
-        <p class="quote reveal">
-          The reasoning system can change.
-          The infrastructure can change.
-          The capabilities can grow.
-          <span>The execution model stays the same.</span>
-        </p>
-
-      </div>
-
-      <div
-        class="constant-track"
-        aria-hidden="true"
-      >
-        <div class="constant-item">
-          <strong>Local model → Filesystem</strong>
-          <span>Executed through Veil</span>
-        </div>
-
-        <div class="constant-item">
-          <strong>Hosted AI → APIs</strong>
-          <span>Executed through Veil</span>
-        </div>
-
-        <div class="constant-item">
-          <strong>Application → Database</strong>
-          <span>Executed through Veil</span>
-        </div>
-
-        <div class="constant-item">
-          <strong>Human → Infrastructure</strong>
-          <span>Executed through Veil</span>
-        </div>
-
-        <div class="constant-item">
-          <strong>Local model → Filesystem</strong>
-          <span>Executed through Veil</span>
-        </div>
-
-        <div class="constant-item">
-          <strong>Hosted AI → APIs</strong>
-          <span>Executed through Veil</span>
-        </div>
-
-        <div class="constant-item">
-          <strong>Application → Database</strong>
-          <span>Executed through Veil</span>
-        </div>
-
-        <div class="constant-item">
-          <strong>Human → Infrastructure</strong>
-          <span>Executed through Veil</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- ARCHITECTURE -->
-
-    <section id="architecture">
-      <div class="wrap">
-
-        <div class="section-head reveal">
-          <div>
-            <div class="kicker">Architecture</div>
-            <h2>Proposal and execution remain separate.</h2>
-          </div>
-
-          <p>
-            Software, humans, and planners decide what should happen.
-            Veil validates their declarative plan and capability contracts,
-            resolves prior results, authorizes each step, and records outcomes.
-            Capabilities use providers to interact with infrastructure.
-          </p>
-        </div>
-
-        <div class="architecture-shell reveal">
-
-          <div class="architecture-top">
-
-            <div class="arch-zone-label">
-              Reasoning / software / humans
-            </div>
-
-            <div class="arch-flow">
-              <button
-                class="arch-node"
-                data-node="intent"
-              >
-                Intent
-              </button>
-
-              <span class="arch-arrow">→</span>
-
-              <button
-                class="arch-node"
-                data-node="planner"
-              >
-                Application / planner
-              </button>
-
-              <span class="arch-arrow">→</span>
-
-              <button
-                class="arch-node active"
-                data-node="plan"
-              >
-                ExecutionPlan
-              </button>
-            </div>
-
-            <div class="arch-boundary">
-              <span>Execution boundary</span>
-            </div>
-
-            <div class="arch-zone-label">
-              Governed execution · capability resolution · lifecycle events
-            </div>
-
-            <div class="arch-flow">
-              <button
-                class="arch-node"
-                data-node="runtime"
-              >
-                OperatorRuntime
-              </button>
-
-              <span class="arch-arrow">→</span>
-
-              <button
-                class="arch-node"
-                data-node="governance"
-              >
-                Validation + authorization
-              </button>
-
-              <span class="arch-arrow">→</span>
-
-              <button
-                class="arch-node"
-                data-node="capability"
-              >
-                Capability
-              </button>
-
-              <span class="arch-arrow">→</span>
-
-              <button
-                class="arch-node"
-                data-node="provider"
-              >
-                Providers / infrastructure
-              </button>
-            </div>
-          </div>
-
-          <div
-            class="architecture-detail"
-            id="architectureDetail"
-          >
-            <strong>ExecutionPlan</strong>
-
-            <p>
-              A structured proposal describing the operations that should be
-              executed. The plan expresses intent in executable form, but does
-              not itself perform the work.
-            </p>
-          </div>
-        </div>
-
-        <p class="api-note reveal">
-          Steps run sequentially. Earlier results can feed later inputs through
-          <a href="{{ '/concepts/result-references.html' | relative_url }}">result references</a>.
-          Jobs retain outcomes and lifecycle events. Deterministic lookup and
-          ordering do not imply deterministic capability or provider results.
-        </p>
-
-        <div class="section-head reveal">
-          <div>
-            <div class="kicker">Capabilities</div>
-            <h2>Define what exists.</h2>
-          </div>
-
-          <p>
-            A capability is an operation explicitly made available for
-            execution. Register capabilities once, then reuse the same
-            execution machinery across AI, applications, automations,
-            and human-driven workflows. The examples below describe capability
-            shapes you can define; they are not bundled integrations in
-            <code>@veil-runtime/core</code>.
-          </p>
-        </div>
-
-        <div class="cap-grid">
-
-          <div class="cap">
-            <span>
-              <b>Files</b><br>
-              <code>filesystem.file.read</code>
-            </span>
-            <i></i>
-          </div>
-
-          <div class="cap">
-            <span>
-              <b>APIs</b><br>
-              <code>http.request</code>
-            </span>
-            <i></i>
-          </div>
-
-          <div class="cap">
-            <span>
-              <b>Browsers</b><br>
-              <code>browser.operation</code>
-            </span>
-            <i></i>
-          </div>
-
-          <div class="cap">
-            <span>
-              <b>Databases</b><br>
-              <code>database.query</code>
-            </span>
-            <i></i>
-          </div>
-
-          <div class="cap">
-            <span>
-              <b>Commands</b><br>
-              <code>shell.execution</code>
-            </span>
-            <i></i>
-          </div>
-
-          <div class="cap">
-            <span>
-              <b>Your systems</b><br>
-              <code>capability.custom</code>
-            </span>
-            <i></i>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- BUILD A CAPABILITY -->
-
-    <section id="build">
-      <div class="wrap">
-
-        <div class="section-head reveal">
-          <div>
-            <div class="kicker">Extend Veil</div>
-            <h2>Make anything a capability.</h2>
-          </div>
-
-          <p>
-            Veil does not need to understand every system you use.
-            Expose the operations you want to make executable, register them,
-            then submit plans through validation and authorization.
-          </p>
-        </div>
-
-        <div class="build-flow reveal">
-
-          <div class="build-step">
-            <span class="build-number">01</span>
-            <small>YOUR SYSTEM</small>
-            <strong>Existing operation</strong>
-            <code>restartService()</code>
-          </div>
-
-          <div class="build-arrow">→</div>
-
-          <div class="build-step active">
-            <span class="build-number">02</span>
-            <small>VEIL</small>
-            <strong>Capability</strong>
-            <code>service.restart</code>
-          </div>
-
-          <div class="build-arrow">→</div>
-
-          <div class="build-step">
-            <span class="build-number">03</span>
-            <small>REGISTER</small>
-            <strong>Available to plans</strong>
-            <code>runtime.use(module)</code>
-          </div>
-
-          <div class="build-arrow">→</div>
-
-          <div class="build-step">
-            <span class="build-number">04</span>
-            <small>EXECUTE</small>
-            <strong>OperatorRuntime</strong>
-            <code>Job</code>
-          </div>
-
-        </div>
-
-        <div class="capability-example reveal">
-
-          <div class="capability-copy">
-
-            <div class="kicker">
-              Your infrastructure stays yours
-            </div>
-
-            <h3>
-              Wrap the operation.<br>
-              Veil handles the execution boundary.
-            </h3>
-
-            <p>
-              A capability can sit in front of a function, API, database,
-              shell command, browser operation, SDK, internal service,
-              or MCP tool.
-            </p>
-
-            <p>
-              You do not move your infrastructure into Veil.
-              You decide which operations become available for controlled execution.
-            </p>
-
-          </div>
-
-          <div class="code-window">
-
-            <div class="code-bar">
-              capability.ts
-              <span>public API · v0.4.0 candidate</span>
-            </div>
-
-            <pre><code>import { createCapability } from "@veil-runtime/core";
-
-const restart = createCapability&lt;{ service: string }, void&gt;({
-  name: "service.restart",
-  version: "1.0.0",
-  description: "Restart an application service",
-  risk: "write",
-  inputSchema: {
-    service: { type: "string", required: true,
-      description: "Service name" }
-  },
-  async execute({ input }) {
-    await infrastructure.restart(input.service);
-  }
-});</code></pre>
-
-          </div>
-
-        </div>
-
-        <p class="api-note reveal">
-          <code>infrastructure</code> is your application’s provider. Register the
-          capability through <code>runtime.use(module)</code>, as shown below.
-          Writes require an application-configured
-          <a href="{{ '/guides/protect-write-actions.html' | relative_url }}">authorizer</a>;
-          the default policy denies them. The quickstart uses the public API shared by v0.3.1 and the v0.4.0 candidate.
-        </p>
-
-      </div>
-    </section>
-
-    <!-- ZERO TO EXECUTION -->
-
-    <section id="quickstart">
-      <div class="wrap">
-
-        <div class="section-head reveal">
-          <div>
-            <div class="kicker">Developer path</div>
-            <h2>From your code to controlled execution.</h2>
-          </div>
-
-          <p>
-            Veil is deliberately small at the integration boundary.
-            Define what may be executed, register it, provide an
-            <code>ExecutionPlan</code>, and let the runtime handle execution.
-          </p>
-        </div>
-
-        <div class="quickstart reveal">
-
-          <div class="quickstart-tabs">
-
-            <button class="quick-tab active" data-quick="define">
-              <span>01</span>
-              Define
-            </button>
-
-            <button class="quick-tab" data-quick="register">
-              <span>02</span>
-              Register
-            </button>
-
-            <button class="quick-tab" data-quick="plan">
-              <span>03</span>
-              Plan
-            </button>
-
-            <button class="quick-tab" data-quick="execute">
-              <span>04</span>
-              Execute
-            </button>
-
-          </div>
-
-          <div class="quick-code">
-
-            <div class="quick-header">
-              <span id="quickTitle">Define a capability</span>
-              <span>TypeScript</span>
-            </div>
-
-            <pre><code id="quickCode"></code></pre>
-
-          </div>
-
-          <div class="quick-explain">
-
-            <span class="control-label">
-              What happened?
-            </span>
-
-            <h3 id="quickExplainTitle">
-              Expose one controlled operation.
-            </h3>
-
-            <p id="quickExplainBody">
-              Your application still owns the implementation.
-              Veil only needs a capability contract around the operation
-              you want to make available for execution.
-            </p>
-
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-
-    <!-- STARTER -->
-
-    <section id="starter">
-      <div class="wrap">
-
-        <div class="section-head reveal">
-          <div>
-            <div class="kicker">Veil Starter</div>
-            <h2>Run the demo. Learn the boundary. Replace it with your own.</h2>
-          </div>
-
-          <p>
-            Clone the repository and run the interactive Starter locally.
-            Experience mode shows the outcome; Learn mode reveals the real
-            plan, job, events, authorization decisions, and MCP translation.
-          </p>
-        </div>
-
-        <div class="details reveal">
-          <details open>
-            <summary>Clone and build</summary>
-
-            <div class="inside">
-              <span><code>git clone https://github.com/veil-runtime/veil.git</code></span>
-              <span><code>cd veil</code></span>
-              <span><code>npm install</code></span>
-              <span><code>npm run build</code></span>
-            </div>
-          </details>
-
-          <details>
-            <summary>Run the Starter</summary>
-
-            <div class="inside">
-              <span>Install dependencies in <code>examples/veil-starter</code>.</span>
-              <span>Start the trusted application server.</span>
-              <span>Start the browser client in a second terminal.</span>
-              <span>Open the local Vite URL.</span>
-            </div>
-          </details>
-
-          <details>
-            <summary>Learn and extend</summary>
-
-            <div class="inside">
-              <span>Lessons 01–07 explain capabilities, plans, governance, and MCP.</span>
-              <span>Lesson 08 turns the demonstration into an application starting point.</span>
-              <span>Replace a demo capability with one useful operation from your system.</span>
-              <span>Keep execution on the same governed runtime path.</span>
-            </div>
-          </details>
-        </div>
-
-        <div class="actions reveal">
-          <a
-            class="button primary"
-            href="https://github.com/veil-runtime/veil/tree/main/examples/veil-starter"
-          >Open the Starter guide</a>
-
-          <a
-            class="button"
-            href="https://github.com/veil-runtime/veil"
-          >Clone or fork Veil</a>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- AI IS OPTIONAL -->
-
-    <section>
-      <div class="wrap">
-
-        <div class="section-head reveal">
-          <div>
-            <div class="kicker">Bring your own intelligence</div>
-            <h2>AI is optional.</h2>
-          </div>
-
-          <p>
-            Veil executes plans. It does not require a particular model,
-            provider, or even an AI planner. Anything capable of producing
-            an ExecutionPlan can use the same execution runtime.
-          </p>
-        </div>
-
-        <div class="sources reveal">
-
-          <div class="source-card">
-            <small>HOSTED AI</small>
-            <strong>Your hosted model</strong>
-            <span>↓ Planner ↓ ExecutionPlan</span>
-          </div>
-
-          <div class="source-card">
-            <small>LOCAL AI</small>
-            <strong>Your local model</strong>
-            <span>↓ Planner ↓ ExecutionPlan</span>
-          </div>
-
-          <div class="source-card">
-            <small>NO AI</small>
-            <strong>Your application</strong>
-            <span>↓ ExecutionPlan</span>
-          </div>
-
-          <div class="source-card">
-            <small>EXTERNAL SYSTEM</small>
-            <strong>Automation / human / service</strong>
-            <span>↓ ExecutionPlan</span>
-          </div>
-
-        </div>
-
-        <div class="source-runtime reveal">
-          <span>All roads lead to the same boundary</span>
-          <strong>ExecutionPlan → OperatorRuntime → Capability</strong>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- INTEROPERABILITY -->
-
-    <section>
-      <div class="wrap">
-
-        <p class="quote reveal">
-          Bring your own models.
-          Bring your own infrastructure.
-          Build your own capabilities.
-          <span>Meet at one governed boundary.</span>
-        </p>
-
-        <div
-          class="section-head reveal"
-          style="margin-top:90px"
-        >
-          <div>
-            <div class="kicker">Interoperability</div>
-            <h2>MCP connects tools. Veil keeps one execution model.</h2>
-          </div>
-
-          <p>
-            MCP is an interoperability layer around Veil, not a second
-            execution path. Adapters can translate MCP invocations into
-            <code>ExecutionPlan</code> instances, and MCP-backed capabilities
-            can sit behind the same runtime boundary. The v0.4.0 candidate continues
-            to export the inbound <code>McpAdapter</code>, which requires an
-            <code>OperatorRuntime</code> and creates no alternate execution path.
-          </p>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- PUBLIC CORE -->
-
-    <section id="today">
-      <div class="wrap">
-
-        <div class="section-head reveal">
-          <div>
-            <div class="kicker">What is public today</div>
-            <h2>A usable core, an early ecosystem.</h2>
-          </div>
-
-          <p>
-            <code>@veil-runtime/core</code> v0.4.0 candidate provides the public
-            execution boundary, contextual authorization, structured admission
-            diagnostics, and inbound MCP adapter.
-            Providers and integrations can be composed around that boundary
-            without changing the execution model.
-          </p>
-        </div>
-
-        <div class="details reveal">
-
-          <details>
-            <summary>Public runtime API</summary>
-
-            <div class="inside">
-              <span>OperatorRuntime</span>
-              <span>OperatorRuntimeOptions and ExecutionAuthorizer</span>
-              <span>ExecutionPlan and execution-step types</span>
-              <span>Job, result, and event types, including capability.denied</span>
-              <span>Capability and capability-module contracts</span>
-            </div>
-          </details>
-
-          <details>
-            <summary>Capability SDK</summary>
-
-            <div class="inside">
-              <span>Declarative capability authoring</span>
-              <span>Capability modules</span>
-              <span>Middleware support</span>
-              <span>Lifecycle and timeout middleware</span>
-            </div>
-          </details>
-
-          <details>
-            <summary>Planning flexibility</summary>
-
-            <div class="inside">
-              <span>Bring your own planners</span>
-              <span>Deterministic or non-AI planning</span>
-              <span>Explicit ExecutionPlan boundary</span>
-              <span>No required AI vendor</span>
-            </div>
-          </details>
-
-          <details>
-            <summary>Extensible boundaries</summary>
-
-            <div class="inside">
-              <span>Custom capabilities</span>
-              <span>Custom providers and integrations</span>
-              <span>Infrastructure remains under application control</span>
-              <span>Public inbound McpAdapter at the interoperability boundary</span>
-            </div>
-          </details>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- RELEASE CANDIDATE -->
-
-    <section id="v030">
-      <div class="wrap">
-        <div class="section-head reveal">
-          <div>
-            <div class="kicker">v0.4.0 · release candidate</div>
-            <h2>Choose value semantics. Keep authority with the host.</h2>
-          </div>
-          <p>
-            The existing ExecutionPlan 2.0 retains governed receiving-value ownership behind an
-            explicit trusted-host <code>planVersions</code> opt-in. V1 remains the
-            default and can coexist with V2. Structured version admission and exact
-            result-reference recognition apply before governed capability work.
-            See <a href="{{ '/getting-started/installation.html' | relative_url }}">local candidate installation</a>.
-          </p>
+        <div class="section-head">
+          <div><p class="kicker">The problem</p><h2 id="problem-title">Knowing what to do does not establish permission to do it.</h2></div>
+          <p>Software and AI can request useful work. Connecting those requests directly to business systems leaves each integration to handle input checks, permissions and reporting on its own. A plausible request can still target the wrong record or ask for an action your organisation has not approved.</p>
         </div>
         <div class="triad">
-          <article class="card reveal">
-            <span class="number">01 / VERSION</span>
-            <h3>Which semantics are admitted?</h3>
-            <p>The trusted host enables V1, V2 or both. Proposal data cannot enable a
-              plan version, and omission remains V1-only.</p>
-          </article>
-          <article class="card reveal">
-            <span class="number">02 / VALUE</span>
-            <h3>What reaches policy and work?</h3>
-            <p>V2 gives authorization a frozen detached view and capability entry a
-              separate mutable equivalent after explicit allow.</p>
-          </article>
-          <article class="card reveal">
-            <span class="number">03 / AUTHORIZATION</span>
-            <h3>Who grants authority?</h3>
-            <p>Only trusted host configuration supplies callers and policy. Request,
-              plan and model fields remain proposed data, never approval.</p>
-          </article>
+          <article class="card"><span class="number">01 / Intent</span><h3>Requests need boundaries</h3><p>A workflow, person or model can propose an action. That proposal must still pass the rules of the system performing it.</p></article>
+          <article class="card"><span class="number">02 / Policy</span><h3>Rules need a place to run</h3><p>Checks scattered across scripts and tool calls are harder to review consistently. A shared execution path gives policy a defined place.</p></article>
+          <article class="card"><span class="number">03 / Outcomes</span><h3>Activity needs explanation</h3><p>A generated answer is not evidence that an operation succeeded. Teams need the execution status, results and events.</p></article>
         </div>
-        <p class="api-note reveal">
-          v0.4.0 also preserves result-reference shape, route entry, HTTP risk and
-          shell tuple policy. It does not provide hostile-code isolation, passive
-          Proxy/getter traversal, rollback, exactly-once effects or persistence parity.
-          <a href="{{ '/getting-started/v0.4.0.html' | relative_url }}">Read the scope, migration notes and limits</a>.
-        </p>
       </div>
     </section>
 
-    <!-- ROADMAP -->
-
-    <section>
+    <section id="solution" aria-labelledby="solution-title">
       <div class="wrap">
-
-        <div class="section-head reveal">
-          <div>
-            <div class="kicker">Where Veil is going</div>
-            <h2>Architecture first. Ecosystem next.</h2>
-          </div>
-
-          <p>
-            The v0.4.0 candidate preserves opt-in governed receiving values, structured
-            admission and execution-entry hardening while preserving V1 by default.
-            <a href="{{ '/getting-started/v0.4.0.html' | relative_url }}">See the v0.4.0 scope and limits</a>.
-          </p>
+        <div class="section-head">
+          <div><p class="kicker">The governed execution layer</p><h2 id="solution-title">One boundary between a request and the work it asks for.</h2></div>
+          <p>Veil receives a structured request, checks it, asks your application's authorization policy, and invokes registered operations. The same execution contracts work whether the request comes from deterministic software, a human workflow or an optional planner.</p>
         </div>
+        <div class="story">
+          <article class="story-copy"><h3>Make approved work reusable</h3><p>Wrap an existing API call, calculation or operational task as a named operation, called a <strong>capability</strong>. Declare its inputs and risk, then register it with the runtime. Different workflows can request the same operation through the same governed path.</p><a href="{{ '/concepts/capabilities.html' | relative_url }}">Understand capabilities</a></article>
+          <article class="story-copy"><h3>Keep authority with your application</h3><p>Your trusted application supplies caller information and the rules that allow or deny work. By default, Core permits read operations and denies write and destructive operations. An AI proposal grants no additional permission.</p><a href="{{ '/concepts/authorization.html' | relative_url }}">Understand authorization and its limits</a></article>
+        </div>
+        <p class="section-note">Core does not require an AI model or own the intelligence behind a request. It is not a general autonomous agent, an identity-management replacement, a compliance certification or a replacement for your enterprise applications.</p>
+      </div>
+    </section>
 
-        <div class="roadmap reveal">
+    <section id="how-it-works" aria-labelledby="process-title">
+      <div class="wrap">
+        <div class="section-head">
+          <div><p class="kicker">How it works</p><h2 id="process-title">Request → Validate → Authorize → Execute → Record.</h2></div>
+          <p>These are the stages of the governed path. Veil checks a plan before creating a job, then resolves, validates and authorizes each step before invoking its capability.</p>
+        </div>
+        <ol class="execution-flow">
+          <li><h3>Request</h3><p>Your application submits a structured plan describing the registered work it wants done.</p></li>
+          <li><h3>Validate</h3><p>Check operations, supplied versions and declared inputs. Resolve earlier results and validate each step's input.</p></li>
+          <li><h3>Authorize</h3><p>Your configured policy allows or denies the operation using its resolved input and trusted caller context.</p></li>
+          <li><h3>Execute</h3><p>Invoke the allowed capability. Its application-owned implementation interacts with the relevant system.</p></li>
+          <li><h3>Record</h3><p>Return job outcomes and lifecycle events. Your host chooses storage, retention and access to that evidence.</p></li>
+        </ol>
+        <p class="section-note">Events are emitted throughout execution; “Record” summarises the observable outcome, not a separate compliance audit service. <a href="{{ '/architecture/execution-lifecycle.html' | relative_url }}">Read the full execution lifecycle</a>.</p>
+      </div>
+    </section>
 
-          <div class="phase current">
-            <small>PUBLISHED</small>
-            <b>Public Core v0.3.1</b>
-          </div>
-
-          <div class="phase">
-            <small>CANDIDATE</small>
-            <b>v0.4.0 · security + optional local planning</b>
-          </div>
-
-          <div class="phase">
-            <small>IN CANDIDATE</small>
-            <b>V1 default + explicit V2 opt-in</b>
-          </div>
-
-          <div class="phase">
-            <small>AFTER</small>
-            <b>Real-world ecosystem</b>
-          </div>
-
+    <section id="business-value" aria-labelledby="value-title">
+      <div class="wrap">
+        <div class="section-head">
+          <div><p class="kicker">Business value</p><h2 id="value-title">Control how connected work gets done.</h2></div>
+          <p>A reusable execution boundary gives teams a common place to define available operations, apply their rules and inspect results. Its value depends on the capabilities and policies your application implements.</p>
+        </div>
+        <div class="value-grid">
+          <article class="card"><h3>Control</h3><p>Make specific operations available and decide which requests may invoke them. Registration alone is not permission.</p></article>
+          <article class="card"><h3>Consistency</h3><p>Route different request sources through the same validation, authorization and execution lifecycle.</p></article>
+          <article class="card"><h3>Reuse</h3><p>Offer a reviewed integration to several workflows without giving each planner direct integration authority.</p></article>
+          <article class="card"><h3>Traceability</h3><p>Connect a plan to its job, step events and results. Configure the host's storage and retention to fit your needs.</p></article>
+          <article class="card"><h3>Incremental modernisation</h3><p>Wrap a bounded operation in an existing system. Evaluate one workflow before expanding the integration.</p></article>
         </div>
       </div>
     </section>
 
-    <!-- FINAL -->
-
-    <section
-      class="final"
-      id="open-source"
-    >
-      <div class="wrap reveal">
-
-        <div class="kicker">
-          Open source · Apache-2.0
+    <section id="use-cases" aria-labelledby="applications-title">
+      <div class="wrap">
+        <div class="section-head">
+          <div><p class="kicker">Practical applications</p><h2 id="applications-title">Start with a specific action and a clear owner.</h2></div>
+          <p>The following are possible application patterns, not production deployments or ready-made connectors. Your application provides integrations, authenticated caller context, authorization and any review interface.</p>
         </div>
-
-        <h2>
-          Build the execution layer once.
-        </h2>
-
-        <p>
-          Use it from AI, applications, humans, and automation without
-          coupling intelligence directly to execution infrastructure.
-        </p>
-
-        <div class="actions">
-          <a
-            class="button primary"
-            href="https://www.npmjs.com/package/@veil-runtime/core"
-          >Install Veil Core</a>
-
-          <a
-            class="button"
-            href="https://github.com/veil-runtime/veil/tree/main/examples/veil-starter"
-          >Try Veil Starter</a>
-
-          <a
-            class="button"
-            href="https://github.com/veil-runtime/veil"
-          >View on GitHub</a>
+        <div class="triad">
+          <article class="card"><h3>AI-assisted service workflows</h3><p>Let an assistant propose a record lookup or update. Validate the requested operation and apply your policy before touching the service system.</p></article>
+          <article class="card"><h3>Enterprise process automation</h3><p>Read an order, check its status and request a permitted follow-up in ordered steps. Keep the execution result separate from the workflow's description.</p></article>
+          <article class="card"><h3>Legacy modernisation</h3><p>Expose one approved operation around an existing application or API. Add a new request source while keeping the existing system in place.</p></article>
+          <article class="card"><h3>Reusable integrations</h3><p>Package a reviewed set of operations for several internal workflows. Each request still goes through authorization.</p></article>
+          <article class="card"><h3>Developer and operational tooling</h3><p>Wrap a status check or staging operation as a capability. Allow it only for the caller and target your host policy permits.</p></article>
+          <article class="card"><h3>Human-approved actions</h3><p>Use your application's approval process to establish a trusted decision. Its authorizer checks that decision before allowing the requested action.</p></article>
         </div>
-
+        <p class="section-note"><strong>Demonstrated in repository examples:</strong> a deterministic echo, dependent plan steps and a policy that denies unauthorized production actions. Human approval is an application integration pattern; Core does not ship an approval inbox or approval workflow. Explore the <a href="{{ '/cookbook/deterministic-planning.html' | relative_url }}">deterministic example</a> and <a href="{{ '/cookbook/deny-production-action.html' | relative_url }}">production-denial example</a>.</p>
       </div>
     </section>
 
+    <section id="getting-started" aria-labelledby="start-title">
+      <div class="wrap">
+        <div class="section-head">
+          <div><p class="kicker">Getting started</p><h2 id="start-title">Evaluate one workflow. Run one governed action.</h2></div>
+          <p>Business evaluation and developer adoption start with the same question: which bounded operation should be available, to whom, and under which conditions?</p>
+        </div>
+        <div class="story">
+          <article class="story-copy"><h3>Evaluate the fit</h3><p>Choose a process, name the system owner, identify the permissions and decide what successful execution should show. Begin with a read operation and a denied-action case.</p><a class="button" href="{{ '/getting-started/evaluate.html' | relative_url }}">Read the business evaluation guide</a></article>
+          <article class="story-copy" id="quickstart"><h3 id="build">Try Core without a model</h3><p>On qualified Linux with Node 24, install the verified candidate tarball and run a complete JavaScript example. No AI account, UI or remote system is needed for the example.</p><a class="button primary" href="{{ '/getting-started/five-minutes.html' | relative_url }}">Follow the five-minute Core guide</a></article>
+        </div>
+        <div class="terminal install-preview" id="install">
+          <div class="terminal-bar">Published package — v0.3.1, not the v0.4.0 candidate</div>
+          <pre tabindex="0" role="region" aria-label="Install the published package"><code>npm install @veil-runtime/core@0.3.1</code></pre>
+        </div>
+        <p class="section-note" id="starter">Prefer an application demo? The <a href="https://github.com/veil-runtime/veil/tree/903efad9c7212f1f1137407cf2401973577a5287/examples/veil-starter">Starter source application</a> is maintained separately from the Core npm artifact.</p>
+        <p class="section-note">v0.4.0 is not on npm. To evaluate its qualified behavior, use the <a href="{{ '/getting-started/installation.html' | relative_url }}">candidate build and tarball installation instructions</a>. Then follow <a href="{{ '/developer.html' | relative_url }}">the developer learning path</a>.</p>
+      </div>
+    </section>
+
+    <section id="architecture" aria-labelledby="architecture-title">
+      <div class="wrap">
+        <div class="section-head">
+          <div><p class="kicker">Architecture and ecosystem</p><h2 id="architecture-title">Separate the decision from the authority to act.</h2></div>
+          <p>Reasoning and planning are modular inputs. Core receives plans and governs execution. Interfaces and experimental autonomous behaviour have their own product boundaries.</p>
+        </div>
+        <div class="triad">
+          <article class="card"><span class="number">Core</span><h3>Governed execution</h3><p>The runtime, capability and authorization model, plans, jobs and events. Independently usable without a model, UI or autonomous loop.</p></article>
+          <article class="card"><span class="number">UI / independent</span><h3>System-described interfaces</h3><p>Independently developed interfaces that describe and expose system interactions. UI is not included in the Core v0.4.0 package.</p></article>
+          <article class="card"><span class="number">Emergence / experimental</span><h3>Reasoning and coordination</h3><p>Experimental coordination and autonomous behaviour, moving into its own package. Emergence is not included in Core v0.4.0.</p></article>
+        </div>
+        <div class="details technical-details">
+          <details><summary>Technical model: how Core connects intent to systems</summary><div class="technical-copy"><p><code>ExecutionPlan</code> is the boundary between reasoning and execution. <code>OperatorRuntime</code> governs execution. Capabilities define work; application-owned providers interact with external systems.</p><p>In the internal planning path, planners reason, strategies orchestrate and <code>PlannerRouter</code> selects strategies. Applications can submit plans directly without using that path.</p><p>V1 runs ordered steps by default. V2 is host opt-in. Default authorization allows read-risk capabilities and denies write/destructive ones. Identity verification, correct risk labels, credentials and external side effects remain host responsibilities.</p><p><a href="{{ '/architecture/overview.html' | relative_url }}">Explore the architecture</a> · <a href="{{ '/reference/public-exports.html' | relative_url }}">Inspect the public API</a> · <a href="{{ '/architecture/trust-boundaries.html' | relative_url }}">Review trust boundaries</a></p></div></details>
+        </div>
+      </div>
+    </section>
+
+    <section id="today" aria-labelledby="status-title">
+      <div class="wrap">
+        <div class="section-head">
+          <div><p class="kicker">Current status and roadmap</p><h2 id="status-title">A published Core. A qualified candidate. An experimental ecosystem.</h2></div>
+          <p>Version and platform claims matter. v0.4.0 is prepared for Linux publication, with functional, package and filesystem security verification. Publication remains a separate action.</p>
+        </div>
+        <div class="roadmap">
+          <article class="phase"><small>Published</small><h3>Core v0.3.1</h3><p>The current npm release. Install it by its explicit version; it does not contain the v0.4.0 candidate changes.</p></article>
+          <article class="phase current"><small>Linux-qualified candidate</small><h3>Core v0.4.0</h3><p>328 Core tests pass. Linux filesystem regressions cover bounded reads, link rejection and controlled path races. Windows and macOS are unqualified.</p><a href="{{ '/getting-started/v0.4.0.html' | relative_url }}">Candidate notes and migration</a></article>
+          <article class="phase"><small>Experimental / not Core releases</small><h3>Local planning and tools</h3><p>Ollama/Qwen planning is opt-in and can select incorrect work or time out. Sandbox, repository-task and browser capabilities are not published Core features.</p><a href="{{ '/guides/local-planning.html' | relative_url }}">Read local-planning limits</a></article>
+          <article class="phase"><small>Future qualification</small><h3>Independent releases</h3><p>Qualify separate capability packages and additional platforms. UI and Emergence continue independently. These directions are not delivery promises.</p></article>
+        </div>
+        <p class="section-note" id="v030">Existing V1/V2 execution contracts are unchanged. <a href="{{ '/guides/migrate-to-execution-plan-v2.html' | relative_url }}">Review the opt-in V2 migration guide</a>.</p>
+        <p class="section-note">The filesystem protections belong to the source-server reader, not an exported npm file capability or a general sandbox. Core does not provide general cancellation, retries, parallel plans, tenant isolation or exactly-once side effects. <a href="{{ '/getting-started/v0.4.0.html#limits-and-verification' | relative_url }}">Review the candidate's scope and limits</a>.</p>
+      </div>
+    </section>
   </main>
 
-  <footer class="footer wrap">
-    <span>
-      Veil Core v0.4.0 candidate — Apache-2.0 · Copyright 2026 Mustapha Keraan.
-    </span>
-
-    <span>
-      Veil branding is governed separately.
-    </span>
+  <footer class="footer wrap" id="open-source">
+    <span>Veil · Governed execution · Apache-2.0</span>
+    <nav aria-label="Footer navigation"><a href="{{ '/getting-started/evaluate.html' | relative_url }}">Evaluate</a> · <a href="{{ '/developer.html' | relative_url }}">Developer docs</a> · <a href="https://github.com/veil-runtime/veil">Source on GitHub</a></nav>
   </footer>
-
-  <script>
-    const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-    const scenarios = {
-      summary: {
-        intent: "Summarize the local document.",
-        steps: [
-          {
-            capability: "filesystem.file.read",
-            requires: "file"
-          },
-          {
-            capability: "document.summarize"
-          }
-        ]
-      },
-
-      github: {
-        intent: "Read the local document and create a GitHub issue from the findings.",
-        steps: [
-          {
-            capability: "filesystem.file.read",
-            requires: "file"
-          },
-          {
-            capability: "github.issue.create",
-            requires: "github",
-            externalWrite: true
-          }
-        ]
-      },
-
-      delete: {
-        intent: "Read the document, process it, then delete the original file.",
-        steps: [
-          {
-            capability: "filesystem.file.read",
-            requires: "file"
-          },
-          {
-            capability: "document.process"
-          },
-          {
-            capability: "filesystem.file.delete",
-            requires: "delete",
-            destructive: true
-          }
-        ]
-      }
-    };
-
-    const capabilityInputs = {
-      file: document.querySelector("#fileEnabled"),
-      github: document.querySelector("#githubEnabled"),
-      delete: document.querySelector("#deleteEnabled")
-    };
-
-    const approvalRequired =
-      document.querySelector("#approvalRequired");
-
-    const scenarioButtons =
-      [...document.querySelectorAll(".scenario")];
-
-    const requestText =
-      document.querySelector("#requestText");
-
-    const planSteps =
-      document.querySelector("#planSteps");
-
-    const executionLog =
-      document.querySelector("#executionLog");
-
-    const runButton =
-      document.querySelector("#run");
-
-    const heroRun =
-      document.querySelector("#heroRun");
-
-    const approvalPanel =
-      document.querySelector("#approvalPanel");
-
-    const approvalText =
-      document.querySelector("#approvalText");
-
-    const approveButton =
-      document.querySelector("#approveButton");
-
-    const rejectButton =
-      document.querySelector("#rejectButton");
-
-    const receipt =
-      document.querySelector("#receipt");
-
-    const packetState =
-      document.querySelector("#packetState");
-
-    const stateDot =
-      document.querySelector("#stateDot");
-
-    let selectedScenario = "summary";
-    let running = false;
-    let approvalResolver = null;
-
-    function setState(label, type = "ready") {
-      packetState.textContent = label;
-
-      stateDot.className = `dot ${type}`;
-    }
-
-    function addEvent(type, title, detail = "") {
-      const iconMap = {
-        ok: "✓",
-        warn: "◆",
-        error: "✕",
-        info: "•"
-      };
-
-      const event = document.createElement("div");
-
-      event.className = `event ${type}`;
-
-      event.innerHTML = `
-        <span class="event-icon">${iconMap[type] || "•"}</span>
-        <span class="event-main">
-          <strong>${title}</strong>
-          ${detail ? `<span class="event-detail">${detail}</span>` : ""}
-        </span>
-      `;
-
-      executionLog.appendChild(event);
-      executionLog.scrollTop = executionLog.scrollHeight;
-    }
-
-    function renderScenario() {
-      const scenario = scenarios[selectedScenario];
-
-      requestText.textContent = scenario.intent;
-
-      planSteps.innerHTML = scenario.steps
-        .map((step, index) => `
-          <div class="plan-step">
-            <span>${index + 1}.</span>
-            ${step.capability}
-          </div>
-        `)
-        .join("");
-
-      resetExecution();
-    }
-
-    function resetExecution() {
-      executionLog.innerHTML = "";
-
-      approvalPanel.classList.remove("show");
-
-      receipt.className = "receipt";
-      receipt.textContent = "";
-
-      setState("PLAN READY", "ready");
-
-      runButton.disabled = false;
-      runButton.textContent = "Execute governed plan";
-
-      approvalResolver = null;
-      running = false;
-    }
-
-    async function requestApproval(step) {
-      approvalText.textContent =
-        `${step.capability} is waiting for explicit approval.`;
-
-      approvalPanel.classList.add("show");
-
-      return new Promise(resolve => {
-        approvalResolver = resolve;
-      });
-    }
-
-    approveButton.addEventListener("click", () => {
-      if (!approvalResolver) {
-        return;
-      }
-
-      approvalPanel.classList.remove("show");
-
-      const resolve = approvalResolver;
-
-      approvalResolver = null;
-
-      resolve(true);
-    });
-
-    rejectButton.addEventListener("click", () => {
-      if (!approvalResolver) {
-        return;
-      }
-
-      approvalPanel.classList.remove("show");
-
-      const resolve = approvalResolver;
-
-      approvalResolver = null;
-
-      resolve(false);
-    });
-
-    async function execute() {
-      if (running) {
-        return;
-      }
-
-      running = true;
-      const controls = [...scenarioButtons, ...Object.values(capabilityInputs), approvalRequired, heroRun];
-      controls.forEach(control => { control.disabled = true; });
-
-      try {
-        const scenario = scenarios[selectedScenario];
-
-        executionLog.innerHTML = "";
-        receipt.className = "receipt";
-
-        runButton.disabled = true;
-
-        setState("EXECUTING", "running");
-
-        addEvent(
-          "info",
-          "ExecutionPlan received",
-          `${scenario.steps.length} step${scenario.steps.length === 1 ? "" : "s"} proposed`
-        );
-
-        await delay(450);
-
-        const unavailable = scenario.steps.find(step =>
-          step.requires && !capabilityInputs[step.requires].checked
-        );
-        if (unavailable) {
-          addEvent("error", "Plan rejected before execution",
-            `${unavailable.capability} is not registered; no steps executed`);
-          setState("INVALID PLAN", "failure");
-          receipt.textContent = "✕ ADMISSION REJECTED · no job created";
-          receipt.className = "receipt failure show";
-          return;
-        }
-        addEvent("ok", "Plan validated", "registered capabilities and declared inputs checked");
-        addEvent("info", "Job created", "sequential execution begins");
-
-        for (let index = 0; index < scenario.steps.length; index++) {
-          const step = scenario.steps[index];
-
-          addEvent(
-            "info",
-            step.capability,
-            `resolving capability for step ${index + 1}`
-          );
-
-          await delay(430);
-
-          addEvent(
-            "ok",
-            "Capability resolved",
-            step.capability
-          );
-
-          await delay(400);
-
-          addEvent("ok", "Input resolved and validated", "before authorization");
-
-          if ((step.externalWrite || step.destructive) && !approvalRequired.checked) {
-            addEvent("error", "Authorization denied", "default policy denies writes and destructive work");
-            setState("FAILED", "failure");
-            receipt.textContent = "✕ JOB FAILED · denied step not executed; prior steps remain completed";
-            receipt.className = "receipt failure show";
-            return;
-          }
-
-          if (step.externalWrite || step.destructive) {
-            addEvent(
-              "warn",
-              "Application approval requested",
-              `${step.capability} is awaiting the demo authorizer's decision`
-            );
-
-            setState("AWAITING APPROVAL", "running");
-
-            const approved =
-              await requestApproval(step);
-
-            if (!approved) {
-              addEvent(
-                "error",
-                "Approval rejected",
-                `${step.capability} was not executed`
-              );
-
-              await delay(250);
-
-              setState("REJECTED", "failure");
-
-              receipt.textContent =
-                "✕ JOB FAILED · denied step not executed; prior steps remain completed";
-
-              receipt.className =
-                "receipt failure show";
-
-              runButton.disabled = false;
-              runButton.textContent = "Run again";
-
-              running = false;
-              return;
-            }
-
-            addEvent(
-              "ok",
-              "Approval granted",
-              `${step.capability} may proceed`
-            );
-
-            setState("EXECUTING", "running");
-
-            await delay(350);
-          }
-
-          addEvent("ok", "Authorization allowed", "explicit allow before capability invocation");
-
-          addEvent(
-            "info",
-            "Executing capability",
-            step.capability
-          );
-
-          await delay(520);
-
-          addEvent(
-            "ok",
-            "Capability executed",
-            `${step.capability} completed successfully`
-          );
-
-          await delay(320);
-        }
-
-        addEvent(
-          "ok",
-          "Execution completed",
-          "all proposed steps completed"
-        );
-
-        await delay(280);
-
-        setState("COMPLETED", "success");
-
-        receipt.textContent =
-          `✓ COMPLETED · ${scenario.steps.length}/${scenario.steps.length} steps executed`;
-
-        receipt.className =
-          "receipt success show";
-
-        runButton.disabled = false;
-        runButton.textContent = "Run again";
-
-      } finally {
-        running = false;
-        runButton.disabled = false;
-        runButton.textContent = "Run again";
-        controls.forEach(control => { control.disabled = false; });
-      }
-    }
-
-    runButton.addEventListener(
-      "click",
-      execute
-    );
-
-    heroRun.addEventListener(
-      "click",
-      () => {
-        document
-          .querySelector("#simulation")
-          .scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-          });
-
-        setTimeout(execute, 350);
-      }
-    );
-
-    scenarioButtons.forEach(button => {
-      button.addEventListener("click", () => {
-        if (running) {
-          return;
-        }
-
-        scenarioButtons.forEach(item =>
-          item.classList.remove("active")
-        );
-
-        button.classList.add("active");
-        scenarioButtons.forEach(item => item.setAttribute("aria-pressed", String(item === button)));
-
-        selectedScenario =
-          button.dataset.scenario;
-
-        renderScenario();
-      });
-    });
-
-    Object.values(capabilityInputs).forEach(input => {
-      input.addEventListener("change", () => {
-        if (!running) {
-          resetExecution();
-        }
-      });
-    });
-
-    approvalRequired.addEventListener(
-      "change",
-      () => {
-        if (!running) {
-          resetExecution();
-        }
-      }
-    );
-
-    renderScenario();
-    scenarioButtons.forEach(button => button.setAttribute("aria-pressed", String(button.classList.contains("active"))));
-
-    const quickExamples = {
-      define: {
-        title: "Define a capability",
-        explainTitle: "Expose one controlled operation.",
-        explainBody:
-          "Your application owns the implementation. Veil only needs a capability contract around the operation you want to make executable.",
-        code:
-    `import { createCapability } from "@veil-runtime/core";
-
-    const echo = createCapability<{ value: string }, string>({
-      name: "example.echo",
-      version: "1.0.0",
-      description: "Return the provided value",
-      risk: "read",
-      inputSchema: {
-        value: { type: "string", required: true,
-          description: "Value to return" }
-      },
-      async execute({ input }) {
-        return input.value;
-      }
-    });`
-      },
-
-      register: {
-        title: "Register the capability",
-        explainTitle: "Tell Veil what exists.",
-        explainBody:
-          "Capabilities become available when you install a module on the runtime. Plans cannot execute undeclared operations simply because a planner requested them.",
-        code:
-    `import {
-      OperatorRuntime,
-      type CapabilityModule
-    } from "@veil-runtime/core";
-
-    const module: CapabilityModule = {
-      manifest: {
-        name: "example",
-        version: "1.0.0",
-        capabilities: [echo.name]
-      },
-      capabilities: [echo]
-    };
-
-    const runtime = new OperatorRuntime();
-    runtime.use(module);`
-      },
-
-      plan: {
-        title: "Create or receive an ExecutionPlan",
-        explainTitle: "Planning remains separate.",
-        explainBody:
-          "The plan describes what should happen. It may come from AI, deterministic software, a human workflow, or another system.",
-        code:
-    `import type { ExecutionPlan } from "@veil-runtime/core";
-
-    const plan: ExecutionPlan = {
-      version: "1.0",
-      steps: [
-        {
-          id: "echo",
-          capability: echo.name,
-          capabilityVersion: echo.version,
-          input: {
-            value: "Hello from Veil"
-          }
-        }
-      ]
-    };`
-      },
-
-      execute: {
-        title: "Execute through Veil",
-        explainTitle: "The same runtime performs the work.",
-        explainBody:
-          "OperatorRuntime validates the plan, resolves inputs, and authorizes each step before invocation. The default authorizer allows this read operation. Inspect the returned Job for execution success or failure.",
-        code:
-    `const job =
-      await runtime.executePlan(plan);
-
-    console.log(job.status, job.result);`
-      }
-    };
-
-    const quickTabs =
-      [...document.querySelectorAll(".quick-tab")];
-
-    const quickTitle =
-      document.querySelector("#quickTitle");
-
-    const quickCode =
-      document.querySelector("#quickCode");
-
-    const quickExplainTitle =
-      document.querySelector("#quickExplainTitle");
-
-    const quickExplainBody =
-      document.querySelector("#quickExplainBody");
-
-    function renderQuickExample(key) {
-      const example = quickExamples[key];
-
-      quickTitle.textContent =
-        example.title;
-
-      quickCode.textContent =
-        example.code;
-
-      quickExplainTitle.textContent =
-        example.explainTitle;
-
-      quickExplainBody.textContent =
-        example.explainBody;
-    }
-
-    quickTabs.forEach(tab => {
-      tab.addEventListener("click", () => {
-        quickTabs.forEach(item =>
-          item.classList.remove("active")
-        );
-
-        tab.classList.add("active");
-        quickTabs.forEach(item => item.setAttribute("aria-pressed", String(item === tab)));
-
-        renderQuickExample(
-          tab.dataset.quick
-        );
-      });
-    });
-
-    renderQuickExample("define");
-    quickTabs.forEach(tab => tab.setAttribute("aria-pressed", String(tab.classList.contains("active"))));
-
-    /* --------------------------------
-       Architecture explorer
-    --------------------------------- */
-
-    const architectureDetails = {
-      intent: {
-        title: "Intent",
-        body:
-          "The desired outcome. Intent may originate from AI, an application, automation, a human, or another system. It describes what is wanted rather than directly performing infrastructure operations."
-      },
-
-      planner: {
-        title: "Planner",
-        body:
-          "Applications can submit plans directly. In the internal planning path, planners reason, strategies orchestrate, and PlannerRouter selects a strategy. Execution starts only after an ExecutionPlan reaches the runtime."
-      },
-
-      plan: {
-        title: "ExecutionPlan",
-        body:
-          "A structured proposal describing the operations that should be executed. The plan expresses intent in executable form, but does not itself perform the work."
-      },
-
-      runtime: {
-        title: "OperatorRuntime",
-        body:
-          "The execution boundary. OperatorRuntime receives plans, coordinates execution, resolves capabilities, enforces the configured execution lifecycle, and produces observable outcomes."
-      },
-
-      governance: {
-        title: "Validation and authorization",
-        body:
-          "Admission checks registered capabilities, supplied versions, declared input fields and reference ordering. Each step resolves earlier results and validates input before the configured authorizer allows or denies execution. Registration alone grants no permission."
-      },
-
-      capability: {
-        title: "Capability",
-        body:
-          "A capability is the concrete operation that performs work: reading a file, making an HTTP request, querying a database, invoking an MCP tool, or interacting with another system."
-      },
-
-      provider: {
-        title: "Providers and infrastructure",
-        body:
-          "Capabilities use application-owned providers to interact with files, APIs, databases or other systems. Veil records job results and lifecycle events; provider credentials, external side effects and remote-system behavior remain application responsibilities."
-      }
-    };
-
-    const architectureNodes =
-      [...document.querySelectorAll(".arch-node")];
-
-    const architectureDetail =
-      document.querySelector("#architectureDetail");
-
-    architectureNodes.forEach(node => {
-      node.setAttribute("aria-pressed", String(node.classList.contains("active")));
-      node.addEventListener("click", () => {
-        architectureNodes.forEach(item =>
-          item.classList.remove("active")
-        );
-
-        node.classList.add("active");
-        architectureNodes.forEach(item => item.setAttribute("aria-pressed", String(item === node)));
-
-        const detail =
-          architectureDetails[node.dataset.node];
-
-        architectureDetail.innerHTML = `
-          <strong>${detail.title}</strong>
-          <p>${detail.body}</p>
-        `;
-      });
-    });
-
-    /* --------------------------------
-       Reveal animations
-    --------------------------------- */
-
-    const observer =
-      new IntersectionObserver(
-        entries => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("visible");
-            }
-          });
-        },
-        {
-          threshold: .12
-        }
-      );
-
-    document
-      .querySelectorAll(".reveal")
-      .forEach(element => observer.observe(element));
-  </script>
 </body>
 </html>

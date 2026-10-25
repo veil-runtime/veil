@@ -218,7 +218,10 @@ Release preparation does not publish, tag, push, merge, or create a GitHub relea
 ## After an authorized publication
 
 Verify the published npm package and rerun consumer examples against it before
-changing the latest-published version from v0.2.0 to v0.3.0 and removing candidate
+changing the latest-published version from v0.3.1 to v0.4.0 and removing candidate
 labels in the README, homepage, docs layout, developer portal, installation page,
 and release notes. Add release announcement links only when their targets exist.
 Publishing and these follow-up changes are separate from candidate preparation.
+
+For the existing Pages workflow and its separate approval/deployment procedure,
+see [website build and deployment](website.html).

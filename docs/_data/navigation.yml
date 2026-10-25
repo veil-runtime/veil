@@ -8,6 +8,10 @@ sections:
     pages:
       - title: Overview
         url: /getting-started/overview.html
+      - title: Evaluate Veil
+        url: /getting-started/evaluate.html
+      - title: Run Core in Five Minutes
+        url: /getting-started/five-minutes.html
       - title: Installation
         url: /getting-started/installation.html
       - title: First Capability
@@ -142,3 +146,5 @@ sections:
         url: /contributing/pull-requests.html
       - title: Releases
         url: /contributing/releases.html
+      - title: Website Build and Deployment
+        url: /contributing/website.html
