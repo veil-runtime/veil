@@ -115,7 +115,7 @@ operation/effect contract.
 
 ### 3. Deterministic Experiment I
 
-[Experiment I](external-reasoner-experiment.md) placed a scripted reasoner in a
+[Experiment I](external-reasoner-experiment.html) placed a scripted reasoner in a
 separate process behind a bounded JSON-line host. It discovered detached
 capability descriptors, submitted ExecutionPlan 1.0 proposals, consumed projected
 feedback, corrected a malformed proposal, encountered denial, attempted forged
@@ -132,7 +132,7 @@ processes were not claimed as an OS sandbox.
 
 ### 4. Experiment II design and hypothesis
 
-[Experiment II](external-model-reasoner-experiment-design.md) replaced the
+[Experiment II](external-model-reasoner-experiment-design.html) replaced the
 scripted reasoner with a real external model while retaining the same authority
 boundary. Its hypothesis had two deliberately separate parts:
 
@@ -169,7 +169,7 @@ summarized below and remain empirical observations, not security proof.
 
 ### 7. Authorization-entry ownership reassessment
 
-The [ownership reassessment](authorization-entry-ownership-reassessment.md)
+The [ownership reassessment](authorization-entry-ownership-reassessment.html)
 separated five commonly conflated properties:
 
 1. the value initially presented to authorization equals the value at capability
@@ -188,7 +188,7 @@ properties stayed out of scope.
 
 ### 8. ADR-0011 and ExecutionPlan 2.0
 
-[ADR-0011](../adr/0011-governed-value-ownership.md) accepted the narrowed target
+[ADR-0011](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/docs/adr/0011-governed-value-ownership.md) accepted the narrowed target
 as versioned semantics. Commit `e02c440` allocated ExecutionPlan `2.0` and
 implemented it:
 
@@ -215,14 +215,14 @@ authorization/input identity and mutation behavior.
 
 ### 9. Result-reference investigation and ADR-0013
 
-The [result-reference investigation](result-reference-resolution-investigation.md)
+The [result-reference investigation](result-reference-resolution-investigation.html)
 found that the old recognizer did not precisely implement the documented
 single-field tag. It could recognize inherited/accessor `$ref` values and ignore
 hidden or symbol extras. Because recognition decides whether an object is data or
 an instruction, that was an architecture decision rather than a private parser
 detail.
 
-[ADR-0013](../adr/0013-result-reference-object-shape.md) accepted an exact shared
+[ADR-0013](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/docs/adr/0013-result-reference-object-shape.md) accepted an exact shared
 v1/v2 representation: a non-array object whose complete own-key set is exactly
 `$ref`, where `$ref` is an enumerable own data property containing a primitive
 string. Prototype identity and descriptor writability/configurability do not
@@ -235,7 +235,7 @@ discovery or result-path traversal passive.
 
 ### 10. Pre-capture traversal and trusted-host clarification
 
-The [pre-capture investigation](pre-capture-result-reference-boundary.md) showed
+The [pre-capture investigation](pre-capture-result-reference-boundary.html) showed
 that selecting `steps.<id>.result.<path>` can call own getters or Proxy traps
 before v2 capture, receiving-step validation and receiving-step authorization.
 Completed producer results are live in-process graphs; memory storage retains

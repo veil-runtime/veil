@@ -137,7 +137,7 @@ General authorization-value stability requires the separately deferred value
 model and an explicit maintainer architecture decision. The local array copy
 begins at capability entry, after runtime authorization, and does not fix that gap.
 See [trust boundaries](trust-boundaries.html) and the
-[draft invocation-effect ADR](../adr/0010-capability-risk-and-invocation-effect.html).
+[draft invocation-effect ADR](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/docs/adr/0010-capability-risk-and-invocation-effect.md).
 
 There is still no process timeout, memory/output accumulation bound, filesystem
 sandbox, credential isolation, or general command-safety proof. The final output

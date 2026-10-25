@@ -11,6 +11,10 @@ verified published package.** These docs target the unpublished
 npm install @veil-runtime/core
 ```
 
+The v0.4.0 execution target is **Linux**, qualified on x86_64/WSL2 with Node 24.
+**Windows and macOS are unqualified**; this release makes no native execution or
+filesystem security qualification claim for those platforms.
+
 ## Install the release candidate locally
 
 From a checkout of the v0.4.0 candidate, build and pack without publishing:

@@ -55,6 +55,7 @@ The 2026-10-24 release-hardening rerun passed all nine tests on Linux x86_64/WSL
 with Node v24.18.1 after a clean lockfile install (zero failures/skips). This includes
 the Linux simulation of portable identity checks; no native macOS or Windows run
 was available. The four common platform tests remain unconditional in the matrix.
-Native host results are still required before release, including platform-specific
-symlink privileges and Windows path/identity behavior. Linux success does not
+Core v0.4.0 targets Linux execution only. Windows and macOS are unqualified;
+native host results are required before qualifying either platform, including
+platform-specific symlink privileges and Windows path/identity behavior. Linux success does not
 establish those semantics or relax the quiescent-directory requirement.

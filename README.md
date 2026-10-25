@@ -49,7 +49,9 @@ The default authorizer permits reads and denies write/destructive capabilities. 
 
 Release candidate: **v0.4.0**, not published. The latest published package is **v0.3.1**. See the [candidate notes](docs/getting-started/v0.4.0.md) for security fixes, compatibility and verification limits. The public API is unchanged. ExecutionPlan V1 remains the default; [V2](docs/reference/execution-plan-v2.md) requires host opt-in. Core contains no UI, Emergence, Caretaker or autonomous repository-task runner.
 
-The source-tree development server supports an [optional bounded local planner](docs/guides/local-planning.md). It proposes plans through existing admission and authorization. Its implementation and built-in capabilities are internal source-server infrastructure, not additional npm exports. Models never grant authority. General cancellation, isolation, budgets, retries and idempotency enforcement are not Core guarantees.
+The currently supported execution platform for v0.4.0 is Linux (qualified on x86_64/WSL2, Node 24). Windows and macOS are unqualified. See the candidate notes for host and filesystem assumptions.
+
+The source-tree development server supports an experimental, opt-in [optional bounded local planner](docs/guides/local-planning.md). It proposes plans through existing admission and authorization. Its implementation and built-in capabilities are internal source-server infrastructure, not additional npm exports. Models never grant authority. General cancellation, isolation, budgets, retries and idempotency enforcement are not Core guarantees.
 
 ## Contributing
 

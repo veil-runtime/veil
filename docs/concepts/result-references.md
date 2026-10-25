@@ -28,7 +28,7 @@ This wrapper rule applies to ExecutionPlan 1.0 and 2.0.
 1. Step A completes and its result is recorded on its JobStep.
 2. Before Step B executes, Veil walks B's input recursively.
 3. Each reference is replaced with the earlier completed step result or requested property.
-4. For ExecutionPlan 2.0, Veil applies [ADR-0011](../adr/0011-governed-value-ownership.html) governed capture to the complete resolved receiving value.
+4. For ExecutionPlan 2.0, Veil applies [ADR-0011](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/docs/adr/0011-governed-value-ownership.md) governed capture to the complete resolved receiving value.
 5. Veil validates B's receiving input (the captured representation under ExecutionPlan 2.0).
 6. Veil authorizes B using that resolved input or its governed authorization view.
 7. Only an allow starts B's capability.
@@ -64,7 +64,7 @@ reentrant submission must pass its own admission and authorization. A traversal
 error prevents receiving-step authorization and entry, but does not roll back prior
 host behavior.
 
-[ADR-0013](../adr/0013-result-reference-object-shape.html) defines only whether an input object is a result-reference wrapper. It does
+[ADR-0013](https://github.com/veil-runtime/veil/blob/a693b5238d26a10d763dc9c555225b448d0c9e5d/docs/adr/0013-result-reference-object-shape.md) defines only whether an input object is a result-reference wrapper. It does
 not make referenced-result traversal passive, getter-safe, Proxy-safe or side-effect
 free. ADR-0011 begins when the already-resolved receiving value is captured; it does
 not retroactively govern selection behavior. Model-authored or serialized JSON does
