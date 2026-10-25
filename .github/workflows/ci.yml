@@ -6,6 +6,9 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   build:
 
@@ -31,6 +34,9 @@ jobs:
 
       - name: Run release checks
         run: npm run check
+
+      - name: Test documentation verifier
+        run: python3 tools/verify-documentation.test.py
 
   filesystem-security:
     runs-on: ${{ matrix.os }}

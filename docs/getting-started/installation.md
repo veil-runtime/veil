@@ -17,13 +17,23 @@ filesystem security qualification claim for those platforms.
 
 ## Install the release candidate locally
 
-From a checkout of `release/core-v0.4.0`, build, verify and pack without publishing:
+Use the reviewed **`integration/v0.4.0` candidate branch**. It includes the
+fresh-checkout source-server database initialization repair; the original
+`release/core-v0.4.0` branch does not. From a fresh Linux checkout:
 
 ```bash
+git clone --branch integration/v0.4.0 https://github.com/veil-runtime/veil.git veil-core
+cd veil-core
+git rev-parse HEAD
 npm ci
 npm run check
 npm pack
 ```
+
+Match the printed checkout revision to the approved PR head and its verification
+record. After publication and creation of the final approved release tag, use
+that tag in the clone command in place of the candidate branch. Do not assume a
+release tag exists merely because a package has been published.
 
 In a consumer project, install the generated tarball by its actual path:
 
@@ -37,9 +47,8 @@ formats `version: '1.0'` and `version: '2.0'` are independent. V1 remains the
 default; V2 requires explicit trusted-host configuration. No npm publication is
 implied by a local pack.
 
-The Linux qualification record for commit `903efad9c7212f1f1137407cf2401973577a5287`
-is available in the repository's
-[release evidence](https://github.com/veil-runtime/veil/blob/903efad9c7212f1f1137407cf2401973577a5287/docs/release/linux-qualification-2026-10-25.json).
+The candidate's verification record is available in the repository's
+[integration release evidence](https://github.com/veil-runtime/veil/blob/integration/v0.4.0/docs/release/v0.4.0-integration-evidence.json).
 Verify the SHA-256 for the exact reviewed tarball rather than assuming any file
 named `0.4.0.tgz` has the same contents.
 

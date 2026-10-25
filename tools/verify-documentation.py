@@ -4,7 +4,7 @@ import re, subprocess, sys
 from urllib.parse import unquote, urlsplit
 
 root = Path(__file__).resolve().parent.parent
-changed = subprocess.check_output(['git', 'diff', '--name-only', 'v0.3.1'], cwd=root, text=True).splitlines()
+changed = subprocess.check_output(['git', 'diff', '--name-only', '--diff-filter=d', 'v0.3.1'], cwd=root, text=True).splitlines()
 added = subprocess.check_output(['git', 'ls-files', '--others', '--exclude-standard'], cwd=root, text=True).splitlines()
 documents = sorted({root / name for name in changed + added if name.endswith('.md')})
 failures = []

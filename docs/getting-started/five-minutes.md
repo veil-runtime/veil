@@ -13,8 +13,10 @@ are unqualified.
 
 Core v0.4.0 is **not published on npm**. Obtain the verified
 `veil-runtime-core-0.4.0.tgz` from your release reviewer, or build it from the
-`release/core-v0.4.0` candidate as described in
+reviewed `integration/v0.4.0` candidate as described in
 [installation](installation.html#install-the-release-candidate-locally).
+That branch includes the fresh-checkout initialization repair. After confirmed
+publication and final release-tag creation, use the approved release tag instead.
 Check the tarball's SHA-256 against the evidence for that exact candidate.
 Building from source also requires the development/native build environment and
 can take longer than five minutes.
