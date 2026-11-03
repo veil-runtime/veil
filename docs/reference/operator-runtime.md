@@ -3,6 +3,9 @@ title: OperatorRuntime
 ---
 # OperatorRuntime
 
+The [v0.6.0 unified development specification](../release/v0.6.0-development.md)
+records integrated lifecycle guarantees, governance review and qualification limits.
+
 ## Construction
 
 `new OperatorRuntime(options?)` accepts:

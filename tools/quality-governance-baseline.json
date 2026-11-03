@@ -24,31 +24,31 @@
     },
     {
       "path": "src/runtime/jobs/job-manager.ts",
-      "anchor": "98a4d84de7c99bcc39208327cd7ee40a2b08c00eb4594824d9f3211b138a993f",
+      "anchor": "8f99972d6665c230e85e0afa51ba63ce60953fd8f32df9ea4c7a6f033cf372d4",
       "kind": "job-manager",
       "classification": "GOVERNED_MACHINERY",
-      "reason": "Phase 1 review L1: existing this.execute dispatch after admission is unchanged. Its class anchor moved because execution now owns and disposes a job-scoped log sink. No new entry, authorization bypass or value semantic change."
+      "reason": "v0.6.0 integration proposal G1 (maintainer adoption pending): same internal dispatch after version/length/structural admission, validation and Job creation; private supervision/work tracking cannot bypass per-step authorization. See docs/release/v0.6.0-development.md."
     },
     {
       "path": "src/runtime/jobs/job-manager.ts",
-      "anchor": "b0884a7a66f648d69198f6f14e3ea3bfac0daf68c7b95cc1cfe61fb1bacb4ee5",
+      "anchor": "9ec2e83adc4517c077a4a314f6e01c892d67c931cca8ccb088616c9f7e526eb1",
       "kind": "execute",
       "classification": "GOVERNED_MACHINERY",
-      "reason": "Phase 1 review L2: existing capability.execute remains after validation and explicit authorization, with unchanged input and context contracts. Its class anchor moved because logging resources now have job-scoped ownership. No provider or registry entry added."
+      "reason": "v0.6.0 integration proposal G3 (maintainer adoption pending): registry capability invocation after input validation, explicit well-formed allow, detached V2 entry copy and supervision checkpoint; work observation grants no authority. See docs/release/v0.6.0-development.md."
     },
     {
       "path": "src/runtime/operator-runtime.ts",
-      "anchor": "aeb8c5092d6664e4ac7c850dd226f2d6ae778cb85cf171c5ce48dd2a560fe125",
+      "anchor": "f77cd0abb36b9b5030798b0bf36a75810ed3567c11336fe22d9a03efcbd42855",
       "kind": "job-manager",
       "classification": "GOVERNED_MACHINERY",
-      "reason": "Post-ADR-0011 review: OperatorRuntime.executePlan still forwards to the same JobManager admission path, adding only the copied trusted host version allowlist. No alternate execution entrance, registry access or authority construction was introduced. GOVERNED_MACHINERY classification retained."
+      "reason": "v0.6.0 integration proposal G4 (maintainer adoption pending): OperatorRuntime delegates to the same JobManager admission entrance after per-instance reservation; copied caller, host authorizer/version/step policy and private tracking retained. See docs/release/v0.6.0-development.md."
     },
     {
       "path": "src/runtime/operator-runtime.ts",
-      "anchor": "c33aca7aa568feefa503eb6f69a1f301cdfece563f12d155e95ac42603fd55b9",
+      "anchor": "fc5e6e062ae4f33959c02e83b0b03b9e4fffd1bcc00166a369a3a9b4c167a6b4",
       "kind": "execute",
       "classification": "LEGITIMATE_NON_CAPABILITY_EXECUTE",
-      "reason": "Post-ADR-0011 review: planner strategy.execute still produces a plan and delegates to this.executePlan; it cannot invoke a capability, provider or registry. The anchor moved only because the adjacent runtime option/dispatch code changed. LEGITIMATE_NON_CAPABILITY_EXECUTE classification retained."
+      "reason": "v0.6.0 integration proposal G5 (maintainer adoption pending): registered strategy performs reasoning and returns a plan to this.executePlan; planning has no capacity reservation or capability authority. See docs/release/v0.6.0-development.md."
     },
     {
       "path": "src/runtime/execution/governed-value.ts",
@@ -171,10 +171,10 @@
     },
     {
       "path": "src/runtime/jobs/job-manager.ts",
-      "anchor": "7ed7f19af7b6bca74f4f85f7685e5902610444560dfd55f29897e5303d3d9f8f",
+      "anchor": "63917ec0d7c5ffa5a4ec55830a8f31cc4104095bc1580586564b3a66c0088be8",
       "kind": "dynamic",
       "classification": "GOVERNED_MACHINERY",
-      "reason": "Phase 1 review L3: fixed Symbol.dispose call on the local JobLogSink in execute finally; releases only that invocation's SQLite sink. No capability or provider execution."
+      "reason": "v0.6.0 integration proposal G2 (maintainer adoption pending): fixed Symbol.dispose on this invocation-owned JobLogSink, deferred until its actual capability promise settles; guarded cleanup grants no execution authority. See docs/release/v0.6.0-development.md."
     },
     {
       "path": "src/runtime/logging/job-log-sink.ts",
