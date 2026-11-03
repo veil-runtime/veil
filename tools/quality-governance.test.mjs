@@ -254,7 +254,7 @@ test('complete relevant repository parses and current individual sites classify 
   const sites = parseBaseline(read(baselinePath), 'inventory');
   const key = ({ path, anchor, kind }) => `${path}:${anchor}:${kind}`;
   assert.deepEqual(report.findings.map(key).sort(), sites.map(key).sort());
-  assert.equal(sites.length, 24);
+  assert.equal(sites.length, 31);
   assert.ok(!sites.some((site) => site.path.startsWith('src/api/routes/')));
   assert.equal(sites.filter((site) => site.classification === 'LEGACY_BYPASS').length, 0);
   assert.deepEqual(sites.filter((site) => site.kind === 'dynamic').map((site) => site.path), [
@@ -267,6 +267,11 @@ test('complete relevant repository parses and current individual sites classify 
     'experiments/external-model-reasoner/model-adapter.mjs',
     'experiments/external-model-reasoner/model-adapter.mjs',
     'experiments/external-model-reasoner/run.mjs',
+    'src/runtime/jobs/job-manager.ts',
+    'src/runtime/logging/job-log-sink.ts',
+    'src/runtime/logging/sqlite-log-sink.ts',
+    'test/logging-reliability.test.ts', 'test/logging-reliability.test.ts',
+    'test/logging-reliability.test.ts', 'test/logging-reliability.test.ts',
   ]);
   console.log(`Parser compatibility: ${report.files} relevant repository files; ${sites.length} individually classified sites; Node ${process.versions.node}.`);
 });
