@@ -280,7 +280,7 @@ test('read store uses query-scoped connections on success and failure', t => {
   assert.ok(closed.every(db => !db.open));
   assert.equal(sink['db'].open, true);
   const missing = new ExecutionLogStore(join(directory, 'missing.db'));
-  assert.throws(() => missing.listByJob('job'), /no such table/);
+  assert.deepEqual(missing.listByJob('job'), []);
   assert.equal(closed.length, 11);
   sink[Symbol.dispose]();
 });
@@ -307,4 +307,57 @@ test('native close refusal is contained and attempted once without retry', async
   assert.equal(opened.size, 1);
   // A failed native close cannot promise release; the test owns final cleanup.
   assert.ok([...opened].every(db => db.open));
+});
+
+
+test('silent Job on a fresh database returns empty logs without creating the log schema', async t => {
+  const directory = mkdtempSync(join(tmpdir(), 'veil-silent-job-'));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const path = join(directory, 'operator.db');
+  const store = new ExecutionLogStore(path);
+  const opened = connections(t);
+  const { runtime, plan } = fixture(async () => 'silent');
+  const job = await runtime.executePlan(plan);
+  assert.equal(job.status, 'completed');
+  assert.equal(opened.size, 0);
+  assert.deepEqual(store.listByJob(job.id), []);
+  const db = new Database(path);
+  try {
+    assert.equal(db.prepare("SELECT 1 FROM sqlite_schema WHERE name = 'execution_logs'").get(), undefined);
+  } finally { db.close(); }
+});
+
+test('log reads propagate malformed schema, corruption and permission errors and close connections', t => {
+  const directory = mkdtempSync(join(tmpdir(), 'veil-log-errors-'));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const path = join(directory, 'malformed.db');
+  const db = new Database(path);
+  db.exec('CREATE TABLE execution_logs (unexpected TEXT)');
+  db.close();
+  const closed: Database.Database[] = [];
+  const close = Database.prototype.close;
+  t.mock.method(Database.prototype, 'close', function(this: Database.Database) {
+    closed.push(this); return close.call(this);
+  });
+  assert.throws(() => new ExecutionLogStore(path).listByJob('job'), /no such column/);
+  for (const [filename, schema, message] of [
+    ['uppercase.db', 'CREATE TABLE EXECUTION_LOGS (unexpected TEXT)', /no such column/],
+    ['view.db', 'CREATE VIEW execution_logs AS SELECT * FROM absent', /no such table: main.absent/],
+  ] as const) {
+    const malformedPath = join(directory, filename);
+    const malformed = new Database(malformedPath);
+    malformed.exec(schema);
+    // Close through the original method so only query-owned closures are counted.
+    close.call(malformed);
+    assert.throws(() => new ExecutionLogStore(malformedPath).listByJob('job'), message);
+  }
+  const corrupt = join(directory, 'corrupt.db');
+  fs.writeFileSync(corrupt, 'This is not a SQLite database');
+  assert.throws(() => new ExecutionLogStore(corrupt).listByJob('job'), /not a database/);
+  // Inject permission errors deterministically; chmod is ineffective under privileged CI users.
+  const permission = Object.assign(new Error('permission denied'), { code: 'SQLITE_PERM' });
+  t.mock.method(Database.prototype, 'prepare', () => { throw permission; });
+  assert.throws(() => new ExecutionLogStore(path).listByJob('job'), error => error === permission);
+  assert.equal(closed.length, 5);
+  assert.ok(closed.every(connection => !connection.open));
 });

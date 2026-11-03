@@ -319,3 +319,81 @@ test('run plans outside the reservation and then applies runtime admission limit
   planning.resolve(); await assert.rejects(pending, /step limit exceeded/);
   assert.equal((await runtime.executePlan(plan)).status, 'completed');
 });
+
+for (const version of ['1.0', '2.0'] as const) {
+  test(`${version}: bounded steps getter is captured once, including invalid first reads`, async () => {
+    let calls = 0;
+    const { runtime, plan } = fixture(version, async () => { calls++; }, { maxPlanSteps: 1 });
+    const oversized = [plan.steps[0], { ...plan.steps[0], id: 'second' }];
+    for (const first of [undefined, null, {}, 'steps', plan.steps]) {
+      let reads = 0;
+      const submitted = { ...plan, get steps() {
+        return (++reads === 1 ? first : oversized) as ExecutionPlan['steps'];
+      } };
+      if (first === plan.steps) {
+        assert.equal((await runtime.executePlan(submitted)).status, 'completed');
+      } else {
+        await rejectsWithoutJobs(runtime, () => runtime.executePlan(submitted), /Invalid bounded execution plan steps/);
+      }
+      assert.equal(reads, 1);
+    }
+    assert.equal(calls, 1);
+  });
+
+  test(`${version}: bounded Proxy length is validated without coercion or second reads`, async () => {
+    let calls = 0;
+    const { runtime, plan } = fixture(version, async () => { calls++; }, { maxPlanSteps: 1 });
+    for (const length of [undefined, null, '1', true, NaN, Infinity, -1, 0.5,
+      4_294_967_296, 1n, { valueOf() { assert.fail('length coerced'); } }, 2, 1]) {
+      let reads = 0;
+      const steps = new Proxy([...plan.steps], { get(target, key) {
+        if (key === 'length') return ++reads === 1 ? length : 100;
+        return target[key as keyof typeof target];
+      } });
+      if (length === 1) {
+        assert.equal((await runtime.executePlan({ ...plan, steps })).status, 'completed');
+      } else {
+        await rejectsWithoutJobs(runtime, () => runtime.executePlan({ ...plan, steps }),
+          length === 2 ? /step limit exceeded/ : /Invalid bounded execution plan steps/);
+      }
+      assert.equal(reads, 1);
+    }
+    assert.equal(calls, 1);
+  });
+
+  test(`${version}: bounded captured structure survives persistence and authorization awaits`, async t => {
+    const persisting = deferred<void>();
+    const persist = deferred<void>();
+    const authorizing = deferred<void>();
+    const authorization = deferred<CapabilityAuthorizationDecision>();
+    let calls = 0;
+    const { runtime, plan } = fixture(version, async () => { calls++; return 'captured'; }, {
+      maxPlanSteps: 1,
+      authorizer: { authorize(context) {
+        assert.equal(context.stepId, 'first');
+        assert.equal(context.capability.name, plan.steps[0].capability);
+        authorizing.resolve(); return authorization.promise;
+      } },
+    });
+    const original = { ...plan.steps[0] };
+    const submitted = { ...plan, steps: [original] };
+    const create = jobStore.create.bind(jobStore);
+    t.mock.method(jobStore, 'create', async (job: Job) => {
+      persisting.resolve(); await persist.promise; return create(job);
+    });
+    const pending = runtime.executePlan(submitted);
+    await persisting.promise;
+    original.id = 'mutated'; original.capability = 'missing';
+    submitted.steps.push({ ...original });
+    persist.resolve();
+    await authorizing.promise;
+    submitted.steps.length = 0;
+    submitted.steps = [{ id: 'replacement', capability: 'missing' }];
+    authorization.resolve({ decision: 'allow' });
+    const job = await pending;
+    assert.equal(job.status, 'completed');
+    assert.deepEqual(job.steps.map(step => step.id), ['first']);
+    assert.equal(job.result, 'captured');
+    assert.equal(calls, 1);
+  });
+}

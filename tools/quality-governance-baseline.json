@@ -24,17 +24,17 @@
     },
     {
       "path": "src/runtime/jobs/job-manager.ts",
-      "anchor": "8f99972d6665c230e85e0afa51ba63ce60953fd8f32df9ea4c7a6f033cf372d4",
+      "anchor": "f1d32dd14560fcf9883e25c30c3663dc0078ebd49de915f920ec6abb1aca5849",
       "kind": "job-manager",
       "classification": "GOVERNED_MACHINERY",
-      "reason": "v0.6.0 final governance adoption G1 approved under the maintainer’s Final Governance Adoption instruction: Dispatch captured, version-admitted, structurally validated steps only after Job creation. Supervision and private work tracking retain the same per-step gate. See docs/release/v0.6.0-governance-adoption.md."
+      "reason": "v0.6.0 final governance adoption G1 approved under the maintainer’s Final Governance Adoption instruction: Dispatch captured, version-admitted, structurally validated steps only after Job creation. Supervision and private work tracking retain the same per-step gate. See docs/release/v0.6.0-governance-adoption.md. PR #89 remediation re-review G1: Dispatch uses the same single captured array and validated numeric length when bounded; no fallback read. Structural validation and Job creation still precede dispatch."
     },
     {
       "path": "src/runtime/jobs/job-manager.ts",
-      "anchor": "9ec2e83adc4517c077a4a314f6e01c892d67c931cca8ccb088616c9f7e526eb1",
+      "anchor": "1de7ac2827640d7ab79d276299f619e963f329668ec66628268887da6fc4c44e",
       "kind": "execute",
       "classification": "GOVERNED_MACHINERY",
-      "reason": "v0.6.0 final governance adoption G3 approved under the maintainer’s Final Governance Adoption instruction: Invoke only after reference resolution, resolved-input validation, well-formed explicit allow, V2 detached entry copy and supervision checkpoint. Tracking observes the same callback once; late settlement has no scheduling continuation. See docs/release/v0.6.0-governance-adoption.md."
+      "reason": "v0.6.0 final governance adoption G3 approved under the maintainer’s Final Governance Adoption instruction: Invoke only after reference resolution, resolved-input validation, well-formed explicit allow, V2 detached entry copy and supervision checkpoint. Tracking observes the same callback once; late settlement has no scheduling continuation. See docs/release/v0.6.0-governance-adoption.md. PR #89 remediation re-review G3: The enclosing JobManager declaration changed. Registry resolution, reference/input validation, explicit well-formed allow, V2 copy and supervision checkpoint still guard the unchanged capability invocation."
     },
     {
       "path": "src/runtime/operator-runtime.ts",
@@ -171,10 +171,10 @@
     },
     {
       "path": "src/runtime/jobs/job-manager.ts",
-      "anchor": "63917ec0d7c5ffa5a4ec55830a8f31cc4104095bc1580586564b3a66c0088be8",
+      "anchor": "86079973f34a21759ce6f2d9e713ba8bf8a7b3741f0adefe90ec08671ab0749e",
       "kind": "dynamic",
       "classification": "GOVERNED_MACHINERY",
-      "reason": "v0.6.0 final governance adoption G2 approved under the maintainer’s Final Governance Adoption instruction: Fixed Symbol.dispose closes only this execution’s logger. Defer cleanup to actual capability settlement after logical stop; catch cleanup failure. No capability dispatch or shared-service disposal. See docs/release/v0.6.0-governance-adoption.md."
+      "reason": "v0.6.0 final governance adoption G2 approved under the maintainer’s Final Governance Adoption instruction: Fixed Symbol.dispose closes only this execution’s logger. Defer cleanup to actual capability settlement after logical stop; catch cleanup failure. No capability dispatch or shared-service disposal. See docs/release/v0.6.0-governance-adoption.md. PR #89 remediation re-review G2: The enclosing JobManager declaration changed. This fixed disposal call, local logger owner, deferred settlement cleanup and containment are unchanged."
     },
     {
       "path": "src/runtime/logging/job-log-sink.ts",
@@ -213,10 +213,10 @@
     },
     {
       "path": "test/logging-reliability.test.ts",
-      "anchor": "2a08e19fadf01e5a6f50dabac5fecd6ce3f1c66be0780f17b8ccc1b3f6460657",
+      "anchor": "04c6b74a9489fbd5b56cf547b540b7b29d0b5461d787191105b7276a28d5683b",
       "kind": "dynamic",
       "classification": "TEST_OR_FIXTURE",
-      "reason": "v0.6.0 final governance adoption T4 approved under the maintainer’s Final Governance Adoption instruction: Fixed Symbol.dispose releases only the fixture-owned sink after query-connection ownership assertions. No shared runtime cleanup or capability entry. See docs/release/v0.6.0-governance-adoption.md."
+      "reason": "v0.6.0 final governance adoption T4 approved under the maintainer’s Final Governance Adoption instruction: Fixed Symbol.dispose releases only the fixture-owned sink after query-connection ownership assertions. No shared runtime cleanup or capability entry. See docs/release/v0.6.0-governance-adoption.md. PR #89 remediation re-review T4: The missing-table assertion now expects an empty collection. The unchanged fixed disposal call releases only the local SQLiteLogSink fixture; success/failure query-connection closure remains asserted."
     }
   ]
 }

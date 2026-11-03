@@ -17,8 +17,19 @@ export class ExecutionSupervision {
       this.expiresAt = performance.now() + timeoutMs;
       this.timer = setTimeout(() => this.stop('Execution deadline exceeded'), timeoutMs);
     }
-    hostSignal?.addEventListener('abort', this.cancel, { once: true });
-    if (hostSignal?.aborted) this.cancel();
+    try {
+      hostSignal?.addEventListener('abort', this.cancel, { once: true });
+      if (hostSignal?.aborted) this.cancel();
+    } catch (error) {
+      clearTimeout(this.timer);
+      try {
+        // Registration may have succeeded before the host method threw.
+        hostSignal?.removeEventListener('abort', this.cancel);
+      } catch {
+        // Preserve the initialization failure even if host cleanup also fails.
+      }
+      throw error;
+    }
   }
 
   get signal(): AbortSignal {

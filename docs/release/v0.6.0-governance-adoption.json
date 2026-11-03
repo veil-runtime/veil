@@ -1071,5 +1071,538 @@
       "net": 5
     },
     "reviewAddedCodeLines": 0
+  },
+  "pr89Remediation": {
+    "date": "2026-11-03",
+    "implementationBase": "b13a06d03970a0a00963666db8cc036abeff2232",
+    "authority": "Maintainer PR #89 Review Remediation instruction: individually review changed anchors and preserve all previously approved governance dispositions.",
+    "fixedBase": {
+      "ref": "v0.5.0",
+      "commit": "78713066cafba46b0c2f1cd40eed0e9937102002",
+      "expectedExitCode": 2
+    },
+    "scope": "Three correctness fixes within v0.6.0 feature freeze; no public contract, scanner, parser, rejection or trust-control changes. Earlier adoption sections remain historical.",
+    "inventory": {
+      "count": 31,
+      "parsedCodeFiles": 161,
+      "routeAllowances": 0,
+      "legacyBypasses": 0,
+      "sites": [
+        {
+          "path": "examples/veil-starter/server/veil/capabilities.test.ts",
+          "anchor": "52b8509038c6e02f0fccf1a34118a963984bded3ddc019b2bdee9e3083de44a3",
+          "kind": "execute",
+          "line": 52,
+          "column": 26,
+          "detail": "execution-method reference",
+          "classification": "TEST_OR_FIXTURE"
+        },
+        {
+          "path": "experiments/external-model-reasoner/model-adapter.mjs",
+          "anchor": "aef3c1446aacedf2d4eae8133cf07f8e009a0825b29f08e1763a4e310beeda19",
+          "kind": "dynamic",
+          "line": 30,
+          "column": 60,
+          "detail": "unsupported dynamic invocation or executable extraction",
+          "classification": "TEST_OR_FIXTURE"
+        },
+        {
+          "path": "experiments/external-model-reasoner/model-adapter.mjs",
+          "anchor": "28a49a354fa8f965c784293731603772b623ce565e33a1ca1381b2a2e76b8e2d",
+          "kind": "dynamic",
+          "line": 33,
+          "column": 77,
+          "detail": "unsupported dynamic invocation or executable extraction",
+          "classification": "TEST_OR_FIXTURE"
+        },
+        {
+          "path": "experiments/external-model-reasoner/run.mjs",
+          "anchor": "7f78381ad5ff742445c3bea35efc42459684184a46a5f779673c1514f3ac2731",
+          "kind": "dynamic",
+          "line": 28,
+          "column": 33,
+          "detail": "unsupported dynamic invocation or executable extraction",
+          "classification": "TEST_OR_FIXTURE"
+        },
+        {
+          "path": "src/runtime/execution/governed-value.ts",
+          "anchor": "8dd63a8040d329c82382bc4ae292a642e8a44479de63b274242748bbd7c8e0d1",
+          "kind": "dynamic",
+          "line": 85,
+          "column": 30,
+          "detail": "unsupported reflective property access",
+          "classification": "GOVERNED_MACHINERY"
+        },
+        {
+          "path": "src/runtime/execution/governed-value.ts",
+          "anchor": "bea564db8bd711e6fc0e2b17e6ab2e34929980c9cd32d31ee32b3434924b65bb",
+          "kind": "dynamic",
+          "line": 99,
+          "column": 24,
+          "detail": "unsupported reflective property access",
+          "classification": "GOVERNED_MACHINERY"
+        },
+        {
+          "path": "src/runtime/execution/plan-validator.ts",
+          "anchor": "56e72b010dc9a4c6c38fe49f317cebdf7bf52424d0bdc154a74214b5c867f0c4",
+          "kind": "dynamic",
+          "line": 56,
+          "column": 19,
+          "detail": "unsupported dynamic invocation or executable extraction",
+          "classification": "GOVERNED_MACHINERY"
+        },
+        {
+          "path": "src/runtime/execution/result-reference.ts",
+          "anchor": "fa558518ddbff03dddc63d98f9496c264b3734a45dc09caea209ddc012cb7ffd",
+          "kind": "dynamic",
+          "line": 18,
+          "column": 22,
+          "detail": "unsupported reflective property access",
+          "classification": "GOVERNED_MACHINERY"
+        },
+        {
+          "path": "src/runtime/jobs/job-manager.ts",
+          "anchor": "f1d32dd14560fcf9883e25c30c3663dc0078ebd49de915f920ec6abb1aca5849",
+          "kind": "job-manager",
+          "line": 123,
+          "column": 12,
+          "detail": "direct JobManager execution entrance",
+          "classification": "GOVERNED_MACHINERY"
+        },
+        {
+          "path": "src/runtime/jobs/job-manager.ts",
+          "anchor": "86079973f34a21759ce6f2d9e713ba8bf8a7b3741f0adefe90ec08671ab0749e",
+          "kind": "dynamic",
+          "line": 221,
+          "column": 9,
+          "detail": "unsupported dynamic invocation or executable extraction",
+          "classification": "GOVERNED_MACHINERY"
+        },
+        {
+          "path": "src/runtime/jobs/job-manager.ts",
+          "anchor": "1de7ac2827640d7ab79d276299f619e963f329668ec66628268887da6fc4c44e",
+          "kind": "execute",
+          "line": 350,
+          "column": 42,
+          "detail": "execution-method reference",
+          "classification": "GOVERNED_MACHINERY"
+        },
+        {
+          "path": "src/runtime/logging/job-log-sink.ts",
+          "anchor": "91eee71f67beaad965a4230cefa411ecaa101cb0bfd74691fddf4ade8bf588e0",
+          "kind": "dynamic",
+          "line": 29,
+          "column": 5,
+          "detail": "unsupported dynamic invocation or executable extraction",
+          "classification": "GOVERNED_MACHINERY"
+        },
+        {
+          "path": "src/runtime/logging/sqlite-log-sink.ts",
+          "anchor": "11dec86f4a4a6c70552af30360f80e65f5fe8ff49f17df241e180b939025b197",
+          "kind": "dynamic",
+          "line": 42,
+          "column": 7,
+          "detail": "unsupported dynamic invocation or executable extraction",
+          "classification": "GOVERNED_MACHINERY"
+        },
+        {
+          "path": "src/runtime/operator-runtime.ts",
+          "anchor": "f77cd0abb36b9b5030798b0bf36a75810ed3567c11336fe22d9a03efcbd42855",
+          "kind": "job-manager",
+          "line": 183,
+          "column": 20,
+          "detail": "direct JobManager execution entrance",
+          "classification": "GOVERNED_MACHINERY"
+        },
+        {
+          "path": "src/runtime/operator-runtime.ts",
+          "anchor": "fc5e6e062ae4f33959c02e83b0b03b9e4fffd1bcc00166a369a3a9b4c167a6b4",
+          "kind": "execute",
+          "line": 236,
+          "column": 13,
+          "detail": "execution-method reference",
+          "classification": "LEGITIMATE_NON_CAPABILITY_EXECUTE"
+        },
+        {
+          "path": "src/sdk/capability/create-capability.ts",
+          "anchor": "0e58f16e6c26e79279fe0a35302a8c6c2f0194e689fda296fd424bbae98cc6b4",
+          "kind": "execute",
+          "line": 90,
+          "column": 11,
+          "detail": "execution-method reference",
+          "classification": "GOVERNED_MACHINERY"
+        },
+        {
+          "path": "src/sdk/capability/create-capability.ts",
+          "anchor": "71ee6e7e30c08a8a46082da1658dd23de501f521b2d2a4cc359fb8ef80940ddf",
+          "kind": "execute",
+          "line": 107,
+          "column": 11,
+          "detail": "execution-method reference",
+          "classification": "GOVERNED_MACHINERY"
+        },
+        {
+          "path": "test/fixtures/package-consumer/verify.mjs",
+          "anchor": "0ca0d41fecc7c7f23ede6d59e48201e69fd07dd15ae85888d2360f0ff3c65141",
+          "kind": "dynamic",
+          "line": 16,
+          "column": 5,
+          "detail": "unsupported dynamic module loading or JobManager require/re-export; use a static named import for analysis",
+          "classification": "TEST_OR_FIXTURE"
+        },
+        {
+          "path": "test/logging-reliability.test.ts",
+          "anchor": "823bfec96de092683943d8dbb3d8f4706f3b3f79c230b768b12abec18ad08071",
+          "kind": "dynamic",
+          "line": 76,
+          "column": 33,
+          "detail": "unsupported dynamic invocation or executable extraction",
+          "classification": "TEST_OR_FIXTURE"
+        },
+        {
+          "path": "test/logging-reliability.test.ts",
+          "anchor": "e063cf0572585862b6b0377d8c26958ef96941530729dfb4b3b42ab9c996d758",
+          "kind": "dynamic",
+          "line": 259,
+          "column": 3,
+          "detail": "unsupported dynamic invocation or executable extraction",
+          "classification": "TEST_OR_FIXTURE"
+        },
+        {
+          "path": "test/logging-reliability.test.ts",
+          "anchor": "515773eb22aae19942ed14583cfdaae0918e8543c6470eb9de2a8e95343c2e2a",
+          "kind": "dynamic",
+          "line": 259,
+          "column": 28,
+          "detail": "unsupported dynamic invocation or executable extraction",
+          "classification": "TEST_OR_FIXTURE"
+        },
+        {
+          "path": "test/logging-reliability.test.ts",
+          "anchor": "04c6b74a9489fbd5b56cf547b540b7b29d0b5461d787191105b7276a28d5683b",
+          "kind": "dynamic",
+          "line": 285,
+          "column": 3,
+          "detail": "unsupported dynamic invocation or executable extraction",
+          "classification": "TEST_OR_FIXTURE"
+        },
+        {
+          "path": "test/plan-admission.test.ts",
+          "anchor": "0187fa2f4b6daff3da9797f03c97152101c7318704c3dd988042fa700a86fe3d",
+          "kind": "dynamic",
+          "line": 78,
+          "column": 24,
+          "detail": "unsupported reflective property access",
+          "classification": "TEST_OR_FIXTURE"
+        },
+        {
+          "path": "test/plan-admission.test.ts",
+          "anchor": "b66fcc08bfab183eb951c39f40e1ad47a29208aa33e1285ee7f8bb912a66335d",
+          "kind": "dynamic",
+          "line": 104,
+          "column": 71,
+          "detail": "unsupported reflective property access",
+          "classification": "TEST_OR_FIXTURE"
+        },
+        {
+          "path": "test/plan-admission.test.ts",
+          "anchor": "e5a2f8f0399da97e329901facf8636b7d550dac8fad166fcd39a21f2e2bc08d8",
+          "kind": "dynamic",
+          "line": 113,
+          "column": 20,
+          "detail": "unsupported dynamic invocation or executable extraction",
+          "classification": "TEST_OR_FIXTURE"
+        },
+        {
+          "path": "test/plan-admission.test.ts",
+          "anchor": "9a74dee9a6be95e8470eec859dc028791944182a248397608a35313d8820c1bf",
+          "kind": "dynamic",
+          "line": 116,
+          "column": 18,
+          "detail": "unsupported dynamic module loading or JobManager require/re-export; use a static named import for analysis",
+          "classification": "TEST_OR_FIXTURE"
+        },
+        {
+          "path": "test/planner-routing.test.ts",
+          "anchor": "3045cc55b637d5509c9705dc787c292013d3b248cc1c419b94df983bc1c9d561",
+          "kind": "execute",
+          "line": 56,
+          "column": 27,
+          "detail": "execution-method reference",
+          "classification": "TEST_OR_FIXTURE"
+        },
+        {
+          "path": "test/planner-routing.test.ts",
+          "anchor": "b36db2ba927195ec359f250c4493e61e178c3cabf1e3451dcbc8f900b63698a9",
+          "kind": "execute",
+          "line": 57,
+          "column": 28,
+          "detail": "execution-method reference",
+          "classification": "TEST_OR_FIXTURE"
+        },
+        {
+          "path": "test/planner-routing.test.ts",
+          "anchor": "132a61ba2d05f584ebc5cabffa0c65cb331b462c7f556da32c38ecfcfb7731f8",
+          "kind": "execute",
+          "line": 66,
+          "column": 5,
+          "detail": "execution-method reference",
+          "classification": "TEST_OR_FIXTURE"
+        },
+        {
+          "path": "test/planner-routing.test.ts",
+          "anchor": "349a445b6e74964e7191e282b1e06550d9c11dcf41c303b90615391cf966bd72",
+          "kind": "execute",
+          "line": 73,
+          "column": 22,
+          "detail": "execution-method reference",
+          "classification": "TEST_OR_FIXTURE"
+        },
+        {
+          "path": "test/planner-routing.test.ts",
+          "anchor": "838a7dae7e1f045541edd0d94c3aaca7c7f8721386d0cda8d7899da603671809",
+          "kind": "execute",
+          "line": 80,
+          "column": 5,
+          "detail": "execution-method reference",
+          "classification": "TEST_OR_FIXTURE"
+        }
+      ]
+    },
+    "individualReviews": [
+      {
+        "id": "G1",
+        "previous": {
+          "path": "src/runtime/jobs/job-manager.ts",
+          "anchor": "8f99972d6665c230e85e0afa51ba63ce60953fd8f32df9ea4c7a6f033cf372d4",
+          "kind": "job-manager"
+        },
+        "current": {
+          "path": "src/runtime/jobs/job-manager.ts",
+          "anchor": "f1d32dd14560fcf9883e25c30c3663dc0078ebd49de915f920ec6abb1aca5849",
+          "kind": "job-manager",
+          "line": 123,
+          "column": 12,
+          "detail": "direct JobManager execution entrance"
+        },
+        "classification": "GOVERNED_MACHINERY",
+        "receiver": "this (internal JobManager)",
+        "purpose": "Dispatch captured, version-admitted, structurally validated steps only after Job creation. Supervision and private work tracking retain the same per-step gate.",
+        "previousDisposition": "APPROVE exact candidate identity",
+        "disposition": "APPROVE exact replacement; retain previous authority and classification; retire predecessor identity",
+        "review": "Dispatch uses the same single captured array and validated numeric length when bounded; no fallback read. Structural validation and Job creation still precede dispatch.",
+        "regressionEvidence": [
+          "test/execution-capacity.test.ts",
+          "test/structural-ownership.test.ts",
+          "test/plan-admission.test.ts"
+        ]
+      },
+      {
+        "id": "G2",
+        "previous": {
+          "path": "src/runtime/jobs/job-manager.ts",
+          "anchor": "63917ec0d7c5ffa5a4ec55830a8f31cc4104095bc1580586564b3a66c0088be8",
+          "kind": "dynamic"
+        },
+        "current": {
+          "path": "src/runtime/jobs/job-manager.ts",
+          "anchor": "86079973f34a21759ce6f2d9e713ba8bf8a7b3741f0adefe90ec08671ab0749e",
+          "kind": "dynamic",
+          "line": 221,
+          "column": 9,
+          "detail": "unsupported dynamic invocation or executable extraction"
+        },
+        "classification": "GOVERNED_MACHINERY",
+        "receiver": "invocation-owned JobLogSink",
+        "purpose": "Fixed Symbol.dispose closes only this execution’s logger. Defer cleanup to actual capability settlement after logical stop; catch cleanup failure. No capability dispatch or shared-service disposal.",
+        "previousDisposition": "APPROVE exact candidate identity",
+        "disposition": "APPROVE exact replacement; retain previous authority and classification; retire predecessor identity",
+        "review": "The enclosing JobManager declaration changed. This fixed disposal call, local logger owner, deferred settlement cleanup and containment are unchanged.",
+        "regressionEvidence": [
+          "test/logging-reliability.test.ts",
+          "test/execution-supervision.test.ts"
+        ]
+      },
+      {
+        "id": "G3",
+        "previous": {
+          "path": "src/runtime/jobs/job-manager.ts",
+          "anchor": "9ec2e83adc4517c077a4a314f6e01c892d67c931cca8ccb088616c9f7e526eb1",
+          "kind": "execute"
+        },
+        "current": {
+          "path": "src/runtime/jobs/job-manager.ts",
+          "anchor": "1de7ac2827640d7ab79d276299f619e963f329668ec66628268887da6fc4c44e",
+          "kind": "execute",
+          "line": 350,
+          "column": 42,
+          "detail": "execution-method reference"
+        },
+        "classification": "GOVERNED_MACHINERY",
+        "receiver": "capability resolved from the internal registry",
+        "purpose": "Invoke only after reference resolution, resolved-input validation, well-formed explicit allow, V2 detached entry copy and supervision checkpoint. Tracking observes the same callback once; late settlement has no scheduling continuation.",
+        "previousDisposition": "APPROVE exact candidate identity",
+        "disposition": "APPROVE exact replacement; retain previous authority and classification; retire predecessor identity",
+        "review": "The enclosing JobManager declaration changed. Registry resolution, reference/input validation, explicit well-formed allow, V2 copy and supervision checkpoint still guard the unchanged capability invocation.",
+        "regressionEvidence": [
+          "test/execution-contract.test.ts",
+          "test/governed-value-v2.test.ts",
+          "test/execution-integration.test.ts"
+        ]
+      },
+      {
+        "id": "T4",
+        "previous": {
+          "path": "test/logging-reliability.test.ts",
+          "anchor": "2a08e19fadf01e5a6f50dabac5fecd6ce3f1c66be0780f17b8ccc1b3f6460657",
+          "kind": "dynamic"
+        },
+        "current": {
+          "path": "test/logging-reliability.test.ts",
+          "anchor": "04c6b74a9489fbd5b56cf547b540b7b29d0b5461d787191105b7276a28d5683b",
+          "kind": "dynamic",
+          "line": 285,
+          "column": 3,
+          "detail": "unsupported dynamic invocation or executable extraction"
+        },
+        "classification": "TEST_OR_FIXTURE",
+        "receiver": "local SQLiteLogSink fixture",
+        "purpose": "Fixed Symbol.dispose releases only the fixture-owned sink after query-connection ownership assertions. No shared runtime cleanup or capability entry.",
+        "previousDisposition": "APPROVE exact candidate identity",
+        "disposition": "APPROVE exact replacement; retain previous authority and classification; retire predecessor identity",
+        "review": "The missing-table assertion now expects an empty collection. The unchanged fixed disposal call releases only the local SQLiteLogSink fixture; success/failure query-connection closure remains asserted.",
+        "regressionEvidence": [
+          "test/logging-reliability.test.ts"
+        ]
+      }
+    ],
+    "preservedDispositions": "All other 27 exact current identities and classifications retained. All previous approvals and four v0.5.0 retirements retained; four remediation predecessors retired only in candidate inventory.",
+    "verification": {
+      "status": "passed functional/package and quality regression gates; historical comparison remains exit 2",
+      "commands": [
+        {
+          "command": "npx tsc --project tsconfig.test.json",
+          "exitCode": 0
+        },
+        {
+          "command": "node --test .tmp/test-build/test/{execution-capacity,execution-supervision,logging-reliability,plan-admission,execution-integration,execution-contract,structural-ownership,value-ownership,governed-value-v2,plan-version,governance-routes,execution-routes}.test.js",
+          "exitCode": 0,
+          "tests": 354
+        },
+        {
+          "command": "npm run check",
+          "exitCode": 0,
+          "tests": 455,
+          "includes": [
+            "npm run typecheck",
+            "npm test",
+            "npm run verify:package",
+            "npm run build",
+            "installed package consumer typecheck, public imports and private import rejection (112 packed files)"
+          ]
+        },
+        {
+          "command": "npm run test:quality",
+          "exitCode": 0,
+          "tests": 216
+        },
+        {
+          "command": "npm run quality -- --base v0.5.0",
+          "exitCode": 2,
+          "untrustedCurrentSites": 11,
+          "historicalRetiredSites": 4,
+          "reviewRequiredControls": 7
+        },
+        {
+          "command": "git diff --check",
+          "exitCode": 0
+        }
+      ],
+      "qualityGrowthVersusV050": {
+        "source": {
+          "additions": 387,
+          "removals": 74,
+          "net": 313
+        },
+        "test": {
+          "additions": 1422,
+          "removals": 1,
+          "net": 1421
+        },
+        "harness": {
+          "additions": 6,
+          "removals": 1,
+          "net": 5
+        }
+      },
+      "qualityDeltaVersusPreviousAdoption": {
+        "sourceNet": 22,
+        "testNet": 187,
+        "harnessNet": 0
+      },
+      "controlReview": "Three amended runtime regression files strengthen coverage. Unchanged integration, package consumer and governance test controls retain their previous approved dispositions; baseline only replaces four reviewed exact identities/reasons. No scanner/parser/trust/rejection changes.",
+      "sandboxFailures": [
+        {
+          "command": "node --input-type=module (read-only inventory scan)",
+          "failure": "spawnSync git EPERM; authorized rerun passed"
+        },
+        {
+          "command": "npm run check",
+          "failure": "test failed at file level: external-model-reasoner, external-reasoner, filesystem-confinement, local-planner; authorized reruns passed unchanged controls"
+        },
+        {
+          "command": "npm run test:quality",
+          "failure": "test failed at file level: quality-governance.test.mjs and quality.test.mjs; authorized reruns passed unchanged controls"
+        },
+        {
+          "command": "gh pr view 89",
+          "failure": "error connecting to api.github.com; authorized rerun succeeded"
+        },
+        {
+          "command": "git diff --check (intermediate)",
+          "failure": "CRLF on five newly inserted lines reported trailing whitespace; fixed only those inserted line endings; final check passed"
+        }
+      ],
+      "logs": [
+        "/tmp/veil-pr89-check.log",
+        "/tmp/veil-pr89-focused-boundaries.log",
+        "/tmp/veil-pr89-quality-tests.log",
+        "/tmp/veil-pr89-quality-v050.log",
+        "/tmp/veil-pr89-independent.log"
+      ],
+      "independentConsumer": {
+        "command": "node /tmp/veil-pr89-independent.cjs",
+        "exitCode": 0,
+        "directory": "/tmp/veil-pr89-consumer-x5jzVV",
+        "publicFixtureTypecheck": "pass",
+        "publicAndPrivateExports": "pass",
+        "reliability": {
+          "successfulJobs": 30,
+          "successfulSteps": 60,
+          "failedJobs": 1,
+          "semanticVersions": [
+            "1.0",
+            "2.0"
+          ],
+          "descriptorsBefore": 0,
+          "maximumDescriptors": 1,
+          "descriptorsAfter": 0
+        }
+      }
+    },
+    "remainingRisks": [
+      "Full release-candidate qualification deferred by instruction.",
+      "Historical quality comparison remains mechanically non-green pending normal trusted-branch adoption.",
+      "Host code with a broken removeEventListener can refuse listener cleanup; constructor preserves the original error and releases the deadline timer.",
+      "Existing getter/Proxy side effects, V1 nested input sharing and inability to roll back external capability effects remain unchanged."
+    ],
+    "prStatusBeforePush": {
+      "url": "https://github.com/veil-runtime/veil/pull/89",
+      "state": "OPEN",
+      "isDraft": false,
+      "head": "b13a06d03970a0a00963666db8cc036abeff2232",
+      "checks": "build (24.x) and filesystem-security on Ubuntu/macOS/Windows passed at prior head",
+      "intendedDelivery": "Commit and push to integration/core-v0.6.0; do not merge, tag or publish. New-head remote checks must be assessed separately."
+    }
   }
 }

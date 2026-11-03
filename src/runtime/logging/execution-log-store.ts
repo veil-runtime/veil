@@ -14,6 +14,11 @@ export class ExecutionLogStore {
     mkdirSync(dirname(resolve(this.path)), { recursive: true });
     const db = new Database(this.path);
     try {
+      // A silent Job never initializes the lazy log schema. Other query errors propagate.
+      const schema = db.prepare(
+        "SELECT 1 FROM sqlite_schema WHERE name = 'execution_logs' COLLATE NOCASE"
+      ).get();
+      if (!schema) return [];
       const rows = db
         .prepare(`
           SELECT

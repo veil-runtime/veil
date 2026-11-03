@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
+import { getEventListeners } from 'node:events';
 import { test, type TestContext } from 'node:test';
 import Database from 'better-sqlite3';
 import {
@@ -7,6 +8,7 @@ import {
   type Capability, type CapabilityAuthorizationDecision, type ExecutionAuthorizer, type Job,
 } from '../src/index.js';
 import { runtimeEventBus } from '../src/runtime/events/memory-event-bus.js';
+import { ExecutionSupervision } from '../src/runtime/execution/execution-supervision.js';
 import { JobLogSink } from '../src/runtime/logging/job-log-sink.js';
 import { jobStore } from '../src/runtime/jobs/job-store.js';
 import { plannerRouterRegistry } from '../src/runtime/planner/planner-router-registry.js';
@@ -408,4 +410,58 @@ test('persistence failure still retains in-flight logger ownership until settlem
   provider.resolve('late');
   await settle();
   assert.equal(dispose.mock.callCount(), 1);
+});
+
+for (const failure of ['missing add', 'throwing add getter', 'throwing add', 'throwing aborted', 'throwing cleanup'] as const) {
+  test(`constructor releases deadline and partial listener on ${failure}`, t => {
+    const initializationError = new Error('host initialization');
+    const controller = new AbortController();
+    let listener: EventListener | undefined;
+    let removals = 0;
+    let timerCalls = 0;
+    const token = {} as ReturnType<typeof setTimeout>;
+    t.mock.method(globalThis, 'setTimeout', ((_callback: () => void) => {
+      timerCalls++; return token;
+    }) as typeof setTimeout);
+    const clear = t.mock.method(globalThis, 'clearTimeout', () => {});
+    const signal = {
+      get addEventListener() {
+        if (failure === 'throwing add getter') throw initializationError;
+        if (failure === 'missing add') return undefined;
+        return (_type: string, callback: EventListener) => {
+          listener = callback;
+          controller.signal.addEventListener('abort', callback);
+          if (failure !== 'throwing aborted') throw initializationError;
+        };
+      },
+      get aborted() { throw initializationError; },
+      removeEventListener(_type: string, callback: EventListener) {
+        removals++;
+        assert.equal(callback, listener ?? callback);
+        controller.signal.removeEventListener('abort', callback);
+        listener = undefined;
+        if (failure === 'throwing cleanup') throw new Error('cleanup');
+      },
+    } as unknown as AbortSignal;
+    assert.throws(() => new ExecutionSupervision(signal, 1000), error =>
+      failure === 'missing add' ? error instanceof TypeError : error === initializationError);
+    assert.equal(timerCalls, 1);
+    assert.deepEqual(clear.mock.calls.map(call => call.arguments), [[token]]);
+    assert.equal(removals, 1);
+    assert.equal(listener, undefined);
+    assert.equal(getEventListeners(controller.signal, 'abort').length, 0);
+  });
+}
+
+test('invalid host signal with deadline rejects without leaking a timer', async t => {
+  const set = t.mock.method(globalThis, 'setTimeout');
+  const clear = t.mock.method(globalThis, 'clearTimeout');
+  const { runtime, plan } = fixture('1.0', async () => 'ok');
+  await assert.rejects(runtime.executePlan(plan, {
+    signal: {} as AbortSignal, timeoutMs: 2_147_483_647,
+  }), TypeError);
+  assert.equal(set.mock.callCount(), 1);
+  assert.equal(clear.mock.callCount(), 1);
+  assert.equal(clear.mock.calls[0].arguments[0], set.mock.calls[0].result);
+  assert.equal((await runtime.executePlan(plan)).status, 'completed');
 });
