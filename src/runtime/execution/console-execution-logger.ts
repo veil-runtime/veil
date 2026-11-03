@@ -4,6 +4,8 @@ import {
   ExecutionLogLevel,
 } from './execution-logger.js';
 
+import { reportLoggingFailure } from '../logging/logging-diagnostic.js';
+
 import { ExecutionLogSink } from '../logging/execution-log-sink.js';
 
 export class ConsoleExecutionLogger
@@ -57,6 +59,12 @@ export class ConsoleExecutionLogger
       metadata,
     };
 
-    void this.sink.write(entry);
+    try {
+      void Promise.resolve(this.sink.write(entry)).catch(() => {
+        reportLoggingFailure();
+      });
+    } catch {
+      reportLoggingFailure();
+    }
   }
 }

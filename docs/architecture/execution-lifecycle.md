@@ -81,6 +81,15 @@ equivalent to the authorized value. See [trust boundaries](trust-boundaries.html
 
 ## Completion
 
+During v0.6.0 development, host `signal` and `timeoutMs` options add cooperative
+supervision around authorization and capability waits. Admission is unchanged.
+Scheduling and result-commit checkpoints reject observed cancellation/expiry;
+late responses are observed without advancing lifecycle state. The runtime's
+signal reaches capability context, while a logically terminated Job retains its
+logging owner until the returned capability promise settles. See the
+[transition/race table](../release/v0.6.0-phase2.md) and
+[option contract](../reference/operator-runtime.html#cooperative-execution-supervision-v060-development).
+
 On success the job outcome is success. Its result is the sole result for a one-step plan, or the ordered array of results for a multi-step plan. It emits job.completed and persists. On any failure outcome/status become failed, the error is recorded, job.failed is emitted, and the job persists.
 
 ## Boundaries and guarantees
