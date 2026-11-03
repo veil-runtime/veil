@@ -1,4 +1,5 @@
 import { containForeignAdmissionError } from './execution/plan-admission-error.js';
+import { ExecutionSupervision } from './execution/execution-supervision.js';
 import type { CapabilityDescriptor } from './registry/capability.js';
 import { Job } from './jobs/job.js';
 import { JobListFilter } from './jobs/job-store.js';
@@ -38,10 +39,18 @@ export interface RunJobOptions {
   planner?: string;
   strategy?: string;
   caller?: ExecutionCaller;
+  /** Cooperative cancellation of execution; does not cancel planning or undo effects. */
+  signal?: AbortSignal;
+  /** Execution budget in milliseconds, beginning at executePlan submission. */
+  timeoutMs?: number;
 }
 
 export interface ExecutePlanOptions {
   caller?: ExecutionCaller;
+  /** Cooperative cancellation; completed external effects are not undone. */
+  signal?: AbortSignal;
+  /** Integer execution budget from 0 through 2147483647 milliseconds. */
+  timeoutMs?: number;
 }
 
 export interface OperatorRuntimeOptions {
@@ -120,16 +129,22 @@ export class OperatorRuntime {
     options: ExecutePlanOptions = {}
   ): Promise<Job> {
     const admissionOwner = {};
+    const supervision = options.signal !== undefined || options.timeoutMs !== undefined
+      ? new ExecutionSupervision(options.signal, options.timeoutMs)
+      : undefined;
     try {
       return await jobManager.executePlan(
         plan,
         immutableCaller(options.caller),
         this.authorizer,
         admissionOwner,
-        this.planVersions
+        this.planVersions,
+        supervision
       );
     } catch (error) {
       throw containForeignAdmissionError(admissionOwner, error);
+    } finally {
+      supervision?.dispose();
     }
   }
 
@@ -177,7 +192,7 @@ export class OperatorRuntime {
 
     return this.executePlan(
       plan,
-      { caller: options.caller }
+      { caller: options.caller, signal: options.signal, timeoutMs: options.timeoutMs }
     );
   }
 

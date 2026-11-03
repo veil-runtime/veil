@@ -26,6 +26,8 @@ import { ConsoleExecutionLogger } from '../execution/console-execution-logger.js
 import { ConsoleLogSink } from '../logging/console-log-sink.js';
 import { CompositeLogSink } from '../logging/composite-log-sink.js';
 import { JobLogSink } from '../logging/job-log-sink.js';
+import { reportLoggingFailure } from '../logging/logging-diagnostic.js';
+import { ExecutionSupervision } from '../execution/execution-supervision.js';
 
 class JobManager {
   async executePlan(
@@ -34,7 +36,8 @@ class JobManager {
     authorizer: ExecutionAuthorizer =
       defaultExecutionAuthorizer,
     admissionOwner: AdmissionOwner = {},
-    enabledVersions: ReadonlySet<string> = new Set(['1.0'])
+    enabledVersions: ReadonlySet<string> = new Set(['1.0']),
+    supervision?: ExecutionSupervision
   ): Promise<Job> {
     const version = plan.version;
     if ((version !== '1.0' && version !== '2.0') || !enabledVersions.has(version)) {
@@ -105,7 +108,8 @@ class JobManager {
       job.id,
       caller,
       authorizer,
-      version
+      version,
+      supervision
     );
   }
 
@@ -172,7 +176,8 @@ class JobManager {
     caller?: ExecutionCaller,
     authorizer: ExecutionAuthorizer =
       defaultExecutionAuthorizer,
-    semanticVersion: '1.0' | '2.0' = '1.0'
+    semanticVersion: '1.0' | '2.0' = '1.0',
+    supervision?: ExecutionSupervision
   ): Promise<Job> {
     const job = await jobStore.get(id);
 
@@ -192,9 +197,18 @@ class JobManager {
 
     const logSink = new JobLogSink();
     const sink = new CompositeLogSink([new ConsoleLogSink(), logSink]);
+    let unsettledCapability: Promise<unknown> | undefined;
+    const disposeLogs = () => {
+      try {
+        logSink[Symbol.dispose]();
+      } catch {
+        reportLoggingFailure();
+      }
+    };
 
     try {
       for (const step of job.steps) {
+        supervision?.checkpoint();
         const capability = capabilityRegistry.get(step.capability);
 
         if (!capability) {
@@ -231,15 +245,15 @@ class JobManager {
             );
           }
 
-          const authorization = semanticVersion === '2.0'
-            ? await authorizer.authorize(createGovernedAuthorizationContext(
+          const authorize = () => semanticVersion === '2.0'
+            ? authorizer.authorize(createGovernedAuthorizationContext(
               job.id,
               step.id,
               capability,
               copyGovernedValue(governedInput, true),
               caller
             ))
-            : await authorizer.authorize({
+            : authorizer.authorize({
                 jobId: job.id,
                 stepId: step.id,
                 capability: {
@@ -250,6 +264,9 @@ class JobManager {
                 input: resolvedInput,
                 caller,
               });
+          const authorization = supervision
+            ? await supervision.wait(authorize)
+            : await authorize();
 
           if (
             typeof authorization !== 'object' ||
@@ -295,6 +312,8 @@ class JobManager {
             ? copyGovernedValue(governedInput)
             : resolvedInput;
 
+          supervision?.checkpoint();
+
           step.status = 'running';
           step.startedAt = new Date().toISOString();
 
@@ -309,15 +328,30 @@ class JobManager {
             sink
           );
 
-          const result = await capability.execute(
+          const execute = () => capability.execute(
             capabilityInput,
             {
               jobId: job.id,
               stepId: step.id,
               logger,
               caller,
+              ...(supervision ? { signal: supervision.signal } : {}),
             }
           );
+          const result = supervision
+            ? await supervision.wait(() => {
+                const work = Promise.resolve(execute());
+                unsettledCapability = work;
+                // Only release ownership here; late values never touch Job state.
+                void work.then(
+                  () => { unsettledCapability = undefined; },
+                  () => { unsettledCapability = undefined; }
+                );
+                return work;
+              })
+            : await execute();
+
+          supervision?.checkpoint();
 
           step.result = result;
           step.status = 'completed';
@@ -351,6 +385,7 @@ class JobManager {
         }
       }
 
+      supervision?.checkpoint();
       job.status = 'completed';
       job.outcome = 'success';
       job.completedAt = new Date().toISOString();
@@ -388,7 +423,11 @@ class JobManager {
 
       return job;
     } finally {
-      logSink[Symbol.dispose]();
+      if (unsettledCapability) {
+        void unsettledCapability.then(disposeLogs, disposeLogs);
+      } else {
+        disposeLogs();
+      }
     }
   }
 

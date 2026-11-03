@@ -11,6 +11,8 @@ import {
   type ExecutionAuthorizer,
   type ExecutionPlan,
   type OperatorRuntimeOptions,
+  type ExecutePlanOptions,
+  type RunJobOptions,
 } from '@veil-runtime/core';
 
 const capability = createCapability<{ value: string }, string>({
@@ -79,5 +81,13 @@ export async function validateConsumer(): Promise<void> {
   const job = await runtime.executePlan(plan);
   if (job.status !== 'completed') {
     throw new Error(`Unexpected status: ${job.status}: ${job.error ?? 'unknown error'}`);
+  }
+  const controller = new AbortController();
+  controller.abort();
+  const executionOptions: ExecutePlanOptions = { signal: controller.signal, timeoutMs: 1000 };
+  const runOptions: RunJobOptions = executionOptions;
+  const stopped = await runtime.executePlan(plan, runOptions);
+  if (stopped.status !== 'failed' || stopped.error !== 'Execution cancelled') {
+    throw new Error('Public cooperative cancellation failed');
   }
 }
