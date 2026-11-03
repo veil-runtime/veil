@@ -1,5 +1,5 @@
 {
-  "status": "development candidate; no release approval",
+  "status": "governance adopted under maintainer task instruction; release qualification pending",
   "date": "2026-11-03",
   "environment": {
     "os": "linux",
@@ -39,7 +39,7 @@
         "previousAnchor": "98a4d84de7c99bcc39208327cd7ee40a2b08c00eb4594824d9f3211b138a993f",
         "finalAnchor": "8f99972d6665c230e85e0afa51ba63ce60953fd8f32df9ea4c7a6f033cf372d4",
         "classification": "GOVERNED_MACHINERY",
-        "proposedDisposition": "adopt final identity; maintainer decision pending"
+        "proposedDisposition": "approved exact final identity under Final Governance Adoption instruction; historical comparison remains untrusted"
       },
       {
         "path": "src/runtime/jobs/job-manager.ts",
@@ -47,7 +47,7 @@
         "previousAnchor": "b0884a7a66f648d69198f6f14e3ea3bfac0daf68c7b95cc1cfe61fb1bacb4ee5",
         "finalAnchor": "9ec2e83adc4517c077a4a314f6e01c892d67c931cca8ccb088616c9f7e526eb1",
         "classification": "GOVERNED_MACHINERY",
-        "proposedDisposition": "adopt final identity; maintainer decision pending"
+        "proposedDisposition": "approved exact final identity under Final Governance Adoption instruction; historical comparison remains untrusted"
       },
       {
         "path": "src/runtime/operator-runtime.ts",
@@ -55,7 +55,7 @@
         "previousAnchor": "aeb8c5092d6664e4ac7c850dd226f2d6ae778cb85cf171c5ce48dd2a560fe125",
         "finalAnchor": "f77cd0abb36b9b5030798b0bf36a75810ed3567c11336fe22d9a03efcbd42855",
         "classification": "GOVERNED_MACHINERY",
-        "proposedDisposition": "adopt final identity; maintainer decision pending"
+        "proposedDisposition": "approved exact final identity under Final Governance Adoption instruction; historical comparison remains untrusted"
       },
       {
         "path": "src/runtime/operator-runtime.ts",
@@ -63,7 +63,7 @@
         "previousAnchor": "c33aca7aa568feefa503eb6f69a1f301cdfece563f12d155e95ac42603fd55b9",
         "finalAnchor": "fc5e6e062ae4f33959c02e83b0b03b9e4fffd1bcc00166a369a3a9b4c167a6b4",
         "classification": "LEGITIMATE_NON_CAPABILITY_EXECUTE",
-        "proposedDisposition": "adopt final identity; maintainer decision pending"
+        "proposedDisposition": "approved exact final identity under Final Governance Adoption instruction; historical comparison remains untrusted"
       },
       {
         "path": "src/runtime/jobs/job-manager.ts",
@@ -71,10 +71,10 @@
         "previousAnchor": "7ed7f19af7b6bca74f4f85f7685e5902610444560dfd55f29897e5303d3d9f8f",
         "finalAnchor": "63917ec0d7c5ffa5a4ec55830a8f31cc4104095bc1580586564b3a66c0088be8",
         "classification": "GOVERNED_MACHINERY",
-        "proposedDisposition": "adopt final identity; maintainer decision pending"
+        "proposedDisposition": "approved exact final identity under Final Governance Adoption instruction; historical comparison remains untrusted"
       }
     ],
-    "maintainerAdoption": "pending",
+    "maintainerAdoption": "approved under Final Governance Adoption instruction; see docs/release/v0.6.0-governance-adoption.md and .json for individual dispositions and authority limits",
     "unchangedControls": [
       {
         "path": "tools/quality.mjs",
@@ -126,7 +126,8 @@
         "sha256": "4382513a7d365783c37e638756d51427defea194fbfd3e206aad926d14a2db99",
         "byteEqualToFixedBase": true
       }
-    ]
+    ],
+    "finalAdoptionEvidence": "docs/release/v0.6.0-governance-adoption.json"
   },
   "verification": [
     {
@@ -579,7 +580,9 @@
   },
   "recommendation": {
     "developmentReview": "GO",
-    "finalReleaseQualification": "NO-GO until maintainer governance dispositions are recorded; native platform and exact-artifact checks remain final-candidate work"
+    "finalReleaseQualification": "GO to proceed with release qualification after including governance adoption in PR #89; final release itself remains unqualified",
+    "mayLeaveDraft": true,
+    "governanceReview": "GO; 11 sites, four retirements and seven controls individually approved; 31 exact candidate identities retained"
   },
   "published": false,
   "merged": false,

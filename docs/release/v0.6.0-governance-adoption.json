@@ -1,0 +1,1075 @@
+{
+  "date": "2026-11-03",
+  "reviewedImplementation": "f62447114d0f3b9d2f8454b6a849a61eefb6e046",
+  "pullRequest": "https://github.com/veil-runtime/veil/pull/89",
+  "authority": {
+    "instruction": "Maintainer task: Veil Core v0.6.0 — Final Governance Adoption; record explicit maintainer approvals where justified.",
+    "reviewer": "Codex, acting under this conditional adoption instruction",
+    "scope": "exact reviewed sites and seven verification controls only; no architecture decision, GitHub approval review, merge or release approval implied",
+    "githubReviewStateAtInspection": "no submitted reviews; PR draft; head matches reviewed implementation"
+  },
+  "fixedBase": {
+    "ref": "v0.5.0",
+    "commit": "78713066cafba46b0c2f1cd40eed0e9937102002",
+    "expectedExitCode": 2
+  },
+  "inventory": {
+    "count": 31,
+    "parsedCodeFiles": 161,
+    "routeAllowances": 0,
+    "legacyBypasses": 0,
+    "sites": [
+      {
+        "path": "examples/veil-starter/server/veil/capabilities.test.ts",
+        "anchor": "52b8509038c6e02f0fccf1a34118a963984bded3ddc019b2bdee9e3083de44a3",
+        "kind": "execute",
+        "line": 52,
+        "column": 26,
+        "detail": "execution-method reference",
+        "classification": "TEST_OR_FIXTURE",
+        "receiver": "fixture capability",
+        "purpose": "existing direct isolated capability unit test",
+        "regressionEvidence": [
+          "same source assertion at :52; unchanged from v0.5.0"
+        ],
+        "disposition": "RETAIN unchanged previously adopted identity"
+      },
+      {
+        "path": "experiments/external-model-reasoner/model-adapter.mjs",
+        "anchor": "aef3c1446aacedf2d4eae8133cf07f8e009a0825b29f08e1763a4e310beeda19",
+        "kind": "dynamic",
+        "line": 30,
+        "column": 60,
+        "detail": "unsupported dynamic invocation or executable extraction",
+        "classification": "TEST_OR_FIXTURE",
+        "receiver": "fixed-key metadata record",
+        "purpose": "bounded metadata projection; model response is data",
+        "regressionEvidence": [
+          "test/external-model-reasoner.test.ts:4; unchanged experiment source"
+        ],
+        "disposition": "RETAIN unchanged previously adopted identity"
+      },
+      {
+        "path": "experiments/external-model-reasoner/model-adapter.mjs",
+        "anchor": "28a49a354fa8f965c784293731603772b623ce565e33a1ca1381b2a2e76b8e2d",
+        "kind": "dynamic",
+        "line": 33,
+        "column": 77,
+        "detail": "unsupported dynamic invocation or executable extraction",
+        "classification": "TEST_OR_FIXTURE",
+        "receiver": "fixed-key metadata record",
+        "purpose": "bounded metadata projection; model response is data",
+        "regressionEvidence": [
+          "test/external-model-reasoner.test.ts:4; unchanged experiment source"
+        ],
+        "disposition": "RETAIN unchanged previously adopted identity"
+      },
+      {
+        "path": "experiments/external-model-reasoner/run.mjs",
+        "anchor": "7f78381ad5ff742445c3bea35efc42459684184a46a5f779673c1514f3ac2731",
+        "kind": "dynamic",
+        "line": 28,
+        "column": 33,
+        "detail": "unsupported dynamic invocation or executable extraction",
+        "classification": "TEST_OR_FIXTURE",
+        "receiver": "local CLI options record",
+        "purpose": "fixed allowlisted CLI key assignment",
+        "regressionEvidence": [
+          "test/external-model-reasoner.test.ts:4; unchanged experiment source"
+        ],
+        "disposition": "RETAIN unchanged previously adopted identity"
+      },
+      {
+        "path": "src/runtime/execution/governed-value.ts",
+        "anchor": "8dd63a8040d329c82382bc4ae292a642e8a44479de63b274242748bbd7c8e0d1",
+        "kind": "dynamic",
+        "line": 85,
+        "column": 30,
+        "detail": "unsupported reflective property access",
+        "classification": "GOVERNED_MACHINERY",
+        "receiver": "Object own-property descriptor intrinsic",
+        "purpose": "passive array length or enumerable data descriptor inspection; no dispatch",
+        "regressionEvidence": [
+          "test/governed-value-v2.test.ts:233,243,253"
+        ],
+        "disposition": "RETAIN unchanged previously adopted identity"
+      },
+      {
+        "path": "src/runtime/execution/governed-value.ts",
+        "anchor": "bea564db8bd711e6fc0e2b17e6ab2e34929980c9cd32d31ee32b3434924b65bb",
+        "kind": "dynamic",
+        "line": 99,
+        "column": 24,
+        "detail": "unsupported reflective property access",
+        "classification": "GOVERNED_MACHINERY",
+        "receiver": "Object own-property descriptor intrinsic",
+        "purpose": "passive array length or enumerable data descriptor inspection; no dispatch",
+        "regressionEvidence": [
+          "test/governed-value-v2.test.ts:233,243,253"
+        ],
+        "disposition": "RETAIN unchanged previously adopted identity"
+      },
+      {
+        "path": "src/runtime/execution/plan-validator.ts",
+        "anchor": "56e72b010dc9a4c6c38fe49f317cebdf7bf52424d0bdc154a74214b5c867f0c4",
+        "kind": "dynamic",
+        "line": 56,
+        "column": 19,
+        "detail": "unsupported dynamic invocation or executable extraction",
+        "classification": "GOVERNED_MACHINERY",
+        "receiver": "TYPE_CHECKS predicate table",
+        "purpose": "existing trusted capability schema type predicate lookup; no new authority",
+        "regressionEvidence": [
+          "test/execution-contract.test.ts:170,375; test/plan-admission.test.ts:46"
+        ],
+        "disposition": "RETAIN unchanged previously adopted identity"
+      },
+      {
+        "path": "src/runtime/execution/result-reference.ts",
+        "anchor": "fa558518ddbff03dddc63d98f9496c264b3734a45dc09caea209ddc012cb7ffd",
+        "kind": "dynamic",
+        "line": 18,
+        "column": 22,
+        "detail": "unsupported reflective property access",
+        "classification": "GOVERNED_MACHINERY",
+        "receiver": "Object own-property descriptor intrinsic",
+        "purpose": "exact $ref wrapper recognition; result-path rules unchanged",
+        "regressionEvidence": [
+          "test/governed-value-v2.test.ts:297; test/execution-contract.test.ts:673,711"
+        ],
+        "disposition": "RETAIN unchanged previously adopted identity"
+      },
+      {
+        "path": "src/runtime/jobs/job-manager.ts",
+        "anchor": "8f99972d6665c230e85e0afa51ba63ce60953fd8f32df9ea4c7a6f033cf372d4",
+        "kind": "job-manager",
+        "line": 117,
+        "column": 12,
+        "detail": "direct JobManager execution entrance",
+        "id": "G1",
+        "receiver": "this (internal JobManager)",
+        "purpose": "Dispatch captured, version-admitted, structurally validated steps only after Job creation. Supervision and private work tracking retain the same per-step gate.",
+        "regressionEvidence": [
+          "test/execution-capacity.test.ts:60",
+          "test/execution-capacity.test.ts:75",
+          "test/execution-capacity.test.ts:258",
+          "test/execution-contract.test.ts:375",
+          "test/structural-ownership.test.ts:135"
+        ],
+        "classification": "GOVERNED_MACHINERY",
+        "disposition": "APPROVE exact candidate identity"
+      },
+      {
+        "path": "src/runtime/jobs/job-manager.ts",
+        "anchor": "63917ec0d7c5ffa5a4ec55830a8f31cc4104095bc1580586564b3a66c0088be8",
+        "kind": "dynamic",
+        "line": 215,
+        "column": 9,
+        "detail": "unsupported dynamic invocation or executable extraction",
+        "id": "G2",
+        "receiver": "invocation-owned JobLogSink",
+        "purpose": "Fixed Symbol.dispose closes only this execution’s logger. Defer cleanup to actual capability settlement after logical stop; catch cleanup failure. No capability dispatch or shared-service disposal.",
+        "regressionEvidence": [
+          "test/logging-reliability.test.ts:111",
+          "test/logging-reliability.test.ts:226",
+          "test/execution-supervision.test.ts:228",
+          "test/execution-supervision.test.ts:274",
+          "test/execution-integration.test.ts:45"
+        ],
+        "classification": "GOVERNED_MACHINERY",
+        "disposition": "APPROVE exact candidate identity"
+      },
+      {
+        "path": "src/runtime/jobs/job-manager.ts",
+        "anchor": "9ec2e83adc4517c077a4a314f6e01c892d67c931cca8ccb088616c9f7e526eb1",
+        "kind": "execute",
+        "line": 344,
+        "column": 42,
+        "detail": "execution-method reference",
+        "id": "G3",
+        "receiver": "capability resolved from the internal registry",
+        "purpose": "Invoke only after reference resolution, resolved-input validation, well-formed explicit allow, V2 detached entry copy and supervision checkpoint. Tracking observes the same callback once; late settlement has no scheduling continuation.",
+        "regressionEvidence": [
+          "test/execution-contract.test.ts:431",
+          "test/execution-contract.test.ts:488",
+          "test/governed-value-v2.test.ts:56",
+          "test/governed-value-v2.test.ts:106",
+          "test/execution-supervision.test.ts:161",
+          "test/execution-integration.test.ts:118"
+        ],
+        "classification": "GOVERNED_MACHINERY",
+        "disposition": "APPROVE exact candidate identity"
+      },
+      {
+        "path": "src/runtime/logging/job-log-sink.ts",
+        "anchor": "91eee71f67beaad965a4230cefa411ecaa101cb0bfd74691fddf4ade8bf588e0",
+        "kind": "dynamic",
+        "line": 29,
+        "column": 5,
+        "detail": "unsupported dynamic invocation or executable extraction",
+        "id": "L4",
+        "receiver": "privately constructed SQLiteLogSink",
+        "purpose": "Fixed optional Symbol.dispose call after marking the JobLogSink disposed. One private connection, no shared service or execution authority, no reopening from a retained logger.",
+        "regressionEvidence": [
+          "test/logging-reliability.test.ts:226",
+          "test/logging-reliability.test.ts:254",
+          "test/logging-reliability.test.ts:288"
+        ],
+        "classification": "GOVERNED_MACHINERY",
+        "disposition": "APPROVE exact candidate identity"
+      },
+      {
+        "path": "src/runtime/logging/sqlite-log-sink.ts",
+        "anchor": "11dec86f4a4a6c70552af30360f80e65f5fe8ff49f17df241e180b939025b197",
+        "kind": "dynamic",
+        "line": 42,
+        "column": 7,
+        "detail": "unsupported dynamic invocation or executable extraction",
+        "id": "L5",
+        "receiver": "this newly constructed SQLiteLogSink",
+        "purpose": "Fixed Symbol.dispose on schema initialization failure closes the newly allocated database and preserves the original error. Native close errors are contained; no capability or registry path.",
+        "regressionEvidence": [
+          "test/logging-reliability.test.ts:153",
+          "test/logging-reliability.test.ts:215",
+          "test/logging-reliability.test.ts:288"
+        ],
+        "classification": "GOVERNED_MACHINERY",
+        "disposition": "APPROVE exact candidate identity"
+      },
+      {
+        "path": "src/runtime/operator-runtime.ts",
+        "anchor": "f77cd0abb36b9b5030798b0bf36a75810ed3567c11336fe22d9a03efcbd42855",
+        "kind": "job-manager",
+        "line": 183,
+        "column": 20,
+        "detail": "direct JobManager execution entrance",
+        "id": "G4",
+        "receiver": "internal jobManager singleton",
+        "purpose": "Delegate through the same admission entrance with captured host policy, copied caller and configured authorizer. Synchronous per-instance reservation is rejecting policy; tracking only retains capacity until submission and actual work settle.",
+        "regressionEvidence": [
+          "test/execution-capacity.test.ts:248",
+          "test/execution-capacity.test.ts:271",
+          "test/execution-capacity.test.ts:287",
+          "test/execution-integration.test.ts:45",
+          "test/execution-contract.test.ts:644"
+        ],
+        "classification": "GOVERNED_MACHINERY",
+        "disposition": "APPROVE exact candidate identity"
+      },
+      {
+        "path": "src/runtime/operator-runtime.ts",
+        "anchor": "fc5e6e062ae4f33959c02e83b0b03b9e4fffd1bcc00166a369a3a9b4c167a6b4",
+        "kind": "execute",
+        "line": 236,
+        "column": 13,
+        "detail": "execution-method reference",
+        "id": "G5",
+        "receiver": "registered planner strategy selected through PlannerRouter",
+        "purpose": "Reasoning returns an ExecutionPlan to this.executePlan. Planning stays outside capacity reservation; neither returned plan fields nor planner selection grants capability authority.",
+        "regressionEvidence": [
+          "test/planner-routing.test.ts:44",
+          "test/execution-capacity.test.ts:306",
+          "test/execution-supervision.test.ts:331",
+          "test/governance-routes.test.ts:166"
+        ],
+        "classification": "LEGITIMATE_NON_CAPABILITY_EXECUTE",
+        "disposition": "APPROVE exact candidate identity"
+      },
+      {
+        "path": "src/sdk/capability/create-capability.ts",
+        "anchor": "0e58f16e6c26e79279fe0a35302a8c6c2f0194e689fda296fd424bbae98cc6b4",
+        "kind": "execute",
+        "line": 90,
+        "column": 11,
+        "detail": "execution-method reference",
+        "classification": "GOVERNED_MACHINERY",
+        "receiver": "host definition callback or configured middleware",
+        "purpose": "existing SDK capability/middleware delegation; no new admission entrance",
+        "regressionEvidence": [
+          "test/value-ownership.test.ts:249; installed consumer; unchanged SDK"
+        ],
+        "disposition": "RETAIN unchanged previously adopted identity"
+      },
+      {
+        "path": "src/sdk/capability/create-capability.ts",
+        "anchor": "71ee6e7e30c08a8a46082da1658dd23de501f521b2d2a4cc359fb8ef80940ddf",
+        "kind": "execute",
+        "line": 107,
+        "column": 11,
+        "detail": "execution-method reference",
+        "classification": "GOVERNED_MACHINERY",
+        "receiver": "host definition callback or configured middleware",
+        "purpose": "existing SDK capability/middleware delegation; no new admission entrance",
+        "regressionEvidence": [
+          "test/value-ownership.test.ts:249; installed consumer; unchanged SDK"
+        ],
+        "disposition": "RETAIN unchanged previously adopted identity"
+      },
+      {
+        "path": "test/fixtures/package-consumer/verify.mjs",
+        "anchor": "0ca0d41fecc7c7f23ede6d59e48201e69fd07dd15ae85888d2360f0ff3c65141",
+        "kind": "dynamic",
+        "line": 16,
+        "column": 5,
+        "detail": "unsupported dynamic module loading or JobManager require/re-export; use a static named import for analysis",
+        "classification": "TEST_OR_FIXTURE",
+        "receiver": "enumerated private import paths",
+        "purpose": "negative package boundary check",
+        "regressionEvidence": [
+          "npm run check installed-package verification; ERR_PACKAGE_PATH_NOT_EXPORTED assertions"
+        ],
+        "disposition": "RETAIN unchanged previously adopted identity"
+      },
+      {
+        "path": "test/logging-reliability.test.ts",
+        "anchor": "823bfec96de092683943d8dbb3d8f4706f3b3f79c230b768b12abec18ad08071",
+        "kind": "dynamic",
+        "line": 76,
+        "column": 33,
+        "detail": "unsupported dynamic invocation or executable extraction",
+        "id": "T1",
+        "receiver": "local ConsoleExecutionLogger with inert throwing/rejecting sink",
+        "purpose": "Loop key is drawn only from literal debug/info/warn/error. Exercise every existing void logger method against sync throws, rejection and hostile thenables; no caller-selected callable or capability entry.",
+        "regressionEvidence": [
+          "test/logging-reliability.test.ts:67"
+        ],
+        "classification": "TEST_OR_FIXTURE",
+        "disposition": "APPROVE exact candidate identity"
+      },
+      {
+        "path": "test/logging-reliability.test.ts",
+        "anchor": "e063cf0572585862b6b0377d8c26958ef96941530729dfb4b3b42ab9c996d758",
+        "kind": "dynamic",
+        "line": 259,
+        "column": 3,
+        "detail": "unsupported dynamic invocation or executable extraction",
+        "id": "T2",
+        "receiver": "local JobLogSink owner",
+        "purpose": "First fixed Symbol.dispose call closes the test-owned connection. Together with T3 asserts one connection and no reopening; test-process instrumentation only.",
+        "regressionEvidence": [
+          "test/logging-reliability.test.ts:254"
+        ],
+        "classification": "TEST_OR_FIXTURE",
+        "disposition": "APPROVE exact candidate identity"
+      },
+      {
+        "path": "test/logging-reliability.test.ts",
+        "anchor": "515773eb22aae19942ed14583cfdaae0918e8543c6470eb9de2a8e95343c2e2a",
+        "kind": "dynamic",
+        "line": 259,
+        "column": 28,
+        "detail": "unsupported dynamic invocation or executable extraction",
+        "id": "T3",
+        "receiver": "same local JobLogSink owner",
+        "purpose": "Second fixed Symbol.dispose call proves idempotence; a subsequent write cannot reopen the owner. Test-process instrumentation only.",
+        "regressionEvidence": [
+          "test/logging-reliability.test.ts:254"
+        ],
+        "classification": "TEST_OR_FIXTURE",
+        "disposition": "APPROVE exact candidate identity"
+      },
+      {
+        "path": "test/logging-reliability.test.ts",
+        "anchor": "2a08e19fadf01e5a6f50dabac5fecd6ce3f1c66be0780f17b8ccc1b3f6460657",
+        "kind": "dynamic",
+        "line": 285,
+        "column": 3,
+        "detail": "unsupported dynamic invocation or executable extraction",
+        "id": "T4",
+        "receiver": "local SQLiteLogSink fixture",
+        "purpose": "Fixed Symbol.dispose releases only the fixture-owned sink after query-connection ownership assertions. No shared runtime cleanup or capability entry.",
+        "regressionEvidence": [
+          "test/logging-reliability.test.ts:264"
+        ],
+        "classification": "TEST_OR_FIXTURE",
+        "disposition": "APPROVE exact candidate identity"
+      },
+      {
+        "path": "test/plan-admission.test.ts",
+        "anchor": "0187fa2f4b6daff3da9797f03c97152101c7318704c3dd988042fa700a86fe3d",
+        "kind": "dynamic",
+        "line": 78,
+        "column": 24,
+        "detail": "unsupported reflective property access",
+        "classification": "TEST_OR_FIXTURE",
+        "receiver": "test Error descriptor intrinsic or fixed diagnostic module loader",
+        "purpose": "immutability/lookalike/separate-module issuance identity tests; cache restored in finally",
+        "regressionEvidence": [
+          "test/plan-admission.test.ts:71,97"
+        ],
+        "disposition": "RETAIN unchanged previously adopted identity"
+      },
+      {
+        "path": "test/plan-admission.test.ts",
+        "anchor": "b66fcc08bfab183eb951c39f40e1ad47a29208aa33e1285ee7f8bb912a66335d",
+        "kind": "dynamic",
+        "line": 104,
+        "column": 71,
+        "detail": "unsupported reflective property access",
+        "classification": "TEST_OR_FIXTURE",
+        "receiver": "test Error descriptor intrinsic or fixed diagnostic module loader",
+        "purpose": "immutability/lookalike/separate-module issuance identity tests; cache restored in finally",
+        "regressionEvidence": [
+          "test/plan-admission.test.ts:71,97"
+        ],
+        "disposition": "RETAIN unchanged previously adopted identity"
+      },
+      {
+        "path": "test/plan-admission.test.ts",
+        "anchor": "e5a2f8f0399da97e329901facf8636b7d550dac8fad166fcd39a21f2e2bc08d8",
+        "kind": "dynamic",
+        "line": 113,
+        "column": 20,
+        "detail": "unsupported dynamic invocation or executable extraction",
+        "classification": "TEST_OR_FIXTURE",
+        "receiver": "test Error descriptor intrinsic or fixed diagnostic module loader",
+        "purpose": "immutability/lookalike/separate-module issuance identity tests; cache restored in finally",
+        "regressionEvidence": [
+          "test/plan-admission.test.ts:71,97"
+        ],
+        "disposition": "RETAIN unchanged previously adopted identity"
+      },
+      {
+        "path": "test/plan-admission.test.ts",
+        "anchor": "9a74dee9a6be95e8470eec859dc028791944182a248397608a35313d8820c1bf",
+        "kind": "dynamic",
+        "line": 116,
+        "column": 18,
+        "detail": "unsupported dynamic module loading or JobManager require/re-export; use a static named import for analysis",
+        "classification": "TEST_OR_FIXTURE",
+        "receiver": "test Error descriptor intrinsic or fixed diagnostic module loader",
+        "purpose": "immutability/lookalike/separate-module issuance identity tests; cache restored in finally",
+        "regressionEvidence": [
+          "test/plan-admission.test.ts:71,97"
+        ],
+        "disposition": "RETAIN unchanged previously adopted identity"
+      },
+      {
+        "path": "test/planner-routing.test.ts",
+        "anchor": "3045cc55b637d5509c9705dc787c292013d3b248cc1c419b94df983bc1c9d561",
+        "kind": "execute",
+        "line": 56,
+        "column": 27,
+        "detail": "execution-method reference",
+        "classification": "TEST_OR_FIXTURE",
+        "receiver": "local direct or fallback strategy",
+        "purpose": "reasoning-only planner selection, eligibility, fallback and rejection",
+        "regressionEvidence": [
+          "test/planner-routing.test.ts:53,63,71,77"
+        ],
+        "disposition": "RETAIN unchanged previously adopted identity"
+      },
+      {
+        "path": "test/planner-routing.test.ts",
+        "anchor": "b36db2ba927195ec359f250c4493e61e178c3cabf1e3451dcbc8f900b63698a9",
+        "kind": "execute",
+        "line": 57,
+        "column": 28,
+        "detail": "execution-method reference",
+        "classification": "TEST_OR_FIXTURE",
+        "receiver": "local direct or fallback strategy",
+        "purpose": "reasoning-only planner selection, eligibility, fallback and rejection",
+        "regressionEvidence": [
+          "test/planner-routing.test.ts:53,63,71,77"
+        ],
+        "disposition": "RETAIN unchanged previously adopted identity"
+      },
+      {
+        "path": "test/planner-routing.test.ts",
+        "anchor": "132a61ba2d05f584ebc5cabffa0c65cb331b462c7f556da32c38ecfcfb7731f8",
+        "kind": "execute",
+        "line": 66,
+        "column": 5,
+        "detail": "execution-method reference",
+        "classification": "TEST_OR_FIXTURE",
+        "receiver": "local direct or fallback strategy",
+        "purpose": "reasoning-only planner selection, eligibility, fallback and rejection",
+        "regressionEvidence": [
+          "test/planner-routing.test.ts:53,63,71,77"
+        ],
+        "disposition": "RETAIN unchanged previously adopted identity"
+      },
+      {
+        "path": "test/planner-routing.test.ts",
+        "anchor": "349a445b6e74964e7191e282b1e06550d9c11dcf41c303b90615391cf966bd72",
+        "kind": "execute",
+        "line": 73,
+        "column": 22,
+        "detail": "execution-method reference",
+        "classification": "TEST_OR_FIXTURE",
+        "receiver": "local direct or fallback strategy",
+        "purpose": "reasoning-only planner selection, eligibility, fallback and rejection",
+        "regressionEvidence": [
+          "test/planner-routing.test.ts:53,63,71,77"
+        ],
+        "disposition": "RETAIN unchanged previously adopted identity"
+      },
+      {
+        "path": "test/planner-routing.test.ts",
+        "anchor": "838a7dae7e1f045541edd0d94c3aaca7c7f8721386d0cda8d7899da603671809",
+        "kind": "execute",
+        "line": 80,
+        "column": 5,
+        "detail": "execution-method reference",
+        "classification": "TEST_OR_FIXTURE",
+        "receiver": "local direct or fallback strategy",
+        "purpose": "reasoning-only planner selection, eligibility, fallback and rejection",
+        "regressionEvidence": [
+          "test/planner-routing.test.ts:53,63,71,77"
+        ],
+        "disposition": "RETAIN unchanged previously adopted identity"
+      }
+    ]
+  },
+  "changedSites": [
+    {
+      "path": "src/runtime/jobs/job-manager.ts",
+      "anchor": "8f99972d6665c230e85e0afa51ba63ce60953fd8f32df9ea4c7a6f033cf372d4",
+      "kind": "job-manager",
+      "line": 117,
+      "column": 12,
+      "detail": "direct JobManager execution entrance",
+      "id": "G1",
+      "receiver": "this (internal JobManager)",
+      "purpose": "Dispatch captured, version-admitted, structurally validated steps only after Job creation. Supervision and private work tracking retain the same per-step gate.",
+      "regressionEvidence": [
+        "test/execution-capacity.test.ts:60",
+        "test/execution-capacity.test.ts:75",
+        "test/execution-capacity.test.ts:258",
+        "test/execution-contract.test.ts:375",
+        "test/structural-ownership.test.ts:135"
+      ],
+      "classification": "GOVERNED_MACHINERY",
+      "disposition": "APPROVE exact candidate identity"
+    },
+    {
+      "path": "src/runtime/jobs/job-manager.ts",
+      "anchor": "63917ec0d7c5ffa5a4ec55830a8f31cc4104095bc1580586564b3a66c0088be8",
+      "kind": "dynamic",
+      "line": 215,
+      "column": 9,
+      "detail": "unsupported dynamic invocation or executable extraction",
+      "id": "G2",
+      "receiver": "invocation-owned JobLogSink",
+      "purpose": "Fixed Symbol.dispose closes only this execution’s logger. Defer cleanup to actual capability settlement after logical stop; catch cleanup failure. No capability dispatch or shared-service disposal.",
+      "regressionEvidence": [
+        "test/logging-reliability.test.ts:111",
+        "test/logging-reliability.test.ts:226",
+        "test/execution-supervision.test.ts:228",
+        "test/execution-supervision.test.ts:274",
+        "test/execution-integration.test.ts:45"
+      ],
+      "classification": "GOVERNED_MACHINERY",
+      "disposition": "APPROVE exact candidate identity"
+    },
+    {
+      "path": "src/runtime/jobs/job-manager.ts",
+      "anchor": "9ec2e83adc4517c077a4a314f6e01c892d67c931cca8ccb088616c9f7e526eb1",
+      "kind": "execute",
+      "line": 344,
+      "column": 42,
+      "detail": "execution-method reference",
+      "id": "G3",
+      "receiver": "capability resolved from the internal registry",
+      "purpose": "Invoke only after reference resolution, resolved-input validation, well-formed explicit allow, V2 detached entry copy and supervision checkpoint. Tracking observes the same callback once; late settlement has no scheduling continuation.",
+      "regressionEvidence": [
+        "test/execution-contract.test.ts:431",
+        "test/execution-contract.test.ts:488",
+        "test/governed-value-v2.test.ts:56",
+        "test/governed-value-v2.test.ts:106",
+        "test/execution-supervision.test.ts:161",
+        "test/execution-integration.test.ts:118"
+      ],
+      "classification": "GOVERNED_MACHINERY",
+      "disposition": "APPROVE exact candidate identity"
+    },
+    {
+      "path": "src/runtime/logging/job-log-sink.ts",
+      "anchor": "91eee71f67beaad965a4230cefa411ecaa101cb0bfd74691fddf4ade8bf588e0",
+      "kind": "dynamic",
+      "line": 29,
+      "column": 5,
+      "detail": "unsupported dynamic invocation or executable extraction",
+      "id": "L4",
+      "receiver": "privately constructed SQLiteLogSink",
+      "purpose": "Fixed optional Symbol.dispose call after marking the JobLogSink disposed. One private connection, no shared service or execution authority, no reopening from a retained logger.",
+      "regressionEvidence": [
+        "test/logging-reliability.test.ts:226",
+        "test/logging-reliability.test.ts:254",
+        "test/logging-reliability.test.ts:288"
+      ],
+      "classification": "GOVERNED_MACHINERY",
+      "disposition": "APPROVE exact candidate identity"
+    },
+    {
+      "path": "src/runtime/logging/sqlite-log-sink.ts",
+      "anchor": "11dec86f4a4a6c70552af30360f80e65f5fe8ff49f17df241e180b939025b197",
+      "kind": "dynamic",
+      "line": 42,
+      "column": 7,
+      "detail": "unsupported dynamic invocation or executable extraction",
+      "id": "L5",
+      "receiver": "this newly constructed SQLiteLogSink",
+      "purpose": "Fixed Symbol.dispose on schema initialization failure closes the newly allocated database and preserves the original error. Native close errors are contained; no capability or registry path.",
+      "regressionEvidence": [
+        "test/logging-reliability.test.ts:153",
+        "test/logging-reliability.test.ts:215",
+        "test/logging-reliability.test.ts:288"
+      ],
+      "classification": "GOVERNED_MACHINERY",
+      "disposition": "APPROVE exact candidate identity"
+    },
+    {
+      "path": "src/runtime/operator-runtime.ts",
+      "anchor": "f77cd0abb36b9b5030798b0bf36a75810ed3567c11336fe22d9a03efcbd42855",
+      "kind": "job-manager",
+      "line": 183,
+      "column": 20,
+      "detail": "direct JobManager execution entrance",
+      "id": "G4",
+      "receiver": "internal jobManager singleton",
+      "purpose": "Delegate through the same admission entrance with captured host policy, copied caller and configured authorizer. Synchronous per-instance reservation is rejecting policy; tracking only retains capacity until submission and actual work settle.",
+      "regressionEvidence": [
+        "test/execution-capacity.test.ts:248",
+        "test/execution-capacity.test.ts:271",
+        "test/execution-capacity.test.ts:287",
+        "test/execution-integration.test.ts:45",
+        "test/execution-contract.test.ts:644"
+      ],
+      "classification": "GOVERNED_MACHINERY",
+      "disposition": "APPROVE exact candidate identity"
+    },
+    {
+      "path": "src/runtime/operator-runtime.ts",
+      "anchor": "fc5e6e062ae4f33959c02e83b0b03b9e4fffd1bcc00166a369a3a9b4c167a6b4",
+      "kind": "execute",
+      "line": 236,
+      "column": 13,
+      "detail": "execution-method reference",
+      "id": "G5",
+      "receiver": "registered planner strategy selected through PlannerRouter",
+      "purpose": "Reasoning returns an ExecutionPlan to this.executePlan. Planning stays outside capacity reservation; neither returned plan fields nor planner selection grants capability authority.",
+      "regressionEvidence": [
+        "test/planner-routing.test.ts:44",
+        "test/execution-capacity.test.ts:306",
+        "test/execution-supervision.test.ts:331",
+        "test/governance-routes.test.ts:166"
+      ],
+      "classification": "LEGITIMATE_NON_CAPABILITY_EXECUTE",
+      "disposition": "APPROVE exact candidate identity"
+    },
+    {
+      "path": "test/logging-reliability.test.ts",
+      "anchor": "823bfec96de092683943d8dbb3d8f4706f3b3f79c230b768b12abec18ad08071",
+      "kind": "dynamic",
+      "line": 76,
+      "column": 33,
+      "detail": "unsupported dynamic invocation or executable extraction",
+      "id": "T1",
+      "receiver": "local ConsoleExecutionLogger with inert throwing/rejecting sink",
+      "purpose": "Loop key is drawn only from literal debug/info/warn/error. Exercise every existing void logger method against sync throws, rejection and hostile thenables; no caller-selected callable or capability entry.",
+      "regressionEvidence": [
+        "test/logging-reliability.test.ts:67"
+      ],
+      "classification": "TEST_OR_FIXTURE",
+      "disposition": "APPROVE exact candidate identity"
+    },
+    {
+      "path": "test/logging-reliability.test.ts",
+      "anchor": "e063cf0572585862b6b0377d8c26958ef96941530729dfb4b3b42ab9c996d758",
+      "kind": "dynamic",
+      "line": 259,
+      "column": 3,
+      "detail": "unsupported dynamic invocation or executable extraction",
+      "id": "T2",
+      "receiver": "local JobLogSink owner",
+      "purpose": "First fixed Symbol.dispose call closes the test-owned connection. Together with T3 asserts one connection and no reopening; test-process instrumentation only.",
+      "regressionEvidence": [
+        "test/logging-reliability.test.ts:254"
+      ],
+      "classification": "TEST_OR_FIXTURE",
+      "disposition": "APPROVE exact candidate identity"
+    },
+    {
+      "path": "test/logging-reliability.test.ts",
+      "anchor": "515773eb22aae19942ed14583cfdaae0918e8543c6470eb9de2a8e95343c2e2a",
+      "kind": "dynamic",
+      "line": 259,
+      "column": 28,
+      "detail": "unsupported dynamic invocation or executable extraction",
+      "id": "T3",
+      "receiver": "same local JobLogSink owner",
+      "purpose": "Second fixed Symbol.dispose call proves idempotence; a subsequent write cannot reopen the owner. Test-process instrumentation only.",
+      "regressionEvidence": [
+        "test/logging-reliability.test.ts:254"
+      ],
+      "classification": "TEST_OR_FIXTURE",
+      "disposition": "APPROVE exact candidate identity"
+    },
+    {
+      "path": "test/logging-reliability.test.ts",
+      "anchor": "2a08e19fadf01e5a6f50dabac5fecd6ce3f1c66be0780f17b8ccc1b3f6460657",
+      "kind": "dynamic",
+      "line": 285,
+      "column": 3,
+      "detail": "unsupported dynamic invocation or executable extraction",
+      "id": "T4",
+      "receiver": "local SQLiteLogSink fixture",
+      "purpose": "Fixed Symbol.dispose releases only the fixture-owned sink after query-connection ownership assertions. No shared runtime cleanup or capability entry.",
+      "regressionEvidence": [
+        "test/logging-reliability.test.ts:264"
+      ],
+      "classification": "TEST_OR_FIXTURE",
+      "disposition": "APPROVE exact candidate identity"
+    }
+  ],
+  "retiredIdentities": [
+    {
+      "path": "src/runtime/jobs/job-manager.ts",
+      "anchor": "047f720846d3555ca5c4529fbb205ecf013ee054235e7047a984a5cf275169cc",
+      "kind": "job-manager",
+      "line": 104,
+      "column": 12,
+      "detail": "direct JobManager execution entrance",
+      "classification": "GOVERNED_MACHINERY",
+      "receiver": "this (internal JobManager)",
+      "purpose": "Historical syntax identity of G1; replaced by reviewed final enclosing-declaration syntax.",
+      "regressionEvidence": [
+        "test/execution-capacity.test.ts:60",
+        "test/execution-capacity.test.ts:75",
+        "test/execution-capacity.test.ts:258",
+        "test/execution-contract.test.ts:375",
+        "test/structural-ownership.test.ts:135"
+      ],
+      "replacementAnchor": "8f99972d6665c230e85e0afa51ba63ce60953fd8f32df9ea4c7a6f033cf372d4",
+      "disposition": "APPROVE retirement; REJECT candidate reuse of obsolete identity"
+    },
+    {
+      "path": "src/runtime/jobs/job-manager.ts",
+      "anchor": "dfc3ca4baa099a6765f7fb25412620837a8307c19eee894b6d2bf79194b59f50",
+      "kind": "execute",
+      "line": 312,
+      "column": 32,
+      "detail": "execution-method reference",
+      "classification": "GOVERNED_MACHINERY",
+      "receiver": "capability resolved from the internal registry",
+      "purpose": "Historical syntax identity of G3; replaced by reviewed final enclosing-declaration syntax.",
+      "regressionEvidence": [
+        "test/execution-contract.test.ts:431",
+        "test/execution-contract.test.ts:488",
+        "test/governed-value-v2.test.ts:56",
+        "test/governed-value-v2.test.ts:106",
+        "test/execution-supervision.test.ts:161",
+        "test/execution-integration.test.ts:118"
+      ],
+      "replacementAnchor": "9ec2e83adc4517c077a4a314f6e01c892d67c931cca8ccb088616c9f7e526eb1",
+      "disposition": "APPROVE retirement; REJECT candidate reuse of obsolete identity"
+    },
+    {
+      "path": "src/runtime/operator-runtime.ts",
+      "anchor": "aeb8c5092d6664e4ac7c850dd226f2d6ae778cb85cf171c5ce48dd2a560fe125",
+      "kind": "job-manager",
+      "line": 124,
+      "column": 20,
+      "detail": "direct JobManager execution entrance",
+      "classification": "GOVERNED_MACHINERY",
+      "receiver": "internal jobManager singleton",
+      "purpose": "Historical syntax identity of G4; replaced by reviewed final enclosing-declaration syntax.",
+      "regressionEvidence": [
+        "test/execution-capacity.test.ts:248",
+        "test/execution-capacity.test.ts:271",
+        "test/execution-capacity.test.ts:287",
+        "test/execution-integration.test.ts:45",
+        "test/execution-contract.test.ts:644"
+      ],
+      "replacementAnchor": "f77cd0abb36b9b5030798b0bf36a75810ed3567c11336fe22d9a03efcbd42855",
+      "disposition": "APPROVE retirement; REJECT candidate reuse of obsolete identity"
+    },
+    {
+      "path": "src/runtime/operator-runtime.ts",
+      "anchor": "c33aca7aa568feefa503eb6f69a1f301cdfece563f12d155e95ac42603fd55b9",
+      "kind": "execute",
+      "line": 170,
+      "column": 13,
+      "detail": "execution-method reference",
+      "classification": "LEGITIMATE_NON_CAPABILITY_EXECUTE",
+      "receiver": "registered planner strategy selected through PlannerRouter",
+      "purpose": "Historical syntax identity of G5; replaced by reviewed final enclosing-declaration syntax.",
+      "regressionEvidence": [
+        "test/planner-routing.test.ts:44",
+        "test/execution-capacity.test.ts:306",
+        "test/execution-supervision.test.ts:331",
+        "test/governance-routes.test.ts:166"
+      ],
+      "replacementAnchor": "fc5e6e062ae4f33959c02e83b0b03b9e4fffd1bcc00166a369a3a9b4c167a6b4",
+      "disposition": "APPROVE retirement; REJECT candidate reuse of obsolete identity"
+    }
+  ],
+  "verificationControls": [
+    {
+      "id": "C1",
+      "path": "test/execution-capacity.test.ts",
+      "receiver": "test process; host-limit policy fixtures",
+      "trustClassification": "VERIFICATION_CONTROL; human review required",
+      "purpose": "42 cases across V1/V2 cover zero/exact/oversized/sparse admission, no Jobs/events on rejection, captured policy, reentry, pending authorization/provider retention and release, persistence failures. Adds assertions; no existing test removed.",
+      "regressionEvidence": "test/execution-capacity.test.ts:48,60,75,135,166,248,258,271,287,306",
+      "disposition": "APPROVE reviewed additive control change"
+    },
+    {
+      "id": "C2",
+      "path": "test/execution-integration.test.ts",
+      "receiver": "test process; public runtime plus test-owned SQLite observation",
+      "trustClassification": "VERIFICATION_CONTROL; human review required",
+      "purpose": "16 V1/V2 combinations cover cancel/deadline, late success/rejection, independent owners, deny/malformed/throw and cleanup failures; asserts no later step, terminal mutation or premature capacity recovery.",
+      "regressionEvidence": "test/execution-integration.test.ts:45,118,162",
+      "disposition": "APPROVE reviewed additive control change"
+    },
+    {
+      "id": "C3",
+      "path": "test/execution-supervision.test.ts",
+      "receiver": "test process; supervision and lifecycle fixtures",
+      "trustClassification": "VERIFICATION_CONTROL; human review required",
+      "purpose": "39 cases preserve admission precedence and fail-closed authorization; stop before entry and fence late decisions/results; verify timers/listeners, logger lifetime and persistence failures.",
+      "regressionEvidence": "test/execution-supervision.test.ts:40,62,141,161,214,228,301,358,392",
+      "disposition": "APPROVE reviewed additive control change"
+    },
+    {
+      "id": "C4",
+      "path": "test/fixtures/package-consumer/index.ts",
+      "receiver": "installed public package consumer",
+      "trustClassification": "VERIFICATION_CONTROL; human review required",
+      "purpose": "Extends existing successful public consumer with typed capacity/supervision options and pre-abort failure assertion. Existing success check retained. verify.mjs still rejects private imports.",
+      "regressionEvidence": "test/fixtures/package-consumer/index.ts:57,85; test/fixtures/package-consumer/verify.mjs:10",
+      "disposition": "APPROVE reviewed additive control change"
+    },
+    {
+      "id": "C5",
+      "path": "test/logging-reliability.test.ts",
+      "receiver": "isolated test process; fixture-owned sinks/native prototype mocks",
+      "trustClassification": "VERIFICATION_CONTROL; human review required",
+      "purpose": "14 tests add sync/async/thenable failure containment, bounded sanitized diagnostics, connection accounting, owner independence/idempotence, query lifetime and contained native close refusal. Normal file isolation retained.",
+      "regressionEvidence": "test/logging-reliability.test.ts:46,67,82,111,153,215,226,254,264,288",
+      "disposition": "APPROVE reviewed additive control change"
+    },
+    {
+      "id": "C6",
+      "path": "tools/quality-governance-baseline.json",
+      "receiver": "candidate manifest; comparator trusts only Git-base manifest",
+      "trustClassification": "VERIFICATION_CONTROL; human review required",
+      "purpose": "24 to 31 = four exact replacements plus seven additions; all 31 identities equal scanned syntax. This adoption changes only 11 reasons, preserving tuples, order and classifications. Candidate reasons confer no comparison authority.",
+      "regressionEvidence": "tools/quality-governance.test.mjs:247; tools/quality-governance.mjs:307",
+      "disposition": "APPROVE reviewed additive control change"
+    },
+    {
+      "id": "C7",
+      "path": "tools/quality-governance.test.mjs",
+      "receiver": "quality test inventory assertion",
+      "trustClassification": "VERIFICATION_CONTROL; human review required",
+      "purpose": "Only count 24 to 31 and seven explicit dynamic paths added. Exact sorted identity equality, zero API-route allowances, zero legacy bypasses, parser and negative rejection tests remain. Scanner/harness implementation and other quality tests byte-equal to v0.5.0.",
+      "regressionEvidence": "tools/quality-governance.test.mjs:247; npm run test:quality (216/216)",
+      "disposition": "APPROVE reviewed additive control change"
+    }
+  ],
+  "adoptionMutation": {
+    "file": "tools/quality-governance-baseline.json",
+    "reasonChanges": 11,
+    "identityChanges": 0,
+    "classificationChanges": 0,
+    "beforeSha256": "9f0119c8f034c94fdb8de33692923c64b83f8b5db6ef19e0c741c799346e90a8",
+    "afterSha256": "7099e3237b7aee66dc49d945c85ce6c65858dca513d6f17cf9c53d32f143832d"
+  },
+  "approvedFindingCount": 22,
+  "rejectedCurrentFindings": [],
+  "requiredCorrectiveChanges": [],
+  "verification": [
+    {
+      "command": "npm run check",
+      "execution": "authorized unsandboxed rerun; normal file isolation",
+      "exitCode": 0,
+      "testsPassed": 441,
+      "testsFailed": 0,
+      "packageFiles": 112,
+      "log": "/tmp/veil-v060-governance-check-authorized.log"
+    },
+    {
+      "command": "npm run test:quality",
+      "execution": "after eleven reason-only approvals; authorized unsandboxed run",
+      "exitCode": 0,
+      "testsPassed": 216,
+      "testsFailed": 0,
+      "log": "/tmp/veil-v060-governance-quality-final.log"
+    },
+    {
+      "command": "npm run quality -- --base v0.5.0",
+      "exitCode": 2,
+      "untrustedSites": 11,
+      "retiredIdentities": 4,
+      "verificationControls": 7,
+      "parsedCodeFiles": 161,
+      "byteIdenticalToHistoricalReport": true,
+      "report": "docs/release/v0.6.0-quality-v050.txt",
+      "sha256": "f1ac3d52ba6f84434f8b60da4d871d964b26ac5e51f192b47b1c0f22fe1b5236"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    {
+      "command": "reason-only tuple equality and protected-file byte comparison",
+      "exitCode": 0,
+      "unchangedIdentities": 31,
+      "reasonChanges": 11,
+      "protectedFiles": 19
+    }
+  ],
+  "recommendation": {
+    "governance": "GO",
+    "mayLeaveDraft": true,
+    "remoteDraftChanged": false,
+    "releaseQualification": "may proceed; not performed or approved here",
+    "merge": false,
+    "releaseTag": false,
+    "npmPublish": false
+  },
+  "protectedFiles": [
+    {
+      "path": "tools/quality.mjs",
+      "sha256": "b5f6601c341872705b3e7a2afeddc0699032d884eb0cd8b35e52d0023aa43a99",
+      "byteEqualToFixedBase": true
+    },
+    {
+      "path": "tools/quality-governance.mjs",
+      "sha256": "1ccb9257ab051b66b6c96c4fc1e290de731ff9c66f40ece4bba9ef67874a2982",
+      "byteEqualToFixedBase": true
+    },
+    {
+      "path": "tools/quality.test.mjs",
+      "sha256": "7c5dc62c56eb88de195005b31a5859ce7483fba12c591700bed2f851a482dea4",
+      "byteEqualToFixedBase": true
+    },
+    {
+      "path": "tools/verify-package.mjs",
+      "sha256": "5469895ebf5271e1e6fb88c45dcc97e3e6fd58ec4eb816376a81ca61c2f047be",
+      "byteEqualToFixedBase": true
+    },
+    {
+      "path": "package.json",
+      "sha256": "fa2c9170a4cd4bc55a0089298658e53e63484290bee26cf438f5da821223cf1d",
+      "byteEqualToFixedBase": true
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "9a7346b488c30e4fe66632f21798cdbb9fbae1f99198b538a6775e003959f2c8",
+      "byteEqualToFixedBase": true
+    },
+    {
+      "path": "src/index.ts",
+      "sha256": "a6236848a17c392fa525037b12dbf5fc0449903974397ebe4562660163102f98",
+      "byteEqualToFixedBase": true
+    },
+    {
+      "path": "src/runtime/planner/planner.ts",
+      "sha256": "83e8cef660f261b253aaefab75d8d27a84704932ddbddd15b49f84ba504ed8db",
+      "byteEqualToFixedBase": true
+    },
+    {
+      "path": "src/runtime/registry/capability.ts",
+      "sha256": "bef8bda515c0f4c8f6fffcac5dae80d6f6c9cc9333b5985ecbfaf908566c5bbf",
+      "byteEqualToFixedBase": true
+    },
+    {
+      "path": "src/runtime/jobs/job.ts",
+      "sha256": "1eaf589b3fcb8feed76d1ac3c4deb62682bf6b4123f1b26e3614116e518e9b85",
+      "byteEqualToFixedBase": true
+    },
+    {
+      "path": "src/runtime/jobs/job-step.ts",
+      "sha256": "4382513a7d365783c37e638756d51427defea194fbfd3e206aad926d14a2db99",
+      "byteEqualToFixedBase": true
+    },
+    {
+      "path": "src/runtime/jobs/job-event.ts",
+      "sha256": "78ad86e6f493b19b11422317ff49162ec0aeb0026caf7294609ca012db2a56ac",
+      "byteEqualToFixedBase": true
+    },
+    {
+      "path": "src/runtime/permissions/execution-authorizer.ts",
+      "sha256": "44cefa04fa591dbe9620e146c0595f719d27ef29a5d99bd205cf90829e48d5d6",
+      "byteEqualToFixedBase": true
+    },
+    {
+      "path": "src/runtime/execution/plan-validator.ts",
+      "sha256": "b57e5fe938f79aeddfbf8aca31e99bbbeb7f9c964095899a65b4dddabed306f6",
+      "byteEqualToFixedBase": true
+    },
+    {
+      "path": "src/runtime/execution/result-reference.ts",
+      "sha256": "d24149d550e1e5defdcbd80a89bd115571c1ac1c3666603051ba27340e68fdcc",
+      "byteEqualToFixedBase": true
+    },
+    {
+      "path": "src/runtime/execution/governed-value.ts",
+      "sha256": "266cf0067d5e235bc5c851b00a0f04fdb48d1b93731d0afac0a7b52e50af7ce0",
+      "byteEqualToFixedBase": true
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "8561c7dc181867a9c91e2b6b0699f0bfbd0b6791743fbdd2f16cc6b29bae2ae2",
+      "byteEqualToFixedBase": true
+    },
+    {
+      "path": "tsconfig.build.json",
+      "sha256": "0651bf53d7f21255bd624d05a2434c1c592ea70d1374f34886013a422a68f569",
+      "byteEqualToFixedBase": true
+    },
+    {
+      "path": "tsconfig.test.json",
+      "sha256": "5e97b923968e0361449841ce72d60d8a89be943f6f61058c5d15c933e3c6c327",
+      "byteEqualToFixedBase": true
+    }
+  ],
+  "initialFailures": [
+    {
+      "command": "gh pr view 89 --json ...",
+      "exitCode": 1,
+      "error": "error connecting to api.github.com",
+      "resolution": "authorized network rerun read PR #89; exact head confirmed; no submitted reviews"
+    },
+    {
+      "command": "npm run test:quality (sandbox)",
+      "exitCode": 1,
+      "error": "Both file-level tests failed: tools/quality-governance.test.mjs and tools/quality.test.mjs; runner reported test failed without child diagnostics",
+      "resolution": "authorized rerun 216/216; final post-adoption rerun also 216/216"
+    },
+    {
+      "command": "npm run check (sandbox)",
+      "exitCode": 1,
+      "error": "22 file-level processes passed, four failed: external-model-reasoner, external-reasoner, filesystem-confinement, local-planner. Runner reported test failed without child diagnostics.",
+      "resolution": "authorized rerun 441/441, typecheck/build/installed-package verifier pass; no source/test changes"
+    },
+    {
+      "command": "rg ... test/sdk*.test.ts",
+      "exitCode": 2,
+      "error": "test/sdk*.test.ts: No such file or directory (os error 2)",
+      "resolution": "Inspected src/sdk/capability/create-capability.ts, test/value-ownership.test.ts:249, and installed consumer instead"
+    }
+  ],
+  "qualityGrowth": {
+    "source": {
+      "additions": 365,
+      "removals": 74,
+      "net": 291
+    },
+    "test": {
+      "additions": 1235,
+      "removals": 1,
+      "net": 1234
+    },
+    "harness": {
+      "additions": 6,
+      "removals": 1,
+      "net": 5
+    },
+    "reviewAddedCodeLines": 0
+  }
+}
