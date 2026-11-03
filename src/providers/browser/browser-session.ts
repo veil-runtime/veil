@@ -20,7 +20,13 @@ export async function createSession(
 ): Promise<BrowserSession> {
   const context = await sessionManager.create(name);
 
-  const page = await context.newPage();
+  let page: Page;
+  try {
+    page = await context.newPage();
+  } catch (error) {
+    await context.close();
+    throw error;
+  }
 
   return {
     context,
