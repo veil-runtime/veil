@@ -1,5 +1,7 @@
 import { ExecutionLogEntry } from '../execution/execution-logger.js';
 
+import { reportLoggingFailure } from './logging-diagnostic.js';
+
 import { ExecutionLogSink } from './execution-log-sink.js';
 
 export class CompositeLogSink
@@ -14,7 +16,13 @@ export class CompositeLogSink
   ): Promise<void> {
     await Promise.all(
       this.sinks.map(
-        (sink) => sink.write(entry)
+        async (sink) => {
+          try {
+            await sink.write(entry);
+          } catch {
+            reportLoggingFailure();
+          }
+        }
       )
     );
   }

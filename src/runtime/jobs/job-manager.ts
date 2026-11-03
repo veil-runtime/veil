@@ -25,7 +25,7 @@ import { JobListFilter, jobStore } from './job-store.js';
 import { ConsoleExecutionLogger } from '../execution/console-execution-logger.js';
 import { ConsoleLogSink } from '../logging/console-log-sink.js';
 import { CompositeLogSink } from '../logging/composite-log-sink.js';
-import { SQLiteLogSink } from '../logging/sqlite-log-sink.js';
+import { JobLogSink } from '../logging/job-log-sink.js';
 
 class JobManager {
   async executePlan(
@@ -190,6 +190,9 @@ class JobManager {
 
     this.addEvent(job, 'execution.started');
 
+    const logSink = new JobLogSink();
+    const sink = new CompositeLogSink([new ConsoleLogSink(), logSink]);
+
     try {
       for (const step of job.steps) {
         const capability = capabilityRegistry.get(step.capability);
@@ -303,10 +306,7 @@ class JobManager {
           const logger = new ConsoleExecutionLogger(
             job.id,
             step.id,
-            new CompositeLogSink([
-              new ConsoleLogSink(),
-              new SQLiteLogSink(),
-            ])
+            sink
           );
 
           const result = await capability.execute(
@@ -387,6 +387,8 @@ class JobManager {
       await jobStore.update(job);
 
       return job;
+    } finally {
+      logSink[Symbol.dispose]();
     }
   }
 
