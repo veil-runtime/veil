@@ -1,0 +1,47 @@
+{
+  "date": "2026-11-03",
+  "qualification": "GO",
+  "publication": "NO-GO from this working tree; release metadata is uncommitted and publication is not authorized here",
+  "sourceCommit": "fe220afd515c5f5c5ef5a9312eb1714ef643943e",
+  "remediationCommit": "7f24fb3ca49ae8943cdcdf9c6a9dcc7d2bce67b9",
+  "remoteFetch": {
+    "httpsFetchSucceeded": true,
+    "authenticated": false,
+    "reason": "SSH authentication failed; no Git credential helper was configured and gh reported an invalid token",
+    "originConfigurationChanged": false
+  },
+  "version": "0.6.0",
+  "artifact": {
+    "path": ".tmp/core-v060-final-candidate/veil-runtime-core-0.6.0.tgz",
+    "sha256": "3b594c55bb468d90b2b7b0c8a5f846fa0ebb8b6f1271c7c4c48734fda189ad38",
+    "files": 112
+  },
+  "comparisonBase": {
+    "ref": "v0.5.0",
+    "commit": "78713066cafba46b0c2f1cd40eed0e9937102002",
+    "qualityExitCode": 2,
+    "reviewedCurrentSites": 11,
+    "retiredIdentities": 4,
+    "reviewRequiredControls": 7
+  },
+  "checks": {
+    "coreCheck": { "command": "npm run check --offline", "result": "PASS", "tests": "455/455" },
+    "qualityRegression": { "command": "npm run test:quality", "result": "PASS", "tests": "216/216" },
+    "fullAudit": { "command": "npm audit --json", "result": "PASS", "vulnerabilities": 0, "dependencies": 197 },
+    "productionAudit": { "command": "npm audit --omit=dev --json", "result": "PASS", "vulnerabilities": 0 },
+    "starterCheck": { "command": "npm run check", "result": "PASS", "tests": "14/14" },
+    "starterAudits": { "result": "PASS", "vulnerabilities": 0, "dependencies": 147 },
+    "exactTarballConsumer": { "result": "PASS", "publicApi": true, "privateImportRejection": true, "successfulJobs": 30, "successfulSteps": 60, "sqliteDescriptors": { "before": 0, "peak": 1, "after": 0 } },
+    "pullRequestCi": [
+      "build (24.x): pass",
+      "filesystem-security (ubuntu-latest): pass",
+      "filesystem-security (macos-latest): pass",
+      "filesystem-security (windows-latest): pass"
+    ]
+  },
+  "governanceDispositionsChanged": false,
+  "comparisonBaselineChanged": false,
+  "mergeToMain": false,
+  "releaseTagCreated": false,
+  "npmPublished": false
+}
