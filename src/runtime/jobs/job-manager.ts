@@ -51,14 +51,17 @@ class JobManager {
       );
     }
 
-    // Own the structural envelope before admission; nested input remains shared.
-    const submittedSteps = plan.steps;
-    const stepCount = submittedSteps.length;
-    if (maxPlanSteps !== undefined && stepCount > maxPlanSteps) {
+    // Inspect only length for configured bounds; preserve legacy capture order otherwise.
+    const boundedSteps = maxPlanSteps === undefined ? undefined : plan.steps;
+    const boundedStepCount = boundedSteps?.length;
+    if (maxPlanSteps !== undefined && boundedStepCount !== undefined && boundedStepCount > maxPlanSteps) {
       throw new Error('Execution plan step limit exceeded');
     }
+    // Own the structural envelope before admission; nested input remains shared.
     const capturedGoal = plan.goal;
     const idempotencyKey = plan.idempotencyKey;
+    const submittedSteps = boundedSteps ?? plan.steps;
+    const stepCount = boundedStepCount ?? submittedSteps.length;
     const steps = new Array<ExecutionStep>(stepCount);
     for (let index = 0; index < steps.length; index += 1) {
       if (!(index in submittedSteps)) continue;

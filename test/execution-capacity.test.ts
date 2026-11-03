@@ -255,6 +255,19 @@ test('limits are captured from trusted construction options and cannot be overri
   assert.equal((await runtime.executePlan(plan)).status, 'completed');
 });
 
+test('omitting the step limit preserves the legacy structural getter order', async () => {
+  const { runtime, plan } = fixture('1.0', async () => 'ok');
+  const reads: string[] = [];
+  const submitted = {
+    get version() { reads.push('version'); return plan.version; },
+    get goal() { reads.push('goal'); return 'goal'; },
+    get idempotencyKey() { reads.push('key'); return 'key'; },
+    get steps() { reads.push('steps'); return plan.steps; },
+  };
+  assert.equal((await runtime.executePlan(submitted)).status, 'completed');
+  assert.deepEqual(reads, ['version', 'goal', 'key', 'steps']);
+});
+
 test('capacity is reserved before reentrant admission or event callbacks', async () => {
   const { runtime, plan } = fixture('1.0', async () => 'ok', { maxActiveExecutions: 1 });
   const rejected: Promise<unknown>[] = [];
