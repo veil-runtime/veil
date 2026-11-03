@@ -54,7 +54,7 @@ const authorizer: ExecutionAuthorizer = {
   },
 };
 
-const runtimeOptions: OperatorRuntimeOptions = { authorizer };
+const runtimeOptions: OperatorRuntimeOptions = { authorizer, maxPlanSteps: 1, maxActiveExecutions: 1 };
 const runtime = new OperatorRuntime(runtimeOptions);
 runtime.use(fixtureModule);
 export const mcpAdapter = new McpAdapter(runtime);

@@ -1,3 +1,6 @@
+// Internal observation of actual work, independently of interruptible waits.
+export type TrackExecutionWork = <T>(operation: () => T | PromiseLike<T>) => Promise<T>;
+
 // Internal per-submission supervision. It governs scheduling, not external effects.
 export class ExecutionSupervision {
   private readonly controller = new AbortController();

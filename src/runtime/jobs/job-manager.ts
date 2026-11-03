@@ -28,6 +28,7 @@ import { CompositeLogSink } from '../logging/composite-log-sink.js';
 import { JobLogSink } from '../logging/job-log-sink.js';
 import { reportLoggingFailure } from '../logging/logging-diagnostic.js';
 import { ExecutionSupervision } from '../execution/execution-supervision.js';
+import type { TrackExecutionWork } from '../execution/execution-supervision.js';
 
 class JobManager {
   async executePlan(
@@ -37,7 +38,9 @@ class JobManager {
       defaultExecutionAuthorizer,
     admissionOwner: AdmissionOwner = {},
     enabledVersions: ReadonlySet<string> = new Set(['1.0']),
-    supervision?: ExecutionSupervision
+    supervision?: ExecutionSupervision,
+    maxPlanSteps?: number,
+    trackWork?: TrackExecutionWork
   ): Promise<Job> {
     const version = plan.version;
     if ((version !== '1.0' && version !== '2.0') || !enabledVersions.has(version)) {
@@ -49,10 +52,14 @@ class JobManager {
     }
 
     // Own the structural envelope before admission; nested input remains shared.
+    const submittedSteps = plan.steps;
+    const stepCount = submittedSteps.length;
+    if (maxPlanSteps !== undefined && stepCount > maxPlanSteps) {
+      throw new Error('Execution plan step limit exceeded');
+    }
     const capturedGoal = plan.goal;
     const idempotencyKey = plan.idempotencyKey;
-    const submittedSteps = plan.steps;
-    const steps = new Array<ExecutionStep>(submittedSteps.length);
+    const steps = new Array<ExecutionStep>(stepCount);
     for (let index = 0; index < steps.length; index += 1) {
       if (!(index in submittedSteps)) continue;
       const step = submittedSteps[index];
@@ -109,7 +116,8 @@ class JobManager {
       caller,
       authorizer,
       version,
-      supervision
+      supervision,
+      trackWork
     );
   }
 
@@ -177,7 +185,8 @@ class JobManager {
     authorizer: ExecutionAuthorizer =
       defaultExecutionAuthorizer,
     semanticVersion: '1.0' | '2.0' = '1.0',
-    supervision?: ExecutionSupervision
+    supervision?: ExecutionSupervision,
+    trackWork?: TrackExecutionWork
   ): Promise<Job> {
     const job = await jobStore.get(id);
 
@@ -245,7 +254,7 @@ class JobManager {
             );
           }
 
-          const authorize = () => semanticVersion === '2.0'
+          const requestAuthorization = () => semanticVersion === '2.0'
             ? authorizer.authorize(createGovernedAuthorizationContext(
               job.id,
               step.id,
@@ -264,6 +273,7 @@ class JobManager {
                 input: resolvedInput,
                 caller,
               });
+          const authorize = () => trackWork ? trackWork(requestAuthorization) : requestAuthorization();
           const authorization = supervision
             ? await supervision.wait(authorize)
             : await authorize();
@@ -328,7 +338,7 @@ class JobManager {
             sink
           );
 
-          const execute = () => capability.execute(
+          const invokeCapability = () => capability.execute(
             capabilityInput,
             {
               jobId: job.id,
@@ -338,6 +348,7 @@ class JobManager {
               ...(supervision ? { signal: supervision.signal } : {}),
             }
           );
+          const execute = () => trackWork ? trackWork(invokeCapability) : invokeCapability();
           const result = supervision
             ? await supervision.wait(() => {
                 const work = Promise.resolve(execute());

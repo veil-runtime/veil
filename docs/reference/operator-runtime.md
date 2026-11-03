@@ -11,6 +11,8 @@ title: OperatorRuntime
 interface OperatorRuntimeOptions {
   readonly authorizer?: ExecutionAuthorizer;
   readonly planVersions?: readonly string[];
+  readonly maxPlanSteps?: number;
+  readonly maxActiveExecutions?: number;
 }
 ```
 
@@ -28,6 +30,51 @@ At submission, a version that is not implemented or not enabled rejects with
 `UNSUPPORTED_PLAN_VERSION` before structural capture, Job creation, authorization
 or invocation. There is no automatic upgrade, downgrade or fallback. See the
 [V1](execution-plan-v1.html) and [V2](execution-plan-v2.html) contracts.
+
+## Admission and capacity limits (v0.6.0 development)
+
+`maxPlanSteps` and `maxActiveExecutions` are optional trusted host construction
+options. Both accept nonnegative safe integers, including zero; negative,
+fractional, nonfinite, unsafe and non-number values throw at construction.
+`undefined` leaves the corresponding limit unconfigured. Options are captured
+at construction; plan fields, metadata and per-call options cannot override them.
+
+`maxPlanSteps` bounds the captured step-array length, including sparse holes.
+After version admission, an oversized array rejects before element traversal,
+structural copying, input validation, Job creation, authorization or capability
+invocation. Zero rejects every nonempty plan; empty plans retain their existing
+admission diagnostic. Sparse arrays within the limit retain existing malformed
+plan behavior. The limit does not bound nested input size or traversal cost.
+
+`maxActiveExecutions` bounds reservations on this `OperatorRuntime` instance.
+`executePlan` checks and reserves synchronously before reading the plan or caller
+and before creating a supervision scope. A full runtime rejects immediately,
+without a queue, Job or execution events. Zero rejects every submission.
+Capacity rejection takes precedence over plan validation, cancellation and timeout
+validation when the instance is full. `run` plans first, then submits to the same
+boundary; planning itself does not reserve a slot.
+
+An admitted reservation is held through setup, authorization, capability work and
+final persistence. Cancellation/deadline expiry can return a failed Job while
+the reservation remains held: it releases only after the submission and **all
+actual authorization/capability promises** settle. Fulfillment and rejection both
+release ownership; repeated aborts, racing terminal outcomes and late results
+cannot double-release or revive a Job. A pre-aborted submission still follows
+normal admission and Phase 2 failed-Job semantics when capacity is available.
+
+Limit rejections are ordinary Errors (`Execution plan step limit exceeded` or
+`Active execution capacity exceeded`), outside ADR-0012 structured diagnostics.
+No new diagnostic code, Job status, result or event shape is introduced. Omitting
+the limits preserves unbounded admission/capacity. Capacity alone adds no context
+signal and does not enable cancellation or deadlines.
+
+Other runtime instances, processes and services have independent reservations.
+Registries, Job storage, event bus and providers may still be shared globally;
+these limits cannot establish an aggregate provider, tenant or process budget.
+Unsettled work can hold a slot indefinitely. Detached provider work outside a
+returned promise is not observable. Hosts need their own shared admission policy
+for cross-instance guarantees. Cancellation does not roll back or guarantee
+termination of external effects. See the [Phase 3 review](../release/v0.6.0-phase3.md).
 
 ## Public methods
 
