@@ -37,6 +37,59 @@ use(module) checks that every supplied module capability name appears in module.
 
 ExecutePlanOptions and RunJobOptions allow caller with subject, tenant, scopes, and metadata. OperatorRuntime makes a frozen shallow copy; its scopes array and metadata object are copied/frozen too. That snapshot is supplied to authorizer and execution context.
 
+## Cooperative execution supervision (v0.6.0 development)
+
+Both execution option types add `signal?: AbortSignal` and `timeoutMs?: number`.
+These are trusted host options, never plan or caller-metadata fields. For example:
+
+```ts
+const controller = new AbortController();
+const pending = runtime.executePlan(plan, {
+  signal: controller.signal,
+  timeoutMs: 30_000,
+});
+// A host event may call controller.abort().
+const job = await pending;
+```
+
+`timeoutMs` must be an integer from 0 through 2147483647; invalid configuration
+rejects before submission work. Its monotonic budget begins when `executePlan`
+is entered, including admission and Job setup, and is checked before scheduling
+and after awaited work. Zero permits admission but prevents capability entry.
+`run` forwards these options after planning; neither option interrupts planning.
+Persisting an admitted Job is still awaited and is outside the interruptible wait.
+There is no hard bound on response latency when the event loop or storage blocks.
+
+When configured, the capability context has a runtime-owned `signal`. Either host
+abort or deadline expiry aborts it. Capabilities must pass it to cooperative
+provider APIs themselves. The authorization contract is unchanged; pending
+authorization is observed but cannot grant capability entry after a stop.
+
+Admission still runs for a pre-aborted submission. A valid admitted Job terminates
+using existing `status: 'failed'`, `outcome: 'failed'` and `job.failed`, with
+`error: 'Execution cancelled'` or `'Execution deadline exceeded'`. This phase
+does not introduce a new event or use the pre-existing `cancelled` status. If a
+step is being authorized or executed, it uses the existing failed-step path;
+later steps remain pending. Earlier completed steps retain their results.
+
+The first observed stop reason wins. Late fulfillment/rejection cannot update
+runtime lifecycle state or start another step, and rejections are observed.
+After successful or failed logical termination, later aborts cannot change that
+decision. Logging ownership remains with unsettled capability promises until
+settlement, even if the Job has already returned as failed.
+
+Cancellation does not undo completed effects. A timeout is not proof that an
+external action did not occur. JavaScript and external effects cannot be forcibly
+stopped by this API. A capability that never settles can retain its logger
+indefinitely. Detached background work (including work hidden by middleware's
+own early-return timeout) is outside the returned capability promise's ownership
+boundary. Input/result identity and mutability remain unchanged for V1 and V2;
+supervision does not isolate shared values or hostile same-process code.
+
+Omitting both options preserves the existing execution path and omits context
+`signal`. There are no retries, rollback or idempotency guarantees. See the
+[Phase 2 design and race table](../release/v0.6.0-phase2.md).
+
 ## Failure model
 
 executePlan throws for empty or invalid plans before creating a job. Once a valid job starts, execution failures are represented by a Job with status/outcome failed. run may reject earlier for planning/routing failures. use throws if a supplied capability is omitted from its manifest.
