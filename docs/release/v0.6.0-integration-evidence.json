@@ -133,7 +133,7 @@
       "command": "npm run check",
       "exitCode": 0,
       "passed": 441,
-      "log": "/tmp/veil-v060-check-authorized.log"
+      "log": "/tmp/veil-v060-check-final.log"
     },
     {
       "command": "npx --no-install tsc --project tsconfig.test.json",
@@ -188,6 +188,23 @@
       "exitCode": 0,
       "passed": 6,
       "log": null
+    },
+    {
+      "command": "npm ci --ignore-scripts --prefer-online (examples/veil-starter)",
+      "exitCode": 0,
+      "log": "/tmp/veil-v060-starter-ci.log"
+    },
+    {
+      "command": "npm run check (examples/veil-starter)",
+      "exitCode": 0,
+      "passed": 14,
+      "log": "/tmp/veil-v060-starter-check-authorized.log"
+    },
+    {
+      "command": "npm audit --omit=dev --json (examples/veil-starter)",
+      "exitCode": 0,
+      "vulnerabilities": 0,
+      "log": "/tmp/veil-v060-starter-after-audit.json"
     }
   ],
   "integrationTests": {
@@ -401,6 +418,54 @@
       "repositoryDependencyChanges": 0,
       "repositoryLockfileChanges": 0,
       "overridesAdded": 0
+    },
+    "starterConsumer": {
+      "lockfile": "examples/veil-starter/package-lock.json",
+      "githubDefaultBranchAlert": 50,
+      "advisory": [
+        {
+          "source": 1243661,
+          "name": "@hono/node-server",
+          "dependency": "@hono/node-server",
+          "title": "@hono/node-server: `serveStatic` decodes the request path a second time, leading to bypass of middleware on static paths",
+          "url": "https://github.com/advisories/GHSA-rmxm-3fg6-px4f",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-174"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N"
+          },
+          "range": ">=1.19.10 <2.1.3"
+        }
+      ],
+      "before": {
+        "info": 0,
+        "low": 0,
+        "moderate": 1,
+        "high": 0,
+        "critical": 0,
+        "total": 1
+      },
+      "after": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "resolvedPackageChanges": [
+        {
+          "path": "node_modules/@hono/node-server",
+          "before": "2.1.1",
+          "after": "2.1.6"
+        }
+      ],
+      "linkedCoreMetadata": "reconciled stale 0.4.0 metadata to existing 0.5.0 root; manifests unchanged",
+      "command": "npm update @hono/node-server --package-lock-only --ignore-scripts --prefer-online",
+      "githubAlertClosure": "pending adoption on default branch; no merge authorized"
     }
   },
   "independentConsumers": [
@@ -499,6 +564,12 @@
       "command": "evidence generation through Node child_process in sandbox",
       "error": "spawnSync git EPERM",
       "resolution": "authorized Python evidence generation; protected files checked byte-for-byte"
+    },
+    {
+      "command": "npm run check --prefix examples/veil-starter (sandbox)",
+      "exitCode": 1,
+      "error": "listen EPERM: tsx IPC pipe /tmp/tsx-1000/73.pipe",
+      "resolution": "authorized npm ci/check: TypeScript and 14/14 pass"
     }
   ],
   "crossPlatform": {
@@ -512,5 +583,14 @@
   },
   "published": false,
   "merged": false,
-  "releaseTagCreated": false
+  "releaseTagCreated": false,
+  "pullRequest": {
+    "url": "https://github.com/veil-runtime/veil/pull/89",
+    "base": "develop",
+    "draft": true,
+    "initialHead": "061f87cf6fba35c80fa75ee59a38a0c3223a42df",
+    "initialCI": "Linux full check and Linux/macOS/Windows filesystem-security all succeeded",
+    "run": "https://github.com/veil-runtime/veil/actions/runs/41626040385",
+    "finalHeadCI": "check GitHub after final push"
+  }
 }

@@ -19,7 +19,7 @@ Growth — INFORMATIONAL (physical lines, including blank/comment lines)
   source modified "src/runtime/logging/sqlite-log-sink.ts": 65 -> 79 LOC; +33 -19; net 14
   source modified "src/runtime/operator-runtime.ts": 215 -> 281 LOC; +68 -2; net 66
   test added "test/execution-capacity.test.ts": 0 -> 321 LOC; +321 -0; net 321
-  test added "test/execution-integration.test.ts": 0 -> 182 LOC; +182 -0; net 182 (untracked)
+  test added "test/execution-integration.test.ts": 0 -> 182 LOC; +182 -0; net 182
   test added "test/execution-supervision.test.ts": 0 -> 411 LOC; +411 -0; net 411
   test modified "test/fixtures/package-consumer/index.ts": 83 -> 93 LOC; +11 -1; net 10
   test added "test/logging-reliability.test.ts": 0 -> 310 LOC; +310 -0; net 310
