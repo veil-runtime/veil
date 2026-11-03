@@ -1,0 +1,30 @@
+{
+  "baseline": "34df35075118268ff441d624c5efc5183e4384e4",
+  "comparisonBase": "8cfd8002cf9a7b3db1d615e6c322165aee46c83a",
+  "branch": "integration/core-v0.5.0",
+  "version": "0.5.0",
+  "dependencyPrs": [71, 81, 77, 82],
+  "sourcePrCommits": [
+    "dec859069ca953eb5e02ea2ce782f1ccfcdeaced",
+    "aff9bce52d2665d2b1c458fa79a84a431b1a4152",
+    "13daac24bbf6d217be4788fe9bfda378929f7bc8",
+    "1ad1ac0cdaef28cc18e476f8d9cdc0a055771236"
+  ],
+  "artifact": {
+    "filename": "veil-runtime-core-0.5.0.tgz",
+    "sha256": "85f87099571abb66f7dd5031495bc594ba7463a743c5ec94c091f6210925a4a2",
+    "integrity": "sha512-0ZIAMpELlScHxa3okU2giexTqvOJYJBIjuCGvJB+w9nm+9wNRfqtM14kVM2Adj0Law+krhdVxe7zffTjIwOl1A==",
+    "files": 106
+  },
+  "checks": {
+    "npmRunCheck": "passed: 329 tests and package consumer verification",
+    "qualityTests": "passed: 216 tests",
+    "qualityComparison": "exit 1: additive browser-session regression test reviewed; no unapproved execution reference",
+    "linuxFilesystem": "passed: 9 tests",
+    "productionAudit": "zero vulnerabilities",
+    "freshConsumerAudit": "zero vulnerabilities",
+    "cachedConsumerAudit": "one high and one moderate: body-parser 2.3.0 and fast-uri 3.1.8"
+  },
+  "platformClaim": "Linux only; Windows and macOS full qualification pending",
+  "published": false
+}
