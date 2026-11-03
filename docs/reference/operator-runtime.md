@@ -3,6 +3,9 @@ title: OperatorRuntime
 ---
 # OperatorRuntime
 
+The [v0.6.0 unified development specification](../release/v0.6.0-development.md)
+records integrated lifecycle guarantees, governance review and qualification limits.
+
 ## Construction
 
 `new OperatorRuntime(options?)` accepts:
@@ -11,6 +14,8 @@ title: OperatorRuntime
 interface OperatorRuntimeOptions {
   readonly authorizer?: ExecutionAuthorizer;
   readonly planVersions?: readonly string[];
+  readonly maxPlanSteps?: number;
+  readonly maxActiveExecutions?: number;
 }
 ```
 
@@ -29,6 +34,51 @@ At submission, a version that is not implemented or not enabled rejects with
 or invocation. There is no automatic upgrade, downgrade or fallback. See the
 [V1](execution-plan-v1.html) and [V2](execution-plan-v2.html) contracts.
 
+## Admission and capacity limits (v0.6.0 development)
+
+`maxPlanSteps` and `maxActiveExecutions` are optional trusted host construction
+options. Both accept nonnegative safe integers, including zero; negative,
+fractional, nonfinite, unsafe and non-number values throw at construction.
+`undefined` leaves the corresponding limit unconfigured. Options are captured
+at construction; plan fields, metadata and per-call options cannot override them.
+
+`maxPlanSteps` bounds the captured step-array length, including sparse holes.
+After version admission, an oversized array rejects before element traversal,
+structural copying, input validation, Job creation, authorization or capability
+invocation. Zero rejects every nonempty plan; empty plans retain their existing
+admission diagnostic. Sparse arrays within the limit retain existing malformed
+plan behavior. The limit does not bound nested input size or traversal cost.
+
+`maxActiveExecutions` bounds reservations on this `OperatorRuntime` instance.
+`executePlan` checks and reserves synchronously before reading the plan or caller
+and before creating a supervision scope. A full runtime rejects immediately,
+without a queue, Job or execution events. Zero rejects every submission.
+Capacity rejection takes precedence over plan validation, cancellation and timeout
+validation when the instance is full. `run` plans first, then submits to the same
+boundary; planning itself does not reserve a slot.
+
+An admitted reservation is held through setup, authorization, capability work and
+final persistence. Cancellation/deadline expiry can return a failed Job while
+the reservation remains held: it releases only after the submission and **all
+actual authorization/capability promises** settle. Fulfillment and rejection both
+release ownership; repeated aborts, racing terminal outcomes and late results
+cannot double-release or revive a Job. A pre-aborted submission still follows
+normal admission and Phase 2 failed-Job semantics when capacity is available.
+
+Limit rejections are ordinary Errors (`Execution plan step limit exceeded` or
+`Active execution capacity exceeded`), outside ADR-0012 structured diagnostics.
+No new diagnostic code, Job status, result or event shape is introduced. Omitting
+the limits preserves unbounded admission/capacity. Capacity alone adds no context
+signal and does not enable cancellation or deadlines.
+
+Other runtime instances, processes and services have independent reservations.
+Registries, Job storage, event bus and providers may still be shared globally;
+these limits cannot establish an aggregate provider, tenant or process budget.
+Unsettled work can hold a slot indefinitely. Detached provider work outside a
+returned promise is not observable. Hosts need their own shared admission policy
+for cross-instance guarantees. Cancellation does not roll back or guarantee
+termination of external effects. See the [Phase 3 review](../release/v0.6.0-phase3.md).
+
 ## Public methods
 
 use(module) checks that every supplied module capability name appears in module.manifest.capabilities, then globally registers each capability. executePlan(plan, { caller? }) validates and runs a direct plan. run(goal, { planner?, strategy?, caller? }) performs internal routing/strategy planning then executes its plan. getJob(id), listJobs(filter?), listCapabilities(), and listPlanners() are read APIs over internal global services.
@@ -36,6 +86,59 @@ use(module) checks that every supplied module capability name appears in module.
 ## Caller
 
 ExecutePlanOptions and RunJobOptions allow caller with subject, tenant, scopes, and metadata. OperatorRuntime makes a frozen shallow copy; its scopes array and metadata object are copied/frozen too. That snapshot is supplied to authorizer and execution context.
+
+## Cooperative execution supervision (v0.6.0 development)
+
+Both execution option types add `signal?: AbortSignal` and `timeoutMs?: number`.
+These are trusted host options, never plan or caller-metadata fields. For example:
+
+```ts
+const controller = new AbortController();
+const pending = runtime.executePlan(plan, {
+  signal: controller.signal,
+  timeoutMs: 30_000,
+});
+// A host event may call controller.abort().
+const job = await pending;
+```
+
+`timeoutMs` must be an integer from 0 through 2147483647; invalid configuration
+rejects before submission work. Its monotonic budget begins when `executePlan`
+is entered, including admission and Job setup, and is checked before scheduling
+and after awaited work. Zero permits admission but prevents capability entry.
+`run` forwards these options after planning; neither option interrupts planning.
+Persisting an admitted Job is still awaited and is outside the interruptible wait.
+There is no hard bound on response latency when the event loop or storage blocks.
+
+When configured, the capability context has a runtime-owned `signal`. Either host
+abort or deadline expiry aborts it. Capabilities must pass it to cooperative
+provider APIs themselves. The authorization contract is unchanged; pending
+authorization is observed but cannot grant capability entry after a stop.
+
+Admission still runs for a pre-aborted submission. A valid admitted Job terminates
+using existing `status: 'failed'`, `outcome: 'failed'` and `job.failed`, with
+`error: 'Execution cancelled'` or `'Execution deadline exceeded'`. This phase
+does not introduce a new event or use the pre-existing `cancelled` status. If a
+step is being authorized or executed, it uses the existing failed-step path;
+later steps remain pending. Earlier completed steps retain their results.
+
+The first observed stop reason wins. Late fulfillment/rejection cannot update
+runtime lifecycle state or start another step, and rejections are observed.
+After successful or failed logical termination, later aborts cannot change that
+decision. Logging ownership remains with unsettled capability promises until
+settlement, even if the Job has already returned as failed.
+
+Cancellation does not undo completed effects. A timeout is not proof that an
+external action did not occur. JavaScript and external effects cannot be forcibly
+stopped by this API. A capability that never settles can retain its logger
+indefinitely. Detached background work (including work hidden by middleware's
+own early-return timeout) is outside the returned capability promise's ownership
+boundary. Input/result identity and mutability remain unchanged for V1 and V2;
+supervision does not isolate shared values or hostile same-process code.
+
+Omitting both options preserves the existing execution path and omits context
+`signal`. There are no retries, rollback or idempotency guarantees. See the
+[Phase 2 design and race table](../release/v0.6.0-phase2.md).
 
 ## Failure model
 

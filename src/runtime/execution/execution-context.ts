@@ -12,4 +12,6 @@ export interface ExecutionContext {
   readonly stepId: string;
   readonly logger: ExecutionLogger;
   readonly caller?: ExecutionCaller;
+  /** Present only for host-supervised execution. Cancellation does not undo effects. */
+  readonly signal?: AbortSignal;
 }

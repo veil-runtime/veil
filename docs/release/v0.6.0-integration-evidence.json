@@ -1,0 +1,599 @@
+{
+  "status": "governance adopted under maintainer task instruction; release qualification pending",
+  "date": "2026-11-03",
+  "environment": {
+    "os": "linux",
+    "node": "v24.18.1",
+    "npm": "11.16.0"
+  },
+  "branch": "integration/core-v0.6.0",
+  "develop": "7701e7b2bd4b4fe2f227be058951ef70bbbcc077",
+  "combinedPhaseHead": "c34dd357acff484428e293608f4c005b90e881aa",
+  "fixedQualityBase": {
+    "ref": "v0.5.0",
+    "commit": "78713066cafba46b0c2f1cd40eed0e9937102002",
+    "exitCode": 2,
+    "untrustedSites": 11,
+    "retiredIdentities": 4,
+    "verificationControlsRequiringReview": 7
+  },
+  "phaseCommits": [
+    "540d9ebcfe82b91f09a9789653e2ea14d377202b fix(logging): contain sink failures and scope SQLite ownership to jobs",
+    "af9a1bce70d749491e8d98400acecafe6c772ba2 docs(reliability): record Phase 1 qualification and governance review",
+    "f0b449d537dcd4844ab589d1fc008569968fd9c5 feat(runtime): supervise execution cancellation and deadlines",
+    "38e6b938530f0e7fa284de888605af27b79e3f2e docs(runtime): document Phase 2 lifecycle and verification",
+    "5e609de458985deee24124ceef3164d96acb4436 feat(runtime): bound plan admission and active execution capacity",
+    "37eec6773ca7339353464c56cb429b89db01ba54 fix(runtime): preserve default plan capture order",
+    "c34dd357acff484428e293608f4c005b90e881aa docs(runtime): record Phase 3 verification and governance dispositions"
+  ],
+  "governance": {
+    "candidateInventory": 31,
+    "relevantCodeFiles": 161,
+    "routeAllowances": 0,
+    "legacyBypasses": 0,
+    "newInventorySitesInIntegration": 0,
+    "replacements": [
+      {
+        "path": "src/runtime/jobs/job-manager.ts",
+        "kind": "job-manager",
+        "previousAnchor": "98a4d84de7c99bcc39208327cd7ee40a2b08c00eb4594824d9f3211b138a993f",
+        "finalAnchor": "8f99972d6665c230e85e0afa51ba63ce60953fd8f32df9ea4c7a6f033cf372d4",
+        "classification": "GOVERNED_MACHINERY",
+        "proposedDisposition": "approved exact final identity under Final Governance Adoption instruction; historical comparison remains untrusted"
+      },
+      {
+        "path": "src/runtime/jobs/job-manager.ts",
+        "kind": "execute",
+        "previousAnchor": "b0884a7a66f648d69198f6f14e3ea3bfac0daf68c7b95cc1cfe61fb1bacb4ee5",
+        "finalAnchor": "9ec2e83adc4517c077a4a314f6e01c892d67c931cca8ccb088616c9f7e526eb1",
+        "classification": "GOVERNED_MACHINERY",
+        "proposedDisposition": "approved exact final identity under Final Governance Adoption instruction; historical comparison remains untrusted"
+      },
+      {
+        "path": "src/runtime/operator-runtime.ts",
+        "kind": "job-manager",
+        "previousAnchor": "aeb8c5092d6664e4ac7c850dd226f2d6ae778cb85cf171c5ce48dd2a560fe125",
+        "finalAnchor": "f77cd0abb36b9b5030798b0bf36a75810ed3567c11336fe22d9a03efcbd42855",
+        "classification": "GOVERNED_MACHINERY",
+        "proposedDisposition": "approved exact final identity under Final Governance Adoption instruction; historical comparison remains untrusted"
+      },
+      {
+        "path": "src/runtime/operator-runtime.ts",
+        "kind": "execute",
+        "previousAnchor": "c33aca7aa568feefa503eb6f69a1f301cdfece563f12d155e95ac42603fd55b9",
+        "finalAnchor": "fc5e6e062ae4f33959c02e83b0b03b9e4fffd1bcc00166a369a3a9b4c167a6b4",
+        "classification": "LEGITIMATE_NON_CAPABILITY_EXECUTE",
+        "proposedDisposition": "approved exact final identity under Final Governance Adoption instruction; historical comparison remains untrusted"
+      },
+      {
+        "path": "src/runtime/jobs/job-manager.ts",
+        "kind": "dynamic",
+        "previousAnchor": "7ed7f19af7b6bca74f4f85f7685e5902610444560dfd55f29897e5303d3d9f8f",
+        "finalAnchor": "63917ec0d7c5ffa5a4ec55830a8f31cc4104095bc1580586564b3a66c0088be8",
+        "classification": "GOVERNED_MACHINERY",
+        "proposedDisposition": "approved exact final identity under Final Governance Adoption instruction; historical comparison remains untrusted"
+      }
+    ],
+    "maintainerAdoption": "approved under Final Governance Adoption instruction; see docs/release/v0.6.0-governance-adoption.md and .json for individual dispositions and authority limits",
+    "unchangedControls": [
+      {
+        "path": "tools/quality.mjs",
+        "sha256": "b5f6601c341872705b3e7a2afeddc0699032d884eb0cd8b35e52d0023aa43a99",
+        "byteEqualToFixedBase": true
+      },
+      {
+        "path": "tools/quality-governance.mjs",
+        "sha256": "1ccb9257ab051b66b6c96c4fc1e290de731ff9c66f40ece4bba9ef67874a2982",
+        "byteEqualToFixedBase": true
+      },
+      {
+        "path": "package.json",
+        "sha256": "fa2c9170a4cd4bc55a0089298658e53e63484290bee26cf438f5da821223cf1d",
+        "byteEqualToFixedBase": true
+      },
+      {
+        "path": "package-lock.json",
+        "sha256": "9a7346b488c30e4fe66632f21798cdbb9fbae1f99198b538a6775e003959f2c8",
+        "byteEqualToFixedBase": true
+      },
+      {
+        "path": "src/index.ts",
+        "sha256": "a6236848a17c392fa525037b12dbf5fc0449903974397ebe4562660163102f98",
+        "byteEqualToFixedBase": true
+      },
+      {
+        "path": "src/runtime/planner/planner.ts",
+        "sha256": "83e8cef660f261b253aaefab75d8d27a84704932ddbddd15b49f84ba504ed8db",
+        "byteEqualToFixedBase": true
+      },
+      {
+        "path": "src/runtime/registry/capability.ts",
+        "sha256": "bef8bda515c0f4c8f6fffcac5dae80d6f6c9cc9333b5985ecbfaf908566c5bbf",
+        "byteEqualToFixedBase": true
+      },
+      {
+        "path": "src/runtime/jobs/job.ts",
+        "sha256": "1eaf589b3fcb8feed76d1ac3c4deb62682bf6b4123f1b26e3614116e518e9b85",
+        "byteEqualToFixedBase": true
+      },
+      {
+        "path": "src/runtime/jobs/job-event.ts",
+        "sha256": "78ad86e6f493b19b11422317ff49162ec0aeb0026caf7294609ca012db2a56ac",
+        "byteEqualToFixedBase": true
+      },
+      {
+        "path": "src/runtime/jobs/job-step.ts",
+        "sha256": "4382513a7d365783c37e638756d51427defea194fbfd3e206aad926d14a2db99",
+        "byteEqualToFixedBase": true
+      }
+    ],
+    "finalAdoptionEvidence": "docs/release/v0.6.0-governance-adoption.json"
+  },
+  "verification": [
+    {
+      "command": "npm run check",
+      "exitCode": 0,
+      "passed": 441,
+      "log": "/tmp/veil-v060-check-final.log"
+    },
+    {
+      "command": "npx --no-install tsc --project tsconfig.test.json",
+      "exitCode": 0,
+      "passed": null,
+      "log": null
+    },
+    {
+      "command": "node --test .tmp/test-build/test/{execution-integration,execution-capacity,execution-supervision,logging-reliability,execution-contract,governed-value-v2}.test.js",
+      "exitCode": 0,
+      "passed": 199,
+      "log": "/tmp/veil-v060-focused-authorized.log"
+    },
+    {
+      "command": "node --test .tmp/test-build/test/{filesystem-confinement,governance-routes}.test.js",
+      "exitCode": 0,
+      "passed": 19,
+      "log": "/tmp/veil-v060-security-authorized.log"
+    },
+    {
+      "command": "npm run test:quality",
+      "exitCode": 0,
+      "passed": 216,
+      "log": "/tmp/veil-v060-quality-tests-authorized.log"
+    },
+    {
+      "command": "npm run quality -- --base v0.5.0",
+      "exitCode": 2,
+      "passed": null,
+      "log": "docs/release/v0.6.0-quality-v050.txt"
+    },
+    {
+      "command": "npm audit --omit=dev --json",
+      "exitCode": 0,
+      "passed": null,
+      "log": "/tmp/veil-v060-root-audit.json"
+    },
+    {
+      "command": "npm audit --json",
+      "exitCode": 0,
+      "passed": null,
+      "log": "/tmp/veil-v060-root-all-audit.json"
+    },
+    {
+      "command": "npm run verify:package",
+      "exitCode": 0,
+      "passed": null,
+      "log": "/tmp/veil-v060-package-after-cache-refresh.log"
+    },
+    {
+      "command": "python3 tools/verify-documentation.test.py",
+      "exitCode": 0,
+      "passed": 6,
+      "log": null
+    },
+    {
+      "command": "npm ci --ignore-scripts --prefer-online (examples/veil-starter)",
+      "exitCode": 0,
+      "log": "/tmp/veil-v060-starter-ci.log"
+    },
+    {
+      "command": "npm run check (examples/veil-starter)",
+      "exitCode": 0,
+      "passed": 14,
+      "log": "/tmp/veil-v060-starter-check-authorized.log"
+    },
+    {
+      "command": "npm audit --omit=dev --json (examples/veil-starter)",
+      "exitCode": 0,
+      "vulnerabilities": 0,
+      "log": "/tmp/veil-v060-starter-after-audit.json"
+    }
+  ],
+  "integrationTests": {
+    "file": "test/execution-integration.test.ts",
+    "cases": 16,
+    "semantics": [
+      "1.0",
+      "2.0"
+    ],
+    "races": "deferred entry/settlement barriers and mocked setTimeout"
+  },
+  "qualityGrowth": {
+    "source": {
+      "before": 6325,
+      "after": 6616,
+      "additions": 365,
+      "removals": 74,
+      "net": 291
+    },
+    "tests": {
+      "before": 4209,
+      "after": 5443,
+      "additions": 1235,
+      "removals": 1,
+      "net": 1234
+    },
+    "harness": {
+      "before": 1232,
+      "after": 1237,
+      "additions": 6,
+      "removals": 1,
+      "net": 5
+    }
+  },
+  "dependencyReview": {
+    "repositoryProduction": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "repositoryAll": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "cached": {
+      "exitCode": 1,
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 1,
+        "high": 1,
+        "critical": 0,
+        "total": 2
+      },
+      "selections": {
+        "node_modules/@modelcontextprotocol/sdk": "1.32.2",
+        "node_modules/ajv": "8.20.0",
+        "node_modules/body-parser": "2.3.0",
+        "node_modules/fast-uri": "3.1.8",
+        "node_modules/qs": "6.16.1"
+      }
+    },
+    "fresh": {
+      "exitCode": 0,
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "selections": {
+        "node_modules/@modelcontextprotocol/sdk": "1.32.2",
+        "node_modules/ajv": "8.20.0",
+        "node_modules/body-parser": "2.4.0",
+        "node_modules/fast-uri": "3.1.9",
+        "node_modules/qs": "6.17.1"
+      }
+    },
+    "remediatedCached": {
+      "exitCode": 0,
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "selections": {
+        "node_modules/@modelcontextprotocol/sdk": "1.32.2",
+        "node_modules/ajv": "8.20.0",
+        "node_modules/body-parser": "2.4.0",
+        "node_modules/fast-uri": "3.1.9",
+        "node_modules/qs": "6.16.1"
+      }
+    },
+    "tarball": {
+      "path": "/home/mustapha/dev/ai/playwright-lab/.tmp/core-v060-integration-candidate/veil-runtime-core-0.5.0.tgz",
+      "sha256": "f3f5d9cfba04bb9fa12dca6a5a22177d8731ceddf23942fb5a2a229751fb2dd1"
+    },
+    "advisories": [
+      {
+        "package": "body-parser",
+        "aggregateSeverity": "high",
+        "records": [
+          {
+            "source": 1243074,
+            "name": "body-parser",
+            "dependency": "body-parser",
+            "title": "body-parser vulnerable to Denial of Service via trailing bytes after a compressed request body",
+            "url": "https://github.com/advisories/GHSA-27r3-jxmh-p828",
+            "severity": "high",
+            "cwe": [
+              "CWE-248"
+            ],
+            "cvss": {
+              "score": 7.5,
+              "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+            },
+            "range": ">=2.0.0 <2.4.0"
+          }
+        ]
+      },
+      {
+        "package": "fast-uri",
+        "aggregateSeverity": "moderate",
+        "records": [
+          {
+            "source": 1243098,
+            "name": "fast-uri",
+            "dependency": "fast-uri",
+            "title": "fast-uri vulnerable to URI scheme spoofing via percent-encoded scheme decoding",
+            "url": "https://github.com/advisories/GHSA-w74x-v6f9-j3xg",
+            "severity": "moderate",
+            "cwe": [
+              "CWE-172",
+              "CWE-180"
+            ],
+            "cvss": {
+              "score": 6.1,
+              "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+            },
+            "range": ">=3.0.0 <3.1.9"
+          },
+          {
+            "source": 1243101,
+            "name": "fast-uri",
+            "dependency": "fast-uri",
+            "title": "fast-uri vulnerable to improper path equivalence in relative reference normalization",
+            "url": "https://github.com/advisories/GHSA-xhq7-xmqj-769h",
+            "severity": "low",
+            "cwe": [
+              "CWE-41"
+            ],
+            "cvss": {
+              "score": 3.7,
+              "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N"
+            },
+            "range": ">=3.0.0 <3.1.9"
+          },
+          {
+            "source": 1243104,
+            "name": "fast-uri",
+            "dependency": "fast-uri",
+            "title": "fast-uri vulnerable to host confusion via unchecked WHATWG host canonicalization",
+            "url": "https://github.com/advisories/GHSA-wjr9-j795-jxcr",
+            "severity": "moderate",
+            "cwe": [
+              "CWE-20",
+              "CWE-436"
+            ],
+            "cvss": {
+              "score": 4.8,
+              "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:N"
+            },
+            "range": ">=3.1.3 <3.1.9"
+          },
+          {
+            "source": 1243107,
+            "name": "fast-uri",
+            "dependency": "fast-uri",
+            "title": "fast-uri vulnerable to scheme injection via an unescaped first-segment colon in suffix references",
+            "url": "https://github.com/advisories/GHSA-333x-w4r6-6crp",
+            "severity": "low",
+            "cwe": [
+              "CWE-41",
+              "CWE-116"
+            ],
+            "cvss": {
+              "score": 3.7,
+              "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N"
+            },
+            "range": ">=3.0.0 <3.1.9"
+          }
+        ]
+      }
+    ],
+    "remediation": {
+      "command": "npm update body-parser fast-uri --prefer-online --cache <repository>/.tmp/npm-cache",
+      "location": "disposable cached consumer only",
+      "packagesChanged": 2,
+      "repositoryDependencyChanges": 0,
+      "repositoryLockfileChanges": 0,
+      "overridesAdded": 0
+    },
+    "starterConsumer": {
+      "lockfile": "examples/veil-starter/package-lock.json",
+      "githubDefaultBranchAlert": 50,
+      "advisory": [
+        {
+          "source": 1243661,
+          "name": "@hono/node-server",
+          "dependency": "@hono/node-server",
+          "title": "@hono/node-server: `serveStatic` decodes the request path a second time, leading to bypass of middleware on static paths",
+          "url": "https://github.com/advisories/GHSA-rmxm-3fg6-px4f",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-174"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N"
+          },
+          "range": ">=1.19.10 <2.1.3"
+        }
+      ],
+      "before": {
+        "info": 0,
+        "low": 0,
+        "moderate": 1,
+        "high": 0,
+        "critical": 0,
+        "total": 1
+      },
+      "after": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "resolvedPackageChanges": [
+        {
+          "path": "node_modules/@hono/node-server",
+          "before": "2.1.1",
+          "after": "2.1.6"
+        }
+      ],
+      "linkedCoreMetadata": "reconciled stale 0.4.0 metadata to existing 0.5.0 root; manifests unchanged",
+      "command": "npm update @hono/node-server --package-lock-only --ignore-scripts --prefer-online",
+      "githubAlertClosure": "pending adoption on default branch; no merge authorized"
+    }
+  },
+  "independentConsumers": [
+    {
+      "mode": "fresh",
+      "publicFixtureTypecheck": "pass",
+      "rootAndPrivateExports": "pass",
+      "reliability": {
+        "success": true,
+        "successfulJobs": 30,
+        "successfulSteps": 60,
+        "failedJobs": 1,
+        "semanticVersions": [
+          "1.0",
+          "2.0"
+        ],
+        "descriptorsBefore": 0,
+        "maximumDescriptors": 1,
+        "descriptorsAfter": 0
+      }
+    },
+    {
+      "mode": "remediated cached",
+      "publicFixtureTypecheck": "pass",
+      "rootAndPrivateExports": "pass",
+      "reliability": {
+        "success": true,
+        "successfulJobs": 30,
+        "successfulSteps": 60,
+        "failedJobs": 1,
+        "semanticVersions": [
+          "1.0",
+          "2.0"
+        ],
+        "descriptorsBefore": 0,
+        "maximumDescriptors": 1,
+        "descriptorsAfter": 0
+      }
+    }
+  ],
+  "initialFailures": [
+    {
+      "command": "npx --no-install tsc --project tsconfig.test.json",
+      "exitCode": 2,
+      "error": "TS2339: Property 'n' does not exist on type '{}'.",
+      "resolution": "compare complete SQLite row with { n: 2 }"
+    },
+    {
+      "command": "npm run check (sandbox)",
+      "exitCode": 1,
+      "files": [
+        "external-model-reasoner",
+        "external-reasoner",
+        "filesystem-confinement",
+        "local-planner"
+      ],
+      "resolution": "authorized isolated rerun: 441/441"
+    },
+    {
+      "command": "npm run test:quality (sandbox)",
+      "exitCode": 1,
+      "files": [
+        "tools/quality-governance.test.mjs",
+        "tools/quality.test.mjs"
+      ],
+      "resolution": "authorized rerun: 216/216"
+    },
+    {
+      "command": "npm audit --omit=dev --json (sandbox)",
+      "exitCode": 1,
+      "error": "EAI_AGAIN registry.npmjs.org",
+      "resolution": "authorized network rerun: zero vulnerabilities"
+    },
+    {
+      "command": "gh pr view 87 (sandbox)",
+      "exitCode": 1,
+      "error": "error connecting to api.github.com",
+      "resolution": "authorized network rerun succeeded"
+    },
+    {
+      "command": "node --test --test-isolation=none <six lifecycle files>",
+      "exitCode": 1,
+      "failedTests": [
+        "diagnostics are sanitized, bounded and contain recursion, throws and rejection",
+        "cyclic metadata in console and SQLite leaves successful execution intact",
+        "repeated jobs open one connection per logging execution and close every one",
+        "logging and cleanup failure preserve primary execution error",
+        "rejecting sink and failing cleanup cannot change a successful job",
+        "concurrent runtimes release only their own connection; retained loggers cannot reopen",
+        "internal owner disposal is idempotent and prevents reopening",
+        "native close refusal is contained and attempted once without retry"
+      ],
+      "resolution": "preserve normal file process isolation; 199/199 pass"
+    },
+    {
+      "command": "evidence generation through Node child_process in sandbox",
+      "error": "spawnSync git EPERM",
+      "resolution": "authorized Python evidence generation; protected files checked byte-for-byte"
+    },
+    {
+      "command": "npm run check --prefix examples/veil-starter (sandbox)",
+      "exitCode": 1,
+      "error": "listen EPERM: tsx IPC pipe /tmp/tsx-1000/73.pipe",
+      "resolution": "authorized npm ci/check: TypeScript and 14/14 pass"
+    }
+  ],
+  "crossPlatform": {
+    "local": "Linux only; nine filesystem tests include existing portable-path mock",
+    "nativeCI": "unchanged PR matrix: ubuntu-latest, macos-latest, windows-latest; review separately",
+    "completeReleaseQualification": "deferred"
+  },
+  "recommendation": {
+    "developmentReview": "GO",
+    "finalReleaseQualification": "GO to proceed with release qualification after including governance adoption in PR #89; final release itself remains unqualified",
+    "mayLeaveDraft": true,
+    "governanceReview": "GO; 11 sites, four retirements and seven controls individually approved; 31 exact candidate identities retained"
+  },
+  "published": false,
+  "merged": false,
+  "releaseTagCreated": false,
+  "pullRequest": {
+    "url": "https://github.com/veil-runtime/veil/pull/89",
+    "base": "develop",
+    "draft": true,
+    "initialHead": "061f87cf6fba35c80fa75ee59a38a0c3223a42df",
+    "initialCI": "Linux full check and Linux/macOS/Windows filesystem-security all succeeded",
+    "run": "https://github.com/veil-runtime/veil/actions/runs/41626040385",
+    "finalHeadCI": "check GitHub after final push"
+  }
+}

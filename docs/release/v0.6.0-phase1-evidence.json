@@ -1,0 +1,112 @@
+{
+  "date": "2026-11-03",
+  "branch": "feat/core-v0.6.0-phase1-runtime-reliability",
+  "developBase": "7701e7b2bd4b4fe2f227be058951ef70bbbcc077",
+  "implementationCommit": "540d9ebcfe82b91f09a9789653e2ea14d377202b",
+  "comparisonBase": "v0.5.0",
+  "comparisonCommit": "78713066cafba46b0c2f1cd40eed0e9937102002",
+  "platform": "Linux",
+  "node": "v24.18.1",
+  "npm": "11.16.0",
+  "packageVersionUnchanged": true,
+  "artifact": {
+    "filename": "veil-runtime-core-0.5.0.tgz",
+    "integrity": "sha512-GfEAntJc25lxYXxtJ1LTjEczVfpIk4Ug3JxkRD3GvKJ9DSLpdkYiA0Zgs0CYW6ZOM21vX9gqCehWHC9hN3UBXg==",
+    "shasum": "4641f4de71a22c8585d63d57951b680a77828fd1",
+    "size": 28933,
+    "unpackedSize": 116082,
+    "sha256": "b29e23d59f928b53bb01abb7226a6d88c598b5765bfd8b14c6d0f17c0050973b",
+    "files": 110
+  },
+  "checks": {
+    "focusedLoggingAndLifecycle": {
+      "exitCode": 0,
+      "passed": 14
+    },
+    "npmRunCheck": {
+      "exitCode": 0,
+      "passed": 344,
+      "packageConsumer": "pass"
+    },
+    "qualityTests": {
+      "exitCode": 0,
+      "passed": 216
+    },
+    "fixedBaseQuality": {
+      "exitCode": 2,
+      "movedSites": 2,
+      "newDynamicSites": 7,
+      "candidateInventorySites": 31,
+      "review": "L1-L5 and T1-T4 in adjacent report; candidate inventory cannot grant trust"
+    },
+    "linuxSecurity": {
+      "exitCode": 0,
+      "passed": 9
+    },
+    "independentConsumer": {
+      "install": "pass",
+      "typecheck": "pass",
+      "packageFixture": "pass",
+      "publicApiReliability": {
+        "success": true,
+        "successfulJobs": 30,
+        "successfulSteps": 60,
+        "failedJobs": 1,
+        "semanticVersions": [
+          "1.0",
+          "2.0"
+        ],
+        "descriptorsBefore": 0,
+        "maximumDescriptors": 1,
+        "descriptorsAfter": 0
+      }
+    },
+    "productionAudit": {
+      "repositoryVulnerabilities": 0,
+      "freshConsumerVulnerabilities": 0,
+      "cachedConsumerVulnerabilities": {
+        "high": 1,
+        "moderate": 1
+      },
+      "cachedConsumerExitCode": 1
+    }
+  },
+  "growth": {
+    "source": {
+      "added": 153,
+      "removed": 63,
+      "net": 90
+    },
+    "test": {
+      "added": 310,
+      "removed": 0,
+      "net": 310
+    },
+    "harness": {
+      "added": 6,
+      "removed": 1,
+      "net": 5
+    },
+    "dependencies": "unchanged",
+    "lockfile": "unchanged"
+  },
+  "lifecycleRegression": {
+    "successfulJobs": 20,
+    "steps": 40,
+    "writes": 80,
+    "connectionsOpened": 20,
+    "connectionsClosed": 20,
+    "silentJobConnections": 0,
+    "successfulReadQueries": 10,
+    "failedReadQueries": 1,
+    "readConnectionsClosed": 11
+  },
+  "remainingReview": [
+    "Fixed-base governance findings remain exit 2 pending maintainer review/adoption",
+    "Cached-consumer body-parser and fast-uri advisories",
+    "Native close refusal cannot guarantee release",
+    "Linux qualification only"
+  ],
+  "merged": false,
+  "published": false
+}
