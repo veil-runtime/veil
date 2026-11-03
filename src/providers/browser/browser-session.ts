@@ -20,17 +20,17 @@ export async function createSession(
 ): Promise<BrowserSession> {
   const context = await sessionManager.create(name);
 
-  let page: Page;
-  try {
-    page = await context.newPage();
-  } catch (error) {
-    try {
-      await context.close();
-    } catch {
-      // Preserve the original page-creation error if cleanup also fails.
-    }
-    throw error;
-  }
+  let page: Page;
+  try {
+    page = await context.newPage();
+  } catch (error) {
+    try {
+      await context.close();
+    } catch {
+      // Preserve the original page-creation error if cleanup also fails.
+    }
+    throw error;
+  }
 
   return {
     context,
