@@ -62,10 +62,15 @@
           <span aria-current="page">{{ current.title }}</span>
         </nav>
       {% endif %}
+      {% if page.product == 'ui' %}
+      <p class="version-note">Veil UI <strong>0.3.0</strong> is published on npm as a Developer Preview. Its GitHub Release is marked prerelease.</p>
+      {% elsif page.product == 'ecosystem' %}
+      <p class="version-note">Core 0.6.0 and UI 0.3.0 are published independently. Emergence is experimental; Sandbox and Playground are proposed.</p>
+      {% else %}
       <p class="version-note">
-        Published Core release, qualified on Linux: <strong>v0.4.0</strong>. These docs cover
-        <a href="{{ '/getting-started/v0.4.0.html' | relative_url }}">v0.4.0 scope, compatibility and limits</a>.
+        Published Core release: <strong>v0.6.0</strong>. Linux is fully qualified. Some guides describe earlier releases; check their version-specific scope.
       </p>
+      {% endif %}
       {{ content | replace: '<pre', '<pre tabindex="0" role="region" aria-label="Code or text example"' }}
       {% if current %}
         <nav class="page-navigation" aria-label="Document pagination">
@@ -81,7 +86,7 @@
   </main>
   <footer class="site-footer">
     <a href="{{ '/developer.html' | relative_url }}">Developer Docs</a>
-    <span>Veil Core v0.4.0</span>
+    <span>Core 0.6.0 · UI 0.3.0 Developer Preview</span>
   </footer>
 </body>
 </html>

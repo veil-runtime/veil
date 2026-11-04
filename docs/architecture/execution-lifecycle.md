@@ -87,7 +87,7 @@ Scheduling and result-commit checkpoints reject observed cancellation/expiry;
 late responses are observed without advancing lifecycle state. The runtime's
 signal reaches capability context, while a logically terminated Job retains its
 logging owner until the returned capability promise settles. See the
-[transition/race table](../release/v0.6.0-phase2.md) and
+[transition/race table](https://github.com/veil-runtime/veil/blob/v0.6.0/docs/release/v0.6.0-phase2.md) and
 [option contract](../reference/operator-runtime.html#cooperative-execution-supervision-v060-development).
 
 On success the job outcome is success. Its result is the sole result for a one-step plan, or the ordered array of results for a multi-step plan. It emits job.completed and persists. On any failure outcome/status become failed, the error is recorded, job.failed is emitted, and the job persists.

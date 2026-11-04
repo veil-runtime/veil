@@ -56,19 +56,16 @@ do not assume savings, certification or enterprise readiness from the examples.
 
 ## Understand the current release boundary
 
-Core v0.4.0 is **published on npm**. Linux is the qualified security platform. Windows and macOS are unqualified for v0.4.0. Local Ollama/Qwen
+Core v0.6.0 is **published on npm**. Linux is the fully qualified execution platform. Windows and macOS filesystem-security CI passed, but full native runtime qualification remains outstanding. Local Ollama/Qwen
 planning is experimental and opt-in, with failed write-planning probes documented.
 It is not a reliable autonomous agent.
 
-Core, UI and Emergence are independent products/packages. UI is independently
-developed for system-described interfaces. Emergence covers experimental reasoning
-and coordination and is moving into its own package. Neither is included in Core
-v0.4.0. Sandbox, repository-task and browser capabilities are not published Core
+Core and UI are independent published packages. UI 0.3.0 is a Developer Preview for expressive interfaces. Emergence covers experimental reasoning and coordination. Neither UI nor Emergence is included in Core. Sandbox, repository-task and browser capabilities are not published Core
 features.
 
 Core does not provide identity management, compliance certification, tenant
-isolation, general cancellation, retries, parallel plans or exactly-once effects.
-Read the [release notes](v0.4.0.html) and
+isolation, forced external termination, retries, parallel plans or exactly-once effects.
+Read the [v0.6.0 release notes](https://github.com/veil-runtime/veil/releases/tag/v0.6.0) and
 [trust boundaries](../architecture/trust-boundaries.html) with your technical owner.
 
 ## Continue with a technical evaluation
