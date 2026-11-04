@@ -4,6 +4,14 @@ sections:
     pages:
       - title: Docs Home
         url: /developer.html
+  - title: Ecosystem
+    pages:
+      - title: Products and direction
+        url: /ecosystem.html
+      - title: Veil UI
+        url: /ui.html
+      - title: UI Playground
+        url: /playground/
   - title: Getting Started
     pages:
       - title: Overview

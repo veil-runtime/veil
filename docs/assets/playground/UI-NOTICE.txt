@@ -1,0 +1,6 @@
+Veil UI — Deterministic Composition Engine (Developer Preview)
+Copyright 2026 Veil UI contributors
+
+This product is licensed under the Apache License, Version 2.0.
+Third-party dependencies retain their own copyrights and license grants.
+See docs/THIRD_PARTY.md for the dependency and distribution inventory.

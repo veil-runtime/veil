@@ -21,7 +21,7 @@ Requires Node.js 24+.
 
     npm install @veil-runtime/core
 
-This installs the published package. The current published Core release is v0.4.0; see [installation](docs/getting-started/installation.md). The v0.5.0 release candidate is not published.
+This installs the published package. The current published Core release is v0.6.0; see [installation](docs/getting-started/installation.md).
 
 ## Smallest working example
 
@@ -47,11 +47,11 @@ The default authorizer permits reads and denies write/destructive capabilities. 
 
 ## Status and roadmap
 
-Published release: **v0.4.0**. The **v0.5.0 release candidate** is under qualification and has not been published. See the [v0.4.0 release notes](docs/getting-started/v0.4.0.md) and [v0.5.0 candidate notes](docs/release/v0.5.0-candidate.md). The public API is unchanged. ExecutionPlan V1 remains the default; [V2](docs/reference/execution-plan-v2.md) requires host opt-in. Core contains no UI, Emergence, Caretaker or autonomous repository-task runner.
+Published release: **v0.6.0**. See the [GitHub Release](https://github.com/veil-runtime/veil/releases/tag/v0.6.0) and [ecosystem guide](docs/ecosystem.md). ExecutionPlan V1 remains the default; [V2](docs/reference/execution-plan-v2.md) requires host opt-in. Core contains no UI, Emergence, Caretaker or autonomous repository-task runner.
 
-The currently supported execution platform for v0.4.0 is Linux (qualified on x86_64/WSL2, Node 24). Windows and macOS are unqualified. See the candidate notes for host and filesystem assumptions.
+The fully qualified execution platform for v0.6.0 is Linux with Node 24+. macOS and Windows passed filesystem-security CI, but full native runtime qualification remains outstanding. See the release notes for limits.
 
-The source-tree development server supports an experimental, opt-in [optional bounded local planner](docs/guides/local-planning.md). It proposes plans through existing admission and authorization. Its implementation and built-in capabilities are internal source-server infrastructure, not additional npm exports. Models never grant authority. General cancellation, isolation, budgets, retries and idempotency enforcement are not Core guarantees.
+The source-tree development server supports an experimental, opt-in [optional bounded local planner](docs/guides/local-planning.md). It proposes plans through existing admission and authorization. Its implementation and built-in capabilities are internal source-server infrastructure, not additional npm exports. Models never grant authority. Core v0.6.0 adds cooperative cancellation, optional deadlines and per-instance bounded capacity; it does not guarantee external rollback, isolation, retries or idempotency enforcement.
 
 ## Contributing
 

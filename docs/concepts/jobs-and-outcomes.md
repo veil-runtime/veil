@@ -21,4 +21,4 @@ The internal job memory obtains planner context from historical jobs. PlannerCon
 
 ## Limitations
 
-A job's idempotency key is stored but does not prevent a repeated execution. The current public model has no cancellation, retries, or live progress stream. See [events](events-and-observability.html) and [OperatorRuntime](../reference/operator-runtime.html).
+A job's idempotency key is stored but does not prevent a repeated execution. Core 0.6.0 supports cooperative cancellation and optional deadlines; neither guarantees external work has stopped or rolled back. Retries and a live progress stream are not provided. See [events](events-and-observability.html) and [OperatorRuntime](../reference/operator-runtime.html).

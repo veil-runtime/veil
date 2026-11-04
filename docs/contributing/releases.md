@@ -3,7 +3,15 @@ title: Releases
 ---
 # Releases
 
-The current preparation is **Veil Core v0.4.0**, unpublished, based on the published
+Current published releases are **Core 0.6.0** and **UI 0.3.0 Developer Preview**.
+See their separate [Core](https://github.com/veil-runtime/veil/releases/tag/v0.6.0)
+and [UI](https://github.com/veil-runtime/veil-ui-lab/releases/tag/v0.3.0)
+release records. The preparation notes below are historical; they do not describe
+current publication status.
+
+## Historical Core preparation notes
+
+The v0.4.0 preparation was **Veil Core v0.4.0**, then unpublished, based on the published
 v0.3.1 tag `ec764125a723e555a54b8f8fb63ed2901a813fc6`. The sole package root
 and public contracts remain unchanged. UI, Emergence and repository-task apps
 are excluded. See [candidate notes](../getting-started/v0.4.0.html).
