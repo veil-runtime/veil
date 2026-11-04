@@ -5,6 +5,8 @@ description: Build bounded, expressive interfaces with Veil UI independently of 
 ---
 # Veil UI
 
+[Open the interactive playground](playground/) to edit definitions and try the real UI 0.3.0 renderer without installing anything.
+
 Veil UI is an independent interface toolkit. Published 0.3.0 is a Developer Preview with a framework-neutral interface controller and optional native DOM adapter. Applications and AI systems can supply bounded JSON definitions; trusted host code chooses the allowed actions, handles events and owns data. UI does not grant execution authority.
 
 The package also retains deterministic capability descriptions and one-screen composition APIs. Those are distinct from the universal interface API. The [0.3.0 GitHub Release](https://github.com/veil-runtime/veil-ui-lab/releases/tag/v0.3.0), [interface contract](https://github.com/veil-runtime/veil-ui-lab/blob/v0.3.0/packages/ui/docs/UNIVERSAL-INTERFACE.md) and [API inventory](https://github.com/veil-runtime/veil-ui-lab/blob/v0.3.0/packages/ui/docs/API.md) document their respective boundaries.

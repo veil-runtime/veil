@@ -10,6 +10,8 @@ sections:
         url: /ecosystem.html
       - title: Veil UI
         url: /ui.html
+      - title: UI Playground
+        url: /playground/
   - title: Getting Started
     pages:
       - title: Overview

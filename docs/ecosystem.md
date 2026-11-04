@@ -13,7 +13,7 @@ Veil is a growing set of independent developer tools. **Core** governs execution
 | [Veil UI](ui.html) | 0.3.0 published on npm as a Developer Preview; GitHub marks it prerelease | Framework-neutral interface definitions and optional DOM rendering |
 | Veil Emergence | Independent experimental research | Intelligence and coordination experiments |
 | Veil Sandbox | Proposed | Potential execution isolation |
-| Veil Playground | Proposed | Potential interactive UI experimentation |
+| [Veil Playground](playground/) | Static browser playground | Edit JSON definitions and try published UI 0.3.0 |
 
 ## Boundaries
 

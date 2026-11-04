@@ -1,0 +1,22 @@
+---
+layout: null
+title: Veil UI playground
+---
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Try published Veil UI 0.3.0 with editable JSON and real browser rendering."><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'none'; img-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"><title>Veil UI playground</title><link rel="stylesheet" href="{{ '/assets/playground/playground.css' | relative_url }}"></head><body>
+<a href="#editor" class="skip">Skip to editor</a><header><a href="{{ '/' | relative_url }}">Veil</a><nav><a href="{{ '/developer.html' | relative_url }}">Developer portal</a> · <a href="{{ '/ui.html' | relative_url }}">UI guide</a></nav></header>
+<main><h1>Build an interface. See it work.</h1><p>Real Veil UI 0.3.0. Edit JSON, render it, and interact locally. No Core, model or backend required.</p>
+<label for="gallery">Example</label><select id="gallery"><option value="minimal">Hello interface</option><option value="dashboard">Service dashboard</option><option value="form">Contact form</option><option value="review">Operational review</option></select>
+<div class="workspace"><section><h2>Definition</h2><label for="editor">Interface JSON (maximum 32 KiB)</label><textarea id="editor" spellcheck="false" aria-describedby="feedback"></textarea><div class="controls"><button id="render">Render</button><button id="reset">Reset example</button><button id="copy">Copy JSON</button></div><p id="feedback" role="status" aria-live="polite"></p></section>
+<section><h2>Live preview</h2><label for="size">Preview width</label><select id="size"><option value="wide">Desktop</option><option value="mobile">Mobile (360px)</option></select><div id="preview" tabindex="0" role="region" aria-label="Live interface preview"></div><p>Actions only change local demonstration data. “Approve” grants no permission and executes no external work.</p></section></div>
+<h2>Use it in your application</h2><pre tabindex="0" role="region" aria-label="Integration code"><code>npm install @veil-runtime/ui@0.3.0</code></pre><p>Copy the definition into <code>definition.json</code>. In your browser bundle:</p><pre tabindex="0" role="region" aria-label="Integration code"><code>import { createMountedInterface } from '@veil-runtime/ui/dom';
+import definition from './definition.json';
+const target = document.getElementById('app');
+const ui = createMountedInterface(target, definition, {
+  allowedActions: ['demo'],
+  onEvent(event) {
+    ui.updateData({ ...ui.snapshot().data,
+      message: 'Local action received' }, event.revision);
+  },
+});
+// On teardown: ui.dispose();</code></pre><p>Provide <code>&lt;div id="app"&gt;&lt;/div&gt;</code> and bundle with your application's build tool. UI emits events; your host owns policy, data and effects. A host could submit an authorized plan to Core. UI 0.3.0's optional Core peer range is ^0.4.0; Core 0.6.0 compatibility is not yet qualified.</p>
+<h2>Definitions, not executable code</h2><p>Supported built-ins: Stack, Row, Heading, Text, Status, Input, Button, Table and List. Text, number and checkbox inputs are supported. This playground allows only the local “demo” action, registers no custom components, and caps JSON at 32 KiB. Invalid updates preserve the last working preview.</p><p>Natural-language AI generation is deferred. A future provider-independent adapter would need a protected server endpoint, rate and byte limits, and validation of returned JSON. These examples are deterministic templates, not AI generation.</p></main><script type="module" src="{{ '/assets/playground/playground.js' | relative_url }}"></script></body></html>

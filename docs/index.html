@@ -1393,7 +1393,7 @@ description: Independent tools for governed execution and expressive interfaces.
     <a class="brand" href="{{ '/' | relative_url }}" aria-label="Veil home"><span class="mark" aria-hidden="true"></span>Veil</a>
     <div class="navlinks">
       <a href="{{ '/ecosystem.html' | relative_url }}">Ecosystem</a>
-      <a href="{{ '/ui.html' | relative_url }}">Veil UI</a>
+      <a href="{{ '/playground/' | relative_url }}">Playground</a>
       <a href="#architecture">Architecture</a>
       <a class="pill" href="{{ '/developer.html' | relative_url }}">Developer docs</a>
     </div>
@@ -1409,6 +1409,7 @@ description: Independent tools for governed execution and expressive interfaces.
         <div class="actions">
           <a class="button primary" href="{{ '/getting-started/five-minutes.html' | relative_url }}">Run Veil Core</a>
           <a class="button" href="{{ '/ui.html' | relative_url }}">Explore Veil UI</a>
+          <a class="button" href="{{ '/playground/' | relative_url }}">Try the playground</a>
         </div>
         <p class="status-note"><a href="https://github.com/veil-runtime/veil/releases/tag/v0.6.0">Core 0.6.0</a> and <a href="https://github.com/veil-runtime/veil-ui-lab/releases/tag/v0.3.0">UI 0.3.0 Developer Preview</a> are published independently. Install either from npm. For a combined install, UI currently supports Core 0.4.0.</p>
       </div>
@@ -1552,7 +1553,7 @@ description: Independent tools for governed execution and expressive interfaces.
           <article class="phase"><small>Published / Developer Preview</small><h3>UI 0.3.0</h3><p>Framework-neutral interface definitions, host-controlled actions and an optional native DOM adapter. Works without Core.</p><a href="{{ '/ui.html' | relative_url }}">UI guide</a></article>
           <article class="phase current"><small>Published / Linux-qualified</small><h3>Core 0.6.0</h3><p>455 Core tests passed. Cooperative cancellation, optional deadlines and per-instance capacity limits extend governed execution. Full native qualification remains outstanding on Windows and macOS.</p><a href="https://github.com/veil-runtime/veil/releases/tag/v0.6.0">Release notes</a></article>
           <article class="phase"><small>Experimental / not Core releases</small><h3>Local planning and tools</h3><p>Ollama/Qwen planning is opt-in and can select incorrect work or time out. Sandbox, repository-task and browser capabilities are not published Core features.</p><a href="{{ '/guides/local-planning.html' | relative_url }}">Read local-planning limits</a></article>
-          <article class="phase"><small>Proposed</small><h3>Sandbox and Playground</h3><p>Potential isolation and UI experimentation tools. No release or integration contract is announced.</p></article>
+          <article class="phase"><small>Proposed</small><h3>Sandbox</h3><p>Potential execution isolation. No release or integration contract is announced. The <a href="{{ '/playground/' | relative_url }}">UI playground</a> is available now.</p></article>
         </div>
         <p class="section-note" id="v030">Existing V1/V2 execution contracts are unchanged. <a href="{{ '/guides/migrate-to-execution-plan-v2.html' | relative_url }}">Review the opt-in V2 migration guide</a>.</p>
         <p class="section-note">Core 0.6.0 cancellation is cooperative and cannot guarantee external rollback. Capacity limits apply per runtime instance. <a href="{{ '/ecosystem.html' | relative_url }}">Review product status and boundaries</a>.</p>
