@@ -3,7 +3,7 @@ title: OperatorRuntime
 ---
 # OperatorRuntime
 
-The [v0.6.0 unified development specification](../release/v0.6.0-development.md)
+The [v0.6.0 unified development specification](https://github.com/veil-runtime/veil/blob/v0.6.0/docs/release/v0.6.0-development.md)
 records integrated lifecycle guarantees, governance review and qualification limits.
 
 ## Construction
@@ -77,7 +77,7 @@ these limits cannot establish an aggregate provider, tenant or process budget.
 Unsettled work can hold a slot indefinitely. Detached provider work outside a
 returned promise is not observable. Hosts need their own shared admission policy
 for cross-instance guarantees. Cancellation does not roll back or guarantee
-termination of external effects. See the [Phase 3 review](../release/v0.6.0-phase3.md).
+termination of external effects. See the [Phase 3 review](https://github.com/veil-runtime/veil/blob/v0.6.0/docs/release/v0.6.0-phase3.md).
 
 ## Public methods
 
@@ -138,7 +138,7 @@ supervision does not isolate shared values or hostile same-process code.
 
 Omitting both options preserves the existing execution path and omits context
 `signal`. There are no retries, rollback or idempotency guarantees. See the
-[Phase 2 design and race table](../release/v0.6.0-phase2.md).
+[Phase 2 design and race table](https://github.com/veil-runtime/veil/blob/v0.6.0/docs/release/v0.6.0-phase2.md).
 
 ## Failure model
 
