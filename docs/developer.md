@@ -1,6 +1,6 @@
 ---
 title: Veil developer documentation
-description: Understand Veil, install published Core 0.6.0 or UI 0.3.0, and explore their independent contracts.
+description: Understand Veil, install published Core 0.6.0 or UI 0.4.0, and explore their independent contracts.
 ---
 # Veil developer documentation
 
@@ -10,7 +10,7 @@ Veil Core is a governed, capability-driven execution runtime. It separates decid
 
 ## Published products
 
-**Core 0.6.0** is on [npm](https://www.npmjs.com/package/@veil-runtime/core/v/0.6.0), with a [GitHub Release](https://github.com/veil-runtime/veil/releases/tag/v0.6.0). **UI 0.3.0** is on [npm](https://www.npmjs.com/package/@veil-runtime/ui/v/0.3.0), with a [Developer Preview GitHub Release](https://github.com/veil-runtime/veil-ui-lab/releases/tag/v0.3.0). Read the [UI guide](ui.html) for its independent interface APIs. Core needs no model or UI;
+**Core 0.6.0** is on [npm](https://www.npmjs.com/package/@veil-runtime/core/v/0.6.0), with a [GitHub Release](https://github.com/veil-runtime/veil/releases/tag/v0.6.0). **UI 0.4.0** is on [npm](https://www.npmjs.com/package/@veil-runtime/ui/v/0.4.0), with a [Developer Preview GitHub Release](https://github.com/veil-runtime/veil-ui-lab/releases/tag/v0.4.0). Read the [UI guide](ui.html) for its independent interface APIs. Core needs no model or UI;
 [local planning](guides/local-planning.html) is optional source-server infrastructure.
 Emergence and autonomous repository-task applications are separate components.
 Linux is the qualified execution platform; Windows and macOS are unqualified.
