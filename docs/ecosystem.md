@@ -10,7 +10,7 @@ Veil is a growing set of independent developer tools. **Core** governs execution
 | Component | Current status | Use it for |
 | --- | --- | --- |
 | [Veil Core](getting-started/overview.html) | 0.6.0 published on npm | Plans, capability execution, authorization, jobs and events |
-| [Veil UI](ui.html) | 0.4.0 published on npm as a Developer Preview; GitHub marks it prerelease | Framework-neutral interface definitions and optional DOM rendering |
+| [Veil UI](ui.html) | 0.4.0 stable release on npm and GitHub | Framework-neutral interface definitions and optional DOM rendering |
 | Veil Emergence | Independent experimental research | Intelligence and coordination experiments |
 | Veil Sandbox | Proposed | Potential execution isolation |
 | [Veil Playground](playground/) | Static browser playground | Edit JSON definitions and try published UI 0.4.0 |
@@ -38,6 +38,6 @@ UI's interface definition is bounded data. Its controller validates definitions,
 ## Start independently
 
 - **Core:** [install the published package](getting-started/installation.html) and [run a complete plan](getting-started/five-minutes.html).
-- **UI:** [install the published Developer Preview and run an example](ui.html#install-and-run). The neutral interface engine and DOM adapter do not require Core.
+- **UI:** [install the published stable release and run an example](ui.html#install-and-run). The neutral interface engine and DOM adapter do not require Core.
 
-Published Core 0.6.0 adds cooperative cancellation, optional deadlines and bounded admission and execution capacity. Cancellation does not guarantee that external work stops or rolls back. See the [Core release](https://github.com/veil-runtime/veil/releases/tag/v0.6.0). The separate local UI 0.4.0-rc.2 candidate predates published UI 0.4.0; use the published package for onboarding. Future components have no committed release dates or integration contract.
+Published Core 0.6.0 adds cooperative cancellation, optional deadlines and bounded admission and execution capacity. Cancellation does not guarantee that external work stops or rolls back. See the [Core release](https://github.com/veil-runtime/veil/releases/tag/v0.6.0). Future components have no committed release dates or integration contract.
