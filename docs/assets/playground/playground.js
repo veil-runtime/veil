@@ -1,4 +1,4 @@
-// ../../../../../tmp/veil-ui-published-review/package/dist/validation-safety.js
+// ../../../../../tmp/veil-v2-package/package/dist/validation-safety.js
 var limits = { depth: 32, nodes: 1e4, keys: 256, items: 1e3, string: 65536, bytes: 1048576 };
 var reserved = /* @__PURE__ */ new Set(["__proto__", "prototype", "constructor"]);
 function assertSafeKey(key) {
@@ -72,7 +72,7 @@ function copyData(value) {
   return copy(value);
 }
 
-// ../../../../../tmp/veil-ui-published-review/package/dist/interface-transaction.js
+// ../../../../../tmp/veil-v2-package/package/dist/interface-transaction.js
 var renderers = /* @__PURE__ */ new WeakMap();
 function attachInterfaceRenderers(controller, participants) {
   renderers.set(controller, participants);
@@ -90,7 +90,7 @@ function registerInterfaceRenderer(controller, renderer) {
   };
 }
 
-// ../../../../../tmp/veil-ui-published-review/package/dist/interface.js
+// ../../../../../tmp/veil-v2-package/package/dist/interface.js
 var identifier = /^[A-Za-z][A-Za-z0-9._-]{0,127}$/;
 var commonProperties = ["key", "component", "visible", "ariaLabel"];
 var vocabulary = {
@@ -99,13 +99,15 @@ var vocabulary = {
   Text: { properties: [...commonProperties, "text"], required: [], children: false, event: null },
   Heading: { properties: [...commonProperties, "text"], required: ["text"], children: false, event: null },
   Status: { properties: [...commonProperties, "text"], required: [], children: false, event: null },
-  Input: { properties: [...commonProperties, "label", "binding", "inputType"], required: ["label", "binding"], children: false, event: "state change" },
-  Button: { properties: [...commonProperties, "text", "action"], required: ["text", "action"], children: false, event: "action" },
+  Input: { properties: [...commonProperties, "label", "binding", "inputType", "validation"], required: ["label", "binding"], children: false, event: "state change" },
+  Textarea: { properties: [...commonProperties, "label", "binding", "validation"], required: ["label", "binding"], children: false, event: "state change" },
+  Select: { properties: [...commonProperties, "label", "binding", "validation", "options"], required: ["label", "binding", "options"], children: false, event: "state change" },
+  Button: { properties: [...commonProperties, "text", "action", "disabled", "validate"], required: ["text", "action"], children: false, event: "action" },
   Table: { properties: [...commonProperties, "binding", "columns"], required: ["binding", "columns"], children: false, event: null },
   List: { properties: [...commonProperties, "binding"], required: ["binding"], children: false, event: null }
 };
 var builtins = new Set(Object.keys(vocabulary));
-var nodeKeys = /* @__PURE__ */ new Set(["key", "component", "children", "text", "binding", "visible", "action", "label", "inputType", "columns", "ariaLabel"]);
+var nodeKeys = /* @__PURE__ */ new Set(["key", "component", "children", "text", "binding", "visible", "action", "label", "inputType", "columns", "ariaLabel", "disabled", "validation", "options", "validate"]);
 var plain = (value) => !!value && typeof value === "object" && !Array.isArray(value);
 var exact = (value, allowed) => {
   for (const key of Object.keys(value))
@@ -152,7 +154,7 @@ function validateBindings(definition, data, state) {
       if (items !== void 0 && (!Array.isArray(items) || items.length > 100 || items.some((item) => !scalar(item))))
         throw new Error("Invalid or oversized list items");
     }
-    if (node.component === "Input") {
+    if (isInterfaceField(node)) {
       const current = valueAt(state, node.binding.path);
       if (current !== void 0 && !scalar(current))
         throw new Error("Invalid input state");
@@ -165,14 +167,14 @@ function retainedState(previous, next, oldState) {
     return state;
   const inputs = /* @__PURE__ */ new Map();
   visitNodes(previous.screen, (node) => {
-    if (node.component === "Input")
+    if (isInterfaceField(node))
       inputs.set(node.key, node);
   });
   visitNodes(next.screen, (node) => {
-    if (node.component !== "Input")
+    if (!isInterfaceField(node))
       return;
     const old = inputs.get(node.key);
-    if (!old || old.inputType !== node.inputType || old.binding?.path !== node.binding?.path)
+    if (!old || old.component !== node.component || old.inputType !== node.inputType || old.binding?.path !== node.binding?.path)
       return;
     const path = node.binding.path;
     const oldValue = valueAt(oldState, path);
@@ -235,13 +237,12 @@ function validateInterfaceDefinition(value, components = []) {
     }
     if (node.binding !== void 0)
       binding(node.binding);
-    if (node.visible !== void 0) {
-      if (!plain(node.visible))
-        throw new Error("Invalid visibility condition");
-      exact(node.visible, /* @__PURE__ */ new Set(["binding", "equals"]));
-      binding(node.visible.binding);
-      if (!scalar(node.visible.equals))
-        throw new Error("Invalid visibility condition");
+    if (node.visible !== void 0)
+      validateCondition(node.visible);
+    if (node.disabled !== void 0) {
+      if (node.component !== "Button")
+        throw new Error("Only Button accepts disabled");
+      validateCondition(node.disabled);
     }
     for (const field of ["label", "ariaLabel"])
       if (node[field] !== void 0 && (typeof node[field] !== "string" || node[field].length > 256))
@@ -250,11 +251,44 @@ function validateInterfaceDefinition(value, components = []) {
       throw new Error("Action is not declared by the host");
     if (node.inputType !== void 0 && !["text", "number", "checkbox"].includes(node.inputType))
       throw new Error("Invalid input type");
+    if (node.validate !== void 0 && (node.component !== "Button" || typeof node.validate !== "boolean"))
+      throw new Error("Invalid validate flag");
+    if (node.options !== void 0) {
+      if (node.component !== "Select" || !Array.isArray(node.options) || node.options.length < 1 || node.options.length > 100)
+        throw new Error("Invalid select options");
+      const values = /* @__PURE__ */ new Set();
+      for (const option of node.options) {
+        if (!plain(option))
+          throw new Error("Invalid option");
+        exact(option, /* @__PURE__ */ new Set(["value", "label"]));
+        if (typeof option.value !== "string" || option.value.length > 256 || typeof option.label !== "string" || option.label.length > 256 || values.has(option.value))
+          throw new Error("Invalid option");
+        values.add(option.value);
+      }
+    }
+    if (node.validation !== void 0) {
+      if (!isInterfaceField(node) || !plain(node.validation))
+        throw new Error("Invalid validation");
+      exact(node.validation, /* @__PURE__ */ new Set(["required", "minLength", "maxLength", "min", "max"]));
+      const rules = node.validation;
+      if (rules.required !== void 0 && typeof rules.required !== "boolean")
+        throw new Error("Invalid required rule");
+      for (const key of ["minLength", "maxLength", "min", "max"])
+        if (rules[key] !== void 0 && (typeof rules[key] !== "number" || !Number.isFinite(rules[key])))
+          throw new Error("Invalid validation bound");
+      for (const key of ["minLength", "maxLength"])
+        if (rules[key] !== void 0 && (!Number.isInteger(rules[key]) || rules[key] < 0 || rules[key] > 4096 || node.inputType === "number" || node.inputType === "checkbox"))
+          throw new Error("Invalid length rule");
+      if ((rules.min !== void 0 || rules.max !== void 0) && (node.component !== "Input" || node.inputType !== "number"))
+        throw new Error("Numeric rules require number input");
+      if (rules.minLength > rules.maxLength || rules.min > rules.max)
+        throw new Error("Reversed validation bounds");
+    }
     if (node.columns !== void 0) {
       if (!Array.isArray(node.columns) || node.columns.length < 1 || node.columns.length > 20 || node.columns.some((col) => !plain(col) || Object.keys(col).some((key) => key !== "key" && key !== "label") || !name(col.key) || typeof col.label !== "string" || col.label.length > 256))
         throw new Error("Invalid table columns");
     }
-    if (node.component === "Input" && (!node.binding || node.binding.source !== "state" || !node.label))
+    if (isInterfaceField(node) && (!node.binding || node.binding.source !== "state" || !node.label))
       throw new Error("Input needs a state binding and label");
     if (node.component === "Button" && (!node.action || !node.text))
       throw new Error("Button needs an action and text");
@@ -347,8 +381,11 @@ function createInterfaceController(definition, options = {}) {
         prepared.push(renderer(copySnapshot(candidate)));
       if (disposed)
         throw new Error("Interface controller was disposed during update");
-      for (const renderer of prepared)
+      for (const renderer of prepared) {
         renderer.commit();
+        if (disposed)
+          throw new Error("Interface controller was disposed during update");
+      }
       current = nextDefinition;
       data = nextData;
       state = nextState;
@@ -430,6 +467,13 @@ function createInterfaceController(definition, options = {}) {
         throw new Error("Interface update already in progress");
       if (!current.actions?.includes(action) || !findAction(current.screen, source, action, data, state))
         throw new Error("Action is not available");
+      let submit = false;
+      visitNodes(current.screen, (node) => {
+        if (node.key === source)
+          submit = node.validate === true;
+      });
+      if (submit && Object.keys(getInterfaceValidation({ definition: current, data, state })).length)
+        throw new Error("Interface validation failed");
       dispatching = true;
       try {
         const result = options.onEvent?.({ action, source, state: copyData(state), revision });
@@ -466,15 +510,119 @@ function createInterfaceController(definition, options = {}) {
   return controller;
 }
 function findAction(node, key, action, data, state) {
-  if (node.visible && valueAt(node.visible.binding.source === "data" ? data : state, node.visible.binding.path) !== node.visible.equals)
+  if (node.visible && !evaluateInterfaceCondition(node.visible, { data, state }))
+    return false;
+  if (node.disabled && evaluateInterfaceCondition(node.disabled, { data, state }))
     return false;
   return node.key === key && node.action === action || (node.children?.some((child) => findAction(child, key, action, data, state)) ?? false);
 }
 function resolveInterfaceBinding(snapshot, bindingValue) {
   return valueAt(bindingValue.source === "data" ? snapshot.data : snapshot.state, bindingValue.path);
 }
+function validateCondition(value) {
+  let count = 0;
+  function visit(value2, depth) {
+    if (!plain(value2) || depth > 8 || ++count > 64)
+      throw new Error("Invalid condition or condition limit exceeded");
+    if (Object.hasOwn(value2, "all") || Object.hasOwn(value2, "any")) {
+      const key = Object.hasOwn(value2, "all") ? "all" : "any";
+      exact(value2, /* @__PURE__ */ new Set([key]));
+      const terms = value2[key];
+      if (!Array.isArray(terms) || terms.length < 1 || terms.length > 16)
+        throw new Error("Invalid condition terms");
+      for (const term of terms)
+        visit(term, depth + 1);
+    } else if (Object.hasOwn(value2, "not")) {
+      exact(value2, /* @__PURE__ */ new Set(["not"]));
+      visit(value2.not, depth + 1);
+    } else {
+      binding(value2.binding);
+      if (Object.hasOwn(value2, "equals")) {
+        exact(value2, /* @__PURE__ */ new Set(["binding", "equals"]));
+        if (!scalar(value2.equals))
+          throw new Error("Invalid condition value");
+      } else {
+        exact(value2, /* @__PURE__ */ new Set(["binding", "operator", "value"]));
+        if (!["ne", "lt", "lte", "gt", "gte"].includes(value2.operator) || !scalar(value2.value))
+          throw new Error("Invalid condition operator or value");
+        if (value2.operator !== "ne" && typeof value2.value !== "number")
+          throw new Error("Numeric condition needs a number");
+      }
+    }
+  }
+  visit(value, 0);
+}
+function evaluateInterfaceCondition(condition, snapshot) {
+  if ("all" in condition)
+    return condition.all.every((term) => evaluateInterfaceCondition(term, snapshot));
+  if ("any" in condition)
+    return condition.any.some((term) => evaluateInterfaceCondition(term, snapshot));
+  if ("not" in condition)
+    return !evaluateInterfaceCondition(condition.not, snapshot);
+  const value = valueAt(snapshot[condition.binding.source], condition.binding.path);
+  if ("equals" in condition)
+    return value === condition.equals;
+  if (condition.operator === "ne")
+    return value !== condition.value;
+  if (typeof value !== "number" || !Number.isFinite(value) || typeof condition.value !== "number")
+    return false;
+  switch (condition.operator) {
+    case "lt":
+      return value < condition.value;
+    case "lte":
+      return value <= condition.value;
+    case "gt":
+      return value > condition.value;
+    case "gte":
+      return value >= condition.value;
+  }
+}
+function isInterfaceField(node) {
+  return ["Input", "Textarea", "Select"].includes(node.component);
+}
+function getInterfaceValidation(snapshot) {
+  const errors = {};
+  function visit(node) {
+    if (node.visible && !evaluateInterfaceCondition(node.visible, snapshot))
+      return;
+    if (isInterfaceField(node)) {
+      const value = valueAt(snapshot.state, node.binding.path);
+      const rules = node.validation ?? {};
+      const empty = value === void 0 || value === null || value === "";
+      let error = "";
+      if (rules.required && (empty || node.inputType === "checkbox" && value !== true))
+        error = "This field is required.";
+      else if (!empty) {
+        if (node.inputType === "number") {
+          if (typeof value !== "number" || !Number.isFinite(value))
+            error = "Enter a number.";
+          else if (rules.min !== void 0 && value < rules.min)
+            error = `Minimum value is ${rules.min}.`;
+          else if (rules.max !== void 0 && value > rules.max)
+            error = `Maximum value is ${rules.max}.`;
+        } else if (node.inputType === "checkbox") {
+          if (typeof value !== "boolean")
+            error = "Enter a boolean.";
+        } else if (typeof value !== "string")
+          error = "Enter text.";
+        else if (rules.minLength !== void 0 && value.length < rules.minLength)
+          error = `Minimum length is ${rules.minLength}.`;
+        else if (rules.maxLength !== void 0 && value.length > rules.maxLength)
+          error = `Maximum length is ${rules.maxLength}.`;
+        else if (node.component === "Select" && !node.options.some((option) => option.value === value))
+          error = "Choose an available option.";
+      }
+      if (error)
+        errors[node.key] = error;
+    }
+    for (const child of node.children ?? [])
+      visit(child);
+  }
+  visit(snapshot.definition.screen);
+  return errors;
+}
 
-// ../../../../../tmp/veil-ui-published-review/package/dist/dom.js
+// ../../../../../tmp/veil-v2-package/package/dist/dom.js
 var instance = 0;
 var mounted = /* @__PURE__ */ new WeakMap();
 function createMountedInterface(target, definition, options = {}) {
@@ -529,7 +677,7 @@ function mountInterface(target, controller, components = {}, onError) {
   };
   const display = (value) => value === void 0 || value === null ? "" : typeof value === "object" ? JSON.stringify(value) : String(value);
   const resolveText = (node, snapshot) => typeof node.text === "string" ? node.text : node.text ? display(resolveInterfaceBinding(snapshot, node.text)) : "";
-  const visible = (node, snapshot) => !node.visible || resolveInterfaceBinding(snapshot, node.visible.binding) === node.visible.equals;
+  const visible = (node, snapshot) => !node.visible || evaluateInterfaceCondition(node.visible, snapshot);
   function create(node, snapshot, candidate = false) {
     const children = [];
     let element;
@@ -564,25 +712,26 @@ function mountInterface(target, controller, components = {}, onError) {
       button2.addEventListener("click", click);
       dispose2 = () => button2.removeEventListener("click", click);
       element = button2;
-    } else if (node.component === "Input") {
+    } else if (isInterfaceField(node)) {
       const wrapper = make2("div", "veil-interface-input");
       const label = document.createElement("label");
-      const input2 = document.createElement("input");
-      input2.id = `${domId}-${node.key}`;
+      const input2 = document.createElement(node.component === "Textarea" ? "textarea" : node.component === "Select" ? "select" : "input");
+      input2.id = `${domId}-input-${node.key}`;
       label.htmlFor = input2.id;
-      input2.type = node.inputType ?? "text";
+      if (input2 instanceof HTMLInputElement)
+        input2.type = node.inputType ?? "text";
       input2.style.boxSizing = "border-box";
       input2.style.maxWidth = "100%";
       input2.style.minWidth = "0";
       const change = () => {
         if (!active || !live)
           return;
-        const value = input2.type === "checkbox" ? input2.checked : input2.type === "number" && input2.value !== "" ? Number(input2.value) : input2.value;
+        const value = input2 instanceof HTMLInputElement && input2.type === "checkbox" ? input2.checked : input2.type === "number" && input2.value !== "" ? Number(input2.value) : input2.value;
         try {
           controller.setState(node.binding.path, value);
         } catch (error) {
           const accepted = resolveInterfaceBinding(controller.snapshot(), node.binding);
-          if (input2.type === "checkbox")
+          if (input2 instanceof HTMLInputElement && input2.type === "checkbox")
             input2.checked = accepted === true;
           else
             input2.value = display(accepted);
@@ -595,7 +744,11 @@ function mountInterface(target, controller, components = {}, onError) {
         input2.removeEventListener("input", change);
         input2.removeEventListener("change", change);
       };
-      wrapper.append(label, input2);
+      const feedback2 = document.createElement("span");
+      feedback2.id = `${domId}-feedback-${node.key}`;
+      feedback2.setAttribute("aria-live", "polite");
+      input2.setAttribute("aria-describedby", feedback2.id);
+      wrapper.append(label, input2, feedback2);
       element = wrapper;
     } else if (node.component === "Table") {
       element = make2("table", "veil-interface-table");
@@ -681,6 +834,8 @@ function mountInterface(target, controller, components = {}, onError) {
     const { node, element } = rendered;
     const isVisible = visible(node, snapshot);
     element.hidden = !isVisible;
+    if (node.component === "Button")
+      element.disabled = !!node.disabled && evaluateInterfaceCondition(node.disabled, snapshot);
     element.style.display = isVisible ? rendered.visibleDisplay : "none";
     if (node.ariaLabel)
       element.setAttribute("aria-label", node.ariaLabel);
@@ -699,12 +854,25 @@ function mountInterface(target, controller, components = {}, onError) {
       });
       element.replaceChildren(...entries);
     }
-    if (node.component === "Input") {
+    if (isInterfaceField(node)) {
       const label = element.querySelector("label");
-      const input2 = element.querySelector("input");
+      const input2 = element.querySelector("input,select,textarea");
+      if (input2 instanceof HTMLSelectElement) {
+        input2.replaceChildren(...[{ value: "", label: "Choose\u2026" }, ...node.options.filter((option) => option.value !== "")].map((option) => {
+          const item = document.createElement("option");
+          item.value = option.value;
+          item.textContent = option.label;
+          return item;
+        }));
+      }
+      const errors = getInterfaceValidation(snapshot);
+      const error = Object.hasOwn(errors, node.key) ? errors[node.key] : "";
+      element.querySelector("span").textContent = error;
+      input2.setAttribute("aria-invalid", String(!!error));
+      input2.required = node.validation?.required === true;
       label.textContent = node.label ?? "";
       const value = resolveInterfaceBinding(snapshot, node.binding);
-      if (input2.type === "checkbox")
+      if (input2 instanceof HTMLInputElement && input2.type === "checkbox")
         input2.checked = value === true;
       else {
         const shown = display(value);
@@ -758,7 +926,7 @@ function mountInterface(target, controller, components = {}, onError) {
       destroy(child);
   }
   function prepare(previous, node, snapshot, staged) {
-    const same = previous.node.key === node.key && previous.node.component === node.component && (node.component !== "Button" || previous.node.action === node.action) && (node.component !== "Input" || previous.node.binding?.path === node.binding?.path && previous.node.inputType === node.inputType) && ["Stack", "Row", "Text", "Heading", "Status", "Input", "Button", "Table", "List"].includes(node.component);
+    const same = previous.node.key === node.key && previous.node.component === node.component && (node.component !== "Button" || previous.node.action === node.action) && (!isInterfaceField(node) || previous.node.binding?.path === node.binding?.path && previous.node.inputType === node.inputType) && ["Stack", "Row", "Text", "Heading", "Status", "Input", "Textarea", "Select", "Button", "Table", "List"].includes(node.component);
     if (!same) {
       const next = create(node, snapshot, true);
       staged.push(next);
@@ -857,24 +1025,40 @@ function mountInterface(target, controller, components = {}, onError) {
 }
 
 // docs/assets/playground/source.mjs
+var bind = (path) => ({ source: "state", path });
+var eq = (path, equals) => ({ binding: bind(path), equals });
 var heading = (text) => ({ key: "heading", component: "Heading", text });
-var status = { key: "status", component: "Status", text: { source: "data", path: "message" } };
-var button = (text) => ({ key: "action", component: "Button", text, action: "demo" });
-var input = (key, label, inputType = "text") => ({ key, component: "Input", label, inputType, binding: { source: "state", path: key } });
-var make = (id, children, state = {}, data = {}) => ({ id, actions: ["demo"], state, data: { message: "Ready", ...data }, screen: { key: "root", component: "Stack", children: [...children, status] } });
+var input = (key, label, validation) => ({ key, component: "Input", label, binding: bind(key), validation });
+var button = (key, text, extra = {}) => ({ key, component: "Button", text, action: "demo", ...extra });
+var make = (id, children, state = {}, data = {}) => ({ id, actions: ["demo"], state, data: { message: "Ready", ...data }, screen: { key: "root", component: "Stack", children: [...children, { key: "status", component: "Status", text: { source: "data", path: "message" } }] } });
 var examples = {
-  minimal: make("hello", [heading("Hello interface"), input("name", "Your name"), button("Greet")], { name: "" }),
-  dashboard: make("dashboard", [heading("Service dashboard"), { key: "summary", component: "Text", text: "Local sample data \u2014 3 services" }, { key: "services", component: "Table", binding: { source: "data", path: "services" }, columns: [{ key: "name", label: "Service" }, { key: "state", label: "Status" }] }, button("Refresh locally")], {}, { services: [{ name: "API", state: "Healthy" }, { name: "Jobs", state: "Healthy" }, { name: "Mail", state: "Review" }] }),
-  form: make("contact", [heading("Contact request"), input("name", "Name"), input("count", "Seats", "number"), input("consent", "Contact me", "checkbox"), button("Preview submission")], { name: "", count: 1, consent: false }),
-  review: make("review", [heading("Review deployment"), { key: "description", component: "Text", text: "Demonstration only: review staging release 42." }, input("note", "Review note"), button("Record local approval")], { note: "" })
+  minimal: { description: "Edit a state-bound field and dispatch a host-authorized action.", definition: make("hello", [heading("Hello interface"), input("name", "Your name", {}), button("greet", "Greet")], { name: "" }) },
+  form: { description: "Required fields show immediate validation. Submit dispatches only when visible fields are valid.", definition: make("contact", [heading("Contact request"), input("name", "Name", { required: true, minLength: 2, maxLength: 80 }), { key: "kind", component: "Select", label: "Topic", binding: bind("kind"), options: [{ value: "support", label: "Support" }, { value: "sales", label: "Sales" }], validation: { required: true } }, { key: "notes", component: "Textarea", label: "Message", binding: bind("notes"), validation: { required: true, minLength: 10, maxLength: 500 } }, button("send", "Send request", { validate: true })], { name: "", kind: "", notes: "" }) },
+  workflow: { description: "Compound conditions control visibility and disabling. Validated progression is handled locally by the host.", definition: make("workflow", [heading("Request review"), input("name", "Your name", { required: true, minLength: 2 }), { key: "kind", component: "Select", label: "Environment", binding: bind("kind"), options: [{ value: "staging", label: "Staging" }, { value: "production", label: "Production" }], validation: { required: true } }, { key: "reason", component: "Textarea", label: "Production reason", binding: bind("reason"), validation: { required: true, minLength: 5 }, visible: { all: [eq("kind", "production"), { not: eq("step", 2) }] } }, { key: "review", component: "Text", text: "Review the request and confirm.", visible: { all: [eq("step", 2), { any: [eq("kind", "staging"), eq("kind", "production")] }] } }, button("next", "Review", { validate: true, visible: eq("step", 1) }), button("confirm", "Confirm", { visible: eq("step", 2), disabled: { not: eq("approved", true) } }), { key: "approved", component: "Input", label: "I reviewed this request", inputType: "checkbox", binding: bind("approved"), visible: eq("step", 2) }], { name: "", kind: "", reason: "", step: 1, approved: false }) },
+  dashboard: { description: "Table and list values bind to host data. The action updates only local demonstration data.", definition: make("dashboard", [heading("Service dashboard"), { key: "services", component: "Table", binding: { source: "data", path: "services" }, columns: [{ key: "name", label: "Service" }, { key: "state", label: "Status" }] }, { key: "notes", component: "List", binding: { source: "data", path: "notes" } }, button("refresh", "Refresh locally")], {}, { services: [{ name: "API", state: "Healthy" }, { name: "Jobs", state: "Review" }], notes: ["No external services contacted"] }) },
+  ai: { description: "A static example of JSON an AI agent could produce. No model is connected; the host still validates and authorizes it.", definition: make("agent-request", [heading("Access request"), { key: "purpose", component: "Textarea", label: "Business purpose", binding: bind("purpose"), validation: { required: true, minLength: 10, maxLength: 300 } }, { key: "level", component: "Select", label: "Access level", binding: bind("level"), options: [{ value: "read", label: "Read only" }, { value: "write", label: "Write" }], validation: { required: true } }, button("request", "Request access", { validate: true })], { purpose: "", level: "" }) }
 };
 var editor = document.querySelector("#editor");
 var feedback = document.querySelector("#feedback");
 var preview = document.querySelector("#preview");
 var gallery = document.querySelector("#gallery");
+var inspection = document.querySelector("#inspection");
+var historyNode = document.querySelector("#history");
+var description = document.querySelector("#example-description");
 var ui;
+var history = [];
+function show(value) {
+  return JSON.stringify(value, null, 2).slice(0, 16e3);
+}
+function inspect(snapshot) {
+  inspection.textContent = show({ revision: snapshot.revision, state: snapshot.state, data: snapshot.data, validation: getInterfaceValidation(snapshot) });
+}
 function report(error) {
-  feedback.textContent = String(error.message || error).slice(0, 500);
+  const message = String(error?.message || error).slice(0, 500);
+  feedback.textContent = message;
+  history.unshift({ error: message });
+  history = history.slice(0, 20);
+  historyNode.textContent = show(history);
 }
 function parse() {
   if (editor.value.length > 32768 || new TextEncoder().encode(editor.value).length > 32768) throw Error("Definition exceeds 32 KiB.");
@@ -884,13 +1068,20 @@ function render() {
   try {
     const definition = parse();
     if (ui) ui.updateDefinition(definition);
-    else ui = createMountedInterface(preview, definition, { allowedActions: ["demo"], onError: report, onEvent(event) {
-      try {
-        ui.updateData({ ...ui.snapshot().data, message: event.state.name ? `Hello ${event.state.name}` : "Local demo action recorded. No external operation executed." }, event.revision);
-      } catch (error) {
-        report(error);
-      }
-    } });
+    else {
+      ui = createMountedInterface(preview, definition, { allowedActions: ["demo"], onError: report, onEvent(event) {
+        try {
+          history.unshift({ action: event.action, source: event.source, revision: event.revision });
+          history = history.slice(0, 20);
+          historyNode.textContent = show(history);
+          if (event.source === "next") ui.setState("step", 2);
+          else ui.updateData({ ...ui.snapshot().data, message: event.state.name ? `Hello ${event.state.name}. Local action recorded.` : "Local action recorded. No external operation executed." });
+        } catch (error) {
+          report(error);
+        }
+      } });
+      ui.subscribe(inspect);
+    }
     feedback.textContent = "Rendered successfully.";
   } catch (error) {
     report(error);
@@ -899,13 +1090,19 @@ function render() {
 function reset() {
   ui?.dispose();
   ui = void 0;
-  editor.value = JSON.stringify(examples[gallery.value], null, 2);
+  history = [];
+  historyNode.textContent = "[]";
+  description.textContent = examples[gallery.value].description;
+  editor.value = JSON.stringify(examples[gallery.value].definition, null, 2);
   render();
 }
 document.querySelector("#render").onclick = render;
 document.querySelector("#reset").onclick = reset;
 gallery.onchange = reset;
-document.querySelector("#size").onchange = (event) => preview.classList.toggle("mobile", event.target.value === "mobile");
+document.querySelector("#size").onchange = (event) => {
+  preview.classList.toggle("mobile", event.target.value === "mobile");
+  preview.classList.toggle("narrow", event.target.value === "narrow");
+};
 document.querySelector("#copy").onclick = async () => {
   try {
     parse();
