@@ -3,9 +3,9 @@ title: Releases
 ---
 # Releases
 
-Current published releases are **Core 0.6.0** and **UI 0.3.0 Developer Preview**.
+Current published releases are **Core 0.6.0** and **UI 0.4.0 stable release**.
 See their separate [Core](https://github.com/veil-runtime/veil/releases/tag/v0.6.0)
-and [UI](https://github.com/veil-runtime/veil-ui-lab/releases/tag/v0.3.0)
+and [UI](https://github.com/veil-runtime/veil-ui-lab/releases/tag/v0.4.0)
 release records. The preparation notes below are historical; they do not describe
 current publication status.
 

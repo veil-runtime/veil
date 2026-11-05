@@ -1,25 +1,31 @@
 import { createMountedInterface } from '@veil-runtime/ui/dom';
+import { getInterfaceValidation } from '@veil-runtime/ui/interface';
+const bind = path => ({source:'state',path});
+const eq = (path,equals) => ({binding:bind(path),equals});
 const heading = text => ({key:'heading',component:'Heading',text});
-const status = {key:'status',component:'Status',text:{source:'data',path:'message'}};
-const button = text => ({key:'action',component:'Button',text,action:'demo'});
-const input = (key,label,inputType='text') => ({key,component:'Input',label,inputType,binding:{source:'state',path:key}});
-const make = (id,children,state={},data={}) => ({id,actions:['demo'],state,data:{message:'Ready',...data},screen:{key:'root',component:'Stack',children:[...children,status]}});
+const input = (key,label,validation) => ({key,component:'Input',label,binding:bind(key),validation});
+const button = (key,text,extra={}) => ({key,component:'Button',text,action:'demo',...extra});
+const make = (id,children,state={},data={}) => ({id,actions:['demo'],state,data:{message:'Ready',...data},screen:{key:'root',component:'Stack',children:[...children,{key:'status',component:'Status',text:{source:'data',path:'message'}}]}});
 const examples = {
- minimal:make('hello',[heading('Hello interface'),input('name','Your name'),button('Greet')],{name:''}),
- dashboard:make('dashboard',[heading('Service dashboard'),{key:'summary',component:'Text',text:'Local sample data — 3 services'}, {key:'services',component:'Table',binding:{source:'data',path:'services'},columns:[{key:'name',label:'Service'},{key:'state',label:'Status'}]},button('Refresh locally')],{},{services:[{name:'API',state:'Healthy'},{name:'Jobs',state:'Healthy'},{name:'Mail',state:'Review'}]}),
- form:make('contact',[heading('Contact request'),input('name','Name'),input('count','Seats','number'),input('consent','Contact me','checkbox'),button('Preview submission')],{name:'',count:1,consent:false}),
- review:make('review',[heading('Review deployment'),{key:'description',component:'Text',text:'Demonstration only: review staging release 42.'},input('note','Review note'),button('Record local approval')],{note:''}),
+ minimal: {description:'Edit a state-bound field and dispatch a host-authorized action.',definition:make('hello',[heading('Hello interface'),input('name','Your name',{}),button('greet','Greet')],{name:''})},
+ form: {description:'Required fields show immediate validation. Submit dispatches only when visible fields are valid.',definition:make('contact',[heading('Contact request'),input('name','Name',{required:true,minLength:2,maxLength:80}),{key:'kind',component:'Select',label:'Topic',binding:bind('kind'),options:[{value:'support',label:'Support'},{value:'sales',label:'Sales'}],validation:{required:true}},{key:'notes',component:'Textarea',label:'Message',binding:bind('notes'),validation:{required:true,minLength:10,maxLength:500}},button('send','Send request',{validate:true})],{name:'',kind:'',notes:''})},
+ workflow: {description:'Compound conditions control visibility and disabling. Validated progression is handled locally by the host.',definition:make('workflow',[heading('Request review'),input('name','Your name',{required:true,minLength:2}),{key:'kind',component:'Select',label:'Environment',binding:bind('kind'),options:[{value:'staging',label:'Staging'},{value:'production',label:'Production'}],validation:{required:true}},{key:'reason',component:'Textarea',label:'Production reason',binding:bind('reason'),validation:{required:true,minLength:5},visible:{all:[eq('kind','production'),{not:eq('step',2)}]}},{key:'review',component:'Text',text:'Review the request and confirm.',visible:{all:[eq('step',2),{any:[eq('kind','staging'),eq('kind','production')]}]}},button('next','Review',{validate:true,visible:eq('step',1)}),button('confirm','Confirm',{visible:eq('step',2),disabled:{not:eq('approved',true)}}),{key:'approved',component:'Input',label:'I reviewed this request',inputType:'checkbox',binding:bind('approved'),visible:eq('step',2)}],{name:'',kind:'',reason:'',step:1,approved:false})},
+ dashboard: {description:'Table and list values bind to host data. The action updates only local demonstration data.',definition:make('dashboard',[heading('Service dashboard'),{key:'services',component:'Table',binding:{source:'data',path:'services'},columns:[{key:'name',label:'Service'},{key:'state',label:'Status'}]},{key:'notes',component:'List',binding:{source:'data',path:'notes'}},button('refresh','Refresh locally')],{},{services:[{name:'API',state:'Healthy'},{name:'Jobs',state:'Review'}],notes:['No external services contacted']})},
+ ai: {description:'A static example of JSON an AI agent could produce. No model is connected; the host still validates and authorizes it.',definition:make('agent-request',[heading('Access request'),{key:'purpose',component:'Textarea',label:'Business purpose',binding:bind('purpose'),validation:{required:true,minLength:10,maxLength:300}},{key:'level',component:'Select',label:'Access level',binding:bind('level'),options:[{value:'read',label:'Read only'},{value:'write',label:'Write'}],validation:{required:true}},button('request','Request access',{validate:true})],{purpose:'',level:''})},
 };
 const editor=document.querySelector('#editor'), feedback=document.querySelector('#feedback'), preview=document.querySelector('#preview'), gallery=document.querySelector('#gallery');
-let ui;
-function report(error){ feedback.textContent=String(error.message || error).slice(0,500); }
+const inspection=document.querySelector('#inspection'), historyNode=document.querySelector('#history'), description=document.querySelector('#example-description');
+let ui, history=[];
+function show(value){return JSON.stringify(value,null,2).slice(0,16000);}
+function inspect(snapshot){inspection.textContent=show({revision:snapshot.revision,state:snapshot.state,data:snapshot.data,validation:getInterfaceValidation(snapshot)});}
+function report(error){const message=String(error?.message || error).slice(0,500);feedback.textContent=message; history.unshift({error:message});history=history.slice(0,20);historyNode.textContent=show(history);}
 function parse(){if(editor.value.length>32768 || new TextEncoder().encode(editor.value).length>32768)throw Error('Definition exceeds 32 KiB.');return JSON.parse(editor.value);}
-function render(){try{const definition=parse(); if(ui)ui.updateDefinition(definition); else ui=createMountedInterface(preview,definition,{allowedActions:['demo'],onError:report,onEvent(event){try{ui.updateData({...ui.snapshot().data,message:event.state.name ? `Hello ${event.state.name}` : 'Local demo action recorded. No external operation executed.'},event.revision);}catch(error){report(error);}}});feedback.textContent='Rendered successfully.';}catch(error){report(error);}}
-function reset(){ui?.dispose();ui=undefined;editor.value=JSON.stringify(examples[gallery.value],null,2);render();}
+function render(){try{const definition=parse(); if(ui)ui.updateDefinition(definition); else {ui=createMountedInterface(preview,definition,{allowedActions:['demo'],onError:report,onEvent(event){try{history.unshift({action:event.action,source:event.source,revision:event.revision});history=history.slice(0,20);historyNode.textContent=show(history);if(event.source==='next')ui.setState('step',2);else ui.updateData({...ui.snapshot().data,message:event.state.name ? `Hello ${event.state.name}. Local action recorded.` : 'Local action recorded. No external operation executed.'});}catch(error){report(error);}}});ui.subscribe(inspect);}feedback.textContent='Rendered successfully.';}catch(error){report(error);}}
+function reset(){ui?.dispose();ui=undefined;history=[];historyNode.textContent='[]';description.textContent=examples[gallery.value].description;editor.value=JSON.stringify(examples[gallery.value].definition,null,2);render();}
 document.querySelector('#render').onclick=render;
 document.querySelector('#reset').onclick=reset;
 gallery.onchange=reset;
-document.querySelector('#size').onchange=event=>preview.classList.toggle('mobile',event.target.value==='mobile');
+document.querySelector('#size').onchange=event=>{preview.classList.toggle('mobile',event.target.value==='mobile');preview.classList.toggle('narrow',event.target.value==='narrow');};
 document.querySelector('#copy').onclick=async()=>{try{parse();await navigator.clipboard.writeText(editor.value);feedback.textContent='Definition copied.';}catch(error){report(error);feedback.textContent+=' Select the editor text to copy manually.';}};
 window.addEventListener('pagehide',()=>ui?.dispose());
 reset();
