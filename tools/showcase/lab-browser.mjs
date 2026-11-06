@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import { chromium, firefox, webkit } from 'playwright';
+const base=process.env.VEIL_SITE_URL||'http://127.0.0.1:4191/veil';
+for(const [name,engine] of Object.entries({chromium,firefox,webkit})){
+ const browser=await engine.launch(name==='chromium'?{executablePath:'/usr/bin/google-chrome',args:['--no-sandbox']}:{});
+ try{for(const width of [1280,390]){const page=await browser.newPage({viewport:{width,height:900}});if(process.env.AXE_PATH)await page.addInitScript({path:process.env.AXE_PATH});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ for(const kind of ['llm','operations','workflow']){await page.goto(`${base}/showcase/lab.html?example=${kind}`);const ui=page.locator('#interface');await ui.getByRole('heading').first().waitFor();
+ if(kind==='llm'){await ui.getByRole('button',{name:'Try invalid output'}).click();await ui.getByText(/Invalid descriptor rejected/).waitFor();await ui.getByRole('button',{name:'Recover'}).click();await ui.getByRole('combobox',{name:'Scenario'}).selectOption('incident');await ui.getByRole('button',{name:'Generate descriptor'}).click();await ui.getByText(/Simulated model output/).waitFor();await ui.getByRole('button',{name:'Approve locally'}).click();await ui.getByText(/Approved in this browser/).waitFor();}
+ if(kind==='operations'){await ui.getByRole('button',{name:'Simulate failure'}).click();await ui.getByText(/worker timeout/).waitFor();await ui.getByRole('button',{name:'Retry job'}).click();await ui.getByText(/Simulated job completed/).waitFor();}
+ if(kind==='workflow'){await ui.getByRole('textbox',{name:'Request title'}).fill('Access');await ui.getByRole('textbox',{name:'Reason'}).fill('Investigation');await ui.getByRole('button',{name:'Validate and review'}).click();await ui.getByRole('button',{name:'Approve'}).click();await ui.getByText(/Request approved/).waitFor();}
+ await page.getByRole('tab',{name:'Definition'}).click();assert.ok((await page.locator('#definition-json').textContent()).includes('screen'));await page.getByRole('tab',{name:'Host Integration'}).click();assert.ok((await page.locator('#host-source').textContent()).includes('createMountedInterface'));assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);if(process.env.AXE_PATH){const result=await page.evaluate(()=>axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa']}}));assert.deepEqual(result.violations.map(v=>v.id),[]);assert.deepEqual(result.incomplete.map(v=>v.id),[]);}assert.deepEqual(errors,[]);
+ }await page.screenshot({path:`/tmp/veil-lab-${name}-${width}.png`});await page.close();}console.log(`${name}: lab scenarios at desktop and mobile passed`);}finally{await browser.close();}
+}

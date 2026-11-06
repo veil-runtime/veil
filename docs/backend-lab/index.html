@@ -1,0 +1,36 @@
+---
+layout: null
+title: Veil UI Showcase — Backend Integration Lab
+---
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Connect a Veil UI interface to a real local HTTP service and inspect the host integration."><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"><title>Backend Lab · Veil UI</title><link rel="stylesheet" href="{{ '/assets/showcase/showcase.css' | relative_url }}"></head>
+<body data-mode="simulation" data-api="">
+<a class="skip" href="#perspectives">Skip to lab</a><header class="site-header wrap"><a class="brand" href="{{ '/' | relative_url }}">Veil<span> / UI</span></a><nav aria-label="Main navigation"><a href="{{ '/showcase/' | relative_url }}">Agent Monitor</a><a href="{{ '/playground/' | relative_url }}">Playground</a></nav></header>
+<main class="wrap"><section class="intro"><p class="eyebrow">INTERACTIVE SHOWCASE / 02</p><h1>A useful interface for<br>the system you have.</h1><p class="lede">Search service records and submit an incident. Switch between a Pages simulation and the same-origin HTTP service running on your machine.</p><div class="badges"><span>Veil UI 0.4.2</span><span>No Core required</span><span id="mode-label">Pages simulation</span></div></section>
+<div class="lab"><div class="lab-header"><div><p class="eyebrow">BACKEND INTEGRATION LAB</p><p>Retrieve → filter → submit → refresh</p></div><a href="{{ '/showcase/' | relative_url }}">Agent Monitor</a></div>
+<div id="perspectives" class="tabs" role="tablist" aria-label="Lab perspectives"><button role="tab" aria-selected="true" aria-controls="experience">Experience</button><button role="tab" aria-selected="false" aria-controls="definition" tabindex="-1">Definition</button><button role="tab" aria-selected="false" aria-controls="host" tabindex="-1">Host Integration</button><button role="tab" aria-selected="false" aria-controls="architecture" tabindex="-1">Architecture</button></div>
+<section id="experience" role="tabpanel" tabindex="0"><div class="boundary"><h2>Pages simulation</h2><p>This mode runs deterministic in-browser sample data. It makes no HTTP request. Choose “Real local HTTP” using ?mode=http after starting the service.</p></div><div id="backend-interface" role="region" aria-label="Veil UI backend integration"></div></section>
+<section id="definition" role="tabpanel" tabindex="0" hidden><h2>Exact interface descriptor</h2><p>The accepted Veil UI descriptor and current data/state come from the mounted controller.</p><pre id="definition-json" tabindex="0" role="region" aria-label="Exact descriptor"></pre><pre id="snapshot-json" tabindex="0" role="region" aria-label="Current data and state"></pre></section>
+<section id="host" role="tabpanel" tabindex="0" hidden><h2>Actual host integration</h2><p>The implementation below is the host module in this page’s bundle.</p><label for="source-file">Source module</label><select id="source-file"></select><pre id="host-source" tabindex="0" role="region" aria-label="Actual integration source"></pre>
+<h3>Run the real HTTP service locally</h3><pre tabindex="0" role="region" aria-label="Local service commands"><code>npm run build --prefix tools/showcase
+jekyll build --source docs --destination /tmp/veil-backend-site/veil --disable-disk-cache
+SITE_ROOT=/tmp/veil-backend-site/veil node examples/backend-lab/server.mjs
+# Open http://127.0.0.1:4180/veil/backend-lab/?mode=http</code></pre><p>The Pages site cannot run this Node service. Same-origin requests are disabled in simulation mode. Add ?mode=http when using the local service.</p>
+<h3>Minimal integration</h3><pre tabindex="0" role="region" aria-label="Minimal integration code"><code>npm install @veil-runtime/ui@0.4.2
+import { createMountedInterface } from '@veil-runtime/ui/dom';
+const definition = { id:'records', actions:['search'], state:{ query:'' },
+ screen:{ key:'root', component:'Stack', children:[
+  { key:'query', component:'Input', label:'Search', binding:{ source:'state', path:'query' } },
+  { key:'search', component:'Button', text:'Search', action:'search' },
+  { key:'records', component:'List', binding:{ source:'data', path:'records' } } ] }, data:{ records:[] } };
+let ui;
+ui = createMountedInterface(document.querySelector('#app'), definition, {
+ allowedActions:['search'], onEvent: async event => {
+  if (event.action !== 'search') return;
+  const response = await fetch('/api/records?q=' + encodeURIComponent(event.state.query));
+  if (!response.ok) throw new Error('Request failed');
+  ui.updateData({ records: (await response.json()).records }, event.revision);
+ }
+});
+// On teardown: ui.dispose();</code></pre><p>Production hosts must validate server inputs, authenticate and authorize every write, cap request/response bytes, and handle cancellation and overlapping requests. A client action allowlist is not backend authorization.</p></section>
+<section id="architecture" role="tabpanel" tabindex="0" hidden><h2>Request and response path</h2><ol class="flow"><li><span>HOST</span><h3>Capture intent</h3><p>Veil UI validates fields and emits an allowlisted action.</p></li><li><span>HOST</span><h3>Send HTTP</h3><p>The host adapter uses fetch, AbortController and monotonically increasing request identity.</p></li><li><span>BACKEND</span><h3>Enforce policy</h3><p>Node service checks same-origin, session cookie, body byte limit, exact fields and server-side field constraints.</p></li><li><span>HOST → VEIL UI</span><h3>Accept current response</h3><p>The host ignores aborted or superseded responses and applies current data with the expected UI revision.</p></li></ol><p>The local sample uses an HTTP-only same-site demo session. It is learning code, not production identity infrastructure. The Pages simulation makes no network request.</p></section></div><p id="feedback" role="status" aria-live="polite"></p></main>
+<footer class="wrap"><span>Veil UI · Simplicity. Flexibility. Integration.</span><a href="https://www.npmjs.com/package/@veil-runtime/ui/v/0.4.2">Published package</a></footer><script type="module" src="{{ '/assets/showcase/backend.js' | relative_url }}"></script></body></html>

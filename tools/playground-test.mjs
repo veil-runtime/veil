@@ -7,7 +7,7 @@ try {
  const page=await browser.newPage();
  if(name==='chromium') await page.context().grantPermissions(['clipboard-read','clipboard-write']);
  const errors=[]; page.on('pageerror',e=>errors.push(e.message));
- await page.goto('http://127.0.0.1:4174/veil/playground/');
+ await page.goto(`${process.env.VEIL_SITE_URL || 'http://127.0.0.1:4174/veil'}/playground/`);
  async function clickVisible(selector){const button=page.locator(selector);await button.scrollIntoViewIfNeeded();const target=await button.evaluate(b=>{const r=b.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,hit=document.elementFromPoint(x,y);return {x,y,visible:r.width>0&&r.height>0&&x>=0&&x<innerWidth&&y>=0&&y<innerHeight,hitSame:hit===b||b.contains(hit)};});assert.equal(target.visible,true,`${selector} must be in the viewport before clicking`);assert.equal(target.hitSame,true,`${selector} must own its center hit target`);await page.mouse.click(target.x,target.y);}
  await page.waitForFunction(()=>document.querySelector('#feedback').textContent==='Rendered successfully.');
  for(const name of ['dashboard','form','workflow','ai','minimal']){await page.selectOption('#gallery',name);assert.equal(await page.locator('#feedback').textContent(),'Rendered successfully.');}
@@ -29,7 +29,7 @@ try {
  const forbidden=JSON.parse(original);forbidden.actions=['fetch'];forbidden.screen.children[2].action='fetch';await page.locator('#editor').fill(JSON.stringify(forbidden));await clickVisible('#render');assert.notEqual(await page.locator('#feedback').textContent(),'Rendered successfully.');await clickVisible('#reset');
  const blocked=await page.evaluate(async()=>{window.probe=0;const s=document.createElement('script');s.textContent='window.probe=1';document.body.append(s);let network=false;try{await fetch('https://example.com/');network=true;}catch{}return {script:window.probe,network};});assert.deepEqual(blocked,{script:0,network:false});
  await page.locator('#editor').focus();await page.keyboard.press('Tab');assert.equal(await page.evaluate(()=>document.activeElement.id),'render');
- if(process.env.AXE_PATH){await page.evaluate(readFileSync(process.env.AXE_PATH,'utf8'));const results=await page.evaluate(async()=>await axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}}));assert.deepEqual(results.violations.map(v=>({id:v.id,impact:v.impact})),[]);console.log(name+' axe PASS; incomplete checks: '+JSON.stringify(results.incomplete.map(v=>v.id)));}
+ if(process.env.AXE_PATH){await page.evaluate(readFileSync(process.env.AXE_PATH,'utf8'));const results=await page.evaluate(async()=>await axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}}));assert.deepEqual(results.violations.map(v=>({id:v.id,impact:v.impact})),[]);console.log(name+' axe zero violations; incomplete checks: '+JSON.stringify(results.incomplete.map(v=>({id:v.id,nodes:v.nodes.map(n=>({target:n.target,summary:n.failureSummary,checks:n.any}))}))));}
  console.log(name);assert.deepEqual(errors,[]);console.log('PASS gallery, real renderer actions, invalid JSON/schema/size, reset, copy, HTML escaping, desktop/mobile overflow and page errors');
 } finally {await browser.close();}
 

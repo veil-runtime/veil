@@ -10,6 +10,12 @@ sections:
         url: /ecosystem.html
       - title: Veil UI
         url: /ui.html
+      - title: UI Showcase
+        url: /showcase/
+      - title: LLM to UI, Operations & Workflow
+        url: /showcase/lab.html
+      - title: Backend Integration Lab
+        url: /backend-lab/
       - title: UI Playground
         url: /playground/
   - title: Getting Started
