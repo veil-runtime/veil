@@ -5,35 +5,27 @@ description: Build bounded, expressive interfaces with Veil UI independently of 
 ---
 # Veil UI
 
-[Open the interactive playground](playground/) to edit definitions and try the real UI 0.4.0 renderer without installing anything.
+[Open the interactive playground](playground/) to edit definitions and try the real UI 0.4.2 renderer without installing anything.
 
-Veil UI is an independent interface toolkit. Published 0.4.0 is a stable release with a framework-neutral interface controller and optional native DOM adapter. Applications and AI systems can supply bounded JSON definitions; trusted host code chooses the allowed actions, handles events and owns data. UI does not grant execution authority.
+Veil UI is an independent interface toolkit. Published 0.4.2 is a stable release with a framework-neutral interface controller and optional native DOM adapter. Applications and AI systems can supply bounded JSON definitions; trusted host code chooses the allowed actions, handles events and owns data. UI does not grant execution authority.
 
-The package also retains deterministic capability descriptions and one-screen composition APIs. Those are distinct from the universal interface API. The [0.4.0 GitHub Release](https://github.com/veil-runtime/veil-ui-lab/releases/tag/v0.4.0), [interface contract](https://github.com/veil-runtime/veil-ui-lab/blob/v0.4.0/packages/ui/docs/UNIVERSAL-INTERFACE.md) and [API inventory](https://github.com/veil-runtime/veil-ui-lab/blob/v0.4.0/packages/ui/docs/API.md) document their respective boundaries.
+[Explore the Agent Monitor showcase](showcase/) to follow a deterministic simulation through tool failure, retry and human approval. Inspect the exact descriptor and actual host modules without leaving the experience. Veil UI renders the interface; host code runs the simulation. No model, backend or Core runtime is connected.
 
+The package also retains capability-description and composition APIs. Those are separate from the universal interface API used here. Use the [published npm package](https://www.npmjs.com/package/@veil-runtime/ui/v/0.4.2) and the showcase's Host Integration and Architecture perspectives as public resources.
 
 ## Install and run
 
 Requires Node.js 24 or newer. Install the published package in an application:
 
 ```sh
-npm install @veil-runtime/ui@0.4.0
+npm install @veil-runtime/ui@0.4.2
 ```
 
-The package can be used without Core through its `/interface` and `/dom` entry points. The [universal example](https://github.com/veil-runtime/veil-ui-lab/tree/v0.4.0/packages/ui/examples/universal) and [interface guide](https://github.com/veil-runtime/veil-ui-lab/blob/v0.4.0/packages/ui/docs/UNIVERSAL-INTERFACE.md#smallest-working-interface) show a working browser integration. The older [standalone capability example](https://github.com/veil-runtime/veil-ui-lab/blob/v0.4.0/packages/ui/examples/standalone/index.mjs) needs Core separately:
-
-```sh
-npm install @veil-runtime/ui@0.4.0 @veil-runtime/core@0.4.0
-# Copy packages/ui/examples/standalone/index.mjs into this application, then:
-node index.mjs
-```
-
-
-UI 0.4.0 declares an optional Core peer range of `^0.4.0`; the universal APIs do not require Core.
+Use the `/interface` and `/dom` entry points without Core. The package declares an optional Core peer range of `^0.4.0`; compatibility with Core 0.6.0 is not claimed by this independent browser example. Bundle the modules with your browser build tool.
 
 ## Minimal interface
 
-The following TypeScript follows the published 0.4.0 interface contract. Mount it in a page with `<div id="app"></div>` after bundling the application. The package's `/dom` entry point supplies the optional browser renderer.
+The following TypeScript follows the published 0.4.2 interface contract. Mount it in a page with `<div id="app"></div>` after bundling the application. The package's `/dom` entry point supplies the optional browser renderer.
 
 ```ts
 import { type BuiltinInterfaceDefinition } from '@veil-runtime/ui/interface';
@@ -62,6 +54,8 @@ Built-ins are Stack, Row, Text, Heading, Status, Input, Select, Textarea, Button
 
 ## Core relationship and limits
 
-UI can render without Core. An application may handle a UI event by submitting a plan to Core, but that connection is host code, not a built-in integration. Core then applies its own authorization and execution policy. The current published package pair is UI 0.4.0 with Core 0.4.0; integration with Core 0.6.0 is not qualified. The stable UI release provides bounded interface rendering; it is not a complete autonomous application-building platform. Read the [release limits](https://github.com/veil-runtime/veil-ui-lab/releases/tag/v0.4.0) and [ecosystem architecture](ecosystem.html).
+UI renders without Core. An application may submit a plan to Core from a UI event handler, but that connection is host code, not a built-in integration. Core then applies its own authorization and execution policy. UI does not execute agents or grant permission to perform work.
 
-UI 0.4.0 adds Select and Textarea, declarative validation, compound visibility conditions and conditional button disabling. Validated submission blocks dispatch for invalid visible fields; the host remains responsible for authorization and service-side validation. See the [v0.4.0 guide](https://github.com/veil-runtime/veil-ui-lab/blob/v0.4.0/packages/ui/docs/v0.4.0.md). Candidate preparation failures preserve the accepted preview, but a renderer exception during commit cannot generally undo already applied DOM changes or external effects.
+Select, Textarea, declarative validation, compound visibility conditions and conditional button disabling are supported. Validated submission blocks dispatch for invalid visible fields; the host still owns authorization and service-side validation. Candidate preparation failures preserve the accepted preview, but a renderer exception during commit cannot generally undo already applied DOM changes or external effects.
+
+The [showcase](showcase/) and [playground](playground/) are tested in Chromium, Firefox and WebKit. Browser-engine tests do not establish physical Safari or assistive-technology qualification. The showcase uses deterministic local events; the playground's AI descriptor is an authored template. Neither connects to a live model or backend.

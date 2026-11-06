@@ -10,10 +10,10 @@ Veil is a growing set of independent developer tools. **Core** governs execution
 | Component | Current status | Use it for |
 | --- | --- | --- |
 | [Veil Core](getting-started/overview.html) | 0.6.0 published on npm | Plans, capability execution, authorization, jobs and events |
-| [Veil UI](ui.html) | 0.4.0 stable release on npm and GitHub | Framework-neutral interface definitions and optional DOM rendering |
+| [Veil UI](ui.html) | 0.4.2 published on npm | Framework-neutral interface definitions and optional DOM rendering |
 | Veil Emergence | Independent experimental research | Intelligence and coordination experiments |
 | Veil Sandbox | Proposed | Potential execution isolation |
-| [Veil Playground](playground/) | Static browser playground | Edit JSON definitions and try published UI 0.4.0 |
+| [Veil Playground](playground/) | Static browser playground | Edit JSON definitions and try published UI 0.4.2 |
 
 ## Boundaries
 
@@ -31,7 +31,7 @@ to Core. Neither package requires the other for its independent features.
 
 Core's `ExecutionPlan` is the boundary between reasoning and execution. `OperatorRuntime` validates, authorizes and executes registered capabilities, and returns jobs and events. A plan or UI button is a request, not authority. The host supplies trusted identity and policy. [Read the Core lifecycle](architecture/execution-lifecycle.html) and [authorization guide](concepts/authorization.html).
 
-UI 0.4.0's optional Core peer range is `^0.4.0`. For a combined npm install, use Core 0.4.0 with UI 0.4.0. Compatibility of that UI release with Core 0.6.0 has not been qualified. Each package can be tried independently at its latest published version.
+UI 0.4.2's optional Core peer range is `^0.4.0`. For a combined npm install, use Core 0.4.0 with UI 0.4.2. Compatibility of that UI release with Core 0.6.0 has not been qualified. Each package can be tried independently at its latest published version.
 
 UI's interface definition is bounded data. Its controller validates definitions, preserves compatible local state across updates, and emits events to host code. The optional DOM adapter renders built-in components. The host owns authentication, allowed actions, trusted custom component code and any execution. [Read the UI guide](ui.html).
 

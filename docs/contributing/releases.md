@@ -3,10 +3,10 @@ title: Releases
 ---
 # Releases
 
-Current published releases are **Core 0.6.0** and **UI 0.4.0 stable release**.
+Current published releases are **Core 0.6.0** and **UI 0.4.2**.
 See their separate [Core](https://github.com/veil-runtime/veil/releases/tag/v0.6.0)
-and [UI](https://github.com/veil-runtime/veil-ui-lab/releases/tag/v0.4.0)
-release records. The preparation notes below are historical; they do not describe
+and [UI](https://www.npmjs.com/package/@veil-runtime/ui/v/0.4.2)
+package records. The preparation notes below are historical; they do not describe
 current publication status.
 
 ## Historical Core preparation notes

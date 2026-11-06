@@ -1,6 +1,6 @@
 ---
 title: Veil developer documentation
-description: Understand Veil, install published Core 0.6.0 or UI 0.4.0, and explore their independent contracts.
+description: Understand Veil, install published Core 0.6.0 or UI 0.4.2, and explore their independent contracts.
 ---
 # Veil developer documentation
 
@@ -10,11 +10,15 @@ Veil Core is a governed, capability-driven execution runtime. It separates decid
 
 ## Published products
 
-**Core 0.6.0** is on [npm](https://www.npmjs.com/package/@veil-runtime/core/v/0.6.0), with a [GitHub Release](https://github.com/veil-runtime/veil/releases/tag/v0.6.0). **UI 0.4.0** is on [npm](https://www.npmjs.com/package/@veil-runtime/ui/v/0.4.0), with a [stable GitHub Release](https://github.com/veil-runtime/veil-ui-lab/releases/tag/v0.4.0). Read the [UI guide](ui.html) for its independent interface APIs. Core needs no model or UI;
+**Core 0.6.0** is on [npm](https://www.npmjs.com/package/@veil-runtime/core/v/0.6.0), with a [GitHub Release](https://github.com/veil-runtime/veil/releases/tag/v0.6.0). **UI 0.4.2** is on [npm](https://www.npmjs.com/package/@veil-runtime/ui/v/0.4.2). Read the [UI guide](ui.html) for its independent interface APIs. Core needs no model or UI;
 [local planning](guides/local-planning.html) is optional source-server infrastructure.
 Emergence and autonomous repository-task applications are separate components.
 Linux is the qualified execution platform; Windows and macOS are unqualified.
 Local Ollama/Qwen planning is experimental and opt-in.
+
+## Explore Veil UI
+
+[Try the Agent Monitor showcase](showcase/) to follow a deterministic simulated investigation, inspect its actual interface definition and host code, and understand the integration boundary. It runs on published UI 0.4.2 without Core. Start smaller in the [editable playground](playground/).
 
 ## Your learning path
 
@@ -74,3 +78,9 @@ Use [ExecutionPlan V1](reference/execution-plan-v1.html), [ExecutionPlan V2](ref
 ## Current limits
 
 Core 0.6.0 runs a plan's steps sequentially. It supports cooperative cancellation, optional deadlines and per-instance bounded capacity. It has no ExecutionPlan syntax for DAGs, parallel work, conditionals or retries, and no idempotency enforcement. Cancellation does not guarantee external operations have stopped or rolled back.
+
+### Explore complete UI integrations
+
+The [interactive integration lab](showcase/lab.html) adds three browser-local examples alongside the [Agent Monitor](showcase/) and [Backend Lab](backend-lab/): authored simulated LLM output, an operations console, and a request workflow. Each offers the live Veil UI interface, its accepted descriptor and state, the actual bundled host source, and the runtime/host boundary. Choose a scenario before generating the LLM descriptor. The examples do not contact a model or operate real infrastructure.
+
+For a first integration, install `@veil-runtime/ui@0.4.2`, define a built-in descriptor, validate it with `validateInterfaceDefinition`, mount with `createMountedInterface`, declare and allowlist each action, and handle emitted events in your host. The [editable playground](playground/) is the smallest starting point. The [Backend Lab](backend-lab/) shows a separate local HTTP service; GitHub Pages runs its browser simulation without a backend.

@@ -1,0 +1,68 @@
+---
+layout: null
+title: Veil UI Showcase — Agent Monitor
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Explore a working agent monitor rendered by Veil UI. Inspect its definition, actual host code and integration boundaries.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'none'; img-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Agent Monitor · Veil UI Showcase</title>
+  <link rel="stylesheet" href="{{ '/assets/showcase/showcase.css' | relative_url }}">
+</head>
+<body>
+  <a class="skip" href="#perspectives">Skip to showcase</a>
+  <header class="site-header wrap"><a class="brand" href="{{ '/' | relative_url }}">Veil<span> / UI</span></a><nav aria-label="Main navigation"><a href="{{ '/developer.html' | relative_url }}">Developer docs</a><a href="{{ '/playground/' | relative_url }}">Playground ↗</a></nav></header>
+  <main class="wrap">
+    <section class="intro" aria-labelledby="page-title">
+      <p class="eyebrow">INTERACTIVE SHOWCASE / 01</p>
+      <h1 id="page-title">An agent’s work.<br>A human’s perspective.</h1>
+      <p class="lede">Follow an investigation from first tool call to final decision. Then look inside the interface that makes it understandable.</p>
+      <div class="badges"><span>Deterministic simulation</span><span>Veil UI 0.4.2</span><span>No Core required</span></div>
+    </section>
+    <nav aria-label="More interactive examples"><a href="{{ '/showcase/lab.html' | relative_url }}?example=llm">LLM to UI →</a> · <a href="{{ '/showcase/lab.html' | relative_url }}?example=operations">Operations Console →</a> · <a href="{{ '/showcase/lab.html' | relative_url }}?example=workflow">Adaptive Workflow →</a> · <a href="{{ '/backend-lab/' | relative_url }}">Backend Lab →</a></nav>
+    <div class="lab">
+      <div class="lab-header"><div><p class="eyebrow">AGENT MONITOR</p><p>Investigate → gather evidence → review → hand off</p></div><span id="revision">UI revision 0</span></div>
+      <div id="perspectives" class="tabs" role="tablist" aria-label="Showcase perspectives">
+        <button id="tab-experience" role="tab" aria-selected="true" aria-controls="experience">Experience</button>
+        <button id="tab-definition" role="tab" aria-selected="false" aria-controls="definition" tabindex="-1">Definition</button>
+        <button id="tab-host" role="tab" aria-selected="false" aria-controls="host" tabindex="-1">Host Integration</button>
+        <button id="tab-architecture" role="tab" aria-selected="false" aria-controls="architecture" tabindex="-1">Architecture</button>
+      </div>
+      <section id="experience" role="tabpanel" aria-labelledby="tab-experience" tabindex="0">
+        <div class="experience-grid">
+          <div id="agent-interface" role="region" aria-label="Veil UI agent monitor"></div>
+          <aside class="guide" aria-labelledby="try-title">
+            <p class="eyebrow">TRY THE FULL STORY</p><h2 id="try-title">Stay in control.</h2>
+            <ol><li>Start a run. Watch a tool time out.</li><li>Retry the tool to recover.</li><li>Review the evidence. Approve or reject.</li><li>Pause, advance a step, or cancel at any time while running.</li></ol>
+            <div class="boundary"><h3>Real rendering. Simulated work.</h3><p>Every control, status and table in the monitor is rendered by Veil UI. The host supplies a fixed event sequence. No agent, model or backend is connected.</p></div>
+            <p class="hint">Switch perspectives while a run is active. Its controller and execution state stay mounted.</p>
+          </aside>
+        </div>
+      </section>
+      <section id="definition" role="tabpanel" aria-labelledby="tab-definition" tabindex="0" hidden>
+        <div class="panel-intro"><p class="eyebrow">THE INTERFACE CONTRACT</p><h2>A definition, plus live data.</h2><p>The accepted descriptor below is exactly <code>ui.snapshot().definition</code>. The host updates data separately; the current snapshot shows those values and the revision. Export combines both into a runnable descriptor for your own host.</p><button id="export">Export current interface JSON</button></div>
+        <div class="code-grid"><section><h3>Accepted definition</h3><pre id="definition-json" tabindex="0" role="region" aria-label="Accepted interface definition"></pre></section><section><h3>Current data and state</h3><pre id="snapshot-json" tabindex="0" role="region" aria-label="Current runtime snapshot"></pre></section></div>
+        <p class="hint">This view is read-only. Experiment with editable built-in examples in the <a href="{{ '/playground/' | relative_url }}">playground</a>. This monitor’s actions require its host handlers.</p>
+      </section>
+      <section id="host" role="tabpanel" aria-labelledby="tab-host" tabindex="0" hidden>
+        <div class="panel-intro"><p class="eyebrow">THE CODE THAT RUNS HERE</p><h2>A small boundary between events and pixels.</h2><p>Start with <code>integration.mjs</code>: mount, allowlist, handle events, publish data, dispose. These are the actual source files embedded during the asset build, not illustrative copies. Install <code>@veil-runtime/ui@0.4.2</code> and bundle these modules in a browser application with a mount element.</p></div>
+        <label for="source-file">Source file</label><select id="source-file"></select><pre id="host-source" tabindex="0" role="region" aria-label="Actual host source code"></pre>
+        <p class="hint">To connect a real agent, replace the simulator with your host’s event adapter. Validate incoming events, maintain run identity, and enforce authorization on the server before performing side effects. Keep the UI-facing event and update boundary.</p>
+      </section>
+      <section id="architecture" role="tabpanel" aria-labelledby="tab-architecture" tabindex="0" hidden>
+        <div class="panel-intro"><p class="eyebrow">RESPONSIBILITY, MADE VISIBLE</p><h2>The host runs the work. UI makes it usable.</h2></div>
+        <ol class="flow"><li><span>01 / HOST</span><h3>Produce events</h3><p>A deterministic timer emits simulated tool results. Run and pending-work identities invalidate late callbacks.</p></li><li><span>02 / HOST</span><h3>Project state</h3><p>The host checks lifecycle transitions and maps its model into bounded steps, status and timeline data.</p></li><li><span>03 / VEIL UI</span><h3>Render updates</h3><p><code>updateData(data, revision)</code> validates the candidate. Built-in components render accepted values as text and reconcile the DOM.</p></li><li><span>04 / HOST</span><h3>Handle decisions</h3><p>Veil UI emits an allowlisted action with source, state and revision. The host checks the current phase before accepting approval or cancellation.</p></li></ol>
+        <div class="code-grid"><section><h3>Veil UI owns</h3><p>Descriptor validation, state bindings, conditional controls, action dispatch, revision checks, snapshots and DOM mounting.</p><h3>Your application owns</h3><p>Agent execution, event validation, transport, identity, authorization, tool policy, scheduling, retries, cancellation and external effects. A disabled button is not a security boundary.</p></section><section><h3>Safe by construction</h3><p>No network requests, credentials, custom renderer code from visitors, or executable HTML. Host actions are allowlisted and phase-checked. Timeline length is bounded. Reset and disposal invalidate pending work.</p><p>Preparation errors preserve the accepted interface. Renderer commit failures cannot promise DOM rollback or undo external effects.</p></section></div>
+        <p>Browser module bundling is required. The package declares Node ≥24 for tooling; its optional Core peer is ^0.4.0. This example uses no Core and makes no Core 0.6.0 compatibility claim.</p>
+      </section>
+    </div>
+    <p id="feedback" role="status" aria-live="polite"></p>
+    <section class="next"><div><p class="eyebrow">START SMALL. EXTEND WITH YOUR HOST.</p><h2>Your system already does the work.<br>Give people a way to use it.</h2></div><a href="{{ '/playground/' | relative_url }}">Try a minimal interface →</a></section>
+  </main>
+  <footer class="wrap"><span>Veil UI · Simplicity. Flexibility. Integration.</span><a href="https://www.npmjs.com/package/@veil-runtime/ui/v/0.4.2">Published package ↗</a></footer>
+  <script type="module" src="{{ '/assets/showcase/showcase.js' | relative_url }}"></script>
+</body>
+</html>

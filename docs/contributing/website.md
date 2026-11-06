@@ -88,9 +88,8 @@ and desktop. Website changes do not require npm publication or tag modification.
 Core v0.6.0 is published on
 [npm](https://www.npmjs.com/package/@veil-runtime/core/v/0.6.0) and has a
 [GitHub Release](https://github.com/veil-runtime/veil/releases/tag/v0.6.0).
-UI v0.4.0 is separately published on
-[npm](https://www.npmjs.com/package/@veil-runtime/ui/v/0.4.0) with a
-[stable GitHub Release](https://github.com/veil-runtime/veil-ui-lab/releases/tag/v0.4.0).
+UI v0.4.2 is separately published on
+[npm](https://www.npmjs.com/package/@veil-runtime/ui/v/0.4.2).
 Use explicit published versions in current onboarding and permanent release tags
 for source references. Preserve earlier candidate evidence as historical records.
 
