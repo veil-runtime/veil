@@ -1393,6 +1393,7 @@ description: Independent tools for governed execution and expressive interfaces.
     <a class="brand" href="{{ '/' | relative_url }}" aria-label="Veil home"><span class="mark" aria-hidden="true"></span>Veil</a>
     <div class="navlinks">
       <a href="{{ '/ecosystem.html' | relative_url }}">Ecosystem</a>
+      <a href="{{ '/showcase/' | relative_url }}">UI Showcase</a>
       <a href="{{ '/playground/' | relative_url }}">Playground</a>
       <a href="#architecture">Architecture</a>
       <a class="pill" href="{{ '/developer.html' | relative_url }}">Developer docs</a>
@@ -1411,7 +1412,7 @@ description: Independent tools for governed execution and expressive interfaces.
           <a class="button" href="{{ '/ui.html' | relative_url }}">Explore Veil UI</a>
           <a class="button" href="{{ '/playground/' | relative_url }}">Try the playground</a>
         </div>
-        <p class="status-note"><a href="https://github.com/veil-runtime/veil/releases/tag/v0.6.0">Core 0.6.0</a> and <a href="https://github.com/veil-runtime/veil-ui-lab/releases/tag/v0.4.0">UI 0.4.0 stable release</a> are published independently. Install either from npm. For a combined install, UI currently supports Core 0.4.0.</p>
+        <p class="status-note"><a href="https://github.com/veil-runtime/veil/releases/tag/v0.6.0">Core 0.6.0</a> and <a href="https://www.npmjs.com/package/@veil-runtime/ui/v/0.4.2">UI 0.4.2 stable release</a> are published independently. Install either from npm. For a combined install, UI currently supports Core 0.4.0.</p>
       </div>
       <aside class="story-copy hero-example" aria-labelledby="example-title">
         <p class="kicker">An example integration</p>
@@ -1519,7 +1520,7 @@ description: Independent tools for governed execution and expressive interfaces.
           <div class="terminal-bar">Published Core — in a Core application</div>
           <pre tabindex="0" role="region" aria-label="Install published Core"><code>npm install @veil-runtime/core@0.6.0</code></pre>
           <div class="terminal-bar">Published UI — in a separate UI application</div>
-          <pre tabindex="0" role="region" aria-label="Install published UI"><code>npm install @veil-runtime/ui@0.4.0</code></pre>
+          <pre tabindex="0" role="region" aria-label="Install published UI"><code>npm install @veil-runtime/ui@0.4.2</code></pre>
         </div>
         <p class="section-note" id="starter">Prefer an application demo? The <a href="https://github.com/veil-runtime/veil/tree/v0.6.0/examples/veil-starter">Starter source application</a> is maintained separately from the Core npm artifact.</p>
         <p class="section-note">Install the published release using the <a href="{{ '/getting-started/installation.html' | relative_url }}">installation instructions</a>. Then follow <a href="{{ '/developer.html' | relative_url }}">the developer learning path</a>.</p>
@@ -1547,10 +1548,10 @@ description: Independent tools for governed execution and expressive interfaces.
       <div class="wrap">
         <div class="section-head">
           <div><p class="kicker">Current status and roadmap</p><h2 id="status-title">A published Core. An experimental ecosystem.</h2></div>
-          <p>Core 0.6.0 and UI 0.4.0 are published on npm. Core's fully qualified execution platform is Linux; UI 0.4.0 is a stable release.</p>
+          <p>Core 0.6.0 and UI 0.4.2 are published on npm. Core's fully qualified execution platform is Linux; UI 0.4.2 is a stable release.</p>
         </div>
         <div class="roadmap">
-          <article class="phase"><small>Published / Stable</small><h3>UI 0.4.0</h3><p>Framework-neutral interface definitions, host-controlled actions and an optional native DOM adapter. Works without Core.</p><a href="{{ '/ui.html' | relative_url }}">UI guide</a></article>
+          <article class="phase"><small>Published / Stable</small><h3>UI 0.4.2</h3><p>Framework-neutral interface definitions, host-controlled actions and an optional native DOM adapter. Works without Core.</p><a href="{{ '/ui.html' | relative_url }}">UI guide</a></article>
           <article class="phase current"><small>Published / Linux-qualified</small><h3>Core 0.6.0</h3><p>455 Core tests passed. Cooperative cancellation, optional deadlines and per-instance capacity limits extend governed execution. Full native qualification remains outstanding on Windows and macOS.</p><a href="https://github.com/veil-runtime/veil/releases/tag/v0.6.0">Release notes</a></article>
           <article class="phase"><small>Experimental / not Core releases</small><h3>Local planning and tools</h3><p>Ollama/Qwen planning is opt-in and can select incorrect work or time out. Sandbox, repository-task and browser capabilities are not published Core features.</p><a href="{{ '/guides/local-planning.html' | relative_url }}">Read local-planning limits</a></article>
           <article class="phase"><small>Proposed</small><h3>Sandbox</h3><p>Potential execution isolation. No release or integration contract is announced. The <a href="{{ '/playground/' | relative_url }}">UI playground</a> is available now.</p></article>

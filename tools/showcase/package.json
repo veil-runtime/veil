@@ -1,0 +1,14 @@
+{
+  "name": "veil-public-ui-assets",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test --test-isolation=none *.test.mjs",
+    "backend:serve": "node ../../examples/backend-lab/server.mjs"
+  },
+  "devDependencies": {
+    "@veil-runtime/ui": "0.4.2",
+    "esbuild": "0.28.2"
+  }
+}

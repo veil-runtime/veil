@@ -1,4 +1,4 @@
-// ../../../../../tmp/veil-v2-package/package/dist/validation-safety.js
+// tools/showcase/node_modules/@veil-runtime/ui/dist/validation-safety.js
 var limits = { depth: 32, nodes: 1e4, keys: 256, items: 1e3, string: 65536, bytes: 1048576 };
 var reserved = /* @__PURE__ */ new Set(["__proto__", "prototype", "constructor"]);
 function assertSafeKey(key) {
@@ -72,7 +72,7 @@ function copyData(value) {
   return copy(value);
 }
 
-// ../../../../../tmp/veil-v2-package/package/dist/interface-transaction.js
+// tools/showcase/node_modules/@veil-runtime/ui/dist/interface-transaction.js
 var renderers = /* @__PURE__ */ new WeakMap();
 function attachInterfaceRenderers(controller, participants) {
   renderers.set(controller, participants);
@@ -90,7 +90,7 @@ function registerInterfaceRenderer(controller, renderer) {
   };
 }
 
-// ../../../../../tmp/veil-v2-package/package/dist/interface.js
+// tools/showcase/node_modules/@veil-runtime/ui/dist/interface.js
 var identifier = /^[A-Za-z][A-Za-z0-9._-]{0,127}$/;
 var commonProperties = ["key", "component", "visible", "ariaLabel"];
 var vocabulary = {
@@ -622,7 +622,7 @@ function getInterfaceValidation(snapshot) {
   return errors;
 }
 
-// ../../../../../tmp/veil-v2-package/package/dist/dom.js
+// tools/showcase/node_modules/@veil-runtime/ui/dist/dom.js
 var instance = 0;
 var mounted = /* @__PURE__ */ new WeakMap();
 function createMountedInterface(target, definition, options = {}) {
@@ -841,8 +841,16 @@ function mountInterface(target, controller, components = {}, onError) {
       element.setAttribute("aria-label", node.ariaLabel);
     else
       element.removeAttribute("aria-label");
-    if (["Text", "Heading", "Status", "Button"].includes(node.component))
-      element.textContent = resolveText(node, snapshot);
+    if (["Text", "Heading", "Status", "Button"].includes(node.component)) {
+      const text = resolveText(node, snapshot);
+      if (element.textContent !== text) {
+        const child = element.firstChild;
+        if (child?.nodeType === 3 && child === element.lastChild)
+          child.nodeValue = text;
+        else
+          element.textContent = text;
+      }
+    }
     if (node.component === "List") {
       const items = resolveInterfaceBinding(snapshot, node.binding);
       if (items !== void 0 && (!Array.isArray(items) || items.length > 100))

@@ -1,0 +1,19 @@
+{
+  "version": "0.4.2",
+  "integrity": "sha512-DTPTsIZiB0QYdBIPIABI89pL1kT9TNWDoYIj0jQ8s1ALFcsT3Kis3jGNfuRHxF8UrNgRdKZhXCAtIO4dTHkhBw==",
+  "artifacts": {
+    "docs/assets/playground/playground.js": "f396966ebfe875916a732a3c496bfaadfc888f0111c7c0e5f98e7b1c997e9d72",
+    "docs/assets/showcase/showcase.js": "cd81a087559244d261b87dfef0df466c0886493ae6c6f43f4f66a5e631b2985a",
+    "docs/assets/showcase/backend.js": "750970d38b2264899e0ab84acc15a65772817ab977d629e1134f04e06b34eb13",
+    "docs/assets/showcase/lab.js": "6f132277c7d4fbc8e9480c0a5583eccf613c700ec4a24a4c605454bbede8782d"
+  },
+  "sources": {
+    "integration.mjs": "ac02e7de685be9a2a4ba2115b7c9968c190b4263d31696a92006e93581c93101",
+    "agent.mjs": "9bcbd57816a6c95c85ec79910806d99c384c6a236a503b5968b3c954330a0bd1",
+    "definition.mjs": "2b03137bebae9d4ac20d261ef62f82650c68c7d0c9f32ffc2d7ff58ba206d9db",
+    "backend-integration.mjs": "ef9270877b6790e6549c865d7da9255662aff19c159f95815c281b7b3d696fb3",
+    "backend.mjs": "071e1828325583fc136e43bdb02a9318c13d89646cbea55524acf2a394716bee",
+    "lab.mjs": "30b8cdc458b925661481aebada8396edd8020df0e2493d89d9cda39ecc8f9690",
+    "lab-definition.mjs": "baad9b5de45a12ece9c6c0352354fedf26d5a14a2ede7128ccca583656cb7e34"
+  }
+}
