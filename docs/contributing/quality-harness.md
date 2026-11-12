@@ -62,6 +62,10 @@ ignore CRLF/LF differences but otherwise flag even benign edits for review.
 
 ## Governance reference check (VEIL-GOV-001)
 
+The [conditional generated-UI finding disposition](https://github.com/veil-runtime/veil/blob/develop/docs/release/ui-showcase-governance-disposition-2026-11-12.md)
+records twelve exact published-bundle findings and their limited human acceptance.
+It does not add scanner allowances or make the quality gate pass.
+
 The checker requires **Node >=24.11** because its direct development dependency
 is pinned to `@babel/parser` **8.0.6**. Veil's runtime engine declaration remains
 **Node >=24**. Older Node 24 releases cannot run this development tool; installing
