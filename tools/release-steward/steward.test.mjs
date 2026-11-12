@@ -13,7 +13,7 @@ function fixture() {
   git(dir,'init','-q'); git(dir,'config','user.name','Test'); git(dir,'config','user.email','test@example.com');
   const remote=dir+'-remote.git'; git(dir,'init','--bare','-q',remote); git(dir,'remote','add','origin',remote);
   fs.mkdirSync(path.join(dir,'docs/getting-started'),{recursive:true});
-  fs.writeFileSync(path.join(dir,'docs/getting-started/evaluate.md'),'Core and UI are independent published packages. UI 0.4.0 is a stable release for expressive interfaces. Emergence covers experimental reasoning and coordination. Neither UI nor Emergence is included in Core. Sandbox, repository-task and browser capabilities are not published Core\n');
+  fs.writeFileSync(path.join(dir,'docs/getting-started/evaluate.md'),'Current Core 0.5.0 release guidance.\n');
   fs.writeFileSync(path.join(dir,'README.md'),'Historical UI 0.4.0 release.\n');
   fs.mkdirSync(path.join(dir,'tools'),{recursive:true}); fs.writeFileSync(path.join(dir,'tools/verify-documentation.py'),'print("ok")\n');
   git(dir,'add','.'); git(dir,'commit','-qm','fixture'); git(dir,'push','-q','origin','HEAD:refs/heads/main'); git(dir,'update-ref','refs/remotes/origin/main','HEAD');
@@ -22,7 +22,7 @@ function fixture() {
 function reviewedPlan(config) {
   const report=audit(config);
   const finding=report.findings.find(x=>x.kind==='stale-current-claim');
-  finding.status='verified'; finding.replacement=finding.statement.replace('UI 0.4.0','UI 0.4.2');
+  finding.status='verified'; finding.replacement=finding.statement.replace('Core 0.5.0','Core 0.6.0');
   return planAudit(report);
 }
 test('npm and GitHub metadata, optional peer',()=>{
@@ -41,6 +41,44 @@ test('audit is read only, deterministic, and distinguishes history and missing r
   assert.ok(!a.findings.some(x=>x.file==='README.md'));
   assert.equal(planAudit(a).changes.length,0);
   assert.equal(planAudit(a).digest,planAudit(a).digest);
+});
+test('live audit version contexts remain package aware and historical records stay intact',()=>{
+  const core=fixture(); const ui=fixture();
+  fs.mkdirSync(path.join(core,'docs/contributing'),{recursive:true});
+  fs.writeFileSync(path.join(core,'docs/getting-started/evaluate.md'),'Current published releases: Core 0.6.0 and UI 0.4.2.\n');
+  fs.writeFileSync(path.join(core,'docs/contributing/releases.md'),'## Historical Core preparation notes\n`@veil-runtime/core@0.3.0`. v0.2.0 was the latest published package before that publication.\n');
+  fs.writeFileSync(path.join(core,'docs/ecosystem.md'),"UI 0.4.2's optional Core peer range is `^0.4.0`. For a combined npm install, use Core 0.4.0 with UI 0.4.2. Each package can be tried independently at its latest published version.\n");
+  fs.mkdirSync(path.join(ui,'packages/ui'),{recursive:true});
+  fs.writeFileSync(path.join(ui,'packages/ui/README.md'),'For the current interface quick start, the legacy capability example also needs `@veil-runtime/core@0.4.0`; install that peer separately.\n');
+  fs.writeFileSync(path.join(ui,'packages/ui/CHANGELOG.md'),'## Historical releases\nUI 0.4.0 was published.\n');
+  for (const dir of [core,ui]) { git(dir,'add','.'); git(dir,'commit','-qm','audit fixture'); git(dir,'push','-q','origin','HEAD:refs/heads/main'); git(dir,'update-ref','refs/remotes/origin/main','HEAD'); }
+  const refs=inspectDocs(core,'core');
+  assert.ok(refs.some(x=>x.package==='core' && x.version==='0.6.0'));
+  assert.ok(refs.some(x=>x.package==='ui' && x.version==='0.4.2'));
+  assert.ok(refs.some(x=>x.package==='core' && x.version==='0.3.0' && x.historical));
+  const report=audit({repositories:{core:{path:core,package:'@veil-runtime/core',github:'veil-runtime/veil'},ui:{path:ui,package:'@veil-runtime/ui',github:'veil-runtime/veil-ui-lab'}},capture:{npm:{core:npmRaw('@veil-runtime/core','0.6.0'),ui:npmRaw('@veil-runtime/ui','0.4.2',{'@veil-runtime/core':'^0.4.0'})},github:{core:'[{"tagName":"v0.6.0","isDraft":false}]',ui:'[]'}}});
+  assert.equal(report.findings.filter(x=>x.kind==='stale-current-claim').length,0);
+  assert.ok(report.findings.some(x=>x.repository==='ui' && x.kind==='peer-dependency' && x.detail.includes('optional=true')));
+  assert.ok(report.findings.some(x=>x.repository==='ui' && x.kind==='missing-release' && x.detail==='v0.4.2' && x.status==='unverified'));
+  assert.equal(planAudit(report).changes.length,0);
+  fs.writeFileSync(path.join(core,'docs/getting-started/evaluate.md'),'Current published releases: Core 0.6.0 and UI 0.4.1.\n');
+  const stale=audit({repositories:{core:{path:core,package:'@veil-runtime/core',github:'veil-runtime/veil'},ui:{path:ui,package:'@veil-runtime/ui',github:'veil-runtime/veil-ui-lab'}},capture:{npm:{core:npmRaw('@veil-runtime/core','0.6.0'),ui:npmRaw('@veil-runtime/ui','0.4.2')},github:{core:'[]',ui:'[]'}}});
+  assert.ok(stale.findings.some(x=>x.repository==='core' && x.kind==='stale-current-claim' && x.detail==='ui 0.4.1; npm latest 0.4.2' && x.status==='suspected'));
+  assert.ok(!stale.findings.some(x=>x.kind==='stale-current-claim' && x.detail.includes('core 0.6.0')));
+});
+test('develop qualification is distinct from a stale branch and detached HEAD',()=>{
+  const dir=fixture(); const original=git(dir,'rev-parse','HEAD');
+  fs.writeFileSync(path.join(dir,'main-only'),'x'); git(dir,'add','.'); git(dir,'commit','-qm','main moves'); git(dir,'push','-q','origin','HEAD:refs/heads/main'); git(dir,'update-ref','refs/remotes/origin/main','HEAD');
+  git(dir,'switch','-qc','develop',original); git(dir,'push','-q','origin','HEAD:refs/heads/develop'); git(dir,'update-ref','refs/remotes/origin/develop','HEAD');
+  const config={repositories:{core:{path:dir,package:'@veil-runtime/core',github:'veil-runtime/veil'}},capture:{npm:{core:npmRaw('@veil-runtime/core','0.6.0')},github:{core:'[]'}}};
+  const expected=audit(config);
+  assert.equal(expected.repositories.core.branch,'develop');
+  assert.equal(expected.repositories.core.trackingHead,original);
+  assert.ok(!expected.findings.some(x=>x.kind==='stale-checkout' || x.kind==='checkout-not-default'));
+  fs.writeFileSync(path.join(dir,'develop-only'),'x'); git(dir,'add','.'); git(dir,'commit','-qm','local develop moves');
+  assert.ok(audit(config).findings.some(x=>x.kind==='stale-checkout' && x.status==='suspected'));
+  git(dir,'switch','-q','--detach',original);
+  assert.ok(audit(config).findings.some(x=>x.kind==='detached-checkout' && x.status==='suspected'));
 });
 test('failure data is unverified',()=>{ const dir=fixture(); const a=audit({repositories:{core:{path:dir,package:'@veil-runtime/core',github:'veil-runtime/veil'}},capture:{npm:{core:'{}'}}}); assert.equal(a.findings[0].status,'unverified'); });
 test('plan approval, stale source, unauthorized path, dry run and idempotence',()=>{

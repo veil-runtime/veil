@@ -60,15 +60,26 @@ export function verifyArtifact(pkg, cwd) {
   } finally { fs.rmSync(dir,{recursive:true,force:true}); }
 }
 const maintained = { core: ['README.md','docs/index.html','docs/ecosystem.md','docs/ui.md','docs/getting-started/evaluate.md','docs/getting-started/installation.md','docs/contributing/releases.md'], ui: ['packages/ui/README.md','packages/ui/CHANGELOG.md'] };
-export function inspectDocs(root, repo, latest) {
+export function inspectDocs(root, repo) {
   const refs = [];
   for (const file of maintained[repo]) {
     const full = safeFile(root,file);
     if (!fs.existsSync(full)) continue;
     const lines = fs.readFileSync(full,'utf8').split('\n');
+    let historicalSection = false;
     lines.forEach((line, index) => {
-      const match = line.match(/(?:Core|UI|@veil-runtime\/(?:core|ui))[^\n]{0,70}?\b(?:v?0\.\d+\.\d+)\b/i);
-      if (match) refs.push({ file, line: index+1, statement: line.trim(), version: (match[0].match(/0\.\d+\.\d+/)||[])[0], historical: /historical|candidate|previous|earlier|prior|then unpublished/i.test(line) || /CHANGELOG/.test(file) });
+      const heading = line.match(/^#{1,2}\s+(.+)/);
+      if (heading) historicalSection = /historical|release (?:record|notes)/i.test(heading[1]);
+      const pattern = /@veil-runtime\/(core|ui)@v?(\d+\.\d+\.\d+)|\b(?:Veil\s+)?(Core|UI)\s+v?(\d+\.\d+\.\d+)\b/gi;
+      for (const match of line.matchAll(pattern)) {
+        const pkg = (match[1] || match[3]).toLowerCase();
+        const version = match[2] || match[4];
+        const context = line.slice(Math.max(0,match.index-120), match.index+match[0].length+24);
+        const historical = historicalSection || /CHANGELOG/.test(file) || /historical|candidate|previous|earlier|prior|then unpublished|at the time/i.test(line);
+        const compatibility = /peer|compatib|example|combined (?:npm )?install|qualif/i.test(line);
+        const current = /\b(?:current|latest)\b/i.test(context) && !compatibility;
+        refs.push({ file, line:index+1, statement:line.trim(), package:pkg, version, historical, current });
+      }
     });
   }
   return refs;
@@ -91,10 +102,20 @@ export function audit(config) {
     const commit = command('git',['rev-parse','HEAD'],root);
     const remote = command('git',['remote','get-url','origin'],root);
     const remoteHead = command('git',['rev-parse','refs/remotes/origin/main'],root);
-    result.repositories[id] = { commit, remote, remoteHead, path: root };
+    let branch;
+    try { branch = command('git',['symbolic-ref','--quiet','--short','HEAD'],root); }
+    catch { branch = null; }
+    let trackingHead;
+    if (branch) {
+      try { trackingHead = command('git',['rev-parse','--verify',`refs/remotes/origin/${branch}`],root); }
+      catch { trackingHead = null; }
+    }
+    result.repositories[id] = { commit, remote, remoteHead, path:root, branch, trackingHead };
     try { const advertised = remoteMain(root); result.repositories[id].advertisedHead=advertised; if (advertised !== remoteHead) result.findings.push({ repository:id, kind:'remote-drift', status:'verified', detail:`origin/main ${remoteHead} differs from advertised ${advertised}`, evidence:'git ls-remote' }); }
     catch (error) { result.findings.push({ repository:id, kind:'remote-unavailable', status:'unverified', detail:error.message }); }
-    if (commit !== remoteHead) result.findings.push({ repository:id, kind:'checkout-not-default', status:'suspected', detail:`HEAD ${commit} differs from cached origin/main ${remoteHead}`, evidence:'local refs; remote fetch required' });
+    if (!branch) result.findings.push({ repository:id, kind:'detached-checkout', status:'suspected', detail:`detached HEAD ${commit}`, evidence:'local HEAD; manual qualification review required' });
+    else if (!trackingHead) result.findings.push({ repository:id, kind:'checkout-unverified', status:'suspected', detail:`${branch} has no cached origin/${branch}`, evidence:'local refs; remote fetch required' });
+    else if (commit !== trackingHead) result.findings.push({ repository:id, kind:'stale-checkout', status:'suspected', detail:`${branch} HEAD ${commit} differs from cached origin/${branch} ${trackingHead}`, evidence:'local refs; remote fetch required' });
     const name = repo.package;
     try {
       let raw = config.capture?.npm?.[id];
@@ -105,8 +126,8 @@ export function audit(config) {
         raw = JSON.stringify({ 'dist-tags':{latest}, versions:{[latest]:manifest} });
       }
       result.packages[id] = parseNpm(raw,name);
-      result.evidence[`npm:${id}`] = config.capture ? 'unverified captured metadata' : 'live npm registry';
-      if (!config.capture) {
+      result.evidence[`npm:${id}`] = config.capture?.npm?.[id] ? 'unverified captured metadata' : 'live npm registry';
+      if (!config.capture?.npm?.[id]) {
         try { result.packages[id].artifact = verifyArtifact(result.packages[id],root); }
         catch (error) { result.findings.push({ repository:id, kind:'artifact-unverified', status:'unverified', detail:error.message }); }
       }
@@ -115,20 +136,22 @@ export function audit(config) {
     try {
       const raw = config.capture?.github?.[id] ?? command('gh',['release','list','-R',repo.github,'--limit','100','--json','tagName,name,publishedAt,isDraft'],root);
       releases = parseGithub(raw);
-      result.evidence[`github:${id}`] = config.capture ? 'unverified captured metadata' : 'live GitHub API';
+      result.evidence[`github:${id}`] = config.capture?.github?.[id] !== undefined ? 'unverified captured metadata' : 'live GitHub API';
     } catch (error) { result.findings.push({ repository:id, kind:'github-unavailable', status:'unverified', detail:error.message }); }
     const latest = result.packages[id]?.latest;
     const tag = latest && `v${latest}`;
-    if (tag && releases && !releases.some(x => x.tag === tag && !x.draft)) result.findings.push({ repository:id, kind:'missing-release', status:config.capture ? 'unverified':'verified', detail:tag, evidence:`github:${id}` });
+    if (tag && releases && !releases.some(x => x.tag === tag && !x.draft)) result.findings.push({ repository:id, kind:'missing-release', status:config.capture?.github?.[id] !== undefined ? 'unverified':'verified', detail:tag, evidence:`github:${id}` });
     if (tag) { const tags = command('git',['tag','--list',tag],root); if (!tags) result.findings.push({ repository:id, kind:'missing-local-tag', status:'suspected', detail:tag, evidence:'local tag inventory; remote fetch required' }); }
     if (!latest) continue;
     const peers = result.packages[id].peerDependencies;
-    for (const [peer, range] of Object.entries(peers)) result.findings.push({ repository:id, kind:'peer-dependency', status:config.capture ? 'unverified':'verified', detail:`${peer} ${range}; optional=${result.packages[id].peerDependenciesMeta?.[peer]?.optional === true}`, evidence:`npm:${id}` });
-    for (const ref of inspectDocs(root,id,latest)) {
-      if (!ref.historical && ref.version !== latest && /\b(current|latest|stable release|published)\b/i.test(ref.statement)) {
-        const exact = id === 'core' && ref.file === 'docs/getting-started/evaluate.md' && ref.statement === 'Core and UI are independent published packages. UI 0.4.0 is a stable release for expressive interfaces. Emergence covers experimental reasoning and coordination. Neither UI nor Emergence is included in Core. Sandbox, repository-task and browser capabilities are not published Core';
-        result.findings.push({ repository:id, kind:'stale-current-claim', status:exact && !config.capture ? 'verified':'suspected', file:ref.file, line:ref.line, statement:ref.statement, replacement:exact && !config.capture ? ref.statement.replace('UI 0.4.0 is a stable release','UI 0.4.2 is a stable release') : undefined, detail:`mentions ${ref.version}; npm latest ${latest}`, evidence:`npm:${id}` });
-      }
+    for (const [peer, range] of Object.entries(peers)) result.findings.push({ repository:id, kind:'peer-dependency', status:config.capture?.npm?.[id] ? 'unverified':'verified', detail:`${peer} ${range}; optional=${result.packages[id].peerDependenciesMeta?.[peer]?.optional === true}`, evidence:`npm:${id}` });
+  }
+  for (const [id, repo] of Object.entries(config.repositories)) {
+    for (const ref of inspectDocs(result.repositories[id].path,id)) {
+      const target = Object.entries(config.repositories).find(([,entry]) => entry.package === `@veil-runtime/${ref.package}`)?.[0];
+      const latest = target && result.packages[target]?.latest;
+      if (ref.current && !ref.historical && latest && ref.version !== latest)
+        result.findings.push({ repository:id, kind:'stale-current-claim', status:'suspected', file:ref.file, line:ref.line, statement:ref.statement, detail:`${ref.package} ${ref.version}; npm latest ${latest}`, evidence:`npm:${target}` });
     }
   }
   result.findings.sort((a,b) => JSON.stringify(a).localeCompare(JSON.stringify(b)));
