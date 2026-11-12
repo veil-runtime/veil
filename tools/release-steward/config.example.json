@@ -1,0 +1,6 @@
+{
+  "repositories": {
+    "core": { "path": "/absolute/path/to/veil-core", "package": "@veil-runtime/core", "github": "veil-runtime/veil" },
+    "ui": { "path": "/absolute/path/to/veil-ui-lab", "package": "@veil-runtime/ui", "github": "veil-runtime/veil-ui-lab" }
+  }
+}
