@@ -7,15 +7,24 @@ import { spawnSync } from 'node:child_process';
 export const sha = value => crypto.createHash('sha256').update(value).digest('hex');
 function safeError(result) {
   const message = `${result.stderr || ''} ${result.error?.message || ''}`;
+  if (result.error?.code === 'ENOENT') return 'executable not found';
+  if (result.error?.code === 'EPERM') return 'subprocess denied';
+  if (result.error?.code === 'EACCES') return 'permission denied';
+  if (result.signal) return `signal ${result.signal}`;
   if (/EAI_AGAIN|ENOTFOUND|Could not resolve host/i.test(message)) return 'DNS unavailable';
   if (/ETIMEDOUT|timed out/i.test(message)) return 'timeout';
   if (/EPERM|operation not permitted/i.test(message)) return 'subprocess denied';
   if (/EACCES|permission denied/i.test(message)) return 'permission denied';
+  if (result.error != null) return 'subprocess error';
+  if (result.signal) return `signal ${result.signal}`;
   return `exit ${result.status ?? 'unknown'}`;
 }
-export function command(bin, args, cwd, timeout = 15000) {
-  const result = spawnSync(bin, args, { cwd, encoding: 'utf8', timeout, maxBuffer: 4 * 1024 * 1024, env: { ...process.env, GIT_TERMINAL_PROMPT: '0', NPM_CONFIG_FETCH_RETRIES: '0', NPM_CONFIG_FETCH_TIMEOUT: '10000' } });
-  if (result.status !== 0) throw new Error(`${bin} ${args[0]} failed: ${safeError(result)}`);
+export function command(bin, args, cwd, timeout = 15000, runner = spawnSync) {
+  const result = runner(bin, args, { cwd, encoding: 'utf8', timeout, maxBuffer: 4 * 1024 * 1024, env: { ...process.env, GIT_TERMINAL_PROMPT: '0', NPM_CONFIG_FETCH_RETRIES: '0', NPM_CONFIG_FETCH_TIMEOUT: '10000' } });
+  if (result.error != null || result.signal || result.status !== 0) {
+    const code = result.error?.code ? `${result.error.code}: ` : '';
+    throw new Error(`${bin} ${args[0]} failed: ${code}${safeError(result)}`);
+  }
   return result.stdout.trim();
 }
 export function safeFile(root, relative) {
