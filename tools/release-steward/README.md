@@ -10,3 +10,6 @@ node tools/release-steward/cli.mjs apply --plan /tmp/veil-plan.json --approve PL
 ```
 
 `apply` defaults to dry run. Execution checks the plan digest, source commits and clean source trees, accepts only exact replacements in maintained documentation files, creates detached isolated worktrees, and runs `git diff --check`. Inspect returned diffs and run the repository documentation and package gates before review. The tool never pushes, merges, publishes, tags, or edits GitHub releases. Ambiguous prose and release notes require manual review.
+
+The [v0.1 operational qualification](../../docs/release/release-steward-v0.1-qualification.md)
+covers read-only `audit` and `plan` only. It does not qualify `apply --execute`.
