@@ -1,238 +1,593 @@
 {
-  "toolSourceSha256": "4b5ae0264b3b5e3f848cf35d50efca6a70c84215636cae4880e189ff06546f72",
-  "cliSha256": "201d6bc89560d526b9ebe91e4f42f5300e86c1de999364f29d1f2e6b27829ec0",
-  "fixtureRoot": "/tmp/veil-steward-qualification-8FERBy",
-  "results": [
-    {
-      "case": "approved",
-      "outcome": "executed",
-      "planDigest": "e12ed9e387adfedf5c9ab71b043de9b841dd4847ce436f9ab6da38403a8f39a0",
-      "diffSha256": "c4ce250960b9620019a868d51e5d961a745ecdae0e1712ad23db9d06dce01526",
-      "before": {
-        "head": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
-        "status": "",
-        "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
-        "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
-        "remoteMain": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
-        "remoteRefs": "bd40bc3133a654fa7ab2e4e79000721f657c70d8 refs/heads/main",
-        "tags": ""
+  "schema": 2,
+  "initialQualification": {
+    "toolSourceSha256": "4b5ae0264b3b5e3f848cf35d50efca6a70c84215636cae4880e189ff06546f72",
+    "cliSha256": "201d6bc89560d526b9ebe91e4f42f5300e86c1de999364f29d1f2e6b27829ec0",
+    "fixtureRoot": "/tmp/veil-steward-qualification-8FERBy",
+    "results": [
+      {
+        "case": "approved",
+        "outcome": "executed",
+        "planDigest": "e12ed9e387adfedf5c9ab71b043de9b841dd4847ce436f9ab6da38403a8f39a0",
+        "diffSha256": "c4ce250960b9620019a868d51e5d961a745ecdae0e1712ad23db9d06dce01526",
+        "before": {
+          "head": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
+          "remoteRefs": "bd40bc3133a654fa7ab2e4e79000721f657c70d8 refs/heads/main",
+          "tags": ""
+        },
+        "after": {
+          "head": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
+          "remoteRefs": "bd40bc3133a654fa7ab2e4e79000721f657c70d8 refs/heads/main",
+          "tags": ""
+        }
       },
-      "after": {
-        "head": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
-        "status": "",
-        "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
-        "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
-        "remoteMain": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
-        "remoteRefs": "bd40bc3133a654fa7ab2e4e79000721f657c70d8 refs/heads/main",
-        "tags": ""
-      }
-    },
-    {
-      "case": "wrong-approval",
-      "outcome": "rejected",
-      "error": "Release Steward: plan digest approval mismatch",
-      "before": {
-        "head": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
-        "status": "",
-        "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
-        "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
-        "remoteMain": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
-        "remoteRefs": "bd40bc3133a654fa7ab2e4e79000721f657c70d8 refs/heads/main",
-        "tags": ""
+      {
+        "case": "wrong-approval",
+        "outcome": "rejected",
+        "error": "Release Steward: plan digest approval mismatch",
+        "before": {
+          "head": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
+          "remoteRefs": "bd40bc3133a654fa7ab2e4e79000721f657c70d8 refs/heads/main",
+          "tags": ""
+        },
+        "after": {
+          "head": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
+          "remoteRefs": "bd40bc3133a654fa7ab2e4e79000721f657c70d8 refs/heads/main",
+          "tags": ""
+        }
       },
-      "after": {
-        "head": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
-        "status": "",
-        "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
-        "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
-        "remoteMain": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
-        "remoteRefs": "bd40bc3133a654fa7ab2e4e79000721f657c70d8 refs/heads/main",
-        "tags": ""
-      }
-    },
-    {
-      "case": "tampered-digest",
-      "outcome": "rejected",
-      "error": "Release Steward: plan digest approval mismatch",
-      "before": {
-        "head": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
-        "status": "",
-        "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
-        "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
-        "remoteMain": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
-        "remoteRefs": "bd40bc3133a654fa7ab2e4e79000721f657c70d8 refs/heads/main",
-        "tags": ""
+      {
+        "case": "tampered-digest",
+        "outcome": "rejected",
+        "error": "Release Steward: plan digest approval mismatch",
+        "before": {
+          "head": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
+          "remoteRefs": "bd40bc3133a654fa7ab2e4e79000721f657c70d8 refs/heads/main",
+          "tags": ""
+        },
+        "after": {
+          "head": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
+          "remoteRefs": "bd40bc3133a654fa7ab2e4e79000721f657c70d8 refs/heads/main",
+          "tags": ""
+        }
       },
-      "after": {
-        "head": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
-        "status": "",
-        "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
-        "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
-        "remoteMain": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
-        "remoteRefs": "bd40bc3133a654fa7ab2e4e79000721f657c70d8 refs/heads/main",
-        "tags": ""
-      }
-    },
-    {
-      "case": "stale-statement",
-      "outcome": "rejected",
-      "error": "Release Steward: ambiguous or stale statement",
-      "before": {
-        "head": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
-        "status": "",
-        "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
-        "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
-        "remoteMain": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
-        "remoteRefs": "bd40bc3133a654fa7ab2e4e79000721f657c70d8 refs/heads/main",
-        "tags": ""
+      {
+        "case": "stale-statement",
+        "outcome": "rejected",
+        "error": "Release Steward: ambiguous or stale statement",
+        "before": {
+          "head": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
+          "remoteRefs": "bd40bc3133a654fa7ab2e4e79000721f657c70d8 refs/heads/main",
+          "tags": ""
+        },
+        "after": {
+          "head": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
+          "remoteRefs": "bd40bc3133a654fa7ab2e4e79000721f657c70d8 refs/heads/main",
+          "tags": ""
+        }
       },
-      "after": {
-        "head": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
-        "status": "",
-        "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
-        "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
-        "remoteMain": "bd40bc3133a654fa7ab2e4e79000721f657c70d8",
-        "remoteRefs": "bd40bc3133a654fa7ab2e4e79000721f657c70d8 refs/heads/main",
-        "tags": ""
-      }
-    },
-    {
-      "case": "nonallowlisted",
-      "outcome": "rejected",
-      "error": "Release Steward: unauthorized file",
-      "before": {
-        "head": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
-        "status": "",
-        "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
-        "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
-        "remoteMain": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
-        "remoteRefs": "2fcd3df137019d52302dd0f05c832fd6d0ba1600 refs/heads/main",
-        "tags": ""
+      {
+        "case": "nonallowlisted",
+        "outcome": "rejected",
+        "error": "Release Steward: unauthorized file",
+        "before": {
+          "head": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
+          "remoteRefs": "2fcd3df137019d52302dd0f05c832fd6d0ba1600 refs/heads/main",
+          "tags": ""
+        },
+        "after": {
+          "head": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
+          "remoteRefs": "2fcd3df137019d52302dd0f05c832fd6d0ba1600 refs/heads/main",
+          "tags": ""
+        }
       },
-      "after": {
-        "head": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
-        "status": "",
-        "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
-        "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
-        "remoteMain": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
-        "remoteRefs": "2fcd3df137019d52302dd0f05c832fd6d0ba1600 refs/heads/main",
-        "tags": ""
-      }
-    },
-    {
-      "case": "changed-commit",
-      "outcome": "rejected",
-      "error": "Release Steward: stale source: core",
-      "before": {
-        "head": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
-        "status": "",
-        "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
-        "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
-        "remoteMain": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
-        "remoteRefs": "2fcd3df137019d52302dd0f05c832fd6d0ba1600 refs/heads/main",
-        "tags": ""
+      {
+        "case": "changed-commit",
+        "outcome": "rejected",
+        "error": "Release Steward: stale source: core",
+        "before": {
+          "head": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
+          "remoteRefs": "2fcd3df137019d52302dd0f05c832fd6d0ba1600 refs/heads/main",
+          "tags": ""
+        },
+        "after": {
+          "head": "4ec63fafb39f67d6555679b63ae54ce9d5374ac6",
+          "status": "",
+          "trackedTree": "863d09ba5d8816096198f3a43ee616939c8c969d",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
+          "remoteRefs": "2fcd3df137019d52302dd0f05c832fd6d0ba1600 refs/heads/main",
+          "tags": ""
+        }
       },
-      "after": {
-        "head": "4ec63fafb39f67d6555679b63ae54ce9d5374ac6",
-        "status": "",
-        "trackedTree": "863d09ba5d8816096198f3a43ee616939c8c969d",
-        "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
-        "remoteMain": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
-        "remoteRefs": "2fcd3df137019d52302dd0f05c832fd6d0ba1600 refs/heads/main",
-        "tags": ""
-      }
-    },
-    {
-      "case": "dirty-checkout",
-      "outcome": "rejected",
-      "error": "Release Steward: dirty source: core",
-      "before": {
-        "head": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
-        "status": "",
-        "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
-        "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
-        "remoteMain": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
-        "remoteRefs": "2fcd3df137019d52302dd0f05c832fd6d0ba1600 refs/heads/main",
-        "tags": ""
+      {
+        "case": "dirty-checkout",
+        "outcome": "rejected",
+        "error": "Release Steward: dirty source: core",
+        "before": {
+          "head": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
+          "remoteRefs": "2fcd3df137019d52302dd0f05c832fd6d0ba1600 refs/heads/main",
+          "tags": ""
+        },
+        "after": {
+          "head": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
+          "status": "M README.md",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
+          "remoteRefs": "2fcd3df137019d52302dd0f05c832fd6d0ba1600 refs/heads/main",
+          "tags": ""
+        }
       },
-      "after": {
-        "head": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
-        "status": "M README.md",
-        "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
-        "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
-        "remoteMain": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
-        "remoteRefs": "2fcd3df137019d52302dd0f05c832fd6d0ba1600 refs/heads/main",
-        "tags": ""
-      }
-    },
-    {
-      "case": "moved-remote",
-      "outcome": "rejected",
-      "error": "Release Steward: stale remote metadata: core",
-      "before": {
-        "head": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
-        "status": "",
-        "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
-        "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
-        "remoteMain": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
-        "remoteRefs": "2fcd3df137019d52302dd0f05c832fd6d0ba1600 refs/heads/main",
-        "tags": ""
+      {
+        "case": "moved-remote",
+        "outcome": "rejected",
+        "error": "Release Steward: stale remote metadata: core",
+        "before": {
+          "head": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
+          "remoteRefs": "2fcd3df137019d52302dd0f05c832fd6d0ba1600 refs/heads/main",
+          "tags": ""
+        },
+        "after": {
+          "head": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "4534cdf2a3d5e9eec9d01e0c4321b9c7eefcc092",
+          "remoteRefs": "4534cdf2a3d5e9eec9d01e0c4321b9c7eefcc092 refs/heads/main",
+          "tags": ""
+        }
       },
-      "after": {
-        "head": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
-        "status": "",
-        "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
-        "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
-        "remoteMain": "4534cdf2a3d5e9eec9d01e0c4321b9c7eefcc092",
-        "remoteRefs": "4534cdf2a3d5e9eec9d01e0c4321b9c7eefcc092 refs/heads/main",
-        "tags": ""
-      }
-    },
-    {
-      "case": "moved-advertised-ref",
-      "outcome": "rejected",
-      "error": "Release Steward: stale or unverified remote: core",
-      "before": {
-        "head": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
-        "status": "",
-        "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
-        "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
-        "remoteMain": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
-        "remoteRefs": "2fcd3df137019d52302dd0f05c832fd6d0ba1600 refs/heads/main",
-        "tags": ""
+      {
+        "case": "moved-advertised-ref",
+        "outcome": "rejected",
+        "error": "Release Steward: stale or unverified remote: core",
+        "before": {
+          "head": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
+          "remoteRefs": "2fcd3df137019d52302dd0f05c832fd6d0ba1600 refs/heads/main",
+          "tags": ""
+        },
+        "after": {
+          "head": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "7f16bfbcb96281ac5a63421c54e39dc81c7957b4",
+          "remoteRefs": "7f16bfbcb96281ac5a63421c54e39dc81c7957b4 refs/heads/main\n7f16bfbcb96281ac5a63421c54e39dc81c7957b4 refs/heads/side",
+          "tags": ""
+        }
       },
-      "after": {
-        "head": "2fcd3df137019d52302dd0f05c832fd6d0ba1600",
-        "status": "",
-        "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
-        "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
-        "remoteMain": "7f16bfbcb96281ac5a63421c54e39dc81c7957b4",
-        "remoteRefs": "7f16bfbcb96281ac5a63421c54e39dc81c7957b4 refs/heads/main\n7f16bfbcb96281ac5a63421c54e39dc81c7957b4 refs/heads/side",
-        "tags": ""
+      {
+        "case": "validator-failure",
+        "outcome": "rejected-and-cleaned",
+        "error": "Release Steward: python3 tools/verify-documentation.py failed: exit 17",
+        "before": {
+          "head": "bceea32fccb0c8b8903b34a1d2429b686f2a5d0f",
+          "status": "",
+          "trackedTree": "cbd9058889350f8fa710879ef98e65aa50081dab",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "bceea32fccb0c8b8903b34a1d2429b686f2a5d0f",
+          "remoteRefs": "bceea32fccb0c8b8903b34a1d2429b686f2a5d0f refs/heads/main",
+          "tags": ""
+        },
+        "after": {
+          "head": "bceea32fccb0c8b8903b34a1d2429b686f2a5d0f",
+          "status": "",
+          "trackedTree": "cbd9058889350f8fa710879ef98e65aa50081dab",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "bceea32fccb0c8b8903b34a1d2429b686f2a5d0f",
+          "remoteRefs": "bceea32fccb0c8b8903b34a1d2429b686f2a5d0f refs/heads/main",
+          "tags": ""
+        }
       }
-    },
-    {
-      "case": "validator-failure",
-      "outcome": "rejected-and-cleaned",
-      "error": "Release Steward: python3 tools/verify-documentation.py failed: exit 17",
-      "before": {
-        "head": "bceea32fccb0c8b8903b34a1d2429b686f2a5d0f",
-        "status": "",
-        "trackedTree": "cbd9058889350f8fa710879ef98e65aa50081dab",
-        "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
-        "remoteMain": "bceea32fccb0c8b8903b34a1d2429b686f2a5d0f",
-        "remoteRefs": "bceea32fccb0c8b8903b34a1d2429b686f2a5d0f refs/heads/main",
-        "tags": ""
+    ]
+  },
+  "initialEvidenceSha256": "58838ea17f54fe956a418c744333e185a67a6fa5937595a798ba00f94011082e",
+  "remediationQualification": {
+    "toolSourceSha256": "accf3ac64ff9ced3fe762f4ef755d7f19633f926b627a79f6f551d9667e027fc",
+    "cliSha256": "201d6bc89560d526b9ebe91e4f42f5300e86c1de999364f29d1f2e6b27829ec0",
+    "fixtureRoot": "/tmp/veil-steward-qualification-ssfBsB",
+    "results": [
+      {
+        "case": "approved",
+        "outcome": "executed",
+        "planDigest": "dc235cc94852ead0c80905d5255fa6734ce46cfdc5b1f4e6736d4ad8740ee9aa",
+        "diffSha256": "c4ce250960b9620019a868d51e5d961a745ecdae0e1712ad23db9d06dce01526",
+        "before": {
+          "head": "fe4a8aa3b31beb5e9f10c701eac6fd43d887afb5",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "fe4a8aa3b31beb5e9f10c701eac6fd43d887afb5",
+          "remoteRefs": "fe4a8aa3b31beb5e9f10c701eac6fd43d887afb5 refs/heads/main",
+          "tags": ""
+        },
+        "after": {
+          "head": "fe4a8aa3b31beb5e9f10c701eac6fd43d887afb5",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "fe4a8aa3b31beb5e9f10c701eac6fd43d887afb5",
+          "remoteRefs": "fe4a8aa3b31beb5e9f10c701eac6fd43d887afb5 refs/heads/main",
+          "tags": ""
+        }
       },
-      "after": {
-        "head": "bceea32fccb0c8b8903b34a1d2429b686f2a5d0f",
-        "status": "",
-        "trackedTree": "cbd9058889350f8fa710879ef98e65aa50081dab",
-        "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
-        "remoteMain": "bceea32fccb0c8b8903b34a1d2429b686f2a5d0f",
-        "remoteRefs": "bceea32fccb0c8b8903b34a1d2429b686f2a5d0f refs/heads/main",
-        "tags": ""
+      {
+        "case": "wrong-approval",
+        "outcome": "rejected",
+        "error": "Release Steward: plan digest approval mismatch",
+        "before": {
+          "head": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "remoteRefs": "2f2563f843fe340674ec4b3c08de8906e770830a refs/heads/main",
+          "tags": ""
+        },
+        "after": {
+          "head": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "remoteRefs": "2f2563f843fe340674ec4b3c08de8906e770830a refs/heads/main",
+          "tags": ""
+        }
+      },
+      {
+        "case": "tampered-digest",
+        "outcome": "rejected",
+        "error": "Release Steward: plan digest approval mismatch",
+        "before": {
+          "head": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "remoteRefs": "2f2563f843fe340674ec4b3c08de8906e770830a refs/heads/main",
+          "tags": ""
+        },
+        "atInvocation": {
+          "head": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "remoteRefs": "2f2563f843fe340674ec4b3c08de8906e770830a refs/heads/main",
+          "tags": ""
+        },
+        "after": {
+          "head": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "remoteRefs": "2f2563f843fe340674ec4b3c08de8906e770830a refs/heads/main",
+          "tags": ""
+        },
+        "remainingWorktrees": 1
+      },
+      {
+        "case": "stale-statement",
+        "outcome": "rejected",
+        "error": "Release Steward: ambiguous or stale statement",
+        "before": {
+          "head": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "remoteRefs": "2f2563f843fe340674ec4b3c08de8906e770830a refs/heads/main",
+          "tags": ""
+        },
+        "atInvocation": {
+          "head": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "remoteRefs": "2f2563f843fe340674ec4b3c08de8906e770830a refs/heads/main",
+          "tags": ""
+        },
+        "after": {
+          "head": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "remoteRefs": "2f2563f843fe340674ec4b3c08de8906e770830a refs/heads/main",
+          "tags": ""
+        },
+        "remainingWorktrees": 1
+      },
+      {
+        "case": "nonallowlisted",
+        "outcome": "rejected",
+        "error": "Release Steward: unauthorized file",
+        "before": {
+          "head": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "remoteRefs": "2f2563f843fe340674ec4b3c08de8906e770830a refs/heads/main",
+          "tags": ""
+        },
+        "atInvocation": {
+          "head": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "remoteRefs": "2f2563f843fe340674ec4b3c08de8906e770830a refs/heads/main",
+          "tags": ""
+        },
+        "after": {
+          "head": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "remoteRefs": "2f2563f843fe340674ec4b3c08de8906e770830a refs/heads/main",
+          "tags": ""
+        },
+        "remainingWorktrees": 1
+      },
+      {
+        "case": "changed-commit",
+        "outcome": "rejected",
+        "error": "Release Steward: stale source: core",
+        "before": {
+          "head": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "remoteRefs": "2f2563f843fe340674ec4b3c08de8906e770830a refs/heads/main",
+          "tags": ""
+        },
+        "atInvocation": {
+          "head": "5dec0247674c92fd6c80eb53d3de0a2f56ffaef4",
+          "status": "",
+          "trackedTree": "863d09ba5d8816096198f3a43ee616939c8c969d",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "remoteRefs": "2f2563f843fe340674ec4b3c08de8906e770830a refs/heads/main",
+          "tags": ""
+        },
+        "after": {
+          "head": "5dec0247674c92fd6c80eb53d3de0a2f56ffaef4",
+          "status": "",
+          "trackedTree": "863d09ba5d8816096198f3a43ee616939c8c969d",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "remoteRefs": "2f2563f843fe340674ec4b3c08de8906e770830a refs/heads/main",
+          "tags": ""
+        },
+        "remainingWorktrees": 1
+      },
+      {
+        "case": "dirty-checkout",
+        "outcome": "rejected",
+        "error": "Release Steward: dirty source: core",
+        "before": {
+          "head": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "remoteRefs": "2f2563f843fe340674ec4b3c08de8906e770830a refs/heads/main",
+          "tags": ""
+        },
+        "atInvocation": {
+          "head": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "status": "M README.md",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "remoteRefs": "2f2563f843fe340674ec4b3c08de8906e770830a refs/heads/main",
+          "tags": ""
+        },
+        "after": {
+          "head": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "status": "M README.md",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "remoteRefs": "2f2563f843fe340674ec4b3c08de8906e770830a refs/heads/main",
+          "tags": ""
+        },
+        "remainingWorktrees": 1
+      },
+      {
+        "case": "moved-remote",
+        "outcome": "rejected",
+        "error": "Release Steward: stale remote metadata: core",
+        "before": {
+          "head": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "remoteRefs": "2f2563f843fe340674ec4b3c08de8906e770830a refs/heads/main",
+          "tags": ""
+        },
+        "atInvocation": {
+          "head": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "6eada4ae1f25db3b84b57d31790323ec7d867d1d",
+          "remoteRefs": "6eada4ae1f25db3b84b57d31790323ec7d867d1d refs/heads/main",
+          "tags": ""
+        },
+        "after": {
+          "head": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "6eada4ae1f25db3b84b57d31790323ec7d867d1d",
+          "remoteRefs": "6eada4ae1f25db3b84b57d31790323ec7d867d1d refs/heads/main",
+          "tags": ""
+        },
+        "remainingWorktrees": 1
+      },
+      {
+        "case": "moved-advertised-ref",
+        "outcome": "rejected",
+        "error": "Release Steward: stale or unverified remote: core",
+        "before": {
+          "head": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "remoteRefs": "2f2563f843fe340674ec4b3c08de8906e770830a refs/heads/main",
+          "tags": ""
+        },
+        "atInvocation": {
+          "head": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "c6a76d4d5299422c8d1a56bb1056e166e2a421f8",
+          "remoteRefs": "c6a76d4d5299422c8d1a56bb1056e166e2a421f8 refs/heads/main\nc6a76d4d5299422c8d1a56bb1056e166e2a421f8 refs/heads/side",
+          "tags": ""
+        },
+        "after": {
+          "head": "2f2563f843fe340674ec4b3c08de8906e770830a",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "c6a76d4d5299422c8d1a56bb1056e166e2a421f8",
+          "remoteRefs": "c6a76d4d5299422c8d1a56bb1056e166e2a421f8 refs/heads/main\nc6a76d4d5299422c8d1a56bb1056e166e2a421f8 refs/heads/side",
+          "tags": ""
+        },
+        "remainingWorktrees": 1
+      },
+      {
+        "case": "validator-failure",
+        "outcome": "rejected-and-cleaned",
+        "error": "Release Steward: python3 tools/verify-documentation.py failed: exit 17",
+        "before": {
+          "head": "22b3f30cfb355129af301b7d9869be556c2f764e",
+          "status": "",
+          "trackedTree": "cbd9058889350f8fa710879ef98e65aa50081dab",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "22b3f30cfb355129af301b7d9869be556c2f764e",
+          "remoteRefs": "22b3f30cfb355129af301b7d9869be556c2f764e refs/heads/main",
+          "tags": ""
+        },
+        "atInvocation": {
+          "head": "22b3f30cfb355129af301b7d9869be556c2f764e",
+          "status": "",
+          "trackedTree": "cbd9058889350f8fa710879ef98e65aa50081dab",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "22b3f30cfb355129af301b7d9869be556c2f764e",
+          "remoteRefs": "22b3f30cfb355129af301b7d9869be556c2f764e refs/heads/main",
+          "tags": ""
+        },
+        "after": {
+          "head": "22b3f30cfb355129af301b7d9869be556c2f764e",
+          "status": "",
+          "trackedTree": "cbd9058889350f8fa710879ef98e65aa50081dab",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "22b3f30cfb355129af301b7d9869be556c2f764e",
+          "remoteRefs": "22b3f30cfb355129af301b7d9869be556c2f764e refs/heads/main",
+          "tags": ""
+        },
+        "remainingWorktrees": 1
+      },
+      {
+        "case": "spawn-error-status-zero",
+        "outcome": "rejected",
+        "error": "git diff failed: EPERM: subprocess denied",
+        "before": {
+          "head": "f729b9a9ddf15f80bba4c151e6e388aa7ee947a9",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "f729b9a9ddf15f80bba4c151e6e388aa7ee947a9",
+          "remoteRefs": "f729b9a9ddf15f80bba4c151e6e388aa7ee947a9 refs/heads/main",
+          "tags": ""
+        },
+        "atInvocation": {
+          "head": "f729b9a9ddf15f80bba4c151e6e388aa7ee947a9",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "f729b9a9ddf15f80bba4c151e6e388aa7ee947a9",
+          "remoteRefs": "f729b9a9ddf15f80bba4c151e6e388aa7ee947a9 refs/heads/main",
+          "tags": ""
+        },
+        "after": {
+          "head": "f729b9a9ddf15f80bba4c151e6e388aa7ee947a9",
+          "status": "",
+          "trackedTree": "9bf2256feeb69092dfae513a75c1e3add911d51e",
+          "fileSha256": "a936ade1588b10dc4b2fc88bffd0a09b6a5026d1d56b6003c181623dd502b463",
+          "remoteMain": "f729b9a9ddf15f80bba4c151e6e388aa7ee947a9",
+          "remoteRefs": "f729b9a9ddf15f80bba4c151e6e388aa7ee947a9 refs/heads/main",
+          "tags": ""
+        },
+        "remainingWorktrees": 1
       }
-    }
-  ]
+    ]
+  }
 }

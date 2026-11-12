@@ -4,10 +4,25 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { parseNpm, parseGithub, inspectDocs, planAudit, digestPlan, applyPlan, safeFile, audit } from './steward.mjs';
+import { command, parseNpm, parseGithub, inspectDocs, planAudit, digestPlan, applyPlan, safeFile, audit } from './steward.mjs';
 
 const npmRaw = (name, version, peers = {}) => JSON.stringify({ 'dist-tags':{latest:version}, versions:{[version]:{name,dist:{integrity:'sha512-test',tarball:'https://registry.npmjs.org/x.tgz'},peerDependencies:peers,peerDependenciesMeta:{'@veil-runtime/core':{optional:true}}}} });
 const git = (dir,...args) => { const r=spawnSync('git',args,{cwd:dir,encoding:'utf8'}); assert.equal(r.status,0,r.stderr); return r.stdout.trim(); };
+test('subprocess wrapper rejects spawn errors, signals and unknown status without leaking diagnostics',()=>{
+  const fake = result => (_bin,_args,options) => { assert.equal(options.encoding,'utf8'); return result; };
+  const invoke = result => command('git',['diff','--check','secret-token'],process.cwd(),15000,fake(result));
+  assert.throws(()=>invoke({status:0,error:Object.assign(new Error('token=private-value'),{code:'EPERM'}),stdout:'',stderr:''}),error=>{
+    assert.match(error.message,/git diff failed: EPERM: subprocess denied/);
+    assert.doesNotMatch(error.message,/private-value|secret-token/);
+    return true;
+  });
+  assert.throws(()=>invoke({status:null,error:Object.assign(new Error('missing'),{code:'ENOENT'}),stdout:null,stderr:''}),/git diff failed: ENOENT: executable not found/);
+  assert.throws(()=>invoke({status:0,error:'',stdout:'',stderr:''}),/git diff failed: subprocess error/);
+  assert.throws(()=>invoke({status:null,signal:'SIGTERM',stdout:null,stderr:''}),/git diff failed: signal SIGTERM/);
+  assert.throws(()=>invoke({status:null,stdout:null,stderr:''}),/git diff failed: exit unknown/);
+  assert.equal(invoke({status:0,error:undefined,signal:null,stdout:'ready\n',stderr:''}),'ready');
+  assert.throws(()=>invoke({status:17,error:undefined,signal:null,stdout:'',stderr:''}),/git diff failed: exit 17/);
+});
 function fixture() {
   const dir=fs.mkdtempSync(path.join(os.tmpdir(),'steward-test-'));
   git(dir,'init','-q'); git(dir,'config','user.name','Test'); git(dir,'config','user.email','test@example.com');

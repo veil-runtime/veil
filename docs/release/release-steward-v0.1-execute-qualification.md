@@ -1,6 +1,65 @@
 # Release Steward v0.1 `apply --execute` operational qualification
 
-## Scope and conclusion
+## Remediation and repeat qualification
+
+Commit `5cc2301` recorded a failed full-qualification verdict because
+`command()` ignored `spawnSync.result.error`. The original observations and
+JSON are retained below and under `initialQualification` in the
+[combined evidence](release-steward-v0.1-execute-evidence.json). This repeat
+corrects that defect without changing the approval, source-integrity, or
+allowlist checks.
+
+`command()` now rejects any subprocess error, signal, or missing/nonzero exit
+status before reading stdout. Error text includes the command name and first
+subcommand plus a bounded diagnostic class and error code, without copying
+untrusted stderr, arbitrary arguments, or environment values. The prior
+`steward.mjs` SHA-256 was
+`4b5ae0264b3b5e3f848cf35d50efca6a70c84215636cae4880e189ff06546f72`;
+the corrected SHA-256 is
+`accf3ac64ff9ced3fe762f4ef755d7f19633f926b627a79f6f551d9667e027fc`.
+`cli.mjs` remains
+`201d6bc89560d526b9ebe91e4f42f5300e86c1de999364f29d1f2e6b27829ec0`.
+
+The repeat harness used only disposable checkouts and local bare remotes. Its
+approved execution changed exactly
+`docs/getting-started/evaluate.md` from “Current Core 0.5.0 release guidance.”
+to “Current Core 0.6.0 release guidance.” in a detached worktree. The returned
+diff SHA-256 was again
+`c4ce250960b9620019a868d51e5d961a745ecdae0e1712ad23db9d06dce01526`.
+The new plan digest was
+`dc235cc94852ead0c80905d5255fa6734ce46cfdc5b1f4e6736d4ad8740ee9aa`.
+The repeat rejected wrong approval, altered digest, stale statement, changed
+source commit, dirty checkout, two moved-remote cases, a non-allowlisted file,
+and a validator exit of 17. It also rejected an injected `EPERM` subprocess
+error with reported status `0`. Each source checkout matched its state at
+invocation afterward; the failed validator left one worktree, the original
+checkout, and no detached worktree. The JSON records commits, tree and file
+hashes, status, remote refs, and tags before, at invocation, and after for
+cases that deliberately move a source or remote.
+
+The repeat command was:
+
+```sh
+node tools/release-steward/qualify-execute.mjs > /tmp/veil-steward-execute-remediation.json
+```
+
+The runner's local `git push` commands populate and move only its bare
+fixture remotes before apply calls. Inspection of the Release Steward CLI and
+subprocess call sites found no push, merge, tag creation, npm publish, or
+GitHub release creation operation. No network remote is configured in the
+fixtures, and successful and failed apply calls left their remote refs and
+tag lists unchanged from invocation state. Real Core and UI repositories were
+never passed to apply.
+
+**Verdict:** the controlled `apply --execute` path is operationally qualified
+for these disposable-repository scenarios. This does not qualify a real
+Core/UI release correction: captured metadata was manually reviewed only in
+the synthetic fixture, the fixture documentation validator is deliberately
+small, and the prior live audit plan was empty. Worktree-add failure and
+cleanup-failure behavior were not exercised. A real correction still needs a
+separately reviewed plan and repository-specific validation.
+
+## Initial qualification scope and conclusion (commit `5cc2301`)
 
 This exercise used Core `origin/develop` at
 `f0617f9e026f80dccbe146ccaecc3dd78d7b4e3f` on the separate local branch
@@ -106,6 +165,29 @@ reclassify or resolve any existing Core quality governance finding.
   dependency and lockfile deltas were zero; no verification-control change was
   reported. These governance findings remain review required and unresolved.
 
-Next: fix the subprocess error check, add a regression test for the `error`
-plus zero-status case, and repeat the execution qualification. No PR, merge,
-or production release-state change is part of this record.
+At the time, the next step was to fix the subprocess error check, add a
+regression test for the `error` plus zero-status case, and repeat the execution
+qualification. No PR, merge, or production release-state change was part of
+that initial record.
+
+## Repeat verification results
+
+- `node --test tools/release-steward/steward.test.mjs`: 11 tests passed with
+  approved command execution. The new deterministic test covers `EPERM` with
+  status `0`, `ENOENT` with null status, `SIGTERM`, missing status, genuine
+  success, nonzero exit, and diagnostic redaction. The sandboxed invocation
+  failed before individual cases were reported; it is a sandbox failure, not
+  a verified implementation failure.
+- `npm run check`: the sandboxed run again passed typecheck and stopped at the
+  four subprocess-heavy suites named above. The approved-command rerun passed
+  typecheck, all 455 tests, and package verification (112 tarball files).
+- `python3 tools/verify-documentation.py`: passed with 307 source links,
+  routes, and fragments checked before the final record edit; the final run
+  passed with 308 checked. Rendered Jekyll output remains untested.
+- `npm run quality -- --base f0617f9e026f80dccbe146ccaecc3dd78d7b4e3f`:
+  exited 2 with the same 12 existing `VEIL-GOV-001` findings in playground
+  and showcase assets. It reported zero dependency, lockfile, classified
+  source/test/harness LOC, and verification-control deltas. The tool and
+  qualification files changed as shown by Git; those changes are outside the
+  quality gate's reported LOC categories. Existing governance findings remain
+  review required and were not suppressed or reclassified.

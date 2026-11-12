@@ -6,7 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { audit, digestPlan, planAudit, sha } from './steward.mjs';
+import { audit, command, digestPlan, planAudit, sha } from './steward.mjs';
 
 const cli = fileURLToPath(new URL('./cli.mjs', import.meta.url));
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'veil-steward-qualification-'));
@@ -80,7 +80,7 @@ function rejected(name, mutate, expected) {
   // Cases that deliberately move the source or remote compare against state immediately before apply.
   assert.deepEqual(after, f.expectedBeforeApply || f.before);
   assert.equal(git(f.dir, 'worktree', 'list', '--porcelain').split('worktree ').length - 1, 1);
-  results.push({ case: name, outcome: 'rejected', error: result.stderr, before: f.before, after });
+  results.push({ case: name, outcome: 'rejected', error: result.stderr, before: f.before, atInvocation: f.expectedBeforeApply || f.before, after, remainingWorktrees: 1 });
 }
 
 try {
@@ -136,6 +136,12 @@ try {
   assert.equal(failure.code, 1); assert.match(failure.stderr, /python3 tools\/verify-documentation.py failed/);
   assert.deepEqual(snapshot(failed.dir, failed.remote), failed.before);
   assert.equal(git(failed.dir, 'worktree', 'list', '--porcelain').split('worktree ').length - 1, 1);
-  results.push({ case: 'validator-failure', outcome: 'rejected-and-cleaned', error: failure.stderr, before: failed.before, after: snapshot(failed.dir, failed.remote) });
+  results.push({ case: 'validator-failure', outcome: 'rejected-and-cleaned', error: failure.stderr, before: failed.before, atInvocation: failed.before, after: snapshot(failed.dir, failed.remote), remainingWorktrees: 1 });
+  const denied = fixture('spawn-error-status-zero');
+  const injected = () => ({ status: 0, error: Object.assign(new Error('spawn denied'), { code: 'EPERM' }), stdout: '', stderr: '' });
+  assert.throws(() => command('git', ['diff', '--check'], denied.dir, 15000, injected), /git diff failed: EPERM: subprocess denied/);
+  assert.deepEqual(snapshot(denied.dir, denied.remote), denied.before);
+  assert.equal(git(denied.dir, 'worktree', 'list', '--porcelain').split('worktree ').length - 1, 1);
+  results.push({ case: 'spawn-error-status-zero', outcome: 'rejected', error: 'git diff failed: EPERM: subprocess denied', before: denied.before, atInvocation: denied.before, after: snapshot(denied.dir, denied.remote), remainingWorktrees: 1 });
   process.stdout.write(JSON.stringify({ toolSourceSha256: sha(fs.readFileSync(new URL('./steward.mjs', import.meta.url))), cliSha256: sha(fs.readFileSync(cli)), fixtureRoot: root, results }, null, 2) + '\n');
 } catch (error) { process.stderr.write(`${error.stack}\nFixture root: ${root}\n`); process.exitCode = 1; }
