@@ -15,6 +15,7 @@ const label = (value) => JSON.stringify(value);
 const categories = ['dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies'];
 const harness = new Set(['tools/quality.mjs', 'tools/quality.test.mjs',
   'tools/quality-governance.mjs', 'tools/quality-governance.test.mjs']);
+const approvalsPath = 'tools/quality-governance-approvals.json';
 const code = /\.(?:[cm]?[jt]sx?)$/;
 
 function group(path) {
@@ -25,6 +26,7 @@ function group(path) {
 
 function control(path) {
   return harness.has(path) || path === 'tools/quality-governance-baseline.json'
+    || path === approvalsPath
     || path === 'AGENTS.md' || path === 'tools/verify-package.mjs'
     || /(^|\/)tsconfig(?:\.[^/]+)?\.json$/.test(path)
     || path.startsWith('test/') || path === 'src/index.ts'
@@ -71,6 +73,19 @@ async function compare(baseArgument) {
       const absolute = join(root, path);
       if (!lstatSync(absolute).isFile()) throw new Error(`Not a regular file: ${path}`);
       return normalize(readFileSync(absolute, 'utf8'));
+    } catch (error) {
+      if (error.code === 'ENOENT') return undefined;
+      throw error;
+    }
+  };
+  const beforeRaw = (path) => beforePaths.has(path)
+    ? execFileSync('git', ['show', `${base}:${path}`], { cwd: root, maxBuffer: 32 * 1024 * 1024,
+      stdio: ['ignore', 'pipe', 'pipe'] }) : undefined;
+  const afterRaw = (path) => {
+    try {
+      const absolute = join(root, path);
+      if (!lstatSync(absolute).isFile()) throw new Error(`Not a regular file: ${path}`);
+      return readFileSync(absolute);
     } catch (error) {
       if (error.code === 'ENOENT') return undefined;
       throw error;
@@ -177,7 +192,7 @@ async function compare(baseArgument) {
   let governance;
   try {
     const { checkGovernance } = await import('./quality-governance.mjs');
-    governance = await checkGovernance({ paths, before, after });
+    governance = await checkGovernance({ paths, before, after, beforeRaw, afterRaw, candidateRoot: root });
   } catch (error) {
     governance = { output: `VEIL-GOV-001 analysis failed: ${error.message}`, status: 2 };
   }
