@@ -60,8 +60,12 @@ Core v0.6.0 is **published on npm**. Linux is the fully qualified execution plat
 planning is experimental and opt-in, with failed write-planning probes documented.
 It is not a reliable autonomous agent.
 
-Core and UI are independent published packages. UI 0.4.0 is a stable release for expressive interfaces. Emergence covers experimental reasoning and coordination. Neither UI nor Emergence is included in Core. Sandbox, repository-task and browser capabilities are not published Core
-features.
+Core and UI are independently published packages. UI v0.4.2 is a stable release
+for expressive interfaces and can be integrated without Core. Its optional Core
+peer range is `^0.4.0`; compatibility with Core v0.6.0 has not been qualified.
+Emergence covers experimental reasoning and coordination. Neither UI nor
+Emergence is included in Core. Sandbox, repository-task and browser capabilities
+are not published Core features.
 
 Core does not provide identity management, compliance certification, tenant
 isolation, forced external termination, retries, parallel plans or exactly-once effects.

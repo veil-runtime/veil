@@ -28,9 +28,11 @@ No publication, tag or public release is implied.
 The following original preparation/adoption records are retained as history;
 their candidate/publication statements are not the current release status.
 
-The current release candidate is **v0.3.0**. Package metadata and package verification
-both target `@veil-runtime/core@0.3.0`. v0.2.0 remains the latest published package
-until publication; local source and a packed tarball do not establish npm availability.
+At the time of this historical preparation, the release candidate was **v0.3.0**.
+Package metadata and package verification then targeted
+`@veil-runtime/core@0.3.0`. v0.2.0 was the latest published package before
+that publication; local source and a packed tarball did not establish npm
+availability.
 
 ## Candidate scope
 
@@ -225,11 +227,11 @@ Release preparation does not publish, tag, push, merge, or create a GitHub relea
 
 ## After an authorized publication
 
-Verify the published npm package and rerun consumer examples against it before
-changing the latest-published version from v0.3.1 to v0.4.0 and removing candidate
-labels in the README, homepage, docs layout, developer portal, installation page,
-and release notes. Add release announcement links only when their targets exist.
-Publishing and these follow-up changes are separate from candidate preparation.
+For the historical v0.4.0 candidate, the post-publication step was to verify the
+published npm package and rerun consumer examples before replacing v0.3.1
+current-version claims and candidate labels. Add release announcement links only
+when their targets exist. Publication and documentation follow-up are separate
+from candidate preparation; the present published versions are stated above.
 
 For the existing Pages workflow and its separate approval/deployment procedure,
 see [website build and deployment](website.html).
