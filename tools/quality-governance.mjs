@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { lstatSync, readdirSync } from 'node:fs';
+import { lstatSync, opendirSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 export const baselinePath = 'tools/quality-governance-baseline.json';
@@ -596,6 +596,17 @@ export async function checkGovernance({ paths, before, after, beforeRaw, afterRa
   const candidateApprovals = candidateApprovalText === undefined ? empty
     : parseApprovals(candidateApprovalText, 'candidate', { candidate: true });
   const trusted = baseApprovalText === undefined ? empty : parseApprovals(baseApprovalText, 'base');
+  if (trusted.approvals.length) {
+    if (typeof candidateRoot !== 'string' || !candidateRoot.trim()) {
+      throw fail('candidate: an accessible candidateRoot directory is required for trusted approvals');
+    }
+    try {
+      if (!lstatSync(candidateRoot).isDirectory()) throw new Error('not a real directory');
+      opendirSync(candidateRoot).closeSync();
+    } catch (error) {
+      throw fail(`candidate: invalid or inaccessible candidateRoot: ${error.message}`);
+    }
+  }
   if (baseApprovalText !== undefined && candidateApprovalText === undefined) {
     throw fail('candidate: approval manifest is missing');
   }

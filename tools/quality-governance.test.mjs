@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, readFileSync, rmSync, symlinkSync, unlinkSync, writeFileSync } from 'node:fs';
+import { chmodSync, mkdtempSync, mkdirSync, readFileSync, rmSync, symlinkSync, unlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
@@ -50,15 +50,56 @@ async function approvalFixture() {
   const manifest = { version: 1, contexts: [context], approvals: [approval] };
   base.set(approvalsPath, JSON.stringify(manifest));
   const candidate = new Map(base);
-  const run = (before = base, after = candidate, candidateRoot) => checkGovernanceWithFrozen({
+  const check = (before, after, candidateRoot) => checkGovernanceWithFrozen({
     paths: [...new Set([...before.keys(), ...after.keys()])],
     before: path => before.get(path), after: path => after.get(path),
     beforeRaw: path => before.has(path) ? Buffer.from(before.get(path)) : undefined,
     afterRaw: path => after.has(path) ? Buffer.from(after.get(path)) : undefined,
     candidateRoot,
   });
-  return { base, candidate, run, findingPath, approval, context, manifest };
+  const run = async (before = base, after = candidate, candidateRoot) => {
+    if (candidateRoot !== undefined) return check(before, after, candidateRoot);
+    const root = mkdtempSync(join(tmpdir(), 'veil-governance-approved-'));
+    try {
+      for (const [path, value] of after) {
+        if (path === baselinePath || path === approvalsPath) continue;
+        mkdirSync(dirname(join(root, path)), { recursive: true });
+        writeFileSync(join(root, path), value);
+      }
+      return await check(before, after, root);
+    } finally { rmSync(root, { recursive: true, force: true }); }
+  };
+  return { base, candidate, check, run, findingPath, approval, context, manifest };
 }
+
+test('trusted approvals require a usable filesystem root before they can be approved', async (t) => {
+  const f = await approvalFixture();
+  const root = mkdtempSync(join(tmpdir(), 'veil-governance-invalid-root-'));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const file = join(root, 'file');
+  writeFileSync(file, 'not a directory');
+  const link = join(root, 'link');
+  symlinkSync(root, link);
+  for (const invalid of [undefined, null, '', 0, join(root, 'missing'), file, link]) {
+    await assert.rejects(f.check(f.base, f.candidate, invalid), /candidateRoot/);
+  }
+  const wrongRoot = await f.check(f.base, f.candidate, root);
+  assert.equal(wrongRoot.status, 2);
+  assert.match(wrongRoot.output, /INVALIDATED VEIL-GOV-001.*context file membership changed/);
+  if (process.getuid?.() !== 0) {
+    const inaccessible = join(root, 'inaccessible');
+    mkdirSync(inaccessible);
+    chmodSync(inaccessible, 0);
+    try { await assert.rejects(f.check(f.base, f.candidate, inaccessible), /candidateRoot/); }
+    finally { chmodSync(inaccessible, 0o700); }
+  }
+  const withoutTrust = new Map(f.base);
+  withoutTrust.set(approvalsPath, '{"version":1,"contexts":[],"approvals":[]}');
+  const result = await f.check(withoutTrust, f.candidate, undefined);
+  assert.equal(result.status, 2);
+  assert.match(result.output, /UNRESOLVED VEIL-GOV-001/);
+  assert.doesNotMatch(result.output, /  APPROVED VEIL-GOV-001/);
+});
 
 test('hash-bound approval matches one finding and stays visible', async () => {
   const f = await approvalFixture();
