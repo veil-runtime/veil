@@ -195,9 +195,9 @@ export function applyPlan(plan, options) {
     for (const [id,repo] of Object.entries(plan.repositories)) {
       if (!changes.some(x=>x.repository===id)) continue;
       const dir = fs.mkdtempSync(path.join(os.tmpdir(),`veil-steward-${id}-`));
+      worktrees[id] = dir;
       fs.rmdirSync(dir);
       command('git',['worktree','add','--detach',dir,repo.commit],repo.path);
-      worktrees[id] = dir;
     }
     for (const change of diff) fs.writeFileSync(safeFile(worktrees[change.repository],change.file),change.after);
     const results = {};
@@ -207,5 +207,24 @@ export function applyPlan(plan, options) {
       results[id] = { worktree:dir, diff:command('git',['diff','--',...changes.filter(x=>x.repository===id).map(x=>x.file)],dir) };
     }
     return { dryRun:false, results };
-  } catch (error) { for (const [id,dir] of Object.entries(worktrees)) { try { command('git',['worktree','remove','--force',dir],plan.repositories[id].path); } catch {} } throw error; }
+  } catch (error) {
+    const incomplete = [];
+    for (const [id,dir] of Object.entries(worktrees)) {
+      const repo = plan.repositories[id];
+      let removed = false;
+      for (let attempt = 0; attempt < 2 && !removed; attempt++) {
+        try { command('git',['worktree','remove','--force',dir],repo.path); removed = true; }
+        catch { /* A failed add may have left no Git worktree registration. */ }
+      }
+      try {
+        const registered = command('git',['worktree','list','--porcelain'],repo.path)
+          .split('\n').some(line => line === `worktree ${dir}`);
+        if (registered) { incomplete.push(`${id}: ${dir} remains registered`); continue; }
+      } catch { incomplete.push(`${id}: unable to inspect ${dir}`); continue; }
+      try { fs.rmSync(dir,{recursive:true,force:true}); }
+      catch (cleanupError) { incomplete.push(`${id}: unable to remove ${dir} (${cleanupError.code || 'filesystem error'})`); }
+    }
+    if (incomplete.length) throw new Error(`${error.message}; cleanup incomplete: ${incomplete.join('; ')}. Inspect with git worktree list --porcelain and remove the listed paths manually.`,{cause:error});
+    throw error;
+  }
 }
