@@ -1,9 +1,176 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { baselinePath, checkGovernance, inspectSource, inspectTree, parseBaseline } from './quality-governance.mjs';
+import { baselinePath, checkGovernance as checkGovernanceWithFrozen, inspectSource, inspectTree,
+  parseBaseline, parseApprovals, approvalsPath } from './quality-governance.mjs';
+
+// Existing synthetic baseline tests exercise matching independently of the frozen production inventory.
+function checkGovernance(options) {
+  const legacyIds = new Set();
+  for (const read of [options.before, options.after]) {
+    try {
+      const text = read(baselinePath);
+      if (text !== undefined) for (const site of parseBaseline(text, 'fixture')) {
+        legacyIds.add(`${site.path}:${site.anchor}:${site.kind}`);
+      }
+    } catch { /* The checker under test reports malformed input. */ }
+  }
+  return checkGovernanceWithFrozen({ ...options, legacyIds });
+}
+
+const digest = (value) => createHash('sha256').update(value).digest('hex');
+async function approvalFixture() {
+  const findingPath = 'docs/assets/showcase/showcase.js';
+  const source = 'obj[key]();';
+  const base = new Map([
+    [findingPath, source],
+    ['docs/assets/showcase/host.mjs', 'const components = {};'],
+    ['tools/showcase/package.json', '{"version":"0.4.2"}'],
+    ['tools/showcase/package-lock.json', '{}'],
+    ['tools/showcase/build.mjs', '// pinned build'],
+    [baselinePath, '{"version":1,"sites":[]}'],
+  ]);
+  const site = (await inspectSource(findingPath, source))[0];
+  const context = {
+    name: 'showcase-review', scope: 'ui-showcase-v1',
+    files: [...base].filter(([path]) => path !== baselinePath)
+      .map(([path, value]) => ({ path, sha256: digest(value) })),
+  };
+  const approval = {
+    path: site.path, anchor: site.anchor, kind: site.kind,
+    fileSha256: digest(source), context: context.name,
+    reviewer: { name: 'Fixture Reviewer', identity: 'reviewer@example.invalid' },
+    decision: 'approve', rationale: 'Exact fixture and empty component registry',
+    approvedAt: '2026-11-12',
+  };
+  const manifest = { version: 1, contexts: [context], approvals: [approval] };
+  base.set(approvalsPath, JSON.stringify(manifest));
+  const candidate = new Map(base);
+  const run = (before = base, after = candidate) => checkGovernanceWithFrozen({
+    paths: [...new Set([...before.keys(), ...after.keys()])],
+    before: path => before.get(path), after: path => after.get(path),
+    beforeRaw: path => before.has(path) ? Buffer.from(before.get(path)) : undefined,
+    afterRaw: path => after.has(path) ? Buffer.from(after.get(path)) : undefined,
+  });
+  return { base, candidate, run, findingPath, approval, context, manifest };
+}
+
+test('hash-bound approval matches one finding and stays visible', async () => {
+  const f = await approvalFixture();
+  const result = await f.run();
+  assert.equal(result.status, 0, result.output);
+  assert.match(result.output, /APPROVED VEIL-GOV-001.*Fixture Reviewer/);
+  assert.doesNotMatch(result.output, /UNRESOLVED VEIL-GOV-001/);
+});
+
+test('same structural anchor with changed file bytes invalidates approval', async () => {
+  const f = await approvalFixture();
+  f.candidate.set(f.findingPath, 'obj[key]();\r\n');
+  const result = await f.run();
+  assert.equal(result.status, 2);
+  assert.match(result.output, /INVALIDATED VEIL-GOV-001.*hash changed/);
+});
+
+for (const change of ['changed', 'added', 'removed']) {
+  test(`${change} context file invalidates approval`, async () => {
+    const f = await approvalFixture();
+    const path = 'docs/assets/showcase/host.mjs';
+    if (change === 'changed') f.candidate.set(path, 'const components = { custom() {} };');
+    if (change === 'added') f.candidate.set('docs/assets/showcase/new-host.mjs', 'export {};');
+    if (change === 'removed') f.candidate.delete(path);
+    const result = await f.run();
+    assert.equal(result.status, 2);
+    assert.match(result.output, /INVALIDATED VEIL-GOV-001.*context file (hash|membership) changed/);
+  });
+}
+
+test('copied and new findings remain unresolved', async () => {
+  const f = await approvalFixture();
+  f.candidate.set(f.findingPath, 'obj[key]();\nobj[key]();');
+  f.candidate.set('docs/assets/showcase/new.js', 'other[key]();');
+  const result = await f.run();
+  assert.equal(result.status, 2);
+  assert.match(result.output, /UNRESOLVED VEIL-GOV-001 docs\/assets\/showcase\/new.js/);
+  assert.match(result.output, /UNRESOLVED VEIL-GOV-001 docs\/assets\/showcase\/showcase.js/);
+});
+
+test('candidate-only approval cannot self-authorize', async () => {
+  const f = await approvalFixture();
+  f.base.set(approvalsPath, '{"version":1,"contexts":[],"approvals":[]}');
+  const result = await f.run();
+  assert.equal(result.status, 2);
+  assert.match(result.output, /UNRESOLVED VEIL-GOV-001/);
+  assert.doesNotMatch(result.output, /APPROVED VEIL-GOV-001/);
+});
+
+test('malformed, duplicate, wildcard and traversal approvals are rejected', async () => {
+  const f = await approvalFixture();
+  for (const malformed of ['{', '{}']) {
+    assert.throws(() => parseApprovals(malformed, 'candidate'), /invalid approval/);
+  }
+  const duplicate = structuredClone(f.manifest);
+  duplicate.approvals.push(structuredClone(f.approval));
+  assert.throws(() => parseApprovals(JSON.stringify(duplicate), 'candidate'), /duplicate approval record/);
+  for (const path of ['docs/assets/showcase/*.js', '../showcase.js', '/tmp/showcase.js',
+    'docs/assets/showcase/../showcase.js']) {
+    const invalid = structuredClone(f.manifest);
+    invalid.approvals[0].path = path;
+    assert.throws(() => parseApprovals(JSON.stringify(invalid), 'candidate'), /invalid or duplicate approval record/);
+  }
+  const duplicateFile = structuredClone(f.manifest);
+  duplicateFile.contexts[0].files.push(duplicateFile.contexts[0].files[0]);
+  assert.throws(() => parseApprovals(JSON.stringify(duplicateFile), 'candidate'), /duplicate context file/);
+  const duplicateContext = structuredClone(f.manifest);
+  duplicateContext.contexts.push(structuredClone(f.context));
+  assert.throws(() => parseApprovals(JSON.stringify(duplicateContext), 'candidate'), /duplicate approval context/);
+  for (const change of [
+    value => { value.approvals[0].reviewer.identity = ''; },
+    value => { value.approvals[0].decision = 'reject'; },
+    value => { value.approvals[0].rationale = ' '; },
+    value => { value.approvals[0].approvedAt = '2026-02-30'; },
+    value => { value.approvals[0].extra = true; },
+  ]) {
+    const invalid = structuredClone(f.manifest);
+    change(invalid);
+    assert.throws(() => parseApprovals(JSON.stringify(invalid), 'candidate'), /invalid or duplicate approval record/);
+  }
+});
+
+test('stale and missing approval records fail closed', async () => {
+  const f = await approvalFixture();
+  f.candidate.delete(approvalsPath);
+  await assert.rejects(f.run(), /approval manifest is missing/);
+  f.candidate.set(approvalsPath, '{"version":1,"contexts":[],"approvals":[]}');
+  const missing = await f.run();
+  assert.equal(missing.status, 2);
+  assert.match(missing.output, /INVALIDATED VEIL-GOV-001.*record is missing/);
+  assert.doesNotMatch(missing.output, /APPROVED VEIL-GOV-001/);
+  f.candidate.set(approvalsPath, JSON.stringify(f.manifest));
+  f.candidate.set(f.findingPath, 'const removed = true;');
+  const result = await f.run();
+  assert.equal(result.status, 2);
+  assert.match(result.output, /INVALIDATED VEIL-GOV-001.*approved finding is absent/);
+  assert.match(result.output, /stale candidate approval has no finding/);
+});
+
+test('legacy baseline cannot grow through the old format', async () => {
+  const source = 'cap.execute(input);';
+  const manifest = await baseline(source);
+  const before = new Map([[path, source], [baselinePath, manifest]]);
+  await assert.rejects(checkGovernanceWithFrozen({ paths: [...before.keys()],
+    before: p => before.get(p), after: p => before.get(p) }), /new legacy allowances are forbidden/);
+});
+
+test('approval layer preserves scanner failure and unresolved severity', async () => {
+  const f = await approvalFixture();
+  f.base.set(approvalsPath, '{"version":1,"contexts":[],"approvals":[]}');
+  assert.equal((await f.run()).status, 2);
+  f.candidate.set(f.findingPath, 'const broken = ;');
+  await assert.rejects(f.run(), /parser failure/);
+});
 
 const path = 'src/example.ts';
 async function baseline(source, file = path) {
@@ -253,7 +420,15 @@ test('complete relevant repository parses and current individual sites classify 
   const report = await inspectTree(new Set(paths), read);
   const sites = parseBaseline(read(baselinePath), 'inventory');
   const key = ({ path, anchor, kind }) => `${path}:${anchor}:${kind}`;
-  assert.deepEqual(report.findings.map(key).sort(), sites.map(key).sort());
+  const historical = new Set(sites.map(key));
+  const additional = report.findings.filter((site) => !historical.has(key(site)));
+  assert.deepEqual(additional.map(({ path }) => path).sort(), [
+    ...Array(3).fill('docs/assets/playground/playground.js'),
+    ...Array(3).fill('docs/assets/showcase/showcase.js'),
+    ...Array(3).fill('docs/assets/showcase/backend.js'),
+    ...Array(3).fill('docs/assets/showcase/lab.js'),
+  ].sort());
+  assert.deepEqual(report.findings.filter((site) => historical.has(key(site))).map(key).sort(), sites.map(key).sort());
   assert.equal(sites.length, 31);
   assert.ok(!sites.some((site) => site.path.startsWith('src/api/routes/')));
   assert.equal(sites.filter((site) => site.classification === 'LEGACY_BYPASS').length, 0);
@@ -273,7 +448,7 @@ test('complete relevant repository parses and current individual sites classify 
     'test/logging-reliability.test.ts', 'test/logging-reliability.test.ts',
     'test/logging-reliability.test.ts', 'test/logging-reliability.test.ts',
   ]);
-  console.log(`Parser compatibility: ${report.files} relevant repository files; ${sites.length} individually classified sites; Node ${process.versions.node}.`);
+  console.log(`Parser compatibility: ${report.files} relevant repository files; ${sites.length} historical sites and ${additional.length} unresolved UI findings; Node ${process.versions.node}.`);
 });
 
 for (const source of [

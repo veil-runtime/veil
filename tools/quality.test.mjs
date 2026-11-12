@@ -202,6 +202,15 @@ test('baseline changes are verification controls and invalid candidates fail clo
   assert.match(result.output, /VEIL-GOV-001.*invalid baseline/);
 });
 
+test('approval manifest changes require review and malformed records fail closed', (t) => {
+  const f = fixture(t);
+  f.write('tools/quality-governance-approvals.json', '{}');
+  const result = f.run();
+  assert.equal(result.status, 2);
+  assert.match(result.output, /review required: "tools\/quality-governance-approvals.json"/);
+  assert.match(result.output, /VEIL-GOV-001.*invalid approval schema/);
+});
+
 test('untracked dynamic data needs no baseline entries', (t) => {
   const f = fixture(t);
   f.write('examples/data.ts', 'const value = input[field]; if (value === expected) report(value);');

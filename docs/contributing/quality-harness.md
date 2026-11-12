@@ -26,13 +26,13 @@ reports or baselines. There is no CI integration in this experiment.
 
 ## Output and exit codes
 
-- **0:** Comparison completed; no verification-control changes or governance findings.
+- **0:** Comparison completed; no verification-control changes or unresolved governance findings. Approved findings remain visible.
 - **1:** Comparison completed; **review required** for verification-control changes.
   This does not establish that a change weakens verification. Also used for
   unapproved static execution references and initial baseline adoption.
 - **2:** Invalid arguments, invalid base, unreadable/unsupported inputs, malformed
   manifest/lockfile/baseline JSON, parser failure, unsupported dynamic access,
-  or another analysis failure. Do not treat this as a pass.
+  invalidated hash-bound approval, or another analysis failure. Do not treat this as a pass.
 
 Direct dependency additions, removals, version-specification changes, and category
 transitions are informational. Categories are dependencies, devDependencies,
@@ -55,12 +55,50 @@ are imposed. New files are counted even when untracked.
 
 Verification controls include all package scripts (conservatively including
 helpers and lifecycle hooks), discovered `tsconfig*.json` files, all files under
-`test/`, the package verifier, AGENTS.md, all four harness files, the governance baseline, package export/entry
+`test/`, the package verifier, AGENTS.md, all four harness files, the governance baseline and approval manifest, package export/entry
 metadata, `src/index.ts`, and `src/sdk/**/index.ts`. Additions and deletions count.
 JSON key ordering does not change package metadata comparisons. File comparisons
 ignore CRLF/LF differences but otherwise flag even benign edits for review.
 
 ## Governance reference check (VEIL-GOV-001)
+
+### Hash-bound approvals
+
+`tools/quality-governance-approvals.json` starts empty. It contains no approval
+for the twelve UI bundle findings. Approval entries require exact `path`, scanner
+`anchor`, `kind`, raw-byte `fileSha256`, named `context`, reviewer `name` and
+stable `identity`, `decision: "approve"`, nonempty site-specific `rationale`, and
+an ISO calendar `approvedAt` date. The context has a scanner-defined `scope` and
+an exact list of path/SHA-256 pairs. Duplicate sites, context names or paths,
+unknown fields, wildcards, traversal, malformed hashes/dates, missing fields,
+unused contexts and records without a matching finding are rejected.
+
+The first scope, `ui-showcase-v1`, covers every Git-discovered file under
+`docs/assets/playground/`, `docs/playground/`, `docs/assets/showcase/`,
+`docs/showcase/`, `docs/backend-lab/` and `examples/backend-lab/`, plus
+`tools/showcase/package.json`, `package-lock.json` and `build.mjs`. The manifest
+must list every member with its exact byte hash. A change, addition or removal in
+that scope invalidates an approval; a new scope needs a reviewed scanner change.
+The context also contains the finding file and must give it the same hash as the
+approval record. Git discovery's ignored-untracked and concurrent-edit limits
+described below still apply.
+
+Only the manifest at the explicit Git comparison base grants authority. The
+candidate manifest is schema-checked and must retain applicable records, but
+cannot self-approve new or changed findings. The report prints every approved,
+unresolved and invalidated finding. An invalidated approval exits 2; an unmatched
+finding retains the scanner's existing direct-reference exit 1 or unsupported
+dynamic-access exit 2. API route references remain forbidden even if an approval
+exists. Parser and input failures remain fail closed.
+
+The 31 historical baseline identities present at the PR #108 cutoff remain
+compatible. The scanner freezes their exact path/anchor/kind set: entries may be
+retired, but no new identity can enter through the legacy format. New reviews
+must use hash-bound approvals. Migration of a historical site to a new anchor
+requires a fresh approval with a real reviewer identity; the tool cannot infer
+one from a previous merge or disposition. As with the existing baseline, adoption
+of a new approval record is a maintainer review step and its candidate comparison
+remains non-green until the record is in the legitimate trusted base.
 
 The [conditional generated-UI finding disposition](https://github.com/veil-runtime/veil/blob/develop/docs/release/ui-showcase-governance-disposition-2026-11-12.md)
 records twelve exact published-bundle findings and their limited human acceptance.
