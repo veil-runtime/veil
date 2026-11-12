@@ -36,16 +36,20 @@ Screenshots: `/tmp/veil-lab-{chromium,firefox,webkit}-{1280,390}.png` (last scen
 
 ### Twelve quality findings
 
+The [conditional maintainer disposition](ui-showcase-governance-disposition-2026-11-12.md)
+identifies all twelve exact bundle sites and hashes, scope restrictions, security
+reasoning and the retained nonpassing quality result.
+
 The source locations below are in the bundled copy of published `@veil-runtime/ui@0.4.2`, pinned by `docs/assets/showcase/provenance.json`; none originates in new showcase host modules. The four bundles each report the same three sites. These are scanner reports, not evidence that capability execution is reachable from the site. No runtime edit or scanner allowance was made.
 
-| Reported file | Reflective read at 47:28 | Component lookup/call at 761:66 | DOM method call at 869:55 |
+| Reported file | Reflective read at 47:28 | Component lookup/call at 761:66 | Field-error lookup at 877:55 |
 | --- | --- | --- | --- |
 | `docs/assets/playground/playground.js` | Inherited; duplicate 1 | Inherited; duplicate 1 | Inherited; duplicate 1 |
 | `docs/assets/showcase/showcase.js` | Inherited; duplicate 2 | Inherited; duplicate 2 | Inherited; duplicate 2 |
 | `docs/assets/showcase/backend.js` | Inherited; duplicate 3 | Inherited; duplicate 3 | Inherited; duplicate 3 |
 | `docs/assets/showcase/lab.js` | Inherited; duplicate 4 | Inherited; duplicate 4 | Inherited; duplicate 4 |
 
-The reflective read is `Object.getOwnPropertyDescriptor` in UI data validation: low practical risk and a protective check against accessors. The component lookup/call is the published renderer's custom-component extension: moderate general integration risk if a host registers untrusted components, but these pages register none; accept for this fixed built-in-only integration. The DOM call builds a fixed `<option>` from definition data: low practical risk; accept. The three originating sites are inherited published UI code; the last bundle is newly generated showcase output, but its reported code is unchanged runtime code. All twelve therefore have **documented acceptance for this release candidate**, subject to maintainer review of the quality exit 1. Future use of custom components needs a fresh review. The quality gate is not represented as passing.
+The reflective read is `Object.getOwnPropertyDescriptor` in UI data validation: low practical risk and a protective check against accessors. The component lookup/call is the published renderer's custom-component extension: moderate general integration risk if a host registers untrusted components, but these pages register none. The field-error lookup is `errors[node.key]`, guarded by `Object.hasOwn`; its value becomes DOM text and `aria-invalid`, with no callable invocation. The three originating sites are inherited published UI code; the last bundle is newly generated showcase output, but its reported code is unchanged runtime code. The conditional acceptance is limited to the exact bundles and integrations in the linked disposition. The quality gate still exits **2** and is not represented as passing.
 
 ### User experience and release hygiene
 
