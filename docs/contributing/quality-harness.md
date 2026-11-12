@@ -69,22 +69,30 @@ for the twelve UI bundle findings. Approval entries require exact `path`, scanne
 `anchor`, `kind`, raw-byte `fileSha256`, named `context`, reviewer `name` and
 stable `identity`, `decision: "approve"`, nonempty site-specific `rationale`, and
 an ISO calendar `approvedAt` date. The context has a scanner-defined `scope` and
-an exact list of path/SHA-256 pairs. Duplicate sites, context names or paths,
+an exact list of path/SHA-256 pairs. Duplicate JSON keys at any depth, sites, context names or paths,
 unknown fields, wildcards, traversal, malformed hashes/dates, missing fields,
-unused contexts and records without a matching finding are rejected.
+unused contexts and records without a matching finding are rejected. A candidate
+record whose decision changes to `reject` is accepted only for invalidation
+reporting; it cannot authorize a finding. Trusted-base records must say `approve`.
 
-The first scope, `ui-showcase-v1`, covers every Git-discovered file under
+The first scope, `ui-showcase-v1`, covers every filesystem file under
 `docs/assets/playground/`, `docs/playground/`, `docs/assets/showcase/`,
 `docs/showcase/`, `docs/backend-lab/` and `examples/backend-lab/`, plus
 `tools/showcase/package.json`, `package-lock.json` and `build.mjs`. The manifest
 must list every member with its exact byte hash. A change, addition or removal in
 that scope invalidates an approval; a new scope needs a reviewed scanner change.
 The context also contains the finding file and must give it the same hash as the
-approval record. Git discovery's ignored-untracked and concurrent-edit limits
-described below still apply.
+approval record. Candidate scope enumeration includes ignored and untracked
+files, independently of Git ignore rules. Symlinks and unsupported filesystem
+entries under scoped directories fail closed. Traversal does not follow symlinks
+and is limited to 32 directory levels and 20,000 entries per scope. The scanner
+still discovers code outside approval contexts through Git, so its
+ignored-untracked limit remains there. Concurrent filesystem edits can race
+separate reads; run the gate against a stable working tree.
 
 Only the manifest at the explicit Git comparison base grants authority. The
-candidate manifest is schema-checked and must retain applicable records, but
+candidate manifest is schema-checked and must retain applicable records and
+their context metadata exactly, but
 cannot self-approve new or changed findings. The report prints every approved,
 unresolved and invalidated finding. An invalidated approval exits 2; an unmatched
 finding retains the scanner's existing direct-reference exit 1 or unsupported

@@ -1,4 +1,6 @@
 import { createHash } from 'node:crypto';
+import { lstatSync, readdirSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 
 export const baselinePath = 'tools/quality-governance-baseline.json';
 export const approvalsPath = 'tools/quality-governance-approvals.json';
@@ -338,6 +340,65 @@ const nonempty = (value) => typeof value === 'string' && value.trim() !== '';
 const date = (value) => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)
   && !Number.isNaN(Date.parse(`${value}T00:00:00Z`))
   && new Date(`${value}T00:00:00Z`).toISOString().startsWith(value);
+
+// JSON.parse keeps the last value of a duplicate key. Scan tokens first so even
+// escaped spellings of the same key cannot conceal conflicting review metadata.
+function rejectDuplicateJsonKeys(text, where) {
+  let offset = 0;
+  const space = () => { while (/[\t\n\r ]/.test(text[offset] ?? '')) offset++; };
+  const invalid = () => { throw fail(`${where}: invalid approval JSON near offset ${offset}`); };
+  const string = () => {
+    const start = offset++;
+    while (offset < text.length) {
+      if (text[offset] === '\\') { offset += 2; continue; }
+      if (text[offset++] === '"') {
+        try { return JSON.parse(text.slice(start, offset)); }
+        catch { invalid(); }
+      }
+    }
+    invalid();
+  };
+  const value = () => {
+    space();
+    if (text[offset] === '"') { string(); return; }
+    if (text[offset] === '{') {
+      offset++; space();
+      const seen = new Set();
+      if (text[offset] === '}') { offset++; return; }
+      while (offset < text.length) {
+        if (text[offset] !== '"') invalid();
+        const keyOffset = offset;
+        const key = string();
+        if (seen.has(key)) throw fail(`${where}: duplicate approval JSON key ${JSON.stringify(key)} at offset ${keyOffset}`);
+        seen.add(key);
+        space();
+        if (text[offset++] !== ':') invalid();
+        value(); space();
+        const next = text[offset++];
+        if (next === '}') return;
+        if (next !== ',') invalid();
+        space();
+      }
+      invalid();
+    }
+    if (text[offset] === '[') {
+      offset++; space();
+      if (text[offset] === ']') { offset++; return; }
+      while (offset < text.length) {
+        value(); space();
+        const next = text[offset++];
+        if (next === ']') return;
+        if (next !== ',') invalid();
+      }
+      invalid();
+    }
+    const start = offset;
+    while (offset < text.length && !/[\t\n\r ,}\]]/.test(text[offset])) offset++;
+    if (offset === start) invalid();
+  };
+  value(); space();
+  if (offset !== text.length) invalid();
+}
 export function parseBaseline(text, where) {
   let value;
   try { value = JSON.parse(text); }
@@ -359,8 +420,9 @@ export function parseBaseline(text, where) {
   return value.sites;
 }
 
-export function parseApprovals(text, where) {
+export function parseApprovals(text, where, { candidate = false } = {}) {
   let value;
+  rejectDuplicateJsonKeys(text, where);
   try { value = JSON.parse(text); }
   catch { throw fail(`${where}: invalid approval JSON`); }
   if (!keys(value, ['version', 'contexts', 'approvals']) || value.version !== 1
@@ -393,7 +455,8 @@ export function parseApprovals(text, where) {
       || !nonempty(approval.context) || !contexts.has(approval.context)
       || !keys(approval.reviewer, ['name', 'identity'])
       || !nonempty(approval.reviewer.name) || !nonempty(approval.reviewer.identity)
-      || approval.decision !== 'approve' || !nonempty(approval.rationale)
+      || !(approval.decision === 'approve' || candidate && approval.decision === 'reject')
+      || !nonempty(approval.rationale)
       || !date(approval.approvedAt) || seen.has(identity(approval))) {
       throw fail(`${where}: invalid or duplicate approval record`);
     }
@@ -408,13 +471,76 @@ export function parseApprovals(text, where) {
   return { contexts, approvals: value.approvals };
 }
 
-function contextState(context, paths, raw, where) {
+const sameApproval = (a, b) => a.path === b.path && a.anchor === b.anchor
+  && a.kind === b.kind && a.fileSha256 === b.fileSha256 && a.context === b.context
+  && a.reviewer.name === b.reviewer.name && a.reviewer.identity === b.reviewer.identity
+  && a.decision === b.decision && a.rationale === b.rationale && a.approvedAt === b.approvedAt;
+const sameContext = (a, b) => a.scope === b.scope && a.files.size === b.files.size
+  && [...a.files].every(([path, hash]) => b.files.get(path) === hash);
+
+// Only scanner-defined scope roots are traversed. Every encountered entry counts
+// against the limit, and no symlink (including a parent of a required file) is followed.
+function discoverScopeFiles(root, scope) {
+  const files = new Set();
+  let entries = 0;
+  const limit = 20000;
+  const stat = (path) => {
+    try { return lstatSync(join(root, path)); }
+    catch (error) { if (error.code === 'ENOENT') return undefined; throw error; }
+  };
+  const safeParents = (path) => {
+    const parts = path.split('/');
+    for (let i = 1; i < parts.length; i++) {
+      const parent = parts.slice(0, i).join('/');
+      const info = stat(parent);
+      if (!info) return false;
+      if (!info.isDirectory()) throw fail(`candidate: unsupported or symlink context directory ${parent}`);
+    }
+    return true;
+  };
+  for (const prefix of scope.prefixes) {
+    const start = prefix.slice(0, -1);
+    if (!safeParents(start)) continue;
+    const rootInfo = stat(start);
+    if (!rootInfo) continue;
+    if (!rootInfo.isDirectory()) throw fail(`candidate: unsupported or symlink context directory ${start}`);
+    const pending = [{ path: start, depth: 0 }];
+    while (pending.length) {
+      const { path, depth } = pending.pop();
+      if (depth > 32) throw fail(`candidate: context directory depth limit exceeded at ${path}`);
+      for (const name of readdirSync(join(root, path))) {
+        if (++entries > limit) throw fail('candidate: context entry limit exceeded');
+        const child = `${path}/${name}`;
+        const info = stat(child);
+        if (info.isDirectory()) pending.push({ path: child, depth: depth + 1 });
+        else if (info.isFile()) files.add(child);
+        else throw fail(`candidate: unsupported or symlink context entry ${child}`);
+      }
+    }
+  }
+  for (const path of scope.required) {
+    if (!safeParents(path)) continue;
+    const info = stat(path);
+    if (!info) continue;
+    if (!info.isFile()) throw fail(`candidate: unsupported or symlink context entry ${path}`);
+    files.add(path);
+  }
+  return files;
+}
+
+function contextState(context, paths, raw, where, candidateRoot) {
   const scope = scopes[context.scope];
-  const actual = new Set();
-  for (const path of paths) {
-    if (!scope.prefixes.some((prefix) => path.startsWith(prefix))) continue;
-    try { if (raw(path) !== undefined) actual.add(path); }
-    catch (error) { return `${where}: ${path}: unreadable context input: ${error.message}`; }
+  let actual;
+  try {
+    actual = candidateRoot && where === 'candidate'
+      ? discoverScopeFiles(resolve(candidateRoot), scope) : new Set();
+  } catch (error) { return `${where}: context discovery failed: ${error.message}`; }
+  if (!candidateRoot || where !== 'candidate') {
+    for (const path of paths) {
+      if (!scope.prefixes.some((prefix) => path.startsWith(prefix))) continue;
+      try { if (raw(path) !== undefined) actual.add(path); }
+      catch (error) { return `${where}: ${path}: unreadable context input: ${error.message}`; }
+    }
   }
   for (const path of scope.required) actual.add(path);
   const expected = new Set(context.files.keys());
@@ -431,7 +557,7 @@ function contextState(context, paths, raw, where) {
   }
 }
 
-export async function checkGovernance({ paths, before, after, beforeRaw, afterRaw,
+export async function checkGovernance({ paths, before, after, beforeRaw, afterRaw, candidateRoot,
   legacyIds = frozenLegacy }) {
   const rawBefore = beforeRaw ?? ((path) => {
     const value = before(path);
@@ -468,13 +594,13 @@ export async function checkGovernance({ paths, before, after, beforeRaw, afterRa
   const baseApprovalText = before(approvalsPath);
   const empty = { contexts: new Map(), approvals: [] };
   const candidateApprovals = candidateApprovalText === undefined ? empty
-    : parseApprovals(candidateApprovalText, 'candidate');
+    : parseApprovals(candidateApprovalText, 'candidate', { candidate: true });
   const trusted = baseApprovalText === undefined ? empty : parseApprovals(baseApprovalText, 'base');
   if (baseApprovalText !== undefined && candidateApprovalText === undefined) {
     throw fail('candidate: approval manifest is missing');
   }
   const originalIds = new Set(baseText === undefined ? [] : (await inspectTree(paths, before)).findings.map(identity));
-  const candidateApprovalIds = new Set(candidateApprovals.approvals.map(identity));
+  const candidateApprovalById = new Map(candidateApprovals.approvals.map((site) => [identity(site), site]));
   const candidateLegacyIds = new Set(candidateText === undefined ? []
     : parseBaseline(candidateText, 'candidate').map(identity));
   if (candidateApprovals.approvals.some((site) => candidateLegacyIds.has(identity(site)))) {
@@ -489,6 +615,14 @@ export async function checkGovernance({ paths, before, after, beforeRaw, afterRa
   }
   const allowed = new Map(allowances.map((site) => [identity(site), site]));
   const approved = new Map(trusted.approvals.map((site) => [identity(site), site]));
+  const trustedApprovalIds = new Set(approved.keys());
+  const contextProblems = new Map();
+  const candidateContextProblem = (context) => {
+    if (!contextProblems.has(context)) {
+      contextProblems.set(context, contextState(context, paths, rawAfter, 'candidate', candidateRoot));
+    }
+    return contextProblems.get(context);
+  };
   const candidateIds = new Set(candidate.findings.map(identity));
   const output = [`Governance — ${prefix} (${candidate.files} candidate files parsed)`];
   let status = 0;
@@ -512,9 +646,14 @@ export async function checkGovernance({ paths, before, after, beforeRaw, afterRa
       try { bytes = rawAfter(site.path); }
       catch (error) { throw fail(`${site.path}: unreadable approval input: ${error.message}`); }
       const context = trusted.contexts.get(approval.context);
-      const problem = contextState(context, paths, rawAfter, 'candidate');
-      if (!candidateApprovalIds.has(identity(site))) {
+      const problem = candidateContextProblem(context);
+      const retained = candidateApprovalById.get(identity(site));
+      if (!retained) {
         output.push(`  INVALIDATED ${prefix} ${location}: trusted approval record is missing from candidate manifest.`);
+        status = 2;
+      } else if (!sameApproval(approval, retained)
+        || !sameContext(context, candidateApprovals.contexts.get(retained.context))) {
+        output.push(`  INVALIDATED ${prefix} ${location}: trusted approval record or context changed in candidate manifest.`);
         status = 2;
       } else if (bytes !== undefined && sha256(bytes) === approval.fileSha256 && !problem) {
         output.push(`  APPROVED ${prefix} ${location}: ${site.detail}; ${approval.reviewer.name} (${approval.reviewer.identity}), ${approval.approvedAt}: ${approval.rationale}`);
@@ -534,11 +673,15 @@ export async function checkGovernance({ paths, before, after, beforeRaw, afterRa
     status = 2;
   }
   for (const site of candidateApprovals.approvals) {
+    if (site.decision !== 'approve' && !trustedApprovalIds.has(identity(site))) {
+      output.push(`  INVALIDATED ${prefix} ${site.path}:${site.anchor}: candidate approval decision is not approve.`);
+      status = 2;
+    }
     if (!candidateIds.has(identity(site))) {
       output.push(`  INVALIDATED ${prefix} ${site.path}:${site.anchor}: stale candidate approval has no finding.`);
       status = 2;
     }
-    const problem = contextState(candidateApprovals.contexts.get(site.context), paths, rawAfter, 'candidate');
+    const problem = candidateContextProblem(candidateApprovals.contexts.get(site.context));
     if (problem) {
       output.push(`  INVALIDATED ${prefix} ${site.path}:${site.anchor}: ${problem}.`);
       status = 2;

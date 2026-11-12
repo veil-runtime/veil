@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, symlinkSync, unlinkSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import { baselinePath, checkGovernance as checkGovernanceWithFrozen, inspectSource, inspectTree,
   parseBaseline, parseApprovals, approvalsPath } from './quality-governance.mjs';
@@ -49,11 +50,12 @@ async function approvalFixture() {
   const manifest = { version: 1, contexts: [context], approvals: [approval] };
   base.set(approvalsPath, JSON.stringify(manifest));
   const candidate = new Map(base);
-  const run = (before = base, after = candidate) => checkGovernanceWithFrozen({
+  const run = (before = base, after = candidate, candidateRoot) => checkGovernanceWithFrozen({
     paths: [...new Set([...before.keys(), ...after.keys()])],
     before: path => before.get(path), after: path => after.get(path),
     beforeRaw: path => before.has(path) ? Buffer.from(before.get(path)) : undefined,
     afterRaw: path => after.has(path) ? Buffer.from(after.get(path)) : undefined,
+    candidateRoot,
   });
   return { base, candidate, run, findingPath, approval, context, manifest };
 }
@@ -136,6 +138,103 @@ test('malformed, duplicate, wildcard and traversal approvals are rejected', asyn
     const invalid = structuredClone(f.manifest);
     change(invalid);
     assert.throws(() => parseApprovals(JSON.stringify(invalid), 'candidate'), /invalid or duplicate approval record/);
+  }
+});
+
+test('duplicate JSON keys fail closed at every depth, including escaped equivalents', async () => {
+  const f = await approvalFixture();
+  const raw = JSON.stringify(f.manifest);
+  const cases = [
+    raw.replace('"decision":"approve"', '"decision":"reject","decision":"approve"'),
+    raw.replace('"decision":"approve"', '"decision":"approve","decision":"approve"'),
+    raw.replace('"decision":"approve"', '"dec\\u0069sion":"approve","decision":"approve"'),
+    raw.replace('"identity":"reviewer@example.invalid"',
+      '"identity":"first@example.invalid","identity":"reviewer@example.invalid"'),
+    raw.replace('"scope":"ui-showcase-v1"', '"scope":"other","scope":"ui-showcase-v1"'),
+    raw.replace('"sha256":"', '"sha256":"' + '0'.repeat(64) + '","sha256":"'),
+    raw.replace('"version":1', '"version":1,"version":1'),
+  ];
+  for (const text of cases) assert.throws(() => parseApprovals(text, 'candidate'), /duplicate approval JSON key/);
+  assert.equal(parseApprovals(` \n${raw}\t`, 'candidate').approvals.length, 1);
+  assert.equal(parseApprovals(raw.replace('"decision"', '"dec\\u0069sion"'), 'candidate')
+    .approvals[0].decision, 'approve');
+});
+
+test('changed candidate approval metadata or context never retains a trusted approval', async () => {
+  const changes = [
+    value => { value.approvals[0].reviewer.name = 'Impostor'; },
+    value => { value.approvals[0].reviewer.identity = 'impostor@example.invalid'; },
+    value => { value.approvals[0].rationale = 'Changed rationale'; },
+    value => { value.approvals[0].approvedAt = '2026-11-13'; },
+    value => { value.approvals[0].context = 'replacement'; value.contexts[0].name = 'replacement'; },
+    value => { value.contexts[0].files[1].sha256 = '0'.repeat(64); },
+  ];
+  for (const change of changes) {
+    const f = await approvalFixture();
+    const altered = structuredClone(f.manifest);
+    change(altered);
+    f.candidate.set(approvalsPath, JSON.stringify(altered));
+    const result = await f.run();
+    assert.equal(result.status, 2, result.output);
+    assert.match(result.output, /INVALIDATED VEIL-GOV-001.*trusted approval record or context changed/);
+    assert.doesNotMatch(result.output, /  APPROVED VEIL-GOV-001/);
+  }
+  const f = await approvalFixture();
+  const rejected = JSON.stringify(f.manifest).replace('"decision":"approve"', '"decision":"reject"');
+  f.candidate.set(approvalsPath, rejected);
+  const result = await f.run();
+  assert.equal(result.status, 2);
+  assert.match(result.output, /INVALIDATED VEIL-GOV-001.*trusted approval record or context changed/);
+  assert.doesNotMatch(result.output, /  APPROVED VEIL-GOV-001/);
+});
+
+test('filesystem context discovery rejects ignored, nested, symlink and deleted entries', async (t) => {
+  for (const change of ['ignored', 'untracked', 'nested', 'symlink',
+    'directory-symlink', 'required-symlink', 'deep', 'deleted']) {
+    const f = await approvalFixture();
+    const root = mkdtempSync(join(tmpdir(), 'veil-governance-context-'));
+    t.after(() => rmSync(root, { recursive: true, force: true }));
+    for (const [path, value] of f.candidate) {
+      if (path === baselinePath || path === approvalsPath) continue;
+      mkdirSync(dirname(join(root, path)), { recursive: true });
+      writeFileSync(join(root, path), value);
+    }
+    const scope = join(root, 'docs/assets/showcase');
+    if (change === 'ignored' || change === 'untracked') {
+      writeFileSync(join(scope, change === 'ignored' ? 'ignored.tmp' : 'new.mjs'), 'new context');
+      if (change === 'ignored') {
+        writeFileSync(join(root, '.gitignore'), 'docs/assets/showcase/ignored.tmp\n');
+        execFileSync('git', ['init', '-q', root]);
+        execFileSync('git', ['check-ignore', '-q', 'docs/assets/showcase/ignored.tmp'], { cwd: root });
+      }
+    }
+    if (change === 'nested') {
+      mkdirSync(join(scope, 'nested/deeper'), { recursive: true });
+      writeFileSync(join(scope, 'nested/deeper/new.mjs'), 'new context');
+    }
+    if (change === 'symlink') symlinkSync('host.mjs', join(scope, 'link.mjs'));
+    if (change === 'directory-symlink') symlinkSync('.', join(scope, 'linked-dir'));
+    if (change === 'required-symlink') {
+      const required = join(root, 'tools/showcase/build.mjs');
+      unlinkSync(required);
+      symlinkSync('package.json', required);
+    }
+    if (change === 'deep') {
+      let nested = scope;
+      for (let i = 0; i < 34; i++) nested = join(nested, `level-${i}`);
+      mkdirSync(nested, { recursive: true });
+      writeFileSync(join(nested, 'new.mjs'), 'deep context');
+    }
+    if (change === 'deleted') {
+      unlinkSync(join(scope, 'host.mjs'));
+      f.candidate.delete('docs/assets/showcase/host.mjs');
+    }
+    const result = await f.run(f.base, f.candidate, root);
+    assert.equal(result.status, 2, `${change}: ${result.output}`);
+    assert.match(result.output, change.includes('symlink')
+      ? /INVALIDATED VEIL-GOV-001.*context discovery failed.*symlink context entry/
+      : change === 'deep' ? /INVALIDATED VEIL-GOV-001.*depth limit exceeded/
+        : /INVALIDATED VEIL-GOV-001.*context file (membership|hash) changed/);
   }
 });
 

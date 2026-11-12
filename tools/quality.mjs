@@ -192,7 +192,7 @@ async function compare(baseArgument) {
   let governance;
   try {
     const { checkGovernance } = await import('./quality-governance.mjs');
-    governance = await checkGovernance({ paths, before, after, beforeRaw, afterRaw });
+    governance = await checkGovernance({ paths, before, after, beforeRaw, afterRaw, candidateRoot: root });
   } catch (error) {
     governance = { output: `VEIL-GOV-001 analysis failed: ${error.message}`, status: 2 };
   }

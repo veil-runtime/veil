@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
+import { inspectSource } from './quality-governance.mjs';
 
 const cli = join(import.meta.dirname, 'quality.mjs');
 function fixture(t) {
@@ -209,6 +211,40 @@ test('approval manifest changes require review and malformed records fail closed
   assert.equal(result.status, 2);
   assert.match(result.output, /review required: "tools\/quality-governance-approvals.json"/);
   assert.match(result.output, /VEIL-GOV-001.*invalid approval schema/);
+});
+
+test('quality gate finds an ignored context addition outside Git path discovery', async (t) => {
+  const f = fixture(t);
+  const findingPath = 'docs/assets/showcase/showcase.js';
+  const files = new Map([
+    [findingPath, 'obj[key]();'],
+    ['tools/showcase/package.json', '{}'],
+    ['tools/showcase/package-lock.json', '{}'],
+    ['tools/showcase/build.mjs', '// fixture'],
+  ]);
+  for (const [path, content] of files) f.write(path, content);
+  const hash = value => createHash('sha256').update(value).digest('hex');
+  const site = (await inspectSource(findingPath, files.get(findingPath)))[0];
+  f.write('tools/quality-governance-approvals.json', JSON.stringify({ version: 1,
+    contexts: [{ name: 'fixture', scope: 'ui-showcase-v1', files: [...files]
+      .map(([path, content]) => ({ path, sha256: hash(content) })) }],
+    approvals: [{ path: site.path, anchor: site.anchor, kind: site.kind,
+      fileSha256: hash(files.get(findingPath)), context: 'fixture',
+      reviewer: { name: 'Fixture', identity: 'fixture@example.invalid' },
+      decision: 'approve', rationale: 'Fixture context', approvedAt: '2026-11-12' }],
+  }));
+  const git = (...args) => execFileSync('git', args, { cwd: f.root, encoding: 'utf8' }).trim();
+  git('add', '.');
+  git('-c', 'user.name=Quality Test', '-c', 'user.email=quality@example.invalid',
+    '-c', 'commit.gpgsign=false', '-c', 'core.hooksPath=/dev/null', 'commit', '--quiet', '-m', 'trusted fixture');
+  const base = git('rev-parse', 'HEAD');
+  f.write('.gitignore', 'docs/assets/showcase/ignored.tmp\n');
+  f.write('docs/assets/showcase/ignored.tmp', 'new ignored context');
+  execFileSync('git', ['check-ignore', '-q', 'docs/assets/showcase/ignored.tmp'], { cwd: f.root });
+  const result = f.run(['--base', base]);
+  assert.equal(result.status, 2, result.output);
+  assert.match(result.output, /INVALIDATED VEIL-GOV-001.*context file membership changed/);
+  assert.doesNotMatch(result.output, /  APPROVED VEIL-GOV-001/);
 });
 
 test('untracked dynamic data needs no baseline entries', (t) => {
