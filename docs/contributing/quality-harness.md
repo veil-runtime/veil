@@ -64,8 +64,11 @@ ignore CRLF/LF differences but otherwise flag even benign edits for review.
 
 ### Hash-bound approvals
 
-`tools/quality-governance-approvals.json` starts empty. It contains no approval
-for the twelve UI bundle findings. Approval entries require exact `path`, scanner
+`tools/quality-governance-approvals.json` contains twelve site-specific approvals
+for the four published UI v0.4.2 bundles. They are candidate records in this
+promotion PR; the current `main` comparison base contains no trusted approval
+manifest, so all twelve findings remain unresolved until a subsequent comparison
+uses an approved manifest as its base. Approval entries require exact `path`, scanner
 `anchor`, `kind`, raw-byte `fileSha256`, named `context`, reviewer `name` and
 stable `identity`, `decision: "approve"`, nonempty site-specific `rationale`, and
 an ISO calendar `approvedAt` date. The context has a scanner-defined `scope` and
