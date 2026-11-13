@@ -1,6 +1,9 @@
 import { createHash } from 'node:crypto';
+import { lstatSync, opendirSync, readdirSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 
 export const baselinePath = 'tools/quality-governance-baseline.json';
+export const approvalsPath = 'tools/quality-governance-approvals.json';
 export const relevantCode = (path) => /\.(?:[cm]?[jt]sx?)$/.test(path);
 const prefix = 'VEIL-GOV-001';
 const apiRoute = (path) => path.startsWith('src/api/routes/');
@@ -283,6 +286,119 @@ export async function inspectTree(paths, read) {
 }
 
 const identity = (site) => `${site.path}:${site.anchor}:${site.kind}`;
+const sha256 = (value) => createHash('sha256').update(value).digest('hex');
+const hashPattern = /^[a-f0-9]{64}$/;
+const validPath = (path) => typeof path === 'string' && path !== '' && !path.startsWith('/')
+  && !path.includes('\\') && !/[\*?\[\]]/.test(path)
+  && path.split('/').every((part) => part !== '' && part !== '.' && part !== '..');
+// The 31 identities at the PR #108 cutoff. Historical entries may be retired, not expanded.
+const frozenLegacy = new Set([
+  'examples/veil-starter/server/veil/capabilities.test.ts:52b8509038c6e02f0fccf1a34118a963984bded3ddc019b2bdee9e3083de44a3:execute',
+  'src/runtime/execution/plan-validator.ts:56e72b010dc9a4c6c38fe49f317cebdf7bf52424d0bdc154a74214b5c867f0c4:dynamic',
+  'src/runtime/execution/result-reference.ts:fa558518ddbff03dddc63d98f9496c264b3734a45dc09caea209ddc012cb7ffd:dynamic',
+  'src/runtime/jobs/job-manager.ts:f1d32dd14560fcf9883e25c30c3663dc0078ebd49de915f920ec6abb1aca5849:job-manager',
+  'src/runtime/jobs/job-manager.ts:1de7ac2827640d7ab79d276299f619e963f329668ec66628268887da6fc4c44e:execute',
+  'src/runtime/operator-runtime.ts:f77cd0abb36b9b5030798b0bf36a75810ed3567c11336fe22d9a03efcbd42855:job-manager',
+  'src/runtime/operator-runtime.ts:fc5e6e062ae4f33959c02e83b0b03b9e4fffd1bcc00166a369a3a9b4c167a6b4:execute',
+  'src/runtime/execution/governed-value.ts:8dd63a8040d329c82382bc4ae292a642e8a44479de63b274242748bbd7c8e0d1:dynamic',
+  'src/runtime/execution/governed-value.ts:bea564db8bd711e6fc0e2b17e6ab2e34929980c9cd32d31ee32b3434924b65bb:dynamic',
+  'src/sdk/capability/create-capability.ts:0e58f16e6c26e79279fe0a35302a8c6c2f0194e689fda296fd424bbae98cc6b4:execute',
+  'src/sdk/capability/create-capability.ts:71ee6e7e30c08a8a46082da1658dd23de501f521b2d2a4cc359fb8ef80940ddf:execute',
+  'test/fixtures/package-consumer/verify.mjs:0ca0d41fecc7c7f23ede6d59e48201e69fd07dd15ae85888d2360f0ff3c65141:dynamic',
+  'test/planner-routing.test.ts:3045cc55b637d5509c9705dc787c292013d3b248cc1c419b94df983bc1c9d561:execute',
+  'test/planner-routing.test.ts:b36db2ba927195ec359f250c4493e61e178c3cabf1e3451dcbc8f900b63698a9:execute',
+  'test/planner-routing.test.ts:132a61ba2d05f584ebc5cabffa0c65cb331b462c7f556da32c38ecfcfb7731f8:execute',
+  'test/planner-routing.test.ts:349a445b6e74964e7191e282b1e06550d9c11dcf41c303b90615391cf966bd72:execute',
+  'test/planner-routing.test.ts:838a7dae7e1f045541edd0d94c3aaca7c7f8721386d0cda8d7899da603671809:execute',
+  'test/plan-admission.test.ts:0187fa2f4b6daff3da9797f03c97152101c7318704c3dd988042fa700a86fe3d:dynamic',
+  'test/plan-admission.test.ts:b66fcc08bfab183eb951c39f40e1ad47a29208aa33e1285ee7f8bb912a66335d:dynamic',
+  'test/plan-admission.test.ts:e5a2f8f0399da97e329901facf8636b7d550dac8fad166fcd39a21f2e2bc08d8:dynamic',
+  'test/plan-admission.test.ts:9a74dee9a6be95e8470eec859dc028791944182a248397608a35313d8820c1bf:dynamic',
+  'experiments/external-model-reasoner/model-adapter.mjs:28a49a354fa8f965c784293731603772b623ce565e33a1ca1381b2a2e76b8e2d:dynamic',
+  'experiments/external-model-reasoner/model-adapter.mjs:aef3c1446aacedf2d4eae8133cf07f8e009a0825b29f08e1763a4e310beeda19:dynamic',
+  'experiments/external-model-reasoner/run.mjs:7f78381ad5ff742445c3bea35efc42459684184a46a5f779673c1514f3ac2731:dynamic',
+  'src/runtime/jobs/job-manager.ts:86079973f34a21759ce6f2d9e713ba8bf8a7b3741f0adefe90ec08671ab0749e:dynamic',
+  'src/runtime/logging/job-log-sink.ts:91eee71f67beaad965a4230cefa411ecaa101cb0bfd74691fddf4ade8bf588e0:dynamic',
+  'src/runtime/logging/sqlite-log-sink.ts:11dec86f4a4a6c70552af30360f80e65f5fe8ff49f17df241e180b939025b197:dynamic',
+  'test/logging-reliability.test.ts:823bfec96de092683943d8dbb3d8f4706f3b3f79c230b768b12abec18ad08071:dynamic',
+  'test/logging-reliability.test.ts:e063cf0572585862b6b0377d8c26958ef96941530729dfb4b3b42ab9c996d758:dynamic',
+  'test/logging-reliability.test.ts:515773eb22aae19942ed14583cfdaae0918e8543c6470eb9de2a8e95343c2e2a:dynamic',
+  'test/logging-reliability.test.ts:04c6b74a9489fbd5b56cf547b540b7b29d0b5461d787191105b7276a28d5683b:dynamic',
+]);
+const scopes = {
+  'ui-showcase-v1': {
+    prefixes: ['docs/assets/playground/', 'docs/playground/', 'docs/assets/showcase/',
+      'docs/showcase/', 'docs/backend-lab/', 'examples/backend-lab/'],
+    required: ['tools/showcase/package.json', 'tools/showcase/package-lock.json',
+      'tools/showcase/build.mjs'],
+  },
+};
+const keys = (value, expected) => value && typeof value === 'object' && !Array.isArray(value)
+  && Object.keys(value).length === expected.length
+  && Object.keys(value).every((key) => expected.includes(key));
+const nonempty = (value) => typeof value === 'string' && value.trim() !== '';
+const date = (value) => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)
+  && !Number.isNaN(Date.parse(`${value}T00:00:00Z`))
+  && new Date(`${value}T00:00:00Z`).toISOString().startsWith(value);
+
+// JSON.parse keeps the last value of a duplicate key. Scan tokens first so even
+// escaped spellings of the same key cannot conceal conflicting review metadata.
+function rejectDuplicateJsonKeys(text, where) {
+  let offset = 0;
+  const space = () => { while (/[\t\n\r ]/.test(text[offset] ?? '')) offset++; };
+  const invalid = () => { throw fail(`${where}: invalid approval JSON near offset ${offset}`); };
+  const string = () => {
+    const start = offset++;
+    while (offset < text.length) {
+      if (text[offset] === '\\') { offset += 2; continue; }
+      if (text[offset++] === '"') {
+        try { return JSON.parse(text.slice(start, offset)); }
+        catch { invalid(); }
+      }
+    }
+    invalid();
+  };
+  const value = () => {
+    space();
+    if (text[offset] === '"') { string(); return; }
+    if (text[offset] === '{') {
+      offset++; space();
+      const seen = new Set();
+      if (text[offset] === '}') { offset++; return; }
+      while (offset < text.length) {
+        if (text[offset] !== '"') invalid();
+        const keyOffset = offset;
+        const key = string();
+        if (seen.has(key)) throw fail(`${where}: duplicate approval JSON key ${JSON.stringify(key)} at offset ${keyOffset}`);
+        seen.add(key);
+        space();
+        if (text[offset++] !== ':') invalid();
+        value(); space();
+        const next = text[offset++];
+        if (next === '}') return;
+        if (next !== ',') invalid();
+        space();
+      }
+      invalid();
+    }
+    if (text[offset] === '[') {
+      offset++; space();
+      if (text[offset] === ']') { offset++; return; }
+      while (offset < text.length) {
+        value(); space();
+        const next = text[offset++];
+        if (next === ']') return;
+        if (next !== ',') invalid();
+      }
+      invalid();
+    }
+    const start = offset;
+    while (offset < text.length && !/[\t\n\r ,}\]]/.test(text[offset])) offset++;
+    if (offset === start) invalid();
+  };
+  value(); space();
+  if (offset !== text.length) invalid();
+}
 export function parseBaseline(text, where) {
   let value;
   try { value = JSON.parse(text); }
@@ -304,16 +420,168 @@ export function parseBaseline(text, where) {
   return value.sites;
 }
 
-export async function checkGovernance({ paths, before, after }) {
+export function parseApprovals(text, where, { candidate = false } = {}) {
+  let value;
+  rejectDuplicateJsonKeys(text, where);
+  try { value = JSON.parse(text); }
+  catch { throw fail(`${where}: invalid approval JSON`); }
+  if (!keys(value, ['version', 'contexts', 'approvals']) || value.version !== 1
+    || !Array.isArray(value.contexts) || !Array.isArray(value.approvals)) {
+    throw fail(`${where}: invalid approval schema`);
+  }
+  const contexts = new Map();
+  for (const context of value.contexts) {
+    if (!keys(context, ['name', 'scope', 'files']) || !/^[a-z0-9][a-z0-9.-]*$/.test(context.name ?? '')
+      || !Object.hasOwn(scopes, context.scope) || !Array.isArray(context.files)
+      || contexts.has(context.name)) throw fail(`${where}: invalid or duplicate approval context`);
+    const files = new Map();
+    for (const file of context.files) {
+      if (!keys(file, ['path', 'sha256']) || !validPath(file.path)
+        || !hashPattern.test(file.sha256 ?? '') || files.has(file.path)) {
+        throw fail(`${where}: invalid or duplicate context file`);
+      }
+      files.set(file.path, file.sha256);
+    }
+    contexts.set(context.name, { scope: context.scope, files });
+  }
+  const seen = new Set();
+  const used = new Set();
+  for (const approval of value.approvals) {
+    if (!keys(approval, ['path', 'anchor', 'kind', 'fileSha256', 'context', 'reviewer',
+      'decision', 'rationale', 'approvedAt']) || !validPath(approval.path)
+      || !relevantCode(approval.path) || !hashPattern.test(approval.anchor ?? '')
+      || !['execute', 'job-manager', 'dynamic'].includes(approval.kind)
+      || !hashPattern.test(approval.fileSha256 ?? '')
+      || !nonempty(approval.context) || !contexts.has(approval.context)
+      || !keys(approval.reviewer, ['name', 'identity'])
+      || !nonempty(approval.reviewer.name) || !nonempty(approval.reviewer.identity)
+      || !(approval.decision === 'approve' || candidate && approval.decision === 'reject')
+      || !nonempty(approval.rationale)
+      || !date(approval.approvedAt) || seen.has(identity(approval))) {
+      throw fail(`${where}: invalid or duplicate approval record`);
+    }
+    const context = contexts.get(approval.context);
+    if (context.files.get(approval.path) !== approval.fileSha256) {
+      throw fail(`${where}: approval file hash is absent from or differs from its context`);
+    }
+    seen.add(identity(approval));
+    used.add(approval.context);
+  }
+  if (contexts.size !== used.size) throw fail(`${where}: stale unused approval context`);
+  return { contexts, approvals: value.approvals };
+}
+
+const sameApproval = (a, b) => a.path === b.path && a.anchor === b.anchor
+  && a.kind === b.kind && a.fileSha256 === b.fileSha256 && a.context === b.context
+  && a.reviewer.name === b.reviewer.name && a.reviewer.identity === b.reviewer.identity
+  && a.decision === b.decision && a.rationale === b.rationale && a.approvedAt === b.approvedAt;
+const sameContext = (a, b) => a.scope === b.scope && a.files.size === b.files.size
+  && [...a.files].every(([path, hash]) => b.files.get(path) === hash);
+
+// Only scanner-defined scope roots are traversed. Every encountered entry counts
+// against the limit, and no symlink (including a parent of a required file) is followed.
+function discoverScopeFiles(root, scope) {
+  const files = new Set();
+  let entries = 0;
+  const limit = 20000;
+  const stat = (path) => {
+    try { return lstatSync(join(root, path)); }
+    catch (error) { if (error.code === 'ENOENT') return undefined; throw error; }
+  };
+  const safeParents = (path) => {
+    const parts = path.split('/');
+    for (let i = 1; i < parts.length; i++) {
+      const parent = parts.slice(0, i).join('/');
+      const info = stat(parent);
+      if (!info) return false;
+      if (!info.isDirectory()) throw fail(`candidate: unsupported or symlink context directory ${parent}`);
+    }
+    return true;
+  };
+  for (const prefix of scope.prefixes) {
+    const start = prefix.slice(0, -1);
+    if (!safeParents(start)) continue;
+    const rootInfo = stat(start);
+    if (!rootInfo) continue;
+    if (!rootInfo.isDirectory()) throw fail(`candidate: unsupported or symlink context directory ${start}`);
+    const pending = [{ path: start, depth: 0 }];
+    while (pending.length) {
+      const { path, depth } = pending.pop();
+      if (depth > 32) throw fail(`candidate: context directory depth limit exceeded at ${path}`);
+      for (const name of readdirSync(join(root, path))) {
+        if (++entries > limit) throw fail('candidate: context entry limit exceeded');
+        const child = `${path}/${name}`;
+        const info = stat(child);
+        if (info.isDirectory()) pending.push({ path: child, depth: depth + 1 });
+        else if (info.isFile()) files.add(child);
+        else throw fail(`candidate: unsupported or symlink context entry ${child}`);
+      }
+    }
+  }
+  for (const path of scope.required) {
+    if (!safeParents(path)) continue;
+    const info = stat(path);
+    if (!info) continue;
+    if (!info.isFile()) throw fail(`candidate: unsupported or symlink context entry ${path}`);
+    files.add(path);
+  }
+  return files;
+}
+
+function contextState(context, paths, raw, where, candidateRoot) {
+  const scope = scopes[context.scope];
+  let actual;
+  try {
+    actual = candidateRoot && where === 'candidate'
+      ? discoverScopeFiles(resolve(candidateRoot), scope) : new Set();
+  } catch (error) { return `${where}: context discovery failed: ${error.message}`; }
+  if (!candidateRoot || where !== 'candidate') {
+    for (const path of paths) {
+      if (!scope.prefixes.some((prefix) => path.startsWith(prefix))) continue;
+      try { if (raw(path) !== undefined) actual.add(path); }
+      catch (error) { return `${where}: ${path}: unreadable context input: ${error.message}`; }
+    }
+  }
+  for (const path of scope.required) actual.add(path);
+  const expected = new Set(context.files.keys());
+  if (actual.size !== expected.size || [...actual].some((path) => !expected.has(path))) {
+    return `${where}: context file membership changed`;
+  }
+  for (const path of actual) {
+    let bytes;
+    try { bytes = raw(path); }
+    catch (error) { return `${where}: ${path}: unreadable context input: ${error.message}`; }
+    if (bytes === undefined || sha256(bytes) !== context.files.get(path)) {
+      return `${where}: ${path}: context file hash changed or file missing`;
+    }
+  }
+}
+
+export async function checkGovernance({ paths, before, after, beforeRaw, afterRaw, candidateRoot,
+  legacyIds = frozenLegacy }) {
+  const rawBefore = beforeRaw ?? ((path) => {
+    const value = before(path);
+    return value === undefined ? undefined : Buffer.from(value);
+  });
+  const rawAfter = afterRaw ?? ((path) => {
+    const value = after(path);
+    return value === undefined ? undefined : Buffer.from(value);
+  });
   const baseText = before(baselinePath);
   const candidateText = after(baselinePath);
   if (candidateText !== undefined) {
     const sites = parseBaseline(candidateText, 'candidate'); // Validate, never authorize.
+    if (sites.some((site) => !legacyIds.has(identity(site)))) {
+      throw fail('candidate: new legacy allowances are forbidden; use a hash-bound approval');
+    }
     if (sites.some(site => apiRoute(site.path))) {
       throw fail('candidate: API route execution allowances are forbidden; remove retired route entries');
     }
   }
   const allowances = baseText === undefined ? [] : parseBaseline(baseText, 'base');
+  if (allowances.some((site) => !legacyIds.has(identity(site)))) {
+    throw fail('base: new legacy allowances are forbidden; use a hash-bound approval');
+  }
   if (baseText !== undefined) {
     const original = await inspectTree(paths, before);
     const identities = new Set(original.findings.map(identity));
@@ -322,7 +590,51 @@ export async function checkGovernance({ paths, before, after }) {
     }
   }
   const candidate = await inspectTree(paths, after);
+  const candidateApprovalText = after(approvalsPath);
+  const baseApprovalText = before(approvalsPath);
+  const empty = { contexts: new Map(), approvals: [] };
+  const candidateApprovals = candidateApprovalText === undefined ? empty
+    : parseApprovals(candidateApprovalText, 'candidate', { candidate: true });
+  const trusted = baseApprovalText === undefined ? empty : parseApprovals(baseApprovalText, 'base');
+  if (trusted.approvals.length) {
+    if (typeof candidateRoot !== 'string' || !candidateRoot.trim()) {
+      throw fail('candidate: an accessible candidateRoot directory is required for trusted approvals');
+    }
+    try {
+      if (!lstatSync(candidateRoot).isDirectory()) throw new Error('not a real directory');
+      opendirSync(candidateRoot).closeSync();
+    } catch (error) {
+      throw fail(`candidate: invalid or inaccessible candidateRoot: ${error.message}`);
+    }
+  }
+  if (baseApprovalText !== undefined && candidateApprovalText === undefined) {
+    throw fail('candidate: approval manifest is missing');
+  }
+  const originalIds = new Set(baseText === undefined ? [] : (await inspectTree(paths, before)).findings.map(identity));
+  const candidateApprovalById = new Map(candidateApprovals.approvals.map((site) => [identity(site), site]));
+  const candidateLegacyIds = new Set(candidateText === undefined ? []
+    : parseBaseline(candidateText, 'candidate').map(identity));
+  if (candidateApprovals.approvals.some((site) => candidateLegacyIds.has(identity(site)))) {
+    throw fail('candidate: approval overlaps a legacy allowance');
+  }
+  for (const approval of trusted.approvals) {
+    if (!originalIds.has(identity(approval)) || allowances.some((site) => identity(site) === identity(approval))) {
+      throw fail(`base: stale or overlapping approval ${identity(approval)}`);
+    }
+    const problem = contextState(trusted.contexts.get(approval.context), paths, rawBefore, 'base');
+    if (problem) throw fail(problem);
+  }
   const allowed = new Map(allowances.map((site) => [identity(site), site]));
+  const approved = new Map(trusted.approvals.map((site) => [identity(site), site]));
+  const trustedApprovalIds = new Set(approved.keys());
+  const contextProblems = new Map();
+  const candidateContextProblem = (context) => {
+    if (!contextProblems.has(context)) {
+      contextProblems.set(context, contextState(context, paths, rawAfter, 'candidate', candidateRoot));
+    }
+    return contextProblems.get(context);
+  };
+  const candidateIds = new Set(candidate.findings.map(identity));
   const output = [`Governance — ${prefix} (${candidate.files} candidate files parsed)`];
   let status = 0;
   if (baseText === undefined) {
@@ -331,20 +643,61 @@ export async function checkGovernance({ paths, before, after }) {
   }
   for (const site of candidate.findings) {
     const allowance = allowed.get(identity(site));
+    const approval = approved.get(identity(site));
     const location = `${site.path}:${site.line}:${site.column}`;
     if (apiRoute(site.path)) {
-      output.push(`  ${prefix} ${location}: ${site.detail}; API route references cannot be allowed by a baseline. Use OperatorRuntime.run/executePlan.`);
+      output.push(`  UNRESOLVED ${prefix} ${location}: ${site.detail}; API route references cannot be allowed by a baseline. Use OperatorRuntime.run/executePlan.`);
       status = Math.max(status, site.kind === 'dynamic' ? 2 : 1);
       allowed.delete(identity(site));
     } else if (allowance) {
-      output.push(`  ${allowance.classification}: ${location} — ${allowance.reason}`);
+      output.push(`  ${allowance.classification} [APPROVED LEGACY]: ${location} — ${allowance.reason}`);
       allowed.delete(identity(site)); // An allowance can match exactly once.
+    } else if (approval) {
+      let bytes;
+      try { bytes = rawAfter(site.path); }
+      catch (error) { throw fail(`${site.path}: unreadable approval input: ${error.message}`); }
+      const context = trusted.contexts.get(approval.context);
+      const problem = candidateContextProblem(context);
+      const retained = candidateApprovalById.get(identity(site));
+      if (!retained) {
+        output.push(`  INVALIDATED ${prefix} ${location}: trusted approval record is missing from candidate manifest.`);
+        status = 2;
+      } else if (!sameApproval(approval, retained)
+        || !sameContext(context, candidateApprovals.contexts.get(retained.context))) {
+        output.push(`  INVALIDATED ${prefix} ${location}: trusted approval record or context changed in candidate manifest.`);
+        status = 2;
+      } else if (bytes !== undefined && sha256(bytes) === approval.fileSha256 && !problem) {
+        output.push(`  APPROVED ${prefix} ${location}: ${site.detail}; ${approval.reviewer.name} (${approval.reviewer.identity}), ${approval.approvedAt}: ${approval.rationale}`);
+      } else {
+        output.push(`  INVALIDATED ${prefix} ${location}: ${problem ?? 'finding file hash changed'}; approval ${approval.context} no longer applies.`);
+        status = 2;
+      }
+      approved.delete(identity(site));
     } else {
-      output.push(`  ${prefix} ${location}: ${site.detail}; no trusted individual allowance. Use OperatorRuntime.run/executePlan for capability work.`);
+      output.push(`  UNRESOLVED ${prefix} ${location}: ${site.detail}; no trusted individual allowance or approval. Use OperatorRuntime.run/executePlan for capability work.`);
       status = Math.max(status, site.kind === 'dynamic' ? 2 : 1);
     }
   }
   for (const site of allowed.values()) output.push(`  retired site: ${site.path}:${site.anchor}; remove its candidate baseline entry.`);
+  for (const site of approved.values()) {
+    output.push(`  INVALIDATED ${prefix} ${site.path}:${site.anchor}: approved finding is absent; retire the stale approval.`);
+    status = 2;
+  }
+  for (const site of candidateApprovals.approvals) {
+    if (site.decision !== 'approve' && !trustedApprovalIds.has(identity(site))) {
+      output.push(`  INVALIDATED ${prefix} ${site.path}:${site.anchor}: candidate approval decision is not approve.`);
+      status = 2;
+    }
+    if (!candidateIds.has(identity(site))) {
+      output.push(`  INVALIDATED ${prefix} ${site.path}:${site.anchor}: stale candidate approval has no finding.`);
+      status = 2;
+    }
+    const problem = candidateContextProblem(candidateApprovals.contexts.get(site.context));
+    if (problem) {
+      output.push(`  INVALIDATED ${prefix} ${site.path}:${site.anchor}: ${problem}.`);
+      status = 2;
+    }
+  }
   if (!status) output.push('  No unapproved execution references or unsupported accesses.');
   return { output: output.join('\n'), status };
 }

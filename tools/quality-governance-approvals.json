@@ -1,0 +1,297 @@
+{
+  "version": 1,
+  "contexts": [
+    {
+      "name": "ui-showcase-2026-11-13",
+      "scope": "ui-showcase-v1",
+      "files": [
+        {
+          "path": "docs/assets/playground/README.md",
+          "sha256": "c9b717bbc121b85c7e3b973d434788551edba1a65171d80eb0cf8748b224760c"
+        },
+        {
+          "path": "docs/assets/playground/UI-LICENSE.txt",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+        },
+        {
+          "path": "docs/assets/playground/UI-NOTICE.txt",
+          "sha256": "265e602be56086ebb3cb1d965cdaa220f484bd689fe2b29ad6b64932f564fbdb"
+        },
+        {
+          "path": "docs/assets/playground/playground.css",
+          "sha256": "78eaed4b6fc78d35860ec73b227ce5954ee25e32035c8d264ae5ff5b97d71742"
+        },
+        {
+          "path": "docs/assets/playground/playground.js",
+          "sha256": "f396966ebfe875916a732a3c496bfaadfc888f0111c7c0e5f98e7b1c997e9d72"
+        },
+        {
+          "path": "docs/assets/playground/source.mjs",
+          "sha256": "7e2f8ba9c21dc61487a03aa616499ffdac13dc0652e404455600ec7b84b407f8"
+        },
+        {
+          "path": "docs/assets/showcase/agent.mjs",
+          "sha256": "9bcbd57816a6c95c85ec79910806d99c384c6a236a503b5968b3c954330a0bd1"
+        },
+        {
+          "path": "docs/assets/showcase/backend-integration.mjs",
+          "sha256": "ef9270877b6790e6549c865d7da9255662aff19c159f95815c281b7b3d696fb3"
+        },
+        {
+          "path": "docs/assets/showcase/backend-shell.mjs",
+          "sha256": "69b3d81cba2bf07ff4045ba153dbd67eb4ff37ea7689ef77c6b2c0c19ef8d9cc"
+        },
+        {
+          "path": "docs/assets/showcase/backend.js",
+          "sha256": "750970d38b2264899e0ab84acc15a65772817ab977d629e1134f04e06b34eb13"
+        },
+        {
+          "path": "docs/assets/showcase/backend.mjs",
+          "sha256": "071e1828325583fc136e43bdb02a9318c13d89646cbea55524acf2a394716bee"
+        },
+        {
+          "path": "docs/assets/showcase/definition.mjs",
+          "sha256": "2b03137bebae9d4ac20d261ef62f82650c68c7d0c9f32ffc2d7ff58ba206d9db"
+        },
+        {
+          "path": "docs/assets/showcase/integration.mjs",
+          "sha256": "ac02e7de685be9a2a4ba2115b7c9968c190b4263d31696a92006e93581c93101"
+        },
+        {
+          "path": "docs/assets/showcase/lab-definition.mjs",
+          "sha256": "baad9b5de45a12ece9c6c0352354fedf26d5a14a2ede7128ccca583656cb7e34"
+        },
+        {
+          "path": "docs/assets/showcase/lab-shell.mjs",
+          "sha256": "db2d9592143a23c099aa42625846795474bc58ebb3550907f791e40467df3fc0"
+        },
+        {
+          "path": "docs/assets/showcase/lab.js",
+          "sha256": "6f132277c7d4fbc8e9480c0a5583eccf613c700ec4a24a4c605454bbede8782d"
+        },
+        {
+          "path": "docs/assets/showcase/lab.mjs",
+          "sha256": "30b8cdc458b925661481aebada8396edd8020df0e2493d89d9cda39ecc8f9690"
+        },
+        {
+          "path": "docs/assets/showcase/provenance.json",
+          "sha256": "a76d89a5ae269dd2330b27dc5896096c309bbf9f865632b6c2e2f9707c8df2a8"
+        },
+        {
+          "path": "docs/assets/showcase/shell.mjs",
+          "sha256": "80e6a49c0b40e8d6eca486c534f6fecfd025ee5de642f9c417fb2ddcc75667b1"
+        },
+        {
+          "path": "docs/assets/showcase/showcase.css",
+          "sha256": "a72fffe87898851f12dfeed7e96eef4699665f9448f62b767f9c884b97809276"
+        },
+        {
+          "path": "docs/assets/showcase/showcase.js",
+          "sha256": "cd81a087559244d261b87dfef0df466c0886493ae6c6f43f4f66a5e631b2985a"
+        },
+        {
+          "path": "docs/backend-lab/index.html",
+          "sha256": "c448521dabd27a5718861ebbc99fc8f71e58f78f592c1ff07617a230d7d0eb25"
+        },
+        {
+          "path": "docs/playground/index.html",
+          "sha256": "722af784a951c43cc29aa009bc203c051632df35c8a93abd3aa0b40c544ed09b"
+        },
+        {
+          "path": "docs/showcase/index.html",
+          "sha256": "ad6b2f90323aa29dea9e1af57788a4f1177063eee2f2dbf49e3d0561f5410ea6"
+        },
+        {
+          "path": "docs/showcase/lab.html",
+          "sha256": "ccce41e4de3023db42c67f50b4a44b65f2891bf1ca91d454c1cdead72a8844ee"
+        },
+        {
+          "path": "examples/backend-lab/server.mjs",
+          "sha256": "1afb78b0b4dcf8e76b07907b657b75f13ae4704fb46a5453b702642898976177"
+        },
+        {
+          "path": "tools/showcase/build.mjs",
+          "sha256": "239af702bc1cea84ff6f3ac309bf93b386a374d9f57549979a93595c871b6a87"
+        },
+        {
+          "path": "tools/showcase/package-lock.json",
+          "sha256": "fd91ab50c2234d914f6a08522ac134288d3ab8d2a6556c294a74392d9e249fd4"
+        },
+        {
+          "path": "tools/showcase/package.json",
+          "sha256": "9643bec742de0660202bd33831fac8e8d948e91f2d98173b9629a1815a7a174e"
+        }
+      ]
+    }
+  ],
+  "approvals": [
+    {
+      "path": "docs/assets/playground/playground.js",
+      "anchor": "ee5dfc29a8a36d182e4c479b251d212be5d48008456004c133045d632ea813e4",
+      "kind": "dynamic",
+      "fileSha256": "f396966ebfe875916a732a3c496bfaadfc888f0111c7c0e5f98e7b1c997e9d72",
+      "context": "ui-showcase-2026-11-13",
+      "reviewer": {
+        "name": "Mustapha Keraan",
+        "identity": "https://github.com/mustaphakeraan-OR"
+      },
+      "decision": "approve",
+      "rationale": "Temporary, conditional exception: published UI 0.4.2 bounded-data validation reads an own descriptor to reject accessors and non-enumerable properties before copying. It does not enter Core execution. Host-supplied Proxy descriptor traps can execute host code. Limited to this exact bundle, package integrity, and current input boundaries; see veil-ui-lab#11.",
+      "approvedAt": "2026-11-13"
+    },
+    {
+      "path": "docs/assets/playground/playground.js",
+      "anchor": "538860e33952b3ff2deae22f82188b38e52a264bbb32e89dd2d2ed9f4863b7d2",
+      "kind": "dynamic",
+      "fileSha256": "f396966ebfe875916a732a3c496bfaadfc888f0111c7c0e5f98e7b1c997e9d72",
+      "context": "ui-showcase-2026-11-13",
+      "reviewer": {
+        "name": "Mustapha Keraan",
+        "identity": "https://github.com/mustaphakeraan-OR"
+      },
+      "decision": "approve",
+      "rationale": "Temporary, conditional exception: published UI 0.4.2 looks up and may invoke a custom-component factory. This host supplies no components option, leaving its registry empty. A populated registry or changed wiring requires renewed review and grants no Core execution or authorization authority; see veil-ui-lab#11.",
+      "approvedAt": "2026-11-13"
+    },
+    {
+      "path": "docs/assets/playground/playground.js",
+      "anchor": "d4b84817efd965d609f032e207e1db6a674f4c92c75d68a3255fb5b2519397df",
+      "kind": "dynamic",
+      "fileSha256": "f396966ebfe875916a732a3c496bfaadfc888f0111c7c0e5f98e7b1c997e9d72",
+      "context": "ui-showcase-2026-11-13",
+      "reviewer": {
+        "name": "Mustapha Keraan",
+        "identity": "https://github.com/mustaphakeraan-OR"
+      },
+      "decision": "approve",
+      "rationale": "Temporary, conditional exception: the own-key-guarded UI 0.4.2 lookup reads a validation message for DOM text and aria-invalid; it neither calls nor extracts a callable. Limited to this data use and exact bundle; scanner refinement must preserve validation and accessibility; see veil-ui-lab#11.",
+      "approvedAt": "2026-11-13"
+    },
+    {
+      "path": "docs/assets/showcase/showcase.js",
+      "anchor": "ee5dfc29a8a36d182e4c479b251d212be5d48008456004c133045d632ea813e4",
+      "kind": "dynamic",
+      "fileSha256": "cd81a087559244d261b87dfef0df466c0886493ae6c6f43f4f66a5e631b2985a",
+      "context": "ui-showcase-2026-11-13",
+      "reviewer": {
+        "name": "Mustapha Keraan",
+        "identity": "https://github.com/mustaphakeraan-OR"
+      },
+      "decision": "approve",
+      "rationale": "Temporary, conditional exception: published UI 0.4.2 bounded-data validation reads an own descriptor to reject accessors and non-enumerable properties before copying. It does not enter Core execution. Host-supplied Proxy descriptor traps can execute host code. Limited to this exact bundle, package integrity, and current input boundaries; see veil-ui-lab#11.",
+      "approvedAt": "2026-11-13"
+    },
+    {
+      "path": "docs/assets/showcase/showcase.js",
+      "anchor": "fec7fcbabb5a2463885b0c53809bce98355cb1e84d22c65142492de7e4cfacaa",
+      "kind": "dynamic",
+      "fileSha256": "cd81a087559244d261b87dfef0df466c0886493ae6c6f43f4f66a5e631b2985a",
+      "context": "ui-showcase-2026-11-13",
+      "reviewer": {
+        "name": "Mustapha Keraan",
+        "identity": "https://github.com/mustaphakeraan-OR"
+      },
+      "decision": "approve",
+      "rationale": "Temporary, conditional exception: published UI 0.4.2 looks up and may invoke a custom-component factory. This host supplies no components option, leaving its registry empty. A populated registry or changed wiring requires renewed review and grants no Core execution or authorization authority; see veil-ui-lab#11.",
+      "approvedAt": "2026-11-13"
+    },
+    {
+      "path": "docs/assets/showcase/showcase.js",
+      "anchor": "aaabebf9e747f733ee92b5f5928ece5764177fe44b1d96ef5c70b45fcdcc5bb1",
+      "kind": "dynamic",
+      "fileSha256": "cd81a087559244d261b87dfef0df466c0886493ae6c6f43f4f66a5e631b2985a",
+      "context": "ui-showcase-2026-11-13",
+      "reviewer": {
+        "name": "Mustapha Keraan",
+        "identity": "https://github.com/mustaphakeraan-OR"
+      },
+      "decision": "approve",
+      "rationale": "Temporary, conditional exception: the own-key-guarded UI 0.4.2 lookup reads a validation message for DOM text and aria-invalid; it neither calls nor extracts a callable. Limited to this data use and exact bundle; scanner refinement must preserve validation and accessibility; see veil-ui-lab#11.",
+      "approvedAt": "2026-11-13"
+    },
+    {
+      "path": "docs/assets/showcase/backend.js",
+      "anchor": "ee5dfc29a8a36d182e4c479b251d212be5d48008456004c133045d632ea813e4",
+      "kind": "dynamic",
+      "fileSha256": "750970d38b2264899e0ab84acc15a65772817ab977d629e1134f04e06b34eb13",
+      "context": "ui-showcase-2026-11-13",
+      "reviewer": {
+        "name": "Mustapha Keraan",
+        "identity": "https://github.com/mustaphakeraan-OR"
+      },
+      "decision": "approve",
+      "rationale": "Temporary, conditional exception: published UI 0.4.2 bounded-data validation reads an own descriptor to reject accessors and non-enumerable properties before copying. It does not enter Core execution. Host-supplied Proxy descriptor traps can execute host code. Limited to this exact bundle, package integrity, and current input boundaries; see veil-ui-lab#11.",
+      "approvedAt": "2026-11-13"
+    },
+    {
+      "path": "docs/assets/showcase/backend.js",
+      "anchor": "ea3b5489323caea5c482fde3cc619252829740e2ffaaaee09f98162d130dfbbd",
+      "kind": "dynamic",
+      "fileSha256": "750970d38b2264899e0ab84acc15a65772817ab977d629e1134f04e06b34eb13",
+      "context": "ui-showcase-2026-11-13",
+      "reviewer": {
+        "name": "Mustapha Keraan",
+        "identity": "https://github.com/mustaphakeraan-OR"
+      },
+      "decision": "approve",
+      "rationale": "Temporary, conditional exception: published UI 0.4.2 looks up and may invoke a custom-component factory. This host supplies no components option, leaving its registry empty. A populated registry or changed wiring requires renewed review and grants no Core execution or authorization authority; see veil-ui-lab#11.",
+      "approvedAt": "2026-11-13"
+    },
+    {
+      "path": "docs/assets/showcase/backend.js",
+      "anchor": "bf4c11745523d2ea8a60fbc464125a97defa242f3f09be34d9e855a847bc01e8",
+      "kind": "dynamic",
+      "fileSha256": "750970d38b2264899e0ab84acc15a65772817ab977d629e1134f04e06b34eb13",
+      "context": "ui-showcase-2026-11-13",
+      "reviewer": {
+        "name": "Mustapha Keraan",
+        "identity": "https://github.com/mustaphakeraan-OR"
+      },
+      "decision": "approve",
+      "rationale": "Temporary, conditional exception: the own-key-guarded UI 0.4.2 lookup reads a validation message for DOM text and aria-invalid; it neither calls nor extracts a callable. Limited to this data use and exact bundle; scanner refinement must preserve validation and accessibility; see veil-ui-lab#11.",
+      "approvedAt": "2026-11-13"
+    },
+    {
+      "path": "docs/assets/showcase/lab.js",
+      "anchor": "029aafb1a175afac4ba38fb1a6ef458cfbc1e7a7346309aaf8ac6f380f23d4db",
+      "kind": "dynamic",
+      "fileSha256": "6f132277c7d4fbc8e9480c0a5583eccf613c700ec4a24a4c605454bbede8782d",
+      "context": "ui-showcase-2026-11-13",
+      "reviewer": {
+        "name": "Mustapha Keraan",
+        "identity": "https://github.com/mustaphakeraan-OR"
+      },
+      "decision": "approve",
+      "rationale": "Temporary, conditional exception: published UI 0.4.2 bounded-data validation reads an own descriptor to reject accessors and non-enumerable properties before copying. It does not enter Core execution. Host-supplied Proxy descriptor traps can execute host code. Limited to this exact bundle, package integrity, and current input boundaries; see veil-ui-lab#11.",
+      "approvedAt": "2026-11-13"
+    },
+    {
+      "path": "docs/assets/showcase/lab.js",
+      "anchor": "ea3b5489323caea5c482fde3cc619252829740e2ffaaaee09f98162d130dfbbd",
+      "kind": "dynamic",
+      "fileSha256": "6f132277c7d4fbc8e9480c0a5583eccf613c700ec4a24a4c605454bbede8782d",
+      "context": "ui-showcase-2026-11-13",
+      "reviewer": {
+        "name": "Mustapha Keraan",
+        "identity": "https://github.com/mustaphakeraan-OR"
+      },
+      "decision": "approve",
+      "rationale": "Temporary, conditional exception: published UI 0.4.2 looks up and may invoke a custom-component factory. This host supplies no components option, leaving its registry empty. A populated registry or changed wiring requires renewed review and grants no Core execution or authorization authority; see veil-ui-lab#11.",
+      "approvedAt": "2026-11-13"
+    },
+    {
+      "path": "docs/assets/showcase/lab.js",
+      "anchor": "bf4c11745523d2ea8a60fbc464125a97defa242f3f09be34d9e855a847bc01e8",
+      "kind": "dynamic",
+      "fileSha256": "6f132277c7d4fbc8e9480c0a5583eccf613c700ec4a24a4c605454bbede8782d",
+      "context": "ui-showcase-2026-11-13",
+      "reviewer": {
+        "name": "Mustapha Keraan",
+        "identity": "https://github.com/mustaphakeraan-OR"
+      },
+      "decision": "approve",
+      "rationale": "Temporary, conditional exception: the own-key-guarded UI 0.4.2 lookup reads a validation message for DOM text and aria-invalid; it neither calls nor extracts a callable. Limited to this data use and exact bundle; scanner refinement must preserve validation and accessibility; see veil-ui-lab#11.",
+      "approvedAt": "2026-11-13"
+    }
+  ]
+}

@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.6.0 — Published 2026-11-03
+
+[GitHub release](https://github.com/veil-runtime/veil/releases/tag/v0.6.0)
+at source commit `03b5ed6db25d7c1f20a98a53208d66c103abe163` records governed
+execution supervision: cooperative cancellation via a host `AbortSignal`,
+optional execution deadlines, trusted plan-step and active-execution limits,
+per-instance capacity tracking, and more reliable logging resource handling.
+Existing execution and authorization contracts and V1/V2 semantics remain
+unchanged. Cancellation does not guarantee external work has stopped or rolled
+back; capacity limits are per runtime instance. Requires Node 24 or newer.
+Linux is the fully qualified execution platform.
+
+## 0.5.0 — Published 2026-11-03
+
+[GitHub release](https://github.com/veil-runtime/veil/releases/tag/v0.5.0)
+at source commit `78713066cafba46b0c2f1cd40eed0e9937102002` records an MCP SDK
+production dependency and development tooling refresh. Browser-session source
+cleanup preserves the original page-creation error when context cleanup also
+fails; the browser provider is outside the Core artifact. The sole package-root
+export and execution, capability, job, result and event contracts are unchanged.
+Requires Node 24 or newer. Consumers should refresh their lockfiles to obtain
+fixed transitive dependencies. Linux is the fully qualified execution platform.
+
+## Historical candidate record
+
 ## 0.4.0 — Unreleased Core candidate
 
 Based on published v0.3.1. No new public exports or plan/job/event contracts.
