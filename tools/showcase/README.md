@@ -1,5 +1,7 @@
 # Showcase build and qualification
 
+The current package is **v0.5.0 — Developer Preview**. These demos intentionally remain pinned to v0.4.2; their build, provenance and reproduction commands describe that artifact. See the [current UI guide](https://veil-runtime.github.io/veil/ui.html) for v0.5.0. A demo dependency upgrade requires separate asset and browser qualification.
+
 This private tooling package builds the public playground and Agent Monitor from npm UI 0.4.2. It is not a runtime package and must not be published. Run commands from the repository root:
 
 ```sh
