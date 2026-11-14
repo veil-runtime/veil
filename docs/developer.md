@@ -1,16 +1,16 @@
 ---
 title: Veil developer documentation
-description: Understand Veil, install published Core 0.6.0 or UI 0.4.2, and explore their independent contracts.
+description: Understand Veil, install published Core 0.6.0 or UI 0.5.0, and explore their independent contracts.
 ---
 # Veil developer documentation
 
-Veil comprises independent tools for governed execution and expressive interfaces. Start with the [ecosystem map](ecosystem.html), the published [Core installation](getting-started/installation.html), or the separate [UI stable release](ui.html). Core and UI can be adopted independently; application code may connect them.
+Veil comprises independent tools for governed execution and expressive interfaces. Start with the [ecosystem map](ecosystem.html), the published [Core installation](getting-started/installation.html), or the separate [UI Developer Preview](ui.html). Core and UI can be adopted independently; application code may connect them.
 
 Veil Core is a governed, capability-driven execution runtime. It separates deciding what should happen from performing it. A human, application, deterministic program, or planner can produce an ExecutionPlan; Core validates and executes that plan through registered capabilities. Veil UI independently composes bounded interfaces and emits host-controlled events.
 
 ## Published products
 
-**Core 0.6.0** is on [npm](https://www.npmjs.com/package/@veil-runtime/core/v/0.6.0), with a [GitHub Release](https://github.com/veil-runtime/veil/releases/tag/v0.6.0). **UI 0.4.2** is on [npm](https://www.npmjs.com/package/@veil-runtime/ui/v/0.4.2). Read the [UI guide](ui.html) for its independent interface APIs. Core needs no model or UI;
+**Core 0.6.0** is on [npm](https://www.npmjs.com/package/@veil-runtime/core/v/0.6.0), with a [GitHub Release](https://github.com/veil-runtime/veil/releases/tag/v0.6.0). **UI 0.5.0 (Developer Preview)** is on [npm](https://www.npmjs.com/package/@veil-runtime/ui/v/0.5.0). Read the [UI guide](ui.html) for its independent interface APIs. Core needs no model or UI;
 [local planning](guides/local-planning.html) is optional source-server infrastructure.
 Emergence and autonomous repository-task applications are separate components.
 Linux is the qualified execution platform; Windows and macOS are unqualified.
@@ -18,7 +18,7 @@ Local Ollama/Qwen planning is experimental and opt-in.
 
 ## Explore Veil UI
 
-[Try the Agent Monitor showcase](showcase/) to follow a deterministic simulated investigation, inspect its actual interface definition and host code, and understand the integration boundary. It runs on published UI 0.4.2 without Core. Start smaller in the [editable playground](playground/).
+[Try the Agent Monitor showcase](showcase/) to follow a deterministic simulated investigation, inspect its actual interface definition and host code, and understand the integration boundary. This pinned example runs on UI 0.4.2 without Core; the current package is v0.5.0. Start smaller in the [editable playground](playground/).
 
 ## Your learning path
 
@@ -83,4 +83,4 @@ Core 0.6.0 runs a plan's steps sequentially. It supports cooperative cancellatio
 
 The [interactive integration lab](showcase/lab.html) adds three browser-local examples alongside the [Agent Monitor](showcase/) and [Backend Lab](backend-lab/): authored simulated LLM output, an operations console, and a request workflow. Each offers the live Veil UI interface, its accepted descriptor and state, the actual bundled host source, and the runtime/host boundary. Choose a scenario before generating the LLM descriptor. The examples do not contact a model or operate real infrastructure.
 
-For a first integration, install `@veil-runtime/ui@0.4.2`, define a built-in descriptor, validate it with `validateInterfaceDefinition`, mount with `createMountedInterface`, declare and allowlist each action, and handle emitted events in your host. The [editable playground](playground/) is the smallest starting point. The [Backend Lab](backend-lab/) shows a separate local HTTP service; GitHub Pages runs its browser simulation without a backend.
+For a first integration, run `npm install @veil-runtime/ui`, define a built-in descriptor, validate it with `validateInterfaceDefinition`, mount with `createMountedInterface`, declare and allowlist each action, and handle emitted events in your host. The [editable playground](playground/) is the smallest starting point. The [Backend Lab](backend-lab/) shows a separate local HTTP service; GitHub Pages runs its browser simulation without a backend.
